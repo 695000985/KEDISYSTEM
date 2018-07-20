@@ -1,0 +1,19 @@
+{
+  "name": "kedi-system",
+  "version": "001",
+  "time": "0.0.4",
+  "main": "../temp/login.html",
+  "window": {
+    "toolbar": true,
+    "frame": true,
+    "width": 1600,
+    "height": 800,
+    "single-instance": true,
+    "min-width": 1600,
+    "min-height": 700,
+    "max-width": 1900,
+    "max-height": 1000,
+    "position": "center",
+    "icon": "images/kd_bot_logo.png"
+  }
+}

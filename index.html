@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>KEDI管理系统</title>
+    <link rel="icon" href="images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="css/iconfont.css">
+    <link rel="stylesheet" href="css/H-ui.min.css">
+    <link rel="stylesheet" href="css/H-ui.admin.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/kd.css">
+    <script src="script/vue.min.js"></script>
+    <script src="script/jquery-2.1.1.min.js"></script>
+    <script src="script/H-ui.min.js"></script>
+    <script src="script/H-ui.admin.js"></script>
+    <script src="../script/loading.js"></script>
+
+    <script src="script/common.js"></script>
+    <script src="script/kedi.js"></script>
+    <style>
+        .block {
+            display: block !important;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <img src="./images/kedi_logo.png" alt="">
+        <div>
+            你好,
+            <span class="user_info" style="color: #fff"></span>
+        </div>
+    </nav>
+    <aside class="Hui-aside" id="index_content" style="top: 65px;">
+        <div class="menu_dropdown bk_2">
+            <dl id="" v-for="(x,$index) in menu_list" v-if="x.Menu_name.length">
+                <dt v-bind:class="{selected:ac_index == $index}" v-on:click='select($index)'>
+
+                    <template v-if="x.Menu_sons.length">
+                        <i class="Hui-iconfont">&#xe616;</i> {{x.Menu_name}}
+                        <i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
+                    </template>
+                    <template v-else>
+                        <i class="Hui-iconfont">&#xe616;</i>
+                        <a v-bind:data-href="url(x.Menu_id)" v-bind:data-title="x.Menu_name" style="color: #aab8d5">{{x.Menu_name}}</a>
+
+                    </template>
+                </dt>
+                <dd v-bind:class="{block:ac_index == $index}">
+                    <ul>
+                        <li v-for='n in x.Menu_sons'>
+                            <a v-bind:data-href="url(n.Menu_id)" v-bind:data-title="n.Menu_name">{{n.Menu_name}}</a>
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl id="">
+                <dt>
+                    <i class="Hui-iconfont">&#xe616;</i> 账户信息
+                    <i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
+                </dt>
+                <dd>
+                    <ul>
+                        <li>
+                            <a data-href="temp/user_password.html" data-title="账户密码">账户密码</a>
+                        </li>
+                        <li>
+                            <a data-href="temp/user_info.html" data-title="个人信息">个人信息</a>
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+           
+        </div>
+    </aside>
+    <div class="dislpayArrow hidden-xs">
+        <a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a>
+    </div>
+    <section class="Hui-article-box" style="top: 65px;">
+        <div id="Hui-tabNav" class="Hui-tabNav hidden-xs">
+            <div class="Hui-tabNav-wp">
+                <ul id="min_title_list" class="acrossTab cl">
+                    <li class="active">
+                        <span title="我的桌面" data-href="./temp/main.html">我的主页</span>
+                        <em></em>
+                    </li>
+                </ul>
+            </div>
+            <div class="Hui-tabNav-more btn-group">
+                <a id="js-tabNav-prev" class="btn radius btn-default size-S" href="javascript:;">
+                    <i class="Hui-iconfont">&#xe6d4;</i>
+                </a>
+                <a id="js-tabNav-next" class="btn radius btn-default size-S" href="javascript:;">
+                    <i class="Hui-iconfont">&#xe6d7;</i>
+                </a>
+            </div>
+        </div>
+        <div id="iframe_box" class="Hui-article">
+            <div class="show_iframe">
+                <div style="display:none" class="loading"></div>
+                <iframe scrolling="yes" frameborder="0" src="./temp/main.html"></iframe>
+            </div>
+        </div>
+        <div class="status_bar">
+
+        </div>
+    </section>
+</body>
+<script>
+    var user_token = get_cache('usertoken')
+
+    var open_url = {
+        '3': './temp/app_input.html',
+        '6': './temp/app_info.html',
+        '4': './temp/order_input.html',
+        '7': './temp/ManageReport.html',
+        '29':'./temp/version.html',
+        '8':'./temp/update_report.html'
+    };
+
+    $(function () {
+        $(".index_content_btn div").click(function () {
+            $(this).addClass('active').siblings().removeClass('active')
+        })
+
+        $("body").Huitab({
+            tabBar: ".navbar-wrapper .navbar-levelone",
+            tabCon: ".Hui-aside .menu_dropdown",
+            className: "current",
+            index: 0,
+        });
+        get_menu();//获取菜单；
+        detection_version(function (e) { })
+        get_user_info(function (ret) {
+            $('.user_info').html(ret.username + "(" + ret.Dept + ")")
+        })
+
+    })
+    var index = new Vue({
+        el: "#index_content",
+        data: {
+            menu_list: [],
+            ac_index: -1
+        },
+        methods: {
+            select(index) {
+                if (index == this.ac_index) {
+                    this.ac_index = -1
+                } else {
+                    this.ac_index = index
+                }
+              
+            },
+            url(url_id) {
+                return open_url[url_id]
+            }
+        }
+    })
+    function get_menu() {
+        var url = "/index.php/desktop/menu/getmenus";
+        var data = {};
+        data['usertoken'] = user_token;
+        ajax(url, data, function (e) {
+            if (e.stat == 1) {
+                index.menu_list = e.data
+            } else {
+                showErr(e.errmsg, e.errmsg_en, e.errcode)
+            }
+        })
+
+    }
+</script>
+
+</html>

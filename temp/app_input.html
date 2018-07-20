@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>科迪会员录入系统</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <!-- <link rel="stylesheet" href="../css/H-ui.admin.css"> -->
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+</head>
+<style>
+    [v-cloak]{
+        display: none;
+    }
+</style>
+<body>
+    <div class="reg_content">
+        <div class="fill_in_information">
+            <div class="list_information">
+                <div>
+                    <span> Member Code </span>
+                    <select name="member_code_prefix" id="" class="member_code_prefix">
+                        <option value="KN">KN</option>
+                        <option value="KG">KG</option>
+                    </select>
+                    <input type="text" class="member-code">
+                </div>
+                <div>
+                    <span> Name</span>
+                    <input type="text" class="member-name">
+                </div>
+            </div>
+            <div class="list_information">
+                <div>
+                    <span> Sponsor Code </span>
+                    <select name="" id="" class="sponsor_code_prefix">
+                        <option value="KN">KN</option>
+                        <option value="KG">KG</option>
+                    </select>
+                    <input type="text" class="sponsor-code">
+                </div>
+                <div>
+                    <span> Name</span>
+                    <input type="text" class="parentname" readonly='readonly' disabled>
+                </div>
+            </div>
+            <div class="list_information">
+                <div>
+                    <span> Plancement Code </span>
+                    <select name="" id="" class="plancement_code_prefix">
+                      
+                        <option value="KN">KN</option>
+                        <option value="KG">KG</option>
+                    </select>
+                    <input type="text" class="plancement-code">
+
+                </div>
+                <div>
+                    <span> Name</span>
+                    <input class="recommendname" type="text" readonly='readonly' disabled>
+                </div>
+            </div>
+            <div class="list_information">
+                <div class="skin-minimal">
+                    <span>SC</span>
+                    <input type="text" name="" id="" class="shop-code">
+
+                </div>
+                <div>
+                    <span>Adress1</span>
+                    <input type="text" class="address">
+                </div>
+            </div>
+            <div class="list_information">
+                <div>
+                    <span> Bank Name </span>
+                    <select name="" id="" style="width: 187px;" class="bank-name">
+                      
+                        <option value="0">Union Bank</option>
+                        <option value="1">Interconinental Bank</option>
+                        <option value="2">Zenith Bank</option>
+                        <option value="3">GTBank</option>
+                    </select>
+
+                </div>
+                <div>
+                    <span>Number</span>
+                    <input type="text" class="bank_num">
+                </div>
+            </div>
+            <div class="list_information">
+                <div>
+                    <span>Handset</span>
+                    <input type="text" style="width: 180px" class="mobile">
+                </div>
+                <div style="width: 190px;">
+                    <span>Gender</span>
+                    <input type="radio" name="radio" value="男" checked>男
+                    <input type="radio" name="radio" value="女">女
+                </div>
+            </div>
+            <div class="list_information">
+                <div>
+                    <span>录入员</span>
+
+                    <input type="" style="width: 180px;" value="" class="adress_admin" disabled>
+                </div>
+                <div>
+                    <span>State</span>
+                    <select style="width: 160px;" class="state">
+                        <option value="Lagos">Lagos</option>
+                        <option value="Abuja">Abuja</option>
+                        <option value="Ogun">Ogun</option>
+                        <option value="Edo">Edo</option>
+                        <option value="AkwaIbom">AkwaIbom</option>
+                        <option value="IMO">IMO</option>
+                        <option value="Abia">Abia</option>
+                        <option value="OYO">OYO</option>
+                        <option value="DELTA">DELTA</option>
+                        <option value="ANAMBRA">ANAMBRA</option>
+                        <option value="OSUN">OSUN</option>
+                        <option value="RIVER">RIVER</option>
+                        <option value="OWDO">OWDO</option>
+                        <option value="ONDO">ONDO</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="welcome" style="overflow: hidden;">
+                Welcome to KEDI
+            </div>
+
+            <div class="btn_con">
+                <input type="button" value="CLEAN" class="ty_btn clear" onclick="clear()">
+                <input type="button" value="ADD" class="ty_btn" onclick="member_add()">
+            </div>
+        </div>
+        <div class="infomation_show" id="entry_list" v-cloak style="overflow-x: auto; height: 320px;">
+            <table class="table table-border table-bordered table-bg " id="sale_list" style="background: #fff; width: 700px; display: none;" >
+                <thead>
+                    <tr>
+                        <th style="width: 80px"> Code
+                        </th>
+                        <th style="width: 80px">Name</th>
+                        <th style="width: 40px">Sc</th>
+                        <th >Sponsor</th>
+                        <th style="width: 80px">SponsorName</th>
+                        <th>Placement</th>
+                        <th style="width: 80px">PlacementName</th>
+                        <th style="width: 70px">Regdate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for='x in memberEntry'>
+                        <td>{{x.CustomerNO}}</td>
+                        <td>{{x.CustomerName}}</td>
+                        <td>{{x.ShopNO}}</td>
+                        <td>{{x.ParentNO}}</td>
+                        <td>{{x.ParentName}}</td>
+                        <td>{{x.RecommendNO}}</td>
+                        <td>{{x.RecommendName}}</td>
+                        <td>{{x.CreateTime.substring(0,10)}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</body>
+<script>
+    var key = getQueryString('key')
+    $(function () {
+        get_user_info(function (ret) {
+            $('.adress_admin').val(ret.username)
+        })
+
+        $('.clear').click(function () {
+            $("input[type='text']").val('')
+        })
+
+        $('.sponsor-code').keyup(function () {
+            if ($(this).val().length >= 6) {
+                let data = {};
+                data['CustomerNO'] = $('.sponsor_code_prefix').val() + $('.sponsor-code').val()
+                search_member(data, function (e) {
+                    $('.parentname').val(e.list[0].CustomerName)
+                })
+            }
+        })
+
+        $('.sponsor_code_prefix').change(function () {
+            if ($('.sponsor-code').val().length >= 6) {
+                let data = {};
+                data['CustomerNO'] = $('.sponsor_code_prefix').val() + $('.sponsor-code').val()
+                search_member(data, function (e) {
+                    $('.parentname').val(e.list[0].CustomerName)
+                })
+            }
+        })
+        $('.plancement-code').keyup(function () {
+            if ($(this).val().length >= 6) {
+                let data = {};//RecommendNO
+                data['CCustomerNO'] = $('.plancement_code_prefix').val() + $('.plancement-code').val()
+                search_member(data, function (e) {
+                    $('.recommendname').val(e.list[0].CustomerName)
+                })
+            }
+        })
+
+         $('.plancement_code_prefix').change(function () {
+            if ($('.plancement-code').val().length >= 6) {
+                let data = {};
+                data['CCustomerNO'] = $('.plancement_code_prefix').val() + $('.plancement-code').val()
+                search_member(data, function (e) {
+                    $('.recommendname').val(e.list[0].CustomerName)
+                })
+            }
+        })
+
+    })
+
+
+    function member_add() {
+        var url = '/index.php?s=desktop/Tb_Customer/customer_create';
+        var data = {};
+        data['usertoken'] = get_cache('usertoken');
+        data['CustomerNO'] = $('.member_code_prefix').val() + $('.member-code').val();//
+        data['CustomerName'] = $('.member-name').val();//
+        data['ParentNO'] = $('.sponsor_code_prefix').val() + $('.sponsor-code').val();// 推荐人id
+        data['RecommendNO'] = $('.plancement_code_prefix').val() + $('.plancement-code').val();//安置人
+        data['ShopNO'] = $('.shop-code').val();//专卖店id
+        data['BankName'] = $('.bank-name').val();//
+        data['BankCard'] = $('.bank_num').val();//
+        data['Mobile'] = $('.mobile').val();//
+        data['Adress2'] = $('.adress_admin').val();//录入员
+        data['Address'] = $('.address').val();//
+        data['sex'] = getRadioButtonCheckedValue('radio');//
+        data['State'] = $('.state').val();//
+        $('input[type="button"]').attr('disabled', true);
+        ajax(url, data, function (ret) {
+            $('input[type="button"]').attr('disabled', false);
+            if (ret.stat == 1) {
+                success(config_txt.success_text.zn_entry,config_txt.success_text.en_entry)
+                search_member_all()
+               
+                $('#sale_list').css('display','block');
+                $("input[type='text']").val('')
+            } else {
+                showErr(ret.errmsg, ret.errmsg_en, ret.errcode)
+            }
+        })
+    }
+
+
+    function getRadioButtonCheckedValue(tagNameAttr) {
+        var radio_tag = document.getElementsByName(tagNameAttr);
+        for (var i = 0; i < radio_tag.length; i++) {
+            if (radio_tag[i].checked) {
+                var checkvalue = radio_tag[i].value;
+                return checkvalue;
+            }
+        }
+    }
+    function search_member_all(obj) { // 搜索会员
+        var url = '/index.php?s=desktop/Tb_Customer/get_list';
+        var data = {};
+        data['usertoken'] = get_cache('usertoken');
+        data['ShopNO'] = $('.shop-code').val();
+        data['order'] = 'CustomerID asc';
+        data['limit'] = '0,80'; //
+        data['Start'] = get_local_time() +' 00:00:00'; //
+        data['End'] = get_local_time() + ' 23:59:59'; //
+        var opt = $.extend({}, data, obj)
+        ajax1(url, opt, function (e) {
+            if (e.stat == 1) {
+                member_entry.memberEntry = e.data.list.reverse();
+            } else {
+                showErr(e.errmsg, e.errmsg_en, e.errcode)
+                $('.m-style').css('display', 'none');
+            }
+        })
+    }
+    var member_entry = new Vue({
+        el: '#entry_list',
+        data: {
+            memberEntry: []
+        }
+    })
+</script>
+
+</html>

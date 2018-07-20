@@ -1,0 +1,257 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+  <link href="../css/H-ui.min.css" rel="stylesheet" type="text/css" />
+  <link href="../css/common.css" rel="stylesheet" type="text/css" />
+
+  <link href="../css/iconfont.css" rel="stylesheet" type="text/css" />
+
+  <title>后台登录</title>
+  <style>
+    @charset "utf-8";
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      font-size: 14px
+    }
+
+    .header,
+    .footer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 99
+    }
+
+    .header {
+      top: 0;
+      height: 60px;
+      background: #426374 url(../images/logo.png) no-repeat 0 center
+    }
+
+    .loginWraper {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      z-index: 1;
+      background: #3283AC url(../images/admin-login-bg.jpg) no-repeat center
+    }
+
+    .loginBox {
+      position: absolute;
+      width: 617px;
+      height: 330px;
+      background: url(../images/admin-loginform-bg.png) no-repeat;
+      left: 50%;
+      top: 50%;
+      margin-left: -309px;
+      margin-top: -184px;
+      padding-top: 38px
+    }
+
+    @media (max-width:617px) {
+      .loginbox {
+        width: 100%;
+        position: static;
+        margin-top: 0;
+        margin-left: 0;
+      }
+    }
+
+    .loginBox .row {
+      margin-top: 20px;
+    }
+
+    .loginBox .row .form-label .Hui-iconfont {
+      font-size: 24px
+    }
+
+    .loginBox .input-text {
+      width: 360px
+    }
+
+    @media (max-width:617px) {
+      .loginBox .input-text {
+        width: 80%
+      }
+    }
+
+    .yzm a {
+      color: #426374;
+      font-size: 12px
+    }
+
+    #span_msg {
+      font-size: 14px;
+      color: Red;
+      line-height: 40px;
+      height: 40px;
+      margin-left: 10px;
+      width: 160px;
+      ;
+      float: left
+    }
+
+    .hd_msg {
+      font-size: 12px;
+      color: #fff;
+      height: 30px;
+      z-index: 100;
+      position: absolute;
+      padding-left: 50px;
+      padding-top: 5px
+    }
+
+    .hd_msg a {
+      color: #fff
+    }
+
+    .hd_msg a:hover {
+      color: #fff;
+      text-decoration: underline
+    }
+
+    .footer {
+      height: 46px;
+      line-height: 46px;
+      bottom: 0;
+      text-align: center;
+      color: #fff;
+      font-size: 12px;
+      background-color: #426374
+    }
+
+    #ie6-warning {
+      background: #fff url(/jscss/demoimg/201006/warning.gif) no-repeat 3px center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      font-size: 12px;
+      color: #333;
+      width: 97%;
+      padding: 2px 15px 2px 23px;
+      text-align: left
+    }
+
+    #ie6-warning a {
+      text-decoration: none
+    }
+  </style>
+
+</head>
+
+<body>
+  <input type="hidden" id="TenantId" name="TenantId" value="" />
+  <!-- <div class="header"></div> -->
+  <div class="loginWraper">
+    <div id="loginform" class="loginBox">
+      <form class="form form-horizontal">
+        <div class="row cl">
+          <label class="form-label col-xs-3">
+            <i class="Hui-iconfont">&#xe60d;</i>
+          </label>
+          <div class="formControls col-xs-8">
+            <input  name="" type="text" placeholder="账户" value="peter" class="input-text size-L uname">
+          </div>
+        </div>
+        <div class="row cl">
+          <label class="form-label col-xs-3">
+            <i class="Hui-iconfont">&#xe60e;</i>
+          </label>
+          <div class="formControls col-xs-8">
+            <input  name="" type="password" placeholder="密码" value="1000" class="input-text size-L upassword">
+          </div>
+        </div>
+        <div class="row cl">
+          <div class="formControls col-xs-8 col-xs-offset-3">
+            <input name="" type="button" class="btn btn-success radius size-L" value="&nbsp;登&nbsp;&nbsp;&nbsp;&nbsp;录&nbsp;" onclick="login(this)">
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="loading"></div>
+  <!-- <div class="footer">科迪</div> -->
+  <script src="../script/vue.min.js"></script>
+  <script src="../script/jquery-2.1.1.min.js"></script>
+  <script src="../script/H-ui.min.js"></script>
+  <script src="../script/loading.js"></script>
+  <script src="../script/common.js"></script>
+  <script src="../script/kedi.js"></script>
+<script>
+
+  var version_con=[]
+  $(function(){
+    if (top.location != self.location) {top.location=self.location;}
+    
+     get_version(function(e){
+        version_con = e;
+
+        if_version()
+      })
+
+      
+  })
+
+  function login(a){
+    $(a).css('filter','grayscale(100%)')
+    $('input[type="button"]').attr('disabled',true)
+    show_loading()
+    var url='/index.php?s=desktop/Login/login_ajax';
+    var data={};
+    data['username']=$('.uname').val()
+    data['password']=$('.upassword').val()
+    data['code']=''
+    ajax(url,data,function(retjson){
+      $('input[type="button"]').attr('disabled',false);
+      $(a).css('filter','none');
+      hide_loading()
+      if(retjson.stat == 1){
+        set_cache('usertoken',retjson.data.usertoken);
+        window.location.href='../index.html'
+      }else{
+        showErr(retjson.errmsg,retjson.errmsg_en,retjson.errcode)
+      }
+    })
+  }
+
+  function if_version(){
+      var arr=[];
+       var  local_version=nw.App.manifest.version;
+     //  var timestamp = Date.parse(new Date());// 当前时间戳 1527907044
+    // alert(local_version)
+      for(a in version_con){
+        arr.push(version_con[a].Versions_code)
+      }
+      if(arr.includes(local_version)){
+          var index=arr.indexOf(local_version);
+          if(version_con[index].Versions_stat == 1){
+
+          }else{
+            alert('服务器有最新版本，请及时下载使用。旧版本会影响使用。')
+            nw.App.quit()
+          }
+      }else{
+        alert('服务器有最新版本，请及时下载使用。旧版本可能会影响使用。')
+      }
+     
+
+  }
+</script>
+</body>
+
+</html>

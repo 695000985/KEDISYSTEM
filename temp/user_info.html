@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>个人信息</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+</head>
+
+<body>
+    <div class="user_info_content">
+        <div class="edit_info">
+            <div>
+                <p>
+                    <span>真实姓名RealName:</span>
+                    <input  class="realname" disabled>
+                </p>
+                <p>
+                    <span>登录名UserName:</span>
+                    <input  class="username" disabled>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <span>电话Phone</span>
+                    <input type="text" class="phone">
+                </p>
+                <p>
+                    <span>部门Deptment</span>
+                    <select name="" id="" class="deptment">
+                        <option value=""></option>
+                        <option value="Calculation">Calculation计算部</option>
+                        <option value="Financial">Financial财务部</option>
+                        <option value="Frontdesk">Frontdesk前台</option>
+                        <option value="Market">Market市场部</option>
+                        <option value="Administrative">Administrative行政部</option>
+                        <option value="Stock">Stock仓库</option>
+                        <option value="General">General总部</option>
+                    </select>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <span>出生日期DOB</span>
+                    <input class="Birthday" type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                </p>
+                <p>
+                    <span>问题ChooseQuestion</span>
+                    <input  value="Your favourite food?" disabled>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <span>国家Country</span>
+                    <select name="" id="" class="country">
+                        <option value=""></option>
+                        <option value="CHINA">CHINA</option>
+                        <option value="USA">USA</option>
+                        <option value="BRITAIN">BRITAIN</option>
+                        <option value="NIGERIA">NIGERIA</option>
+                        <option value="GHANA">GHANA</option>
+                        <option value="BENIN">BENIN</option>
+                        <option value="SOUTH ARAICA">SOUTH ARAICA</option>
+                        <option value="OTHERS">OTHERS</option>
+                    </select>
+                </p>
+                <p>
+                    <span>答案Your Answer</span>
+                    <input type="text" class="answer">
+                </p>
+            </div>
+            <div>
+                <p>
+                    <span>宗教Religion</span>
+                    <select name="" id="" class="religion">
+                        <option value=""></option>
+                        <option value="OTHERS">OTHERS</option>
+                        <option value="MUSLIM">MUSLIM</option>
+                        <option value="CHRISTIAN">CHRISTIAN</option>
+                    </select>
+                </p>
+                <p>
+                    <span>民族Ethnicity Group</span>
+                    <select name="" id="" class="ethnicity">
+                        <option value=""></option>
+                        <option value="Others">Others</option>
+                        <option value="Yoruba">Yoruba</option>
+                        <option value="Igbo">Igbo</option>
+                        <option value="Hausa">Hausa</option>
+                    </select>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <span>电子邮件Email</span>
+                    <input type="text" class="email">
+                </p>
+                <p>
+                    <span>全名Full Name</span>
+                    <input type="text" class="full_name">
+                </p>
+            </div>
+            <div>
+                <p>
+                    <span>州State</span>
+                    <!-- <select name="" id="" class="state">
+                        <option value=""></option>
+                    </select> -->
+                    <input type="text" class="state">
+                </p>
+                <p>
+                    <span>现居地PresentAddress</span>
+                    <input type="text" class="present_address">
+                </p>
+            </div>
+            <div>
+                <p>
+                    <span>性别Gender</span>
+                    <input type="radio" name="radio" value="Male">Male
+                    <input type="radio" value="Female" name="radio" id="">Female</p>
+                <p>
+                    <span>祖籍HometownAddress</span>
+                    <input type="text" class="hometown_address">
+                </p>
+            </div>
+        </div>
+        <div class="operate_btn">
+            <button class="btn btn-success" onclick="save_info()">保存OK</button>
+            <button class="btn btn-acidblue" onclick="rewrite()">重写Rewrite</button>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            get_user_info_detail(function (e) {
+                $('.phone').val(e.Phone);
+                $('.Birthday').val(e.Birthday.substring(0,10));
+                $('.country option').each(function () {
+                    if ($(this).val() == $.trim(e.Region)) {
+                        $(this).attr('selected', 'selected')
+                    }
+                })
+                // $('.religion option').each(function () {
+                //     if ($(this).val() == $.trim(e.religion)) {
+                //         $(this).attr('selected', 'selected')
+                //     }
+                // })
+                $('.ethnicity option').each(function () {
+                    if ($(this).val() == $.trim(e.People)) {
+                        $(this).attr('selected', 'selected')
+                    }
+                })
+                $('.email').val(e.Email);
+                $('.full_name').val(e.FullName);
+                $('.state').val(e.State);
+                $('.present_address').val(e.PresentAddress);
+                $('.hometown_address').val(e.HometownAddress);
+                $("input[name='radio']").each(function(){
+                    if ($(this).val() == $.trim(e.Gender)) {
+                        $(this).attr('checked', 'checked')
+                    }
+                })
+            });
+            get_user_info(function (e) {
+                $('.realname').val(e.realname);
+                $('.username').val(e.username);
+                $('.answer').val(e.Answer);
+                $('.deptment option').each(function () {
+                    if ($(this).val() == $.trim(e.Dept)) {
+                        $(this).attr('selected', 'selected')
+                    }
+                })
+
+            })
+        })
+
+        function save_info() {
+            var url = '/index.php?s=desktop/Enter_App_User/setUserinfo';
+            var data = {};
+            var user_info = {};
+            user_info['Phone'] = $('.phone').val();
+            user_info['Birthday'] = $('.Birthday').val();
+            user_info['Region'] = $('.country').val();
+            // user_info['religion']=$('.religion').val();
+            user_info['People'] = $('.ethnicity').val();
+            user_info['Email'] = $('.email').val();
+            user_info['FullName'] = $('.full_name').val();
+            user_info['PresentAddress'] = $('.present_address').val();
+            user_info['HometownAddress'] = $('.hometown_address').val();
+            user_info['State'] = $('.state').val();
+            user_info['Gender'] = getRadioButtonCheckedValue('radio');
+            data['usertoken'] = get_cache('usertoken');
+            data['user'] =
+                `{"username":"${$.trim($('.username').val())}","Dept":"${$('.deptment').val()}","Answer":"${$('.answer').val()}"}`
+            data['userInfo'] = JSON.stringify(user_info)
+            ajax(url, data, function (e) {
+                if (e.stat == 1) {
+                    showErr(e.data)
+                    setTimeout(function () {
+                        javascript: history.go(0)
+                    }, 2000)
+                } else {
+                    showErr(e.errmsg, e.errmsg_en, e.errcode)
+                }
+            })
+        }
+
+        function rewrite() {
+           $('input[type="text"]').val('');
+           $('select').val('')
+        }
+
+        function getRadioButtonCheckedValue(tagNameAttr) {
+            var radio_tag = document.getElementsByName(tagNameAttr);
+            for (var i = 0; i < radio_tag.length; i++) {
+                if (radio_tag[i].checked) {
+                    var checkvalue = radio_tag[i].value;
+                    return checkvalue;
+                }
+            }
+        }
+        var user_infomation = new Vue({
+            el: '',
+            data: {
+                userdata: {}
+            }
+        })
+    </script>
+</body>
+
+</html>

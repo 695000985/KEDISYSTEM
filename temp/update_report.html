@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title></title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+    <script src="../script/excellentexport.js"></script>
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        .active_index {
+            background: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="update_report" id="update_report">
+        <div class="manage_top">
+            <div>
+                <button class="btn btn-default size-S"> 记载经销商数据</button>
+                <button class="btn btn btn-primary-outline  size-S" @click="open_shop_acheivement()">专卖店汇总</button>
+                <button class="btn btn btn-primary-outline  size-S" @click="open_AcheiveMentNow()">当前业绩</button>
+                <button class="btn btn btn-primary-outline  size-S">加入单录入OnlyKits</button>
+                <input type="text" style="width: 100px; padding: 3px 0;">
+                <button class="btn btn-primary-outline size-S ">PrePrint</button>
+                <input type="checkbox" name="" id="" value="PrintBIGSC" v-model="printbigsc">
+                <span>PrintBIGSC</span>
+                <input type="text" name="" id="" style="margin-left: 20px; width: 50px; padding: 3px 0;">
+            </div>
+            <div class="check_con">
+                <p>
+                    <input type="checkbox" name="" id="" value="ErrorReport" v-model="error_report"> ErrorReport
+                </p>
+
+            </div>
+        </div>
+        <!-- 操作条件 -->
+        <div class="edit_condition">
+            <div class="sub_sc">
+                <div>
+                    <p>
+                        <span>日期Date:</span>
+                        <input type="text" class="Wdate real_date" v-bind:value="local_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                    </p>
+                    <p>
+                        <span>新店号 ChangeSC</span>
+                        <input type="text" class="change_sc">
+                    </p>
+                </div>
+                <div>
+
+                    <p>
+                        <span>区域Region</span>
+                        <select name="" id="" v-model="Area">
+                            <option :value="r" v-for="r in region">{{r}}</option>
+                        </select>
+                    </p>
+                    <p>
+                        <span>汇总 No ：</span>
+                        <input type="text" v-model="GroupID">
+                    </p>
+                </div>
+            </div>
+            <div class="">
+                <div>
+                    <button class="btn btn-primary-outline" @click="RegionSearch_btn()">区域查询RegionSearch</button>
+                    <button class="btn btn-primary-outline">添加业绩AddsaleForm_RemoveReport</button>
+                    <br>
+                    <button class="btn btn-primary-outline">汇总详细ReprtDetail</button>
+                    <button class="btn btn-primary-outline">更新店号ChangeSC</button>
+                    <button class="btn btn-primary-outline">更新数据不一致</button>
+                </div>
+            </div>
+
+        </div>
+        <div class="data_list" style="height: 350px; overflow: auto; background: #ccc; padding: 4px 0;margin-top: 5px;">
+            <table class="table table-border table-bordered table-bg " id="update_list" style="background: #fff;">
+                <thead>
+                    <tr>
+                        <th>SC</th>
+                        <th>Status</th>
+                        <th>Kits</th>
+                        <th>Total</th>
+                        <th>Cash</th>
+                        <th>Teller</th>
+                        <th>Debit</th>
+                        <th>Trans</th>
+                        <th>Region</th>
+                        <th>BV</th>
+                        <th>PV</th>
+                        <th>NR</th>
+                        <th>Oper</th>
+                        <th>ID</th>
+                        <th>Cash_usd</th>
+                        <th>WM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-if="table_list.data_report" v-for="(item,$index) in table_list.data_report">
+                        <td>{{item.SC}}</td>
+                        <td>{{item.Status}}</td>
+                        <td>{{item.Kits}}</td>
+                        <td>{{item.Total}}</td>
+                        <td>{{item.Cash}}</td>
+                        <td>{{item.Teller}}</td>
+                        <td>{{item.Debit}}</td>
+                        <td>{{item.Trans}}</td>
+                        <td>{{item.Region}}</td>
+                        <td>{{item.BV}}</td>
+                        <td>{{item.PV}}</td>
+                        <td>{{item.NR}}</td>
+                        <td>{{item.Oper}}</td>
+                        <td>{{item.ID}}</td>
+                        <td>{{item.Cash_usd}}</td>
+                        <td>{{item.WM}}</td>
+                    </tr>
+                    <tr v-else>
+                        <td colspan="16">暂无数据</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="info_content">
+            <div class="left">
+                <div class="info">
+                    <div>
+                        <p>
+                            <span>S_nylon</span>
+                            <input type="text">
+                        </p>
+                        <p>
+                            <span>Result</span>
+                            <input type="text">
+                        </p>
+                        <p>
+                            <span>System Total</span>
+                            <input type="text">
+                        </p>
+                    </div>
+                    <div>
+                        <p>
+                            <span>B_nylon</span>
+                            <input type="text">
+                        </p>
+                        <p>
+                            <span>Grand Total</span>
+                            <input type="text">
+                        </p>
+                        <p>
+                            <span>Region</span>
+                            <input type="text">
+                        </p>
+                    </div>
+                    <div>
+                        <p>
+                            <span>Cash(NR)</span>
+                            <input type="text">
+                            <button>...</button>
+                        </p>
+                        <p>
+                            <span style="width: 79px;">Unit Price</span>
+                            <input type="text">
+                        </p>
+                        <p>
+                            <span>Bank Deposit</span>
+                            <input type="text">
+                        </p>
+                        <button>...</button>
+                        <button>DIS</button>
+                    </div>
+                    <div>
+                        <p>
+                            <span>Kits</span>
+                            <input type="text">
+                        </p>
+                        <p>
+                            <span>Debit</span>
+                            <input type="text">
+                        </p>
+                        <p>
+                            <span>Oper</span>
+                            <input type="text">
+                        </p>
+
+                    </div>
+                    <div>
+                        <p>
+                            <span>Disct/Tsfer</span>
+                            <input type="text">
+                        </p>
+                        <p>
+                            <span>Date</span>
+                            <input type="text">
+                        </p>
+                        <p>
+                            <span>Cash(USd)</span>
+                            <input type="text">
+                        </p>
+
+                    </div>
+                    <div>
+                        <p>
+                            <span>BorrowedCash</span>
+                            <input type="text">
+                        </p>
+                        <p>
+                            <span>BrwCashToteller</span>
+                            <input type="text">
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="right operate">
+                <button class="btn btn-primary-outline">Update</button>
+                <br>
+                <button class="btn btn-primary-outline">TransferToB</button>
+                <br>
+                <button class="btn btn-primary-outline">returnProdu</button>
+                <br>
+                <button class="btn btn-primary-outline">GotoWarehou</button>
+                <br>
+                <button class="btn btn-primary-outline">ReverFormStcok</button>
+
+            </div>
+        </div>
+        <div class="update_report_bottom">
+            <div>
+                TellerPasswordStatus:Normal
+            </div>
+            <div>
+                <a download="data.xls" id="anchorNewApi-xls" href="#" class="btn btn-success" onclick="return newApi('xls');exert_report_no()"
+                    style="display: none;">ExportReport</a>
+                <button class="btn btn-disabled size-S">Export</button>
+                <button class="btn btn-danger size-S">清空付款</button>
+            </div>
+        </div>
+    </div>
+    <div class="shop_Acheivement" id="shop_Acheivement" style="display: none">
+        <div class="acheivement_top">
+            <p>
+                <span>From</span>
+                <input type="text" v-bind:value="local_time" class="Wdate real_date" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                <span>to</span>
+                <input type="text" class="Wdate real_date" v-bind:value="local_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+            </p>
+            <p>
+                <span>SC</span>
+                <input type="text">
+            </p>
+            <P>
+                <button class="btn  btn-outline-dark size-S">查询</button>
+                <button class="btn  btn-outline-dark size-S">专卖店汇总</button>
+            </P>
+            <p>
+                <select name="" id="" v-model="year">
+                    <option :value="y" v-for="y in year_list">{{y}}</option>
+                </select>年
+                <select name="" id="" v-model="month">
+                    <option :value="m" v-for="m in month_list">{{m}}</option>
+                </select>月
+            </p>
+        </div>
+        <div class="table_list" style="height: 350px; overflow: auto; background: #ccc; padding: 4px 0;margin-top: 5px;">
+            <table class="table table-border table-bordered table-bg " id="update_list" style="background: #fff; width: 180px">
+                <thead>
+                    <tr>
+                        <th>shopNo</th>
+                        <th>Acheive</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="acheivement_now" id="acheivement_now" style="display: none">
+        <div class="acheivement_top">
+            <p>
+                <span>From</span>
+                <input type="text" v-bind:value="local_time" class="Wdate real_date" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                <span>to</span>
+                <input type="text" class="Wdate real_date" v-bind:value="local_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+            </p>
+            <P>
+                <button class="btn  btn-outline-dark size-S">当月查询</button>
+            </P>
+            <p>
+                <select name="" id="" v-model="year">
+                    <option :value="y" v-for="y in year_list">{{y}}</option>
+                </select>年
+                <select name="" id="" v-model="month">
+                    <option :value="m" v-for="m in month_list">{{m}}</option>
+                </select>月
+            </p>
+            <P>
+                <button class="btn  btn-outline-dark size-S">往月查询</button>
+            </P>
+        </div>
+        <div class="table_list" style="height: 350px; overflow: auto; background: #ccc; padding: 4px 0;margin-top: 5px;">
+            <table class="table table-border table-bordered table-bg " id="update_list" style="background: #fff; width: 180px">
+                <thead>
+                    <tr>
+                        <th>shopNo</th>
+                        <th>Acheive</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            get_region(function (e) {
+                var data = [];
+                e.forEach(element => {
+                    update_report_main.region.push(element.result) //regionLock
+
+                });
+            })
+            get_user_info(function (ret) {
+                update_report_main.oper_name = ret.username
+            })
+        })
+        var update_report_main = new Vue({
+            el: "#update_report",
+            data: {
+                region: [],
+                oper_name: '',
+                local_time: get_local_time(),
+                printbigsc: '',
+                error_report: '',
+                table_list: {},
+                list_active_index: -1,
+                Area: 'NONE', // 区域Region
+                GroupID: '', //汇总NO
+            },
+            created() {
+
+            },
+            methods: {
+                RegionSearch_btn() {
+                    region_search()
+                },
+                updata_btn() {
+                    update()
+                },
+                open_shop_acheivement() {
+                    open_html('Shop_acheivement', '#shop_Acheivement')
+                },
+                open_AcheiveMentNow() {
+                    open_html('AcheiveMentNow', '#acheivement_now')
+                }
+            }
+        })
+
+        var acheivement = new Vue({
+            el: "#shop_Acheivement",
+            data: {
+                month_list: config_month,
+                year_list: config_year,
+                data_list: {},
+                local_time: get_local_time(),
+                year: get_local_year(),
+                month: get_local_month(),
+            },
+            methods: {
+
+            }
+        })
+
+        function newApi(format) { //导出数据
+            return ExcellentExport.convert({
+                anchor: 'anchorNewApi-' + format,
+                filename: 'data.' + format,
+                format: format
+            }, [{
+                name: 'Sheet Name Here 1',
+                from: {
+                    table: 'update_list'
+                }
+            }]);
+        }
+
+        function region_search() {
+            var url = "desktop/Front_Desk_Report/Get_ReportDetail_Mem_Info";
+            var data = {};
+            data["usertoken"] = get_cache('usertoken');
+            data["GroupID"] = update_report_main.GroupID;
+            data["Area"] = update_report_main.Area;
+            data["Realdate"] = $('.real_date').val();
+            ajax(url, data, function (e) {
+                if (e.stat == 1) {
+                    update_report_main.table_list = e.data
+                } else {
+                    showErr(e.errmsg, e.errmsg_en, e.errcode)
+                }
+            })
+        }
+
+        function update() {
+            var url = "/index.php?s=desktop/Front_Desk_Report/Update";
+            var data = {};
+            data["usertoken"] = get_cache('usertoken');
+            data['GroupID'] = '';
+            data['CashMoney'] = '';
+            data['TellarMoney'] = '';
+            data['DebitMoney'] = '';
+            data['Disc_Trsfer'] = '';
+            data['Cash_USD'] = '';
+            data['shopno'] = '';
+            data['Area'] = '';
+            data['Kits'] = '';
+            data['ReportStatus'] = '';
+            data['Teller_Oper'] = '';
+            ajax(url, data, function (e) {
+                if (e.stat == 1) {
+
+                    success(e.data)
+                } else {
+                    showErr(e.errmsg, e.errmsg_en, e.errcode)
+                }
+            })
+        }
+    </script>
+</body>
+
+
+</html>

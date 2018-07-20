@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title></title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <section style="padding:20px 25px;">
+        <div class="panel panel-default version" id="version_content" v-cloak>
+            <div class="panel-header">系统更新记录</div>
+            <div class="panel-body">
+                <!-- <div class="version_detail">
+                    <div class="list">
+                        <div>版本号：{{version_code}}</div>
+                        <div></div>
+                    </div>
+                    <div class="list" style="display: none">
+                        <div>禁用时间：</div>
+                        <div></div>
+                    </div>
+                    <div class="list" style="display: none">
+                        <div>发布时间：</div>
+                        <div></div>
+                    </div>
+                    <div class="list">
+                        <div>版本更新说明：</div>
+                        <div style="width: 66%;">
+                            <ul id="Huifold1" class="Huifold" v-for="(item,$index) in version_data">
+                                <li class="item" :class="{active: $index == active_index}" @click='open_info($index)'>
+                                    <h4 class="" style="font-weight: 400;"> {{$index+1}} {{item.Versions_name}}-{{item.Versions_code}} 添加时间：{{date_time(item.Versions_add_time)}}
+                                        推送时间：{{date_time(item.Versions_push_time)}} 禁止时间：{{date_time(item.Versions_disabled_time)}}
+                                        <b>+</b>
+                                    </h4>
+                                    <div class="info">{{item.Versions_content}}</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div> -->
+
+                <div class="version_detail" v-for=" x in  version_data">
+                    <div class="list">
+                        <div>版本号: {{x.Versions_code}}</div>
+                        <div></div>
+                    </div>
+                    <div class="list" >
+                        <div>禁用时间：</div>
+                        <div>{{date_time(x.Versions_disabled_time)}}</div>
+                    </div>
+                    <div class="list" >
+                        <div>发布时间：</div>
+                        <div>{{date_time(x.Versions_push_time)}}</div>
+                    </div>
+                    <div class="list">
+                        <div>版本更新说明：</div>
+                        <div style="width: 66%;">
+                            {{x.Versions_content}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        var version = new Vue({
+            el: '#version_content',
+            data: {
+                version_data: [],
+                active_index: -1,
+                version_code:nw.App.manifest.version
+            },
+            created() {
+                get_version(function(e){
+                    version.version_data = e
+                })
+            },
+            methods: {
+                open_info(index) {
+                    this.active_index = index;
+                },
+                date_time(unixtimestamp) {
+                    var unixtimestamp = new Date(unixtimestamp * 1000);
+                    var year = 1900 + unixtimestamp.getYear();
+                    var month = "0" + (unixtimestamp.getMonth() + 1);
+                    var date = "0" + unixtimestamp.getDate();
+                    var hour = "0" + unixtimestamp.getHours();
+                    var minute = "0" + unixtimestamp.getMinutes();
+                    var second = "0" + unixtimestamp.getSeconds();
+                    return (
+                        year +
+                        "-" +
+                        month.substring(month.length - 2, month.length) +
+                        "-" +
+                        date.substring(date.length - 2, date.length) +
+                        " " +
+                        hour.substring(hour.length - 2, hour.length) +
+                        ":" +
+                        minute.substring(minute.length - 2, minute.length) +
+                        ":" +
+                        second.substring(second.length - 2, second.length)
+                    );
+                }
+            }
+        })
+
+      
+    </script>
+</body>
+
+</html>
