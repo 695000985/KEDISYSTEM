@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>onlykits</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+</head>
+
+<body>
+    <div class="change_date_con" id="change_date">
+        <div class="change_top">
+            <p>
+                <span>日期</span>
+                <input type="text" class="Wdate old_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+            </p>
+            <select name="" id="" class="region">
+                <option :value="r" v-for="r in region">{{r}}</option>
+            </select>
+            <button class="btn btn-disabled" @click="query()">查询</button>
+            <p>
+                <span>新日期</span>
+                <input type="text" class="Wdate new_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+            </p>
+            <button class="btn btn-primary" @click="whole()">区域店日期迁移</button>
+            <input type="text" disabled class="gid_name" v-bind:value='gid_name' style="width: 180px;">
+            <button class="btn btn-primary" @click="alone()">专卖店店日期迁移</button>
+        </div>
+        <div class="list_con" style="background: #ccc;">
+            <table v-if="fade" class="table table-border table-bordered table-bg" style="width: 2300px; margin: 0 auto; margin-bottom: 10px; background: #ffffff;">
+                <thead>
+                    <tr>
+                        <td>GroupID</td>
+                        <td>Realdate</td>
+                        <td>ShopNo</td>
+                        <td>Area</td>
+                        <td>Kits</td>
+                        <td>TotalMoney</td>
+                        <td>CashMoney</td>
+                        <td>TellarMoney</td>
+                        <td>DebitMoney</td>
+                        <td>Disc_Trsfer</td>
+                        <td>Cash_USD</td>
+                        <td>ScBV</td>
+                        <td>ScPV</td>
+                        <td>ScNaira</td>
+                        <td>ReportType</td>
+                        <td>Oper_Name</td>
+                        <td>ReportStatus</td>
+                        <td>BelongdSC</td>
+                        <td>Teller_Oper</td>
+                        <td>RegionNO</td>
+                        <td>ReturnBorrowedStatus</td>
+                        <td>KitsLanguage</td>
+                        <td>WarehouseMark</td>
+                        <td>DeductBorrowKits</td>
+                        <td>DataFrom</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="x in list_data" @click="click(x.GroupID)">
+                        <td>{{x.GroupID}}</td>
+                        <td>{{x.Realdate}}</td>
+                        <td>{{x.ShopNo}}</td>
+                        <td>{{x.Area}}</td>
+                        <td>{{x.Kits}}</td>
+                        <td>{{x.TotalMoney}}</td>
+                        <td>{{x.CashMoney}}</td>
+                        <td>{{x.TellarMoney}}</td>
+                        <td>{{x.DebitMoney}}</td>
+                        <td>{{x.Disc_Trsfer}}</td>
+                        <td>{{x.Cash_USD}}</td>
+                        <td>{{x.ScBV}}</td>
+                        <td>{{x.ScPV}}</td>
+                        <td>{{x.ScNaira}}</td>
+                        <td>{{x.ReportType}}</td>
+                        <td>{{x.Oper_Name}}</td>
+                        <td>{{x.ReportStatus}}</td>
+                        <td>{{x.BelongdSC}}</td>
+                        <td>{{x.Teller_Oper}}</td>
+                        <td>{{x.RegionNO}}</td>
+                        <td>{{x.ReturnBorrowedStatus}}</td>
+                        <td>{{x.KitsLanguage}}</td>
+                        <td>{{x.WarehouseMark}}</td>
+                        <td>{{x.DeductBorrowKits}}</td>
+                        <td>{{x.DataFrom}}</td>
+                    </tr>
+                    <tr v-if="!list_data.length">
+                        <td colspan="17">暂无数据</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            get_user_info(function (ret) {
+                $('.oper_name').val(ret.username)
+            })
+            $('.Wdate').val(get_local_time())
+        })
+        var vm = new Vue({
+            el: '#change_date',
+            data: {
+                region: get_local_cache('region_data').split(','),
+                list_data:[],
+                gid_name:'',
+                fade:false
+            },
+            methods: {
+                query() {
+                    var url = "/index.php?s=desktop/Update_Region_Date/button1_Click";
+                    var data = {};
+                    this.fade=true
+                    data['usertoken'] = get_cache('usertoken');
+                    data['OldDate'] = $('.old_time').val();
+                    data['Region'] = $(".region").val();
+                    data['Region_index'] = '';
+                    data['NewDate'] = $('.new_time').val();
+                    data['textBox1'] = $('.gid_name').val();
+                    data['textBox2'] = '';
+                    ajax(url, data, function (e) {
+                        if (e.stat == 1) {
+                            vm.list_data=e.data.search;
+                            vm.gid_name =""
+                        } else {
+                            showErr(e.errmsg, e.errmsg_en, e.errcode)
+                        }
+                    })
+                },
+                alone() {
+                    var url = "/index.php?s=desktop/Update_Region_Date/button3_Click";
+                    var data = {};
+                    data['usertoken'] = get_cache('usertoken');
+                    data['OldDate'] = $('.old_time').val();
+                    data['Region'] = $(".region").val();
+                    data['Region_index'] = '';
+                    data['NewDate'] = $('.new_time').val();
+                    data['textBox1'] = $('.gid_name').val();
+                    data['textBox2'] = '';
+                    ajax(url, data, function (e) {
+                        if (e.stat == 1) {
+                            vm.list_data=e.data.button1_Click.data.search;
+                            vm.gid_name =""
+                            success(e.data.UpdateTellerDateForSC.data)
+                        } else {
+                            showErr(e.errmsg, e.errmsg_en, e.errcode)
+                        }
+                    })
+                },
+                whole() {
+                    var url = "/index.php?s=desktop/Update_Region_Date/button2_Click";
+                    var data = {};
+                    data['usertoken'] = get_cache('usertoken');
+                    data['OldDate'] = $('.old_time').val();
+                    data['Region'] = $(".region").val();
+                    data['Region_index'] = '';
+                    data['NewDate'] = $('.new_time').val();
+                    data['textBox1'] = $('.gid_name').val();
+                    data['textBox2'] = '';
+                    ajax(url, data, function (e) {
+                        if (e.stat == 1) {
+                            success(e.data)
+                        } else {
+                            showErr(e.errmsg, e.errmsg_en, e.errcode)
+                        }
+                    })
+                },
+                click(x){
+                    this.gid_name=x;
+                }
+
+            }
+
+        })
+    </script>
+</body>
+
+</html>

@@ -74,7 +74,7 @@
                     </ul>
                 </dd>
             </dl>
-           
+
         </div>
     </aside>
     <div class="dislpayArrow hidden-xs">
@@ -118,8 +118,10 @@
         '6': './temp/app_info.html',
         '4': './temp/order_input.html',
         '7': './temp/ManageReport.html',
-        '29':'./temp/version.html',
-        '8':'./temp/update_report.html'
+        '29': './temp/version.html',
+        '8': './temp/update_report.html',
+        '34': './temp/onlykits.html',
+        '10': './temp/change_date.html',
     };
 
     $(function () {
@@ -133,10 +135,19 @@
             className: "current",
             index: 0,
         });
-        get_menu();//获取菜单；
-        detection_version(function (e) { })
+        get_menu(); //获取菜单；
+        detection_version(function (e) {})
         get_user_info(function (ret) {
             $('.user_info').html(ret.username + "(" + ret.Dept + ")")
+        })
+
+        get_region(function (e) {
+            var data = [];
+            e.forEach(element => {
+                data.push(element.result) //regionLock
+
+            });
+            set_local_cache('region_data', data)
         })
 
     })
@@ -153,13 +164,14 @@
                 } else {
                     this.ac_index = index
                 }
-              
+
             },
             url(url_id) {
                 return open_url[url_id]
             }
         }
     })
+
     function get_menu() {
         var url = "/index.php/desktop/menu/getmenus";
         var data = {};
@@ -173,6 +185,11 @@
         })
 
     }
+    var os = require("os");
+
+    var networkInterfaces = os.networkInterfaces();
+
+    console.info(networkInterfaces);
 </script>
 
 </html>

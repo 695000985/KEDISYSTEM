@@ -1041,3 +1041,52 @@ nav {
         }
     }  
 }
+.onlykits_con{
+    width: 700px;
+    margin: 10px auto;
+    .info{
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        select{
+            width: 90px;
+        }
+    }
+    .kits_btn{
+        display: flex;
+        margin-top: 20px;
+        justify-content: space-around;
+        align-items: center;
+    }
+}
+.change_date_con{
+    width: 1100px;
+    margin: 10px auto;
+    .change_top{
+        background: #ebe7e7;
+        width: 100%;
+        padding: 4px 0;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        p{
+            margin-bottom: 0;
+        }
+        input{
+            width: 120px;
+            padding: 4px 0;
+        }
+        select{
+            width: 100px;
+            padding: 5px 0;
+
+        }
+
+    }
+    .list_con{
+        min-height: 400px;
+        max-height: 900px;
+        overflow: auto;
+    }
+}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>onlykits</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+</head>
+
+<body>
+    <div class="onlykits_con" id="add_kits">
+        <div class="info">
+            <p>
+                <span>Date</span>
+                <input type="text" class="Wdate" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+            </p>
+            <p>
+                <span>Kits</span>
+                <input type="number" class="kits">
+            </p>
+            <p>
+                <span>Region</span>
+                <select name="" id="" class="region">
+                    <option :value="r" v-for="r in region">{{r}}</option>
+                </select>
+            </p>
+            <p>
+                <span>SC</span>
+                <input type="text" class="sc">
+            </p>
+        </div>
+        <div class="kits_btn">
+            <p>
+                <span>Oper</span>
+                <input type="text" disabled class="oper_name">
+            </p>
+            <button class="btn btn-success" @click="add()">OK</button>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            get_user_info(function (ret) {
+                $('.oper_name').val(ret.username)
+            })
+            $('.Wdate').val(get_local_time())
+        })
+        var vm = new Vue({
+            el: '#add_kits',
+            data: {
+                region: get_local_cache('region_data').split(',')
+            },
+            methods: {
+                add() {
+                    var url = "/index.php?s=desktop/Add_Kits_Without_Order/button1_Click";
+                    var data = {};
+                    data['usertoken'] = get_cache('usertoken');
+                    data['Date'] = $('.Wdate').val();
+                    data['Kits'] = $(".kits").val();
+                    data['Region'] = $('.region').val();
+                    data['SC'] = $('.sc').val();
+                    ajax(url, data, function (e) {
+                        if (e.stat == 1) {
+                           success(e.data.msg)
+                        } else {
+                            showErr(e.errmsg, e.errmsg_en, e.errcode)
+                        }
+                    })
+                }
+            }
+
+        })
+    </script>
+</body>
+
+</html>

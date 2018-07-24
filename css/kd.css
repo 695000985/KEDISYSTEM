@@ -1276,4 +1276,76 @@ nav div {
   width: 60px;
   margin: 0 5px;
 }
+
+.onlykits_con {
+  width: 700px;
+  margin: 10px auto;
+}
+
+.onlykits_con .info {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.onlykits_con .info select {
+  width: 90px;
+}
+
+.onlykits_con .kits_btn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-top: 20px;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.change_date_con {
+  width: 1100px;
+  margin: 10px auto;
+}
+
+.change_date_con .change_top {
+  background: #ebe7e7;
+  width: 100%;
+  padding: 4px 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.change_date_con .change_top p {
+  margin-bottom: 0;
+}
+
+.change_date_con .change_top input {
+  width: 120px;
+  padding: 4px 0;
+}
+
+.change_date_con .change_top select {
+  width: 100px;
+  padding: 5px 0;
+}
+
+.change_date_con .list_con {
+  min-height: 400px;
+  max-height: 900px;
+  overflow: auto;
+}
 /*# sourceMappingURL=kd.css.map */
