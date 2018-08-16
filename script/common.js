@@ -1,8 +1,8 @@
 //var win = require('nw.gui');
-
+var is_overdue;
 var setting_host = '';
 if (!!!get_local_cache("http_url")) {
-    set_local_cache('http_url', 'http://192.168.0.254')
+    set_local_cache('http_url', 'http://211.149.198.76')
 }
 
 
@@ -89,7 +89,7 @@ function openWin(url, opt, fn) {
         "focus": true
     }
     var option = $.extend({}, def, opt)
-    win.Window.open(url, option, function (win) {
+    win.Window.open(url, option, function(win) {
         fn(win)
     })
 }
@@ -102,19 +102,19 @@ function ajax(url, opt, basefunc) {
         data: opt,
         type: "post",
         dataType: "json",
-        success: function (retjson) {
+        success: function(retjson) {
             basefunc(retjson);
             hide_loading()
             if (retjson.errcode == 1001) {
                 showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
-                setTimeout(function () {
+                setTimeout(function() {
                     top.location.href = '../temp/login.html'
                 }, 2000)
             }
         },
-        error: function (XMLHttpRequest) {
+        error: function(XMLHttpRequest) {
             //console.log(XMLHttpRequest.status)
-            showErr(config_txt.network_err.zn_network_err, config_txt.network_err.en_network_err+XMLHttpRequest.status);
+            showErr(config_txt.network_err.zn_network_err, config_txt.network_err.en_network_err + XMLHttpRequest.status);
             $('input[type="button"]').attr('disabled', false);
             $('input[type="button"]').css('filter', 'none');
             hide_loading()
@@ -131,10 +131,10 @@ function ajax1(url, opt, basefunc) { // 不显示加载状态
         data: opt,
         type: "post",
         dataType: "json",
-        success: function (retjson) {
+        success: function(retjson) {
             basefunc(retjson);
         },
-        error: function (XMLHttpRequest) {
+        error: function(XMLHttpRequest) {
 
         }
     });
@@ -168,10 +168,10 @@ function firm(title, txt, fun) { // 确认框
         content: txt, //这里content是一个普通的String
         btn: ['确定', '取消'],
         area: ['300px', '200px'],
-        yes: function (index, layero) {
+        yes: function(index, layero) {
             fun()
         },
-        btn2: function (index, layero) {
+        btn2: function(index, layero) {
 
         }
     });
@@ -184,12 +184,12 @@ function open_frame(title, url) {
         maxmin: true,
         content: url, //这里content
         area: ['900px', '600px'],
-        success: function (layero, index) {
+        success: function(layero, index) {
             //在回调方法中的第2个参数“index”表示的是当前弹窗的索引。
             //通过layer.full方法将窗口放大。
             layer.full(index);
         },
-        end: function () {
+        end: function() {
             Refresh()
         }
     });
@@ -236,10 +236,10 @@ function set_http() {
 }
 var option = {
     key: "Ctrl+Shift+s",
-    active: function () {
+    active: function() {
         console.log("全局快捷键: " + this.key + " 被激活.");
     },
-    failed: function (msg) {
+    failed: function(msg) {
         // :(, 无法注册 |key| 或未注册 |key|.
         console.log(msg);
     }
@@ -249,23 +249,24 @@ var option = {
 var shortcut = new nw.Shortcut(option);
 nw.App.registerGlobalHotKey(shortcut);
 // 您还可以监听快捷键的成功或失败事件
-shortcut.on('active', function () {
+shortcut.on('active', function() {
     set_http()
 });
 
-shortcut.on('failed', function (msg) {
+shortcut.on('failed', function(msg) {
     console.log(msg);
 });
+
 
 // 注销全局快捷键
 //nw.App.unregisterGlobalHotKey(shortcut);
 
 
-$(function () {
+$(function() {
 
     $('title').html('科迪会员录入系统' + '(' + nw.App.manifest.version + ')')
 
-    $(document).ajaxError(function (e, xhr, settings, error) {
+    $(document).ajaxError(function(e, xhr, settings, error) {
         console.log(error);
     });
 })
@@ -275,7 +276,7 @@ function search_member(obj, fn) { // 搜索会员
     var data = {};
     data['usertoken'] = get_cache('usertoken');
     var opt = $.extend({}, data, obj)
-    ajax(url, opt, function (e) {
+    ajax(url, opt, function(e) {
         if (e.stat == 1) {
             fn(e.data)
         } else {
@@ -304,6 +305,18 @@ function get_local_month() {
     var myDate = new Date();
     var mytime = myDate.getMonth() + 1;
     return mytime
+}
+
+function DateMinus(date1, date2) { //date1:小日期   date2:大日期
+    var sdate = new Date(date1);　　
+    var now = new Date(date2);　　
+    var days = now.getTime() - sdate.getTime();　　
+    var day = parseInt(days / (1000 * 60 * 60 * 24));　　
+    return day;
+}
+
+function is_overdue(){
+   return  DateMinus(get_local_cache('localtime'), get_local_time()) >=7
 }
 
 function times(unixtimestamp) {
@@ -338,9 +351,9 @@ function check_time(k) { //小于10  补0；
 }
 
 function get_version(fn) {
-    
+
     var url = '/index.php?s=desktop/Nversions/versions_detail';
-    ajax1(url, {}, function (e) {
+    ajax1(url, {}, function(e) {
         if (e.stat == 1) {
             fn(e.data);
         } else {
@@ -348,9 +361,3 @@ function get_version(fn) {
         }
     })
 }
-
-
-
-
-
-

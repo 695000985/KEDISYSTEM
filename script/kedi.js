@@ -65,6 +65,47 @@ function edit_user_passward(obj) { // 修改管理员登录密码
 }
 
 
+function get_language(fn){
+    var url = "/index.php?s=desktop/Nbutton_Lang/get_Lang_list";
+    var data = {};
+    data['usertoken'] = get_cache('usertoken');
+    // data["page"]='';
+    data["limit"]="0,140";
+    ajax(url, data, function (e) {
+        if (e.stat == 1) {
+            fn(e.data)
+        } else {
+            showErr(e.errmsg, e.errmsg_en, e.errcode)
+        }
+    })
+}
+
+function get_page_txt(pagename){ // 获取对应页面的文字信息
+    var lang_con= JSON.parse(get_local_cache('app_lang'));
+    var x=[];
+    for(i in lang_con.list){
+        if(lang_con.list[i].page == pagename){
+            x.push(lang_con.list[i])
+        }
+    }
+    return x
+}
+
+function splicing_obj(txt_list){// 把 信息组成一个对象
+    var obj={};
+    if(get_local_cache("lang")  == 1){
+        for(i in txt_list){
+            obj[txt_list[i].menu_key] = txt_list[i].zh
+        }
+    }else{
+        for(i in txt_list){
+            obj[txt_list[i].menu_key] = txt_list[i].eng
+        }
+    }
+
+    return obj
+}
+
 var config_txt = {
     "success_text": {
         "zn_entry": '录入成功',
@@ -122,5 +163,13 @@ var config_txt = {
 
     }
 }
-var config_year = ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021'];
-var config_month = ['1', '2', '3', '4','5','6','7','8','9','10','11','12'];
+var config_year = function () {
+    var a = [];
+    for (var i = 0; i < 15; i++) {
+        a[i] = get_local_year() + i;
+    }
+    return a
+};
+var  langs=['English','Chinese']
+var config_month = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+

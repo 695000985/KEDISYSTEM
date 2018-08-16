@@ -20,50 +20,50 @@
 </head>
 
 <body>
-    <div class="user_info_content">
+    <div class="user_info_content" id="main">
         <div class="edit_info">
             <div>
                 <p>
-                    <span>真实姓名RealName:</span>
+                    <span id="RealName">{{obj_txt.RealName}}:</span>
                     <input  class="realname" disabled>
                 </p>
                 <p>
-                    <span>登录名UserName:</span>
+                    <span id="UserName">{{obj_txt.UserName}}:</span>
                     <input  class="username" disabled>
                 </p>
             </div>
             <div>
                 <p>
-                    <span>电话Phone</span>
+                    <span id="Phone">{{obj_txt.Phone}}</span>
                     <input type="text" class="phone">
                 </p>
                 <p>
-                    <span>部门Deptment</span>
+                    <span id="Deptment">{{obj_txt.Deptment}}</span>
                     <select name="" id="" class="deptment">
                         <option value=""></option>
-                        <option value="Calculation">Calculation计算部</option>
-                        <option value="Financial">Financial财务部</option>
-                        <option value="Frontdesk">Frontdesk前台</option>
-                        <option value="Market">Market市场部</option>
-                        <option value="Administrative">Administrative行政部</option>
-                        <option value="Stock">Stock仓库</option>
-                        <option value="General">General总部</option>
+                        <option value="Calculation" id="Calculation">{{obj_txt.Calculation || 'Calculation'}}</option>
+                        <option value="Financial" id="Financial">{{obj_txt.Financial || 'Financial'}}</option>
+                        <option value="Frontdesk" id="Frontdesk">{{obj_txt.Frontdesk || 'Frontdesk'}}</option>
+                        <option value="Market" id="Market">{{obj_txt.Market || 'Market'}}</option>
+                        <option value="Administrative" id="Administrative">{{obj_txt.Administrative || 'Administrative'}}</option>
+                        <option value="Stock" id="Stock">{{obj_txt.Stock || 'Stock'}}</option>
+                        <option value="General" id="General">{{obj_txt.General || 'General'}}</option>
                     </select>
                 </p>
             </div>
             <div>
                 <p>
-                    <span>出生日期DOB</span>
+                    <span id="Birthday">{{obj_txt.Birthday}}</span>
                     <input class="Birthday" type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
                 </p>
                 <p>
-                    <span>问题ChooseQuestion</span>
+                    <span id="ChooseQuestion">{{obj_txt.ChooseQuestion}}</span>
                     <input  value="Your favourite food?" disabled>
                 </p>
             </div>
             <div>
                 <p>
-                    <span>国家Country</span>
+                    <span id="Country">{{obj_txt.Country}}</span>
                     <select name="" id="" class="country">
                         <option value=""></option>
                         <option value="CHINA">CHINA</option>
@@ -77,13 +77,13 @@
                     </select>
                 </p>
                 <p>
-                    <span>答案Your Answer</span>
+                    <span id="Answer">{{obj_txt.Answer}}</span>
                     <input type="text" class="answer">
                 </p>
             </div>
             <div>
                 <p>
-                    <span>宗教Religion</span>
+                    <span id="Religion">{{obj_txt.Religion}}</span>
                     <select name="" id="" class="religion">
                         <option value=""></option>
                         <option value="OTHERS">OTHERS</option>
@@ -92,7 +92,7 @@
                     </select>
                 </p>
                 <p>
-                    <span>民族Ethnicity Group</span>
+                    <span id="EthnicityGroup">{{obj_txt.EthnicityGroup}}</span>
                     <select name="" id="" class="ethnicity">
                         <option value=""></option>
                         <option value="Others">Others</option>
@@ -104,41 +104,41 @@
             </div>
             <div>
                 <p>
-                    <span>电子邮件Email</span>
+                    <span id="Email">{{obj_txt.Email}}</span>
                     <input type="text" class="email">
                 </p>
                 <p>
-                    <span>全名Full Name</span>
+                    <span id="FullName">{{obj_txt.FullName}}</span>
                     <input type="text" class="full_name">
                 </p>
             </div>
             <div>
                 <p>
-                    <span>州State</span>
+                    <span id="State">{{obj_txt.State}}</span>
                     <!-- <select name="" id="" class="state">
                         <option value=""></option>
                     </select> -->
                     <input type="text" class="state">
                 </p>
                 <p>
-                    <span>现居地PresentAddress</span>
+                    <span id="PresentAddress">{{obj_txt.PresentAddress}}</span>
                     <input type="text" class="present_address">
                 </p>
             </div>
             <div>
                 <p>
-                    <span>性别Gender</span>
+                    <span id="Gender">{{obj_txt.Gender}}</span>
                     <input type="radio" name="radio" value="Male">Male
                     <input type="radio" value="Female" name="radio" id="">Female</p>
                 <p>
-                    <span>祖籍HometownAddress</span>
+                    <span id="HometownAddress">{{obj_txt.HometownAddress}}</span>
                     <input type="text" class="hometown_address">
                 </p>
             </div>
         </div>
         <div class="operate_btn">
-            <button class="btn btn-success" onclick="save_info()">保存OK</button>
-            <button class="btn btn-acidblue" onclick="rewrite()">重写Rewrite</button>
+            <button class="btn btn-success" onclick="save_info()" id="Save_info">{{obj_txt.Save_info}}</button>
+            <button class="btn btn-acidblue" onclick="rewrite()" id="Rewrite">{{obj_txt.Rewrite}}</button>
         </div>
     </div>
     <script>
@@ -231,9 +231,19 @@
             }
         }
         var user_infomation = new Vue({
-            el: '',
+            el: '#main',
             data: {
-                userdata: {}
+                userdata: {},
+                lang_txt: get_page_txt('UserInfo_detail'),  // 当前页面的文字信息
+                obj_txt:{} // 对象拼接
+            },
+            mounted(){
+                this.lang_toggle()
+            },
+            methods:{
+                lang_toggle(){
+                    this.obj_txt=splicing_obj(this.lang_txt)
+                }
             }
         })
     </script>

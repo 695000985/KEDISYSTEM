@@ -43,8 +43,8 @@
                     <option selected="" value="CustomerNO">卡号 CustomerNO</option>
                     <option value="ShopNO">专卖店号 ShopNO</option>
                     <option value="Grade">级别(数字) Grade</option>
-                    <option value="ParentNO">推荐人 ParentNO</option>
-                    <option value="RecommendNO">安置人 RecommendNO</option>
+                    <option value="ParentNO">推荐人SponsorNo</option>
+                    <option value="RecommendNO">安置人PlacementNo</option>
                 </select>
                 <input type="text" name="" id="" class="u1_name" placeholder="请输入查找信息">
             </div>
@@ -59,22 +59,22 @@
         </div>
         <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
             <thead>
-                <tr>
+                <!-- <tr>
                     <th scope="col" colspan="9">员工列表</th>
-                </tr>
+                </tr> -->
                 <tr class="text-c">
-                    <th width="40">ID</th>
-                    <th width="70">姓名
+                    <th width="40" class="CustomerID">ID</th>
+                    <th width="70" class="CustomerName">姓名
                         <br>CustomerName</th>
-                    <th width="150">卡号
+                    <th width="150" class="CustomerNO">卡号
                         <br>CustomerNO</th>
-                    <th width="50">状态
+                    <th width="50" class="Status">状态
                         <br>Status</th>
-                    <th width="100">专卖店号
+                    <th width="100" class="ShopNO">专卖店号
                         <br>ShopNO</th>
-                    <th width="200">注册日期
+                    <th width="200" class="RegDate">注册日期
                         <br>RegDate</th>
-                    <th width="100">
+                    <th width="100" class="Operating">
                         操作
                     </th>
                 </tr>
@@ -109,7 +109,7 @@
             <div class="modal-content">
                 <div class="model_list">
                     <div>
-                        <p>
+                        <p class="CustomerNo">
                             会员卡号
                             <br>(CustomerNo)
                         </p>
@@ -132,7 +132,7 @@
                         <input type="text" class="cus_no" v-model='mdata.CustomerName'>
                     </div>
                     <div>
-                        <p>
+                        <p class="SponosorNo">
                             推荐人卡号
                             <br> (Sponosor)
                         </p>
@@ -141,23 +141,23 @@
                 </div>
                 <div class="model_list">
                     <div>
-                        <p>
+                        <p class="Phone">
                             手机号
                             <br>(Phone)
                         </p>
                         <input type="text" class="cus_no" v-model='mdata.Mobile'>
                     </div>
                     <div>
-                        <p>
+                        <p class="PlacementNO">
                             安置人
-                            <br> (PlaceMent)
+                            <br> (PlacementNo)
                         </p>
                         <input type="text" class="cus_no" v-model='mdata.RecommendNO'>
                     </div>
                 </div>
                 <div class="btn_con">
-                    <input type="button" class="btn btn-success" v-on:click='save()' value="更新">
-                    <input type="button" class="btn btn-default" value="取消" data-dismiss="modal" aria-hidden="true">
+                    <input type="button" class="btn btn-success BtnUpdate" v-on:click='save()' value="更新">
+                    <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
                 </div>
             </div>
 
@@ -275,7 +275,12 @@
 
         data: {
             listdata: [],
-            fade:false
+            fade:false,
+            lang_txt: get_page_txt('Member_list'),  // 当前页面的文字信息
+            obj_txt:{} // 对象拼接
+        },
+        mounted() {
+            this.lang_toggle()
         },
         methods: {
             open_model(m_id, m_name, m_no, shopno, p_no, r_no, phone) {
@@ -290,15 +295,28 @@
                 b['usertoken'] = get_cache('usertoken');
                 modal_data.mdata = b
                 $('#my_model').modal('show')
+            },
+            lang_toggle() {
+                this.obj_txt = splicing_obj(this.lang_txt)
             }
-        }
+        },
+        
+       
     })
 
     var modal_data = new Vue({
         el: '#my_model',
         data: {
-            mdata: {}
+            mdata: {},
+            obj_txt:{}
+
         },
+        mounted(){
+            this.$nextTick(function(){
+                this.obj_txt =list.obj_txt
+            })
+        },
+
         methods: {
             save() {
                 var url = '/index.php?s=desktop/Tb_Customer/edit';

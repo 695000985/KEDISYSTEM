@@ -48,19 +48,19 @@
             <div class="left">
                 <div class="order_left_info ">
                     <div>
-                        <p>DATE
+                        <p class="DATE">DATE
                             <input class="Wdate" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})"> </p>
                         <div class="">
-                            <button class="btn_C" onclick="_clear()">C</button>
-                            <input type="button" value="Search" class="btn btn-success" onclick="query_order_report($('.Wdate').val(),$('.select_shop_no').val())">
+                            <button class="btn_C BtnClear" onclick="_clear()">C</button>
+                            <input type="button" value="Search" class="btn btn-success BtnSearch" onclick="query_order_report($('.Wdate').val(),$('.select_shop_no').val())">
                         </div>
                     </div>
                     <div>
-                        <p>
+                        <p class="ShopNo">
                             专卖店:SC
                             <input type="text" class="shop_no">
                         </p>
-                        <p>
+                        <p class="Product_Number">
                             产品*数量
                             <input type="text" class="product_no">
                             <!-- <button  class="query_pro_btn" style="display: none">查找产品</button>
@@ -79,12 +79,12 @@
                         <thead>
                             <tr>
                                 <th width='30'></th>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Memberprice</th>
-                                <th>BV</th>
-                                <th>PV</th>
-                                <th>QTY</th>
+                                <th class="ProductID">ID</th>
+                                <th class="ProductName">Name</th>
+                                <th class="Product_Memberprice">Memberprice</th>
+                                <th class="Product_BV">BV</th>
+                                <th class="Product_PV">PV</th>
+                                <th class="Product_QTY">QTY</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -101,19 +101,19 @@
                     </table>
                 </div>
                 <div class="order_left_total" id="toatl_con">
-                    <div>
+                    <div class="TotalPrice">
                         Total price:
                         <span class="total_price">{{total_data.total_price}}</span>
                     </div>
-                    <div>
+                    <div class="TotalBV">
                         Total BV:
-                        <span class="total_bv">{{total_data.total_pv}}</span>
-                    </div>
-                    <div>
-                        Total PV:
                         <span class="total_bv">{{total_data.total_bv}}</span>
                     </div>
-                    <div>
+                    <div class="TotalPV">
+                        Total PV:
+                        <span class="total_bv">{{total_data.total_pv}}</span>
+                    </div>
+                    <div class="ADD_Order">
                         <input type="button" class="btn btn-success" value="COMMIT" v-on:click='commit()'>
                     </div>
                 </div>
@@ -121,10 +121,10 @@
             <div class="right">
                 <div class="order_right_condition">
                     <div>
-                        <p>SC
+                        <p class="ShopCode">SC
                             <input type="text" class="select_shop_no" >
                         </p>
-                        <p>编号：
+                        <p class="ReportNo">编号：
                             <input type="text" class="report_no" readonly disabled>
                         </p>
                     </div>
@@ -137,15 +137,15 @@
                         <table class="table table-border table-bordered table-bg " id="sale_list" style="background: #fff; width: 800px;">
                             <thead>
                                 <tr>
-                                    <th>
+                                    <th class="Report_SaleNo">
                                         报单编号
                                     </th>
-                                    <th>会员编号</th>
-                                    <th>专卖店</th>
-                                    <th>总BV</th>
-                                    <th>总PV</th>
-                                    <th>总金额</th>
-                                    <th>录入员</th>
+                                    <th class="CustomerNo">会员编号</th>
+                                    <th class="ShopCode">专卖店</th>
+                                    <th class="TotalBV">总BV</th>
+                                    <th class="TotalPV">总PV</th>
+                                    <th class="TotalNaira">总金额</th>
+                                    <th class="ReporterName">录入员</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -167,24 +167,24 @@
                 </div>
                 <div class="order_right_bottom">
                     <div class="top">
-                        <input type="button" value="DELETE" class="btn btn-danger" onclick="del_sale()">
-                        <div>
+                        <input type="button" value="DELETE" class="btn btn-danger BtnDelete" onclick="del_sale()">
+                        <div class="Report_BV">
                             BV
                             <input type="number" class="total_bv" value="0" disabled>
                         </div>
-                        <div>
+                        <div class="Report_PV">
                             PV
                             <input type="number" class="total_pv" value="0" disabled>
                         </div>
-                        <div>
+                        <div class="Report_Naira">
                             Naira
                             <input type="number" class="total_naira" value="0" disabled>
                         </div>
                     </div>
                     <div class="bottom">
-                        <a download="data.xls" id="anchorNewApi-xls" href="#" class="btn btn-success" onclick="return newApi('xls');exert_report_no()" style="display: none;">ExportReport</a>
-                        <input type="button" class="btn btn-success" id="exprot" value="ExportReport" onclick="testing_export_data()">
-                        <input type="button" class="btn btn-success" value="CreateReport" onclick="creat_report()">
+                        <a download="data.xls" id="anchorNewApi-xls" href="#" class="btn btn-success ExportReport" onclick="return newApi('xls');exert_report_no()" style="display: none;">ExportReport</a>
+                        <input type="button" class="btn btn-success ExportReport" id="exprot" value="ExportReport" onclick="testing_export_data()">
+                        <input type="button" class="btn btn-success CreateReport" value="CreateReport" onclick="creat_report()">
                     </div>
                 </div>
             </div>
@@ -195,11 +195,11 @@
                 查询到
                 <span>0</span>条记录
             </div>
-            <div>
+            <div class="InsertDate">
                 录入日期：
                 <input class=" order_input_time " type="text">
             </div>
-            <div>
+            <div class="InsertMent">
                 录入员：
                 <input type="text" disabled class="user_info">
             </div>
@@ -477,13 +477,13 @@
             let txt = `
                     <table class="table-border">
             <tr>
-                <td>Total_naira</td>
+                <td class="TotalNaira">Total_naira</td>
                 <td>${$('#sale_list .tr_active td:nth-child(6)').html()}</td>
-                <td>Total_BV</td>
+                <td class="TotalBV">Total_BV</td>
                 <td>${$('#sale_list tr.tr_active td:nth-child(4)').html()}</td>
             </tr>
             <tr>
-                <td>Total_PV</td>
+                <td class="TotalPV">Total_PV</td>
                 <td>${$('#sale_list tr.tr_active td:nth-child(5)').html()}</td>
                 <td>SC</td>
                 <td>${$('#sale_list tr.tr_active td:nth-child(3)').html()}</td>
@@ -539,15 +539,15 @@
             let txt = `
                     <table class="table-border">
             <tr>
-                <td>Total_naira</td>
+                <td class="TotalNaira">Total_naira</td>
                 <td>${ $('.total_naira').val()}</td>
-                <td>Total_BV</td>
+                <td class="TotalBV">Total_BV</td>
                 <td>${$('.total_bv').val()}</td>
             </tr>
             <tr>
-                <td>Total_PV</td>
+                <td class="TotalPV">Total_PV</td>
                 <td>${$('.total_pv').val()}</td>
-                <td>SC</td>
+                <td class="ShopCode">SC</td>
                 <td>${$('.select_shop_no').val()}</td>
             </tr>
         </table> 
