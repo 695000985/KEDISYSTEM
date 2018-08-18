@@ -78,11 +78,11 @@ nav div { font-size: 16px; color: #fff; }
 
 #my_model .content_model .model_list { display: -webkit-box; display: -ms-flexbox; display: flex; }
 
-#my_model .content_model .model_list div { margin-right: 15px; display: -webkit-box; display: -ms-flexbox; display: flex; }
+#my_model .content_model .model_list div { margin-right: 15px; display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -ms-flex-align: center; align-items: center; margin-bottom: 5px; }
 
-#my_model .content_model .model_list div p { width: 110px; text-align: right; }
+#my_model .content_model .model_list div p { width: 110px; text-align: right; margin-bottom: 0; }
 
-#my_model .content_model .model_list div input { vertical-align: middle; height: 30px; }
+#my_model .content_model .model_list div input { vertical-align: middle; height: 30px; margin-left: 5px; }
 
 #my_model .btn_con { text-align: center; }
 

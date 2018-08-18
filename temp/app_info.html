@@ -40,22 +40,22 @@
         <div class="text-c" style="width: 95%; margin: 15px auto; display: flex; justify-content: flex-end;">
             <div style="margin-right: 15px;">
                 <select id="u1_input">
-                    <option selected="" value="CustomerNO">卡号 CustomerNO</option>
-                    <option value="ShopNO">专卖店号 ShopNO</option>
-                    <option value="Grade">级别(数字) Grade</option>
-                    <option value="ParentNO">推荐人SponsorNo</option>
-                    <option value="RecommendNO">安置人PlacementNo</option>
+                    <option selected="" value="CustomerNO">{{obj_txt.CustomerNO}}</option>
+                    <option value="ShopNO">{{obj_txt.ShopNO}}</option>
+                    <option value="Grade">{{obj_txt.Grade}}</option>
+                    <option value="ParentNO">{{obj_txt.SponsorNo}}</option>
+                    <option value="RecommendNO">{{obj_txt.PlacementNo}}</option>
                 </select>
                 <input type="text" name="" id="" class="u1_name" placeholder="请输入查找信息">
             </div>
             <div style="margin-right: 15px;">
                 <select id="u1_input1">
-                    <option selected="" value="CustomerName">姓名 CustomerName</option>
+                    <option selected="" value="CustomerName">{{obj_txt.CustomerName}}</option>
 
                 </select>
                 <input type="text" name="" id="" class="u1_name1" placeholder="请输入姓名">
             </div>
-            <input type="button" class="btn btn-success btn-serach" id="" value="搜用户" name="" style="height: 30px">
+            <input type="button" class="btn btn-success btn-serach" id="" :value="obj_txt.BtnSearch" name="" style="height: 30px">
         </div>
         <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
             <thead>
@@ -63,19 +63,19 @@
                     <th scope="col" colspan="9">员工列表</th>
                 </tr> -->
                 <tr class="text-c">
-                    <th width="40" class="CustomerID">ID</th>
-                    <th width="70" class="CustomerName">姓名
-                        <br>CustomerName</th>
-                    <th width="150" class="CustomerNO">卡号
-                        <br>CustomerNO</th>
-                    <th width="50" class="Status">状态
-                        <br>Status</th>
-                    <th width="100" class="ShopNO">专卖店号
-                        <br>ShopNO</th>
-                    <th width="200" class="RegDate">注册日期
-                        <br>RegDate</th>
+                    <th width="40" class="CustomerID">{{obj_txt.CustomerID}}</th>
+                    <th width="70" class="CustomerName">
+                        {{obj_txt.CustomerName}}</th>
+                    <th width="150" class="CustomerNO">
+                        {{obj_txt.CustomerNO}}</th>
+                    <th width="50" class="Status">
+                        {{obj_txt.Status}}</th>
+                    <th width="100" class="ShopNO">
+                        {{obj_txt.ShopNO}}</th>
+                    <th width="200" class="RegDate">
+                        {{obj_txt.RegDate}}</th>
                     <th width="100" class="Operating">
-                        操作
+                        {{obj_txt.Operating}}
                     </th>
                 </tr>
             </thead>
@@ -98,7 +98,7 @@
                     </td>
                 </tr>
                 <tr >
-                    <td colspan="7"  v-if="fade">没有数据</td>
+                    <td colspan="7"  v-if="fade" class="NoData">{{obj_txt.NoData}}</td>
                 </tr>
             </tbody>
         </table>
@@ -110,15 +110,14 @@
                 <div class="model_list">
                     <div>
                         <p class="CustomerNo">
-                            会员卡号
-                            <br>(CustomerNo)
+                            {{obj_txt.CustomerNO}}
+                           
                         </p>
                         <input type="text" class="cus_no" v-model="mdata.CustomerNO">
                     </div>
                     <div>
                         <p>
-                            专卖店号
-                            <br> (ShopNO)
+                          {{obj_txt.ShopNO}}
                         </p>
                         <input type="text" class="cus_no" v-model="mdata.ShopNO">
                     </div>
@@ -126,15 +125,14 @@
                 <div class="model_list">
                     <div>
                         <p>
-                            会员名
-                            <br> (CustomerName)
+                           {{obj_txt.CustomerName}}
+                          
                         </p>
                         <input type="text" class="cus_no" v-model='mdata.CustomerName'>
                     </div>
                     <div>
                         <p class="SponosorNo">
-                            推荐人卡号
-                            <br> (Sponosor)
+                           {{obj_txt.SponsorNo}}
                         </p>
                         <input type="text" class="cus_no" v-model='mdata.ParentNO'>
                     </div>
@@ -142,22 +140,20 @@
                 <div class="model_list">
                     <div>
                         <p class="Phone">
-                            手机号
-                            <br>(Phone)
+                           {{obj_txt.Phone || "phone"}}
                         </p>
                         <input type="text" class="cus_no" v-model='mdata.Mobile'>
                     </div>
                     <div>
                         <p class="PlacementNO">
-                            安置人
-                            <br> (PlacementNo)
+                            {{obj_txt.PlacementNo}}
                         </p>
                         <input type="text" class="cus_no" v-model='mdata.RecommendNO'>
                     </div>
                 </div>
                 <div class="btn_con">
-                    <input type="button" class="btn btn-success BtnUpdate" v-on:click='save()' value="更新">
-                    <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
+                    <input type="button" class="btn btn-success BtnUpdate" v-on:click='save()' :value="obj_txt.BtnUpdate">
+                    <input type="button" class="btn btn-default BtnClose" :value="obj_txt.BtnClose" data-dismiss="modal" aria-hidden="true">
                 </div>
             </div>
 

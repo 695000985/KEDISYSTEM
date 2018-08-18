@@ -262,13 +262,17 @@ nav {
             div {
                 margin-right: 15px;
                 display: flex;
+                align-items: center;
+                margin-bottom: 5px;
                 p {
                     width: 110px;
                     text-align: right;
+                    margin-bottom: 0;
                 }
                 input {
                     vertical-align: middle;
                     height: 30px;
+                    margin-left: 5px;
                 }
             }
         }

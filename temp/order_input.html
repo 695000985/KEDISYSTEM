@@ -44,8 +44,8 @@
                 </div>
             </div>
         </header>
-        <div class="kd_content">
-            <div class="left">
+        <div class="kd_content" >
+            <div class="left" >
                 <div class="order_left_info ">
                     <div>
                         <p class="DATE">DATE
@@ -132,9 +132,9 @@
                         <input type="button" class="btn btn-success" value="Fresh" onclick="fresh()">
                     </div>
                 </div>
-                <div class="order_right_formrecord">
+                <div class="order_right_formrecord" >
                     <div class="form_record_con">
-                        <table class="table table-border table-bordered table-bg " id="sale_list" style="background: #fff; width: 800px;">
+                        <table class="table table-border table-bordered table-bg " id="sale_list"  style="background: #fff; width: 800px;">
                             <thead>
                                 <tr>
                                     <th class="Report_SaleNo">
@@ -326,7 +326,14 @@
                 }
             })
         }
-       
+        var left_top =new Vue({
+            el:'',
+            created(){
+
+            },
+            
+        })
+        
         var product_list = new Vue({
             el: '#p_list',
             data: {

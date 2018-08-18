@@ -220,10 +220,12 @@
         var vm = new Vue({
             el: "#lang_group",
             created() {
-                set_local_cache("lang", "0")
+                set_local_cache("lang", "0");
+
+                this.lang_toggle=get_local_cache("lang");
             },
             data: {
-                lang_toggle: get_local_cache("lang"), // 语言切换 0 英语 1 中文
+                lang_toggle: '', // 语言切换 0 英语 1 中文
                 langs: langs, //语言类
             },
 
@@ -256,6 +258,10 @@
                         get_language(function(e){
                             set_local_cache('app_lang',e)
                         })
+                        setTimeout(function(){
+                            window.location.href = '../index.html'
+                        },1000)
+                        
                     }else{              
                         if(!!get_local_cache('app_lang')){
                             
@@ -264,8 +270,12 @@
                                 set_local_cache('app_lang',JSON.stringify(e))
                             }) 
                         }
+                        setTimeout(function(){
+                            window.location.href = '../index.html'
+                        },1000)
+                         
                     }
-                    window.location.href = '../index.html'
+                   
                 } else {
                     showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
                 }
