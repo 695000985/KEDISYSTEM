@@ -256,23 +256,18 @@
                     if (is_overdue()) {
                         get_local_cache('localtime',get_local_time())
                         get_language(function(e){
-                            set_local_cache('app_lang',e)
-                        })
-                        setTimeout(function(){
+                            set_local_cache('app_lang',JSON.stringify(e));
                             window.location.href = '../index.html'
-                        },1000)
-                        
+                        })
                     }else{              
                         if(!!get_local_cache('app_lang')){
-                            
+                            window.location.href = '../index.html'
                         }else{
                             get_language(function(e){
                                 set_local_cache('app_lang',JSON.stringify(e))
+                                window.location.href = '../index.html'
                             }) 
                         }
-                        setTimeout(function(){
-                            window.location.href = '../index.html'
-                        },1000)
                          
                     }
                    

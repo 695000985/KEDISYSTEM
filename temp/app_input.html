@@ -140,8 +140,8 @@
             </div>
 
             <div class="btn_con">
-                <input type="button" value="CLEAN" class="ty_btn clear" id="BtnClean" onclick="clear()">
-                <input type="button" value="ADD" class="ty_btn" onclick="member_add()" id="BtnAdd">
+                <input type="button" :value="obj_txt.BtnClean" class="ty_btn clear" id="BtnClean" onclick="clear()">
+                <input type="button" :value="obj_txt.BtnAdd" class="ty_btn" onclick="member_add()" id="BtnAdd">
             </div>
         </div>
         <div class="infomation_show" id="entry_list" v-cloak style="overflow-x: auto; height: 320px;">
