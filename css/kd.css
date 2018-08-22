@@ -1,4 +1,6 @@
 @charset "UTF-8";
+.text__1 { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
+
 .index_content_btn { width: 630px; margin: 0 auto; margin-top: 75px; }
 
 .index_content_btn div { background: #e1e1e1; font-size: 16px; text-align: center; display: inline-block; height: 100px; line-height: 100px; width: 130px; border: 1px solid #c1c1c1; margin: 10px 10px; }
@@ -419,4 +421,45 @@ nav div { font-size: 16px; color: #fff; }
 .change_date_con .change_top select { width: 100px; padding: 5px 0; }
 
 .change_date_con .list_con { min-height: 400px; max-height: 900px; overflow: auto; }
+
+/* 专卖店 申请 */
+.search_txt { display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-pack: end; -ms-flex-pack: end; justify-content: flex-end; -webkit-box-align: center; -ms-flex-align: center; align-items: center; width: 95%; margin: 0 auto; padding-right: 10px; margin-bottom: 15px; }
+
+.search_txt div { display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -ms-flex-align: center; align-items: center; margin-right: 15px; }
+
+.search_txt div P { margin-bottom: 0; }
+
+.search_txt div input { border: 1px solid #ccc; margin-left: 5px; height: 25px; }
+
+.search_txt div select { border: 1px solid #ccc; margin-left: 5px; height: 30px; }
+
+.market_shop { margin-top: 15px; margin-bottom: 45px; }
+
+#edit_shop .content_model .modal-content { padding: 20px 13px; }
+
+#edit_shop .content_model .model_list { display: -webkit-box; display: -ms-flexbox; display: flex; }
+
+#edit_shop .content_model .model_list div { margin-right: 15px; display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -ms-flex-align: center; align-items: center; margin-bottom: 5px; }
+
+#edit_shop .content_model .model_list div p { width: 110px; text-align: right; margin-bottom: 0; }
+
+#edit_shop .content_model .model_list div input { vertical-align: middle; height: 25px; margin-left: 5px; }
+
+#edit_shop .content_model .model_list div select { width: 130px; height: 27px; margin-left: 5px; }
+
+#edit_shop .btn_con { text-align: center; margin-top: 20px; }
+
+#apply_shop .content_model .modal-content { padding: 20px 13px; }
+
+#apply_shop .content_model .model_list { display: -webkit-box; display: -ms-flexbox; display: flex; }
+
+#apply_shop .content_model .model_list div { margin-right: 15px; display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -ms-flex-align: center; align-items: center; margin-bottom: 5px; }
+
+#apply_shop .content_model .model_list div p { width: 110px; text-align: right; margin-bottom: 0; }
+
+#apply_shop .content_model .model_list div input { vertical-align: middle; height: 25px; margin-left: 5px; }
+
+#apply_shop .content_model .model_list div select { width: 130px; height: 27px; margin-left: 5px; }
+
+#apply_shop .btn_con { text-align: center; margin-top: 20px; }
 /*# sourceMappingURL=kd.css.map */

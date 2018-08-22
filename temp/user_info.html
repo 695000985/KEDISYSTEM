@@ -25,11 +25,11 @@
             <div>
                 <p>
                     <span id="RealName">{{obj_txt.RealName}}:</span>
-                    <input  class="realname" disabled>
+                    <input class="realname" disabled>
                 </p>
                 <p>
                     <span id="UserName">{{obj_txt.UserName}}:</span>
-                    <input  class="username" disabled>
+                    <input class="username" disabled>
                 </p>
             </div>
             <div>
@@ -58,7 +58,7 @@
                 </p>
                 <p>
                     <span id="ChooseQuestion">{{obj_txt.ChooseQuestion}}</span>
-                    <input  value="Your favourite food?" disabled>
+                    <input value="Your favourite food?" disabled>
                 </p>
             </div>
             <div>
@@ -145,7 +145,7 @@
         $(function () {
             get_user_info_detail(function (e) {
                 $('.phone').val(e.Phone);
-                $('.Birthday').val(e.Birthday.substring(0,10));
+                $('.Birthday').val(e.Birthday.substring(0, 10));
                 $('.country option').each(function () {
                     if ($(this).val() == $.trim(e.Region)) {
                         $(this).attr('selected', 'selected')
@@ -166,22 +166,32 @@
                 $('.state').val(e.State);
                 $('.present_address').val(e.PresentAddress);
                 $('.hometown_address').val(e.HometownAddress);
-                $("input[name='radio']").each(function(){
+                $("input[name='radio']").each(function () {
                     if ($(this).val() == $.trim(e.Gender)) {
                         $(this).attr('checked', 'checked')
                     }
                 })
             });
-            get_user_info(function (e) {
-                $('.realname').val(e.realname);
-                $('.username').val(e.username);
-                $('.answer').val(e.Answer);
-                $('.deptment option').each(function () {
-                    if ($(this).val() == $.trim(e.Dept)) {
-                        $(this).attr('selected', 'selected')
-                    }
-                })
+            // get_user_info(function (e) {
+            //     $('.realname').val(e.realname);
+            //     $('.username').val(e.username);
+            //     $('.answer').val(e.Answer);
+            //     $('.deptment option').each(function () {
+            //         if ($(this).val() == $.trim(e.Dept)) {
+            //             $(this).attr('selected', 'selected')
+            //         }
+            //     })
 
+
+            // })
+
+            $('.realname').val(JSON.parse(get_cache("user_info")).realname);
+            $('.username').val(JSON.parse(get_cache("user_info")).username);
+            $('.answer').val(JSON.parse(get_cache("user_info")).Answer);
+            $('.deptment option').each(function () {
+                if ($(this).val() == $.trim(JSON.parse(get_cache("user_info")).Dept)) {
+                    $(this).attr('selected', 'selected')
+                }
             })
         })
 
@@ -217,8 +227,8 @@
         }
 
         function rewrite() {
-           $('input[type="text"]').val('');
-           $('select').val('')
+            $('input[type="text"]').val('');
+            $('select').val('')
         }
 
         function getRadioButtonCheckedValue(tagNameAttr) {
@@ -234,15 +244,15 @@
             el: '#main',
             data: {
                 userdata: {},
-                lang_txt: get_page_txt('UserInfo_detail'),  // 当前页面的文字信息
-                obj_txt:{} // 对象拼接
+                lang_txt: get_page_txt('UserInfo_detail'), // 当前页面的文字信息
+                obj_txt: {} // 对象拼接
             },
-            mounted(){
+            mounted() {
                 this.lang_toggle()
             },
-            methods:{
-                lang_toggle(){
-                    this.obj_txt=splicing_obj(this.lang_txt)
+            methods: {
+                lang_toggle() {
+                    this.obj_txt = splicing_obj(this.lang_txt)
                 }
             }
         })

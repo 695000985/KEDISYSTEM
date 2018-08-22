@@ -345,9 +345,9 @@
 
                 });
             })
-            get_user_info(function (ret) {
-                update_report_main.oper_name = ret.username
-            })
+          
+            update_report_main.oper_name = JSON.parse(get_cache("user_info")).username
+
         })
         var update_report_main = new Vue({
             el: "#update_report",

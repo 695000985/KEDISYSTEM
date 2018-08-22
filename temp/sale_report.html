@@ -697,12 +697,12 @@
     var groupid = queryString('groupid');
     var admin_name;
     $(function () {
-        get_user_info(function (ret) {
-            v_salereport.operator = ret.username;
-            admin_name = ret.username;
-            print_form.people = ret.username;
-            print_form1.people = ret.username;
-        })
+      
+        v_salereport.operator = JSON.parse(get_cache("user_info")).username;
+            admin_name = JSON.parse(get_cache("user_info")).username;
+            print_form.people = JSON.parse(get_cache("user_info")).username;
+            print_form1.people = JSON.parse(get_cache("user_info")).username;
+       
     })
     var v_salereport = new Vue({
         el: '#sale_report_content',

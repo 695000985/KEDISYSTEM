@@ -70,7 +70,7 @@ function get_language(fn){
     var data = {};
     data['usertoken'] = get_cache('usertoken');
     // data["page"]='';
-    data["limit"]="0,140";
+    data["limit"]="0,300";
     ajax(url, data, function (e) {
         if (e.stat == 1) {
             fn(e.data)
@@ -159,8 +159,9 @@ var config_txt = {
         "zn": '',
         "en": "Do you want to the delete tellar"
     },
-    "": {
-
+    "no_data": {
+        "zn": '暂无数据',
+        "en": ""
     }
 }
 var config_year = function () {

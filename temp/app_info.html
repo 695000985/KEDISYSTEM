@@ -319,7 +319,7 @@
                 var data = this.mdata;
                 ajax(url, data, function (e) {
                     if (e.stat == 1) {
-                        showErr(e.data)
+                        success(e.data)
                         $('#my_model').modal('hide');
                         obj = {};
                         if (!!$('.u1_name').val() && !!$('.u1_name1').val()) {
@@ -332,7 +332,7 @@
                         } else {
                             obj['Grade'] = '12';
                         }
-                        obj['limit'] = [(page-1)*pagesize, pagesize].join(","); //条目数
+                       obj['limit'] = [(page-1)*pagesize, pagesize].join(","); //条目数
 
                         search_member(obj)
                     } else {

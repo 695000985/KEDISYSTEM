@@ -215,9 +215,10 @@
         var total_pv = 0;
         var query_stat;
         $(function () {
-            get_user_info(function (ret) {
-                $('.user_info').val(ret.username)
-            })
+            // get_user_info(function (ret) {
+            //     $('.user_info').val(ret.username)
+            // })
+            $('.user_info').val(JSON.parse(get_cache("user_info")).username)
             $('.Wdate').focus(function () {
                 //  $('.order_input_time').val($('.Wdate').val())
             })
@@ -342,9 +343,9 @@
             methods:{
                 lang_toggle() {
                     this.obj_txt = splicing_obj(this.lang_txt);
-                    total.obj_txt=splicing_obj(this.lang_txt);
-                    saleList.obj_txt=splicing_obj(this.lang_txt);
-                    product_list.obj_txt=splicing_obj(this.lang_txt);
+                    // total.obj_txt=splicing_obj(this.lang_txt);
+                    // saleList.obj_txt=splicing_obj(this.lang_txt);
+                    // product_list.obj_txt=splicing_obj(this.lang_txt);
                 }
             }
 

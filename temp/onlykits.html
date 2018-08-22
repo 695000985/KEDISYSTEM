@@ -53,9 +53,10 @@
     </div>
     <script>
         $(function () {
-            get_user_info(function (ret) {
-                $('.oper_name').val(ret.username)
-            })
+            // get_user_info(function (ret) {
+            //     $('.oper_name').val(ret.username)
+            // })
+            $('.oper_name').val(JSON.parse(get_cache("user_info")).username)
             $('.Wdate').val(get_local_time())
         })
         var vm = new Vue({

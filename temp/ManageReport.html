@@ -550,9 +550,11 @@
                     regionLock.lock_region.push(element.result) //regionLock
                 });
             })
-            get_user_info(function(ret) {
-               $('.oper_name').val(ret.username)
-            })
+            // get_user_info(function(ret) {
+            //    $('.oper_name').val(ret.username)
+            // })
+            $('.oper_name').val(JSON.parse(get_cache("user_info")).username)
+            
             $(".sub_sc div p input").keyup(function(){
                 if($(this).val().length > 10){
                    var x= $(this).parent('p').index()+2;

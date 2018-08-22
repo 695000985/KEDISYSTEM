@@ -1,3 +1,9 @@
+.text__1 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+}
 
 .index_content_btn {
     width: 630px;
@@ -13,7 +19,6 @@
         width: 130px;
         border: 1px solid #c1c1c1;
         margin: 10px 10px;
-        
         &:hover {
             border: 1px solid #0078da;
             background: #e5f2fb;
@@ -110,8 +115,6 @@ nav {
     color: #bdbdbd;
     font-size: 14px;
 }
-
-
 
 .m-style .active {
     float: left;
@@ -647,11 +650,11 @@ nav {
             display: flex;
             display: -webkit-flex;
             padding-left: 20px;
-            div{
+            div {
                 display: flex;
                 flex-direction: column;
                 flex-wrap: wrap;
-                P{
+                P {
                     margin-right: 20px;
                 }
             }
@@ -716,12 +719,12 @@ nav {
                             margin-left: 3px;
                         }
                     }
-                    button{
+                    button {
                         margin-left: 4px;
                     }
-                    .btn-disabled{
+                    .btn-disabled {
                         background: #fff;
-                        &:hover{
+                        &:hover {
                             background: #fff;
                             cursor: default;
                         }
@@ -732,134 +735,129 @@ nav {
         .right {
             width: 30%;
             text-align: center;
-            button{
+            button {
                 width: 170px;
                 margin: 7px 0;
-
             }
         }
     }
 }
 
-#region_lock{
- .regio_l_top{
-     span{
-         margin: 0 10px;
-     }
-     select{
-         width: 120px;
-         margin-right: 10px;
-     }
-     button{
-         padding: 0px 18px;
-     }
- }
- .bot_lock{
-     margin: 4px 20px;
-     span{
-         margin-right: 10px;
-
-     }
-     button{
-         padding: 0 10px;
-         margin: 0 10px;
-     }
- }
+#region_lock {
+    .regio_l_top {
+        span {
+            margin: 0 10px;
+        }
+        select {
+            width: 120px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 0px 18px;
+        }
+    }
+    .bot_lock {
+        margin: 4px 20px;
+        span {
+            margin-right: 10px;
+        }
+        button {
+            padding: 0 10px;
+            margin: 0 10px;
+        }
+    }
 }
-.return_borrowed{
-    .return_top{
-        div:nth-child(1){
+
+.return_borrowed {
+    .return_top {
+        div:nth-child(1) {
             background: #c3c3c3;
             display: flex;
             padding: 6px 10px;
             align-items: center;
-            p{
+            p {
                 margin-bottom: 0;
                 margin: 0 20px;
-                input{
+                input {
                     width: 50px;
                 }
             }
         }
-        div:nth-child(2){
+        div:nth-child(2) {
             display: flex;
             display: -webkit-flex;
             padding: 5px 10px;
             align-items: center;
-            button{
+            button {
                 margin: 0 5px;
             }
-            p{
-                margin:0 5px;
-                span{
-
-                }
-                input{
+            p {
+                margin: 0 5px;
+                span {}
+                input {
                     width: 84px;
                 }
             }
         }
-     
     }
-    .record{
+    .record {
         display: flex;
         display: -webkit-flex;
         justify-content: space-around;
-        .re_left{
+        .re_left {
             width: 49%;
             border: 1px solid #ccc;
-            div:nth-child(2){
+            div:nth-child(2) {
                 display: flex;
                 display: -webkit-flex;
                 align-items: center;
                 margin: 5px 0px;
-                input{
+                input {
                     margin: 0 5px;
                 }
-                span{
+                span {
                     display: block;
                     margin: 0 10px;
                 }
-                button{
+                button {
                     margin: 0 10px;
                 }
-
             }
         }
-        .re_right{
+        .re_right {
             width: 49%;
             border: 1px solid #ccc;
-            &>div:nth-child(2){
+            &>div:nth-child(2) {
                 margin-top: 50px;
                 display: flex;
                 display: -webkit-flex;
                 justify-content: space-around;
-                .kits_info{
-                    p{
-                        span{
+                .kits_info {
+                    p {
+                        span {
                             display: inline-block;
                             vertical-align: middle;
                             width: 80px;
                         }
-                        input{
+                        input {
                             width: 90px;
                         }
                     }
                 }
-                .Release{
-                    p{
-                        span{
+                .Release {
+                    p {
+                        span {
                             display: inline-block;
                             vertical-align: middle;
                             width: 80px;
                         }
-                        input{
+                        input {
                             width: 90px;
                         }
                     }
                 }
             }
-            &>div:nth-child(3){
+            &>div:nth-child(3) {
                 margin-top: 20px;
                 display: flex;
                 display: -webkit-flex;
@@ -915,10 +913,10 @@ nav {
             input {
                 margin-left: 5px;
             }
-            .change_sc{
+            .change_sc {
                 width: 84px
             }
-            select{
+            select {
                 width: 140px;
             }
         }
@@ -929,15 +927,13 @@ nav {
                 input {
                     margin-left: 15px;
                 }
-
                 select {
                     width: 150px;
                 }
-                button{
+                button {
                     margin: 3px 8px;
                 }
             }
-            
         }
     }
     .info_content {
@@ -947,7 +943,6 @@ nav {
         overflow: hidden;
         .left {
             width: 70%;
-           
             .info {
                 div {
                     display: flex;
@@ -966,7 +961,7 @@ nav {
                             margin-left: 3px;
                         }
                     }
-                    button{
+                    button {
                         margin-left: 4px;
                     }
                 }
@@ -975,122 +970,228 @@ nav {
         .right {
             width: 30%;
             text-align: center;
-            button{
+            button {
                 width: 170px;
                 margin: 7px 0;
-
             }
         }
     }
-    .update_report_bottom{
+    .update_report_bottom {
         border: 1px solid #ccc;
         padding: 3px 20px;
         display: flex;
         justify-content: space-between;
-        div{
-            button{
+        div {
+            button {
                 margin: 0 19px;
             }
         }
     }
-    
 }
-.shop_Acheivement{
-    .acheivement_top{
+
+.shop_Acheivement {
+    .acheivement_top {
         display: flex;
         display: -webkit-flex;
         justify-content: flex-start;
         background: #eee;
         padding: 5px 10px;
         align-items: center;
-        p{
+        p {
             margin: 0 10px;
-            input{
+            input {
                 width: 88px;
                 margin-left: 6px;
                 margin-right: 3px;
             }
-            button{
-                margin:  0 10px 
+            button {
+                margin: 0 10px
             }
-            select{
+            select {
                 width: 60px;
-                margin:  0 5px;
+                margin: 0 5px;
             }
         }
-    }  
+    }
 }
-.acheivement_now{
-    .acheivement_top{
+
+.acheivement_now {
+    .acheivement_top {
         display: flex;
         display: -webkit-flex;
         justify-content: flex-start;
         background: #eee;
         padding: 5px 10px;
         align-items: center;
-        p{
+        p {
             margin: 0 10px;
-            input{
+            input {
                 width: 88px;
                 margin-left: 6px;
                 margin-right: 3px;
             }
-            button{
-                margin:  0 10px 
+            button {
+                margin: 0 10px
             }
-            select{
+            select {
                 width: 60px;
-                margin:  0 5px;
+                margin: 0 5px;
             }
         }
-    }  
+    }
 }
-.onlykits_con{
+
+.onlykits_con {
     width: 700px;
     margin: 10px auto;
-    .info{
+    .info {
         width: 100%;
         display: flex;
         justify-content: space-around;
         align-items: center;
-        select{
+        select {
             width: 90px;
         }
     }
-    .kits_btn{
+    .kits_btn {
         display: flex;
         margin-top: 20px;
         justify-content: space-around;
         align-items: center;
     }
 }
-.change_date_con{
+
+.change_date_con {
     width: 1100px;
     margin: 10px auto;
-    .change_top{
+    .change_top {
         background: #ebe7e7;
         width: 100%;
         padding: 4px 0;
         display: flex;
         justify-content: space-around;
         align-items: center;
-        p{
+        p {
             margin-bottom: 0;
         }
-        input{
+        input {
             width: 120px;
             padding: 4px 0;
         }
-        select{
+        select {
             width: 100px;
             padding: 5px 0;
-
         }
-
     }
-    .list_con{
+    .list_con {
         min-height: 400px;
         max-height: 900px;
         overflow: auto;
+    }
+}
+
+/* 专卖店 申请 */
+
+.search_txt {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 95%;
+    margin: 0 auto;
+    padding-right: 10px;
+    margin-bottom: 15px;
+    div {
+        display: flex;
+        align-items: center;
+        margin-right: 15px;
+        P{
+            margin-bottom: 0;
+        }
+        input {
+            border: 1px solid #ccc;
+            margin-left: 5px;
+            height: 25px;
+        }
+        select{
+            border: 1px solid #ccc;
+            margin-left: 5px;
+            height: 30px;
+        }
+    }
+}
+
+.market_shop {
+    margin-top: 15px;
+    margin-bottom: 45px;
+}
+
+#edit_shop {
+    .content_model {
+        .modal-content {
+            padding: 20px 13px;
+        }
+        .model_list {
+            display: flex;
+            div {
+                margin-right: 15px;
+                display: flex;
+                align-items: center;
+                margin-bottom: 5px;
+                p {
+                    width: 110px;
+                    text-align: right;
+                    margin-bottom: 0;
+                }
+                input {
+                    vertical-align: middle;
+                    height: 25px;
+                    margin-left: 5px;
+                }
+                select{
+                    width: 130px;
+                    height: 27px;
+                    margin-left: 5px;
+                }
+            }
+        }
+    }
+    .btn_con {
+        text-align: center;
+        margin-top: 20px;
+    }
+}
+#apply_shop {
+    .content_model {
+        .modal-content {
+            padding: 20px 13px;
+        }
+        .model_list {
+            display: flex;
+            div {
+                margin-right: 15px;
+                display: flex;
+                align-items: center;
+                margin-bottom: 5px;
+                p {
+                    width: 110px;
+                    text-align: right;
+                    margin-bottom: 0;
+                }
+                input {
+                    vertical-align: middle;
+                    height: 25px;
+                    margin-left: 5px;
+                }
+                select{
+                    width: 130px;
+                    height: 27px;
+                    margin-left: 5px;
+                }
+            }
+        }
+    }
+    .btn_con {
+        text-align: center;
+        margin-top: 20px;
     }
 }

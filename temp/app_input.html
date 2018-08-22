@@ -25,7 +25,7 @@
 </style>
 
 <body>
-    <div class="reg_content" id="main">
+    <div class="reg_content" id="main" v-cloak>
         <div class="fill_in_information">
             <div class="list_information">
                 <div>
@@ -117,7 +117,7 @@
                 <div>
                     <span id="State">{{obj_txt.State}}</span>
                     <select style="width: 160px;" class="state">
-                        <option value="Lagos">{{obj_txt.Lagos}}</option>
+                        <!-- <option value="Lagos">{{obj_txt.Lagos}}</option>
                         <option value="Abuja">{{obj_txt.Abuja}}</option>
                         <option value="Ogun">{{obj_txt.Ogun}}</option>
                         <option value="Edo">{{obj_txt.Edo}}</option>
@@ -131,7 +131,8 @@
                         <option value="RIVER">{{obj_txt.RIVER}}</option>
                         <option value="OWDO">{{obj_txt.OWDO}}</option>
                         <option value="ONDO">{{obj_txt.ONDO}}</option>
-                        <option value="Other">{{obj_txt.Other}}</option>
+                        <option value="Other">{{obj_txt.Other}}</option>             -->
+                        <option :value="r" v-for="r in region">{{r}}</option>
                     </select>
                 </div>
             </div>
@@ -144,7 +145,7 @@
                 <input type="button" :value="obj_txt.BtnAdd" class="ty_btn" onclick="member_add()" id="BtnAdd">
             </div>
         </div>
-        <div class="infomation_show" id="entry_list" v-cloak style="overflow-x: auto; height: 320px;">
+        <div class="infomation_show" id="entry_list"  style="overflow-x: auto; height: 320px;">
             <table class="table table-border table-bordered table-bg " id="sale_list" style="background: #fff; width: 700px; display: none;">
                 <thead>
                     <tr>
@@ -179,9 +180,10 @@
 <script>
     var key = getQueryString('key')
     $(function () {
-        get_user_info(function (ret) {
-            $('.adress_admin').val(ret.username)
-        })
+        // get_user_info(function (ret) {
+        //    // $('.adress_admin').val(ret.username)
+        // })
+        $('.adress_admin').val(JSON.parse(get_cache("user_info")).username)
 
         $('.clear').click(function () {
             $("input[type='text']").val('')
@@ -294,6 +296,7 @@
         el: '#main',
         data: {
             memberEntry: [],
+            region:get_local_cache('region_data').split(","),
             lang_txt: get_page_txt('Member_Insert'),  // 当前页面的文字信息
             obj_txt:{} // 对象拼接
         },

@@ -41,35 +41,35 @@
                 <dt v-bind:class="{selected:ac_index == $index}" v-on:click='select($index)'>
 
                     <template v-if="x.Menu_sons.length">
-                        <i class="Hui-iconfont">&#xe616;</i> {{x.Menu_name}}
+                        <i class="Hui-iconfont">&#xe616;</i> {{obj_txt[x.Menu_value] || x.Menu_value}}
                         <i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
                     </template>
                     <template v-else>
                         <i class="Hui-iconfont">&#xe616;</i>
-                        <a v-bind:data-href="url(x.Menu_id)" v-bind:data-title="x.Menu_name" style="color: #aab8d5">{{x.Menu_name}}</a>
+                        <a v-bind:data-href="url(x.Menu_value)" v-bind:data-title="x.Menu_value" style="color: #aab8d5">{{obj_txt[x.Menu_value] || x.Menu_value}}</a>
 
                     </template>
                 </dt>
                 <dd v-bind:class="{block:ac_index == $index}">
                     <ul>
                         <li v-for='n in x.Menu_sons'>
-                            <a v-bind:data-href="url(n.Menu_id)" v-bind:data-title="n.Menu_name">{{n.Menu_name}}</a>
+                            <a v-bind:data-href="url(n.Menu_value)" v-bind:data-title="n.Menu_value">{{obj_txt[n.Menu_value] || n.Menu_value }}</a>
                         </li>
                     </ul>
                 </dd>
             </dl>
             <dl id="">
                 <dt>
-                    <i class="Hui-iconfont">&#xe616;</i> 账户信息
+                    <i class="Hui-iconfont">&#xe616;</i> {{obj_txt.Account}}
                     <i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
                 </dt>
                 <dd>
                     <ul>
                         <li>
-                            <a data-href="temp/user_password.html" data-title="账户密码">账户密码</a>
+                            <a data-href="temp/user_password.html" data-title="账户密码">{{obj_txt.account_password}}</a>
                         </li>
                         <li>
-                            <a data-href="temp/user_info.html" data-title="个人信息">个人信息</a>
+                            <a data-href="temp/user_info.html" data-title="个人信息">{{obj_txt.personal_details}}</a>
                         </li>
                     </ul>
                 </dd>
@@ -114,14 +114,15 @@
     var user_token = get_cache('usertoken')
 
     var open_url = {
-        '3': './temp/app_input.html',
-        '6': './temp/app_info.html',
-        '4': './temp/order_input.html',
-        '7': './temp/ManageReport.html',
-        '29': './temp/version.html',
-        '8': './temp/update_report.html',
-        '34': './temp/onlykits.html',
-        '10': './temp/change_date.html',
+        'Member_Insert': './temp/app_input.html', // 会员录入
+        'Member_list': './temp/app_info.html', // 会员列表
+        'Order_Insert': './temp/order_input.html', // 订单录入
+        'ManageReport': './temp/ManageReport.html',
+        'desktop\/Nversions\/versions_detail': './temp/version.html',
+        'updateReport': './temp/update_report.html',
+        'onlykits': './temp/onlykits.html',
+        'ChangeDate': './temp/change_date.html',
+        'Market_Shop': './temp/market_shop.html',
     };
 
     $(function () {
@@ -139,9 +140,10 @@
         detection_version(function (e) {})
         get_user_info(function (ret) {
             $('.user_info').html(ret.username + "(" + ret.Dept + ")")
+            set_cache('user_info',JSON.stringify(ret))
         })
 
-        get_region(function (e) {
+        get_region(function (e) { /// 获取 地区
             var data = [];
             e.forEach(element => {
                 data.push(element.result) //regionLock
@@ -155,7 +157,12 @@
         el: "#index_content",
         data: {
             menu_list: [],
-            ac_index: -1
+            ac_index: -1,
+            lang_txt: get_page_txt('_menu'),  // 当前页面的文字信息
+            obj_txt:{} // 对象拼接
+        },
+        mounted(){
+            this.lang_toggle()
         },
         methods: {
             select(index) {
@@ -168,6 +175,9 @@
             },
             url(url_id) {
                 return open_url[url_id]
+            },
+            lang_toggle() {
+                this.obj_txt = splicing_obj(this.lang_txt)
             }
         }
     })
