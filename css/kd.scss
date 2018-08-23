@@ -1,4 +1,4 @@
-.text__1 {
+.text_1 {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;
@@ -22,6 +22,7 @@
         &:hover {
             border: 1px solid #0078da;
             background: #e5f2fb;
+             
         }
         &.active {
             border: 1px solid #0078da;
@@ -1160,7 +1161,7 @@ nav {
         margin-top: 20px;
     }
 }
-#apply_shop {
+#apply_shop,#detail_shop,#approve_shop {
     .content_model {
         .modal-content {
             padding: 20px 13px;
@@ -1183,8 +1184,8 @@ nav {
                     margin-left: 5px;
                 }
                 select{
-                    width: 130px;
-                    height: 27px;
+                    width: 140px;
+                    height: 30px;
                     margin-left: 5px;
                 }
             }
@@ -1195,3 +1196,12 @@ nav {
         margin-top: 20px;
     }
 }
+#detail_shop{
+    p{
+        width: 84px !important;
+    }
+    input{
+        width: 170px;
+    }
+}
+

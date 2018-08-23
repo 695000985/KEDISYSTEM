@@ -21,37 +21,20 @@
     <script src="../DatePicker/WdatePicker.js"></script>
     <script src="../script/layer.js"></script>
     <script src="../script/jquery.pagination.js"></script>
-
     <style>
         [v-cloak] {
             display: none;
-        }
-
-        .cunt {
-            float: left;
-            margin: 0 5px;
-            min-width: 38px;
-            height: 38px;
-            line-height: 38px;
-            background: #fff;
-            border: 1px solid #ebebeb;
-            color: #bdbdbd;
-            font-size: 14px;
         }
     </style>
 </head>
 
 <body>
+
     <div id="main" v-cloak class="market_shop">
         <div class="search_txt">
             <div>
-                <p>审批人</p>
-                <input type="text" class="apply_person" placeholder="审批人">
-            </div>
-            <div>
-                <p>申请状态</p>
+                <p>审批状态</p>
                 <select name="" id="" class="apply_status">
-                    <option value="">申请状态</option>
                     <option value="0">待审核</option>
                     <option value="1">通过</option>
                     <option value="2">拒绝</option>
@@ -67,50 +50,52 @@
             </div>
             <input type="button" id="" name="" value="搜索" class="btn btn-success btn-radius btn-serach" style="height: 30px;" @click="search_btn()">
 
-            <input type="button" id="" name="" value="申请店铺" class="btn btn-primary btn-radius" style="height: 30px; margin-left: 15px;"
-                @click="open_apply_form()">
-
         </div>
         <div class="shop_list">
             <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
                 <thead>
-                    <tr>
-                        <th style="width: 170px;">Shopno 店铺号</th>
-                        <th style="width: 100px;">Status 店铺状态</th>
-                        <th style="width: 100px;">Phone 手机号</th>
-                        <th style="width: 120px;">apply_person 审批人</th>
-                        <th style="width: 90px;">apply_status 审批状态</th>
-                        <th>OwnerName 店铺所有者</th>
-                        <th>Region 所在地区</th>
-                        <th>Oper 录入人</th>
-                        <th>
-                            操作
-                        </th>
+                    <th style="width: 170px;">Shopno 店铺号</th>
+                    <th style="width: 100px;">Status 店铺状态</th>
+                    <th style="width: 100px;">Phone 手机号</th>
+                    <th style="width: 120px;">apply_person 审批人</th>
+                    <th style="width: 90px;">apply_status 审批状态</th>
+                    <th style="">apply_info 审批信息</th>
+                    <th>OwnerName 店铺所有者</th>
+                    <th>Region 所在地区</th>
+                    <th>Oper 录入人</th>
+                    <th>
+                        操作
+                    </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(s,index) in shop_list" v-if='!!shop_list.length'>
+                    <tr v-for="(s,index) in shop_list" v-if='shop_list.length'>
                         <td style="width: 170px;">{{s.Shopno}}</td>
                         <td style="width: 100px;">{{status_txt(s.Status)}}</td>
+
                         <td style="width: 100px;">{{s.Phone}}</td>
                         <td style="width: 120px;">{{s.apply_person}}</td>
                         <td style="width: 90px;">{{apply_status_txt(s.apply_status)}}</td>
+                        <td>
+                            {{s.apply_info}}
+                        </td>
                         <td>{{s.OwnerName}}</td>
                         <td>{{s.Region}}</td>
                         <td>{{s.Oper}}</td>
                         <td>
-                            <a title="编辑" class="btn btn-primary size-S radius" href="javascript:;" @click="open_edit_shop(s.Shopno,s.Status)" style="text-decoration: none;">
-                                编辑
-                                <i class="Hui-iconfont Hui-iconfont-edit" style="color: #fff;"></i>
-                            </a>
                             <a title="查看" class="btn btn-primary size-S radius" href="javascript:;" @click="open_detail_shop(s.Shopno)" style="text-decoration: none;">
                                 查看
                                 <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: #fff"></i>
                             </a>
+                            <a title="审批" class="btn btn-primary size-S radius" href="javascript:;" @click="open_approve(s.Shopno,s.apply_status,s.apply_info)"
+                                style="text-decoration: none;">
+                                审批
+                                <i class="Hui-iconfont Hui-iconfont-edit" style="color: #fff;"></i>
+                            </a>
                         </td>
                     </tr>
                     <tr v-if="fade">
-                        <td colspan="9">{{no_data}}</td>
+                        <td colspan="10">{{no_data}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -119,143 +104,6 @@
             </div>
         </div>
     </div>
-    <div id="edit_shop" class="model modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="content_model modal-dialog ">
-            <div class="modal-content">
-                <div class="model_list">
-                    <div>
-                        <p class="">
-                            Shop_no
-                        </p>
-                        <input type="text" v-model="Shopno">
-                    </div>
-                    <div>
-                        <p>
-                            Status
-                        </p>
-                        <select name="" id="" v-model="Status">
-                            <option value="0">禁用</option>
-                            <option value="1">可用</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="btn_con">
-                    <input type="button" class="btn btn-success BtnUpdate" v-on:click='edit_shop()' value="提交">
-                    <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <div id="apply_shop" class="model modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="content_model modal-dialog ">
-            <div class="modal-content">
-                <form>
-                    <div class="model_list">
-                        <div>
-                            <p class="">
-                                Shopno
-                            </p>
-                            <input type="number" v-model="Shopno">
-                        </div>
-                        <div>
-                            <p class="">
-                                RegionPerson
-                            </p>
-                            <select name="" id="" v-model="RegionPerson">
-                                <option :value="r" v-for="r in region_con">{{r}}</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="model_list">
-                        <div>
-                            <p class="">
-                                KediID
-                            </p>
-                            <input type="text" v-model="KediID">
-                        </div>
-                        <div>
-                            <p class="">
-                                OwnerName
-                            </p>
-                            <input type="text" v-model="OwnerName">
-                        </div>
-                    </div>
-
-                    <div class="model_list">
-                        <div>
-                            <p class="">
-                                State
-                            </p>
-                            <select name="" id="" v-model="State">
-                                <option value="">选择店铺状态</option>
-                                <option value="0">禁用</option>
-                                <option value="1">可用</option>
-                            </select>
-                        </div>
-                        <div>
-                            <p class="">
-                                Phone
-                            </p>
-                            <input type="text" v-model="Phone">
-                        </div>
-                    </div>
-                    <div class="model_list">
-                        <div>
-                            <p class="">
-                                Address
-                            </p>
-                            <input type="text" v-model="Address">
-                        </div>
-                        <div>
-                            <p class="">
-                                OpenDate
-                            </p>
-                            <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="Wdate open_date">
-
-                        </div>
-                    </div>
-                    <div class="model_list">
-                        <div>
-                            <p class="">
-                                Preparedby
-                            </p>
-                            <input type="text" v-model="Preparedby">
-                        </div>
-                        <div>
-                            <p class="">
-                                Memo
-                            </p>
-                            <input type="text" v-model="Memo">
-                        </div>
-                    </div>
-                    <div class="model_list">
-                        <div>
-                            <p class="">
-                                Region
-                            </p>
-                            <input type="text" v-model="Region">
-                        </div>
-                        <div>
-                            <p class="">
-                                Direction
-                            </p>
-                            <input type="text" v-model="Direction">
-                        </div>
-                    </div>
-                    <div class="btn_con">
-                        <input type="button" class="btn btn-success BtnUpdate" v-on:click="add_apply_shop" value="提交">
-                        <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
-                    </div>
-
-                </form>
-
-            </div>
-        </div>
-    </div>
-
     <div id="detail_shop" class="model modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="content_model modal-dialog ">
             <div class="modal-content">
@@ -359,6 +207,43 @@
 
         </div>
     </div>
+    <div id="approve_shop" class="model modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="content_model modal-dialog ">
+            <div class="modal-content">
+                <div class="model_list">
+                    <div>
+                        <p class="">
+                            Shop_no
+                        </p>
+                        <input type="text" v-model="Shopno" disabled>
+                    </div>
+                    <div>
+                        <p>
+                            apply_status
+                        </p>
+                        <select name="" id="" v-model="apply_status">
+                            <option value="1">通过</option>
+                            <option value="2">拒绝</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="model_list" style="margin-top: 15px;">
+                    <div>
+                        <p class="" style="margin-right: 5px;">
+                            apply_info
+                        </p>
+                        <textarea v-model="apply_info" name="" id="" style="width: 412px; height: 100px; padding: 5px;" placeholder="填写审批信息" resize="none"></textarea>
+                    </div>
+                </div>
+                <div class="btn_con">
+                    <input type="button" class="btn btn-success BtnUpdate" v-on:click='approve_shop()' value="提交">
+                    <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <script>
         var pagecounts;
         var page = 1;
@@ -366,8 +251,8 @@
         var pagesize = 30;
         var pagestat = 0;
         var user_token = get_cache('usertoken');
-        var vm = new Vue({
-            el: '#main',
+        var apply_list = new Vue({
+            el: "#main",
             data: {
                 shop_list: [],
                 fade: false,
@@ -375,32 +260,20 @@
                 lang_txt: get_page_txt('Member_list'), // 当前页面的文字信息
                 obj_txt: {}, // 对象拼接
             },
-            created() {
+            mounted() {
                 init_data()
             },
-            mounted() {
-                this.lang_toggle()
-            },
-
             methods: {
                 lang_toggle() {
                     this.obj_txt = splicing_obj(this.lang_txt)
                 },
+
                 search_btn() {
                     page = 1;
                     obj = {};
+                    this.fade = false;
                     obj['limit'] = [0, pagesize].join(","); //条目数
-                    get_shop(obj)
-                },
-                open_edit_shop(s_no, status) {
-                    edit_shop.Shopno = s_no;
-                    edit_shop.Status = status;
-                    $('#edit_shop').modal('show')
-                },
-                open_detail_shop(s_no) {
-                    detail_shop.Shopno = s_no;
-                    $('#detail_shop').modal('show');
-                    detail_shop.get_detail()
+                    my_apply(obj)
                 },
                 status_txt(type) {
                     let a = "";
@@ -429,142 +302,63 @@
                     }
                     return a;
                 },
-                open_apply_form() { //打开申请店铺表单
-                    $("#apply_shop").modal('show')
-                }
+                open_approve(s_no, status, info) {
+                    approve.Shopno = s_no;
+                    if (status == 0) {
+                        approve.apply_status = '1'
+                    } else {
+                        approve.apply_status = status
+                    }
+                    approve.apply_info = info
 
+                    $('#approve_shop').modal("show");
 
+                },
+                open_detail_shop(s_no) {
+                    detail_shop.Shopno = s_no;
+                    $('#detail_shop').modal('show');
+                    detail_shop.get_detail()
+                },
             }
         })
 
-        var edit_shop = new Vue({
-            el: "#edit_shop",
+        var approve = new Vue({
+            el: "#approve_shop",
             data: {
                 Shopno: '',
-                Status: ''
+                apply_status: '',
+                apply_info: ''
             },
             methods: {
-                edit_shop() {
-                    var url = "/index.php?s=desktop/Market_Shop/edit";
-                    var data = {};
-                    data['usertoken'] = user_token;
-                    data["Shopno"] = this.Shopno;
-                    data["Status"] = this.Status;
-                    ajax(url, data, function (retjson) {
-                        if (retjson.stat == 1) {
-                            success('已提交')
-                            $("#edit_shop").modal('hide');
-
-                            obj = {};
-                            obj['limit'] = [(page - 1) * pagesize, pagesize].join(","); //条目数
-                            get_shop(obj)
-                        } else {
-                            showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
-                            $("#edit_shop").modal('hide')
-                        }
-                    })
-
-                }
-            }
-
-        })
-
-        var apply_shop = new Vue({
-            el: "#apply_shop",
-            data: {
-                Shopno: "",
-                RegionPerson: get_local_cache('region_data').split(',')[0],
-                KediID: '',
-                OwnerName: '',
-                State: '',
-                Phone: '',
-                Address: '',
-                OpenDate: '',
-                Preparedby: '',
-                Memo: '',
-                Region: '',
-                Direction: '',
-                region_con: get_local_cache('region_data').split(',')
-            },
-           
-            methods: {
-                add_apply_shop() {
-                    if(!!!this.Shopno){
-                        showErr('请填写 Shopno')
-                        return
-                    }
-                    if(!!!this.KediID){
-                        showErr('请填写 KediID')
-                        return
-                    }
-                    if(!!!this.OwnerName){
-                        showErr('请填写 OwnerName')
-                        return
-                    }
-                    if(!!!this.Phone){
-                        showErr('请填写 Phone')
-                        return
-                    }
-                    if(!!!this.Address){
-                        showErr('请填写 Address')
-                        return
-                    }
-                    if(!!!this.OpenDate){
-                        showErr('请填写 OpenDate')
-                        return
-                    }
-                    if(!!!this.Preparedby){
-                        showErr('请填写 Preparedby')
+                approve_shop() {
+                    if (!!!this.apply_info) {
+                        showErr('请填写审批信息')
                         return
                     }
 
-                    if(!!!this.Memo){
-                        showErr('请填写 Preparedby')
-                        return
-                    }
-                    if(!!!this.Region){
-                        showErr('请填写 Preparedby')
-                        return
-                    }
-                    if(!!!this.Direction){
-                        showErr('请填写 Preparedby')
-                        return
-                    }
-
-
-                    var url = "/index.php?s=desktop/Market_Shop/add";
+                    var url = "/index.php?s=desktop/Market_Shop/update";
                     var data = {};
                     data["usertoken"] = user_token;
                     data["Shopno"] = this.Shopno;
-                    data["RegionPerson"] = this.RegionPerson;
-                    data["KediID"] = this.KediID;
-                    data["OwnerName"] = this.OwnerName;
-                    data["State"] = this.State;
-                    data["Phone"] = this.Phone;
-                    data["Address"] = this.Address;
-                    data["OpenDate"] = $('.open_date').val();
-                    data["Preparedby"] = this.Preparedby;
-                    data["Memo"] = this.Memo;
-                    data["Region"] = this.Region;
-                    data["Direction"] = this.Direction;
+                    data["apply_status"] = this.apply_status;
+                    data["apply_info"] = this.apply_info;
                     ajax(url, data, function (retjson) {
                         if (retjson.stat == 1) {
-                            success('申请已提交');
+                            success('审批成功');
                             setTimeout(function () {
-                                $("#apply_shop").modal('hide');
+                                $("#approve_shop").modal('hide');
                                 obj = {};
                                 obj['limit'] = [(page - 1) * pagesize, pagesize].join(","); //条目数
-                                get_shop(obj)
-                            }, 100)
-
+                                my_apply(obj)
+                            }, 2000)
                         } else {
                             showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
                         }
                     })
                 }
             }
-
         })
+
         var detail_shop = new Vue({
             el: "#detail_shop",
             data: {
@@ -589,39 +383,32 @@
 
         })
 
-
         function init_data() {
             page = 1
             obj = {};
             pagestat = 0;
             obj['limit'] = [pagestat, pagesize].join(",");
-            get_shop(obj)
+            my_apply(obj)
         }
 
-        function get_shop(obj) {
-            $('.my_page').pagination({
-                totalData: 0,
-                pageCount: 0,
-                current: 0
-            })
+        function my_apply(obj) {
             var url = "/index.php?s=desktop/Market_Shop/get_list";
             var data = {};
             data['usertoken'] = user_token;
-            data['Oper'] = "";
             data['order'] = "Add_Date desc";
-            data['apply_person'] = $('.apply_person').val();
+            data['Oper'] = "";
+            data['apply_person'] = "";
             data['apply_status'] = $('.apply_status').val();
             data['start'] = $('.start_time').val();
             data['end'] = $('.end_time').val();
             var opt = $.extend({}, data, obj)
             ajax(url, opt, function (retjson) {
                 if (retjson.stat == 1) {
-                    vm.shop_list = retjson.data.list
+                    apply_list.shop_list = retjson.data.list
                     pagecounts = retjson.data.count;
                     if (retjson.data.list.length == 0) {
-                        vm.fade = true;
+                        apply_list.fade = true;
                     }
-
                     $('.my_page').pagination({
                         totalData: parseInt(pagecounts),
                         pageCount: Math.ceil(pagecounts / pagesize),
@@ -639,7 +426,7 @@
                             };
                             var d = $.extend({}, x);
 
-                            get_shop(d)
+                            my_apply(d)
                         }
                     });
                     setTimeout(function () {
@@ -649,16 +436,11 @@
                     }, 500)
                 } else {
                     showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
-                    $('.m-style').css('display', 'none');
-                    vm.shop_list = [];
-                    
-                }
 
+                }
             })
         }
     </script>
-
-
 </body>
 
 </html>

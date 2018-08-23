@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>科迪会员录入系统</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/iconfont.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+    <script src="../script/jquery.pagination.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="main" v-cloak class="market_shop">
+        <div class="search_txt" style="display:none">
+            <div>
+                <p>申请状态</p>
+                <select name="" id="" class="apply_status">
+                    <option value="">申请状态</option>
+                    <option value="0">待审核</option>
+                    <option value="1">通过</option>
+                    <option value="2">拒绝</option>
+                </select>
+            </div>
+            <div>
+                <p>开始时间</p>
+                <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate start_time">
+            </div>
+            <div>
+                <p>结束时间</p>
+                <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate end_time">
+            </div>
+            <input type="button" id="" name="" value="搜索" class="btn btn-success btn-radius btn-serach" style="height: 30px;" @click="search_btn()">
+
+        </div>
+        <div class="shop_list">
+            <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
+                <thead>
+                    <th style="width: 170px;">Shopno 店铺号</th>
+                    <th style="width: 100px;">Status 店铺状态</th>
+                    <th style="width: 100px;">Phone 手机号</th>
+                    <th style="width: 120px;">apply_person 审批人</th>
+                    <th style="width: 90px;">apply_status 审批状态</th>
+                    <th style="">apply_info 审批信息</th>
+                    <th>OwnerName 店铺所有者</th>
+                    <th>Region 所在地区</th>
+                    <th>Oper 录入人</th>
+                    <!-- <th>
+                        操作
+                    </th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(s,index) in shop_list" v-if='shop_list.length'>
+                        <td style="width: 170px;">{{s.Shopno}}</td>
+                        <td style="width: 100px;">{{status_txt(s.Status)}}</td>
+
+                        <td style="width: 100px;">{{s.Phone}}</td>
+                        <td style="width: 120px;">{{s.apply_person}}</td>
+                        <td style="width: 90px;">{{apply_status_txt(s.apply_status)}}</td>
+                        <td>
+                            {{s.apply_info}}
+                        </td>
+                        <td>{{s.OwnerName}}</td>
+                        <td>{{s.Region}}</td>
+                        <td>{{s.Oper}}</td>
+                        <!-- <td>
+                            <a title="编辑" class="btn btn-primary size-S radius" href="javascript:;" @click="open_edit_shop(s.Shopno,s.Status)" style="text-decoration: none;">
+                                编辑
+                                <i class="Hui-iconfont Hui-iconfont-edit" style="color: #fff;"></i>
+                            </a>
+                            <a title="查看" class="btn btn-primary size-S radius" href="javascript:;" @click="open_detail_shop(s.Shopno)" style="text-decoration: none;">
+                                查看
+                                <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: #fff"></i>
+                            </a>
+                        </td> -->
+                    </tr>
+                    <tr v-if="fade">
+                        <td colspan="8">{{no_data}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="my_page m-style">
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var pagecounts;
+        var page = 1;
+        var obj;
+        var pagesize = 30;
+        var pagestat = 0;
+        var user_token = get_cache('usertoken');
+        var apply_list = new Vue({
+            el: "#main",
+            data: {
+                shop_list: [],
+                fade: false,
+                no_data: config_txt.no_data.zn,
+                lang_txt: get_page_txt('Member_list'), // 当前页面的文字信息
+                obj_txt: {}, // 对象拼接
+            },
+            created() {
+                init_data()
+            },
+            methods: {
+                lang_toggle() {
+                    this.obj_txt = splicing_obj(this.lang_txt)
+                },
+                approve_shop() {
+                    var url = "/index.php?s=desktop/Market_Shop/update";
+                    var data = {};
+                    data["usertoken"]
+                    data["Shopno"]
+                    data["apply_status"]
+                    data["apply_info"]
+                    ajax(url, data, function (retjson) {
+                        if (retjson.stat == 1) {
+
+                        } else {
+
+                        }
+                    })
+                },
+                status_txt(type) {
+                    let a = "";
+                    switch (type) {
+                        case "0":
+                            a = "禁用"
+                            break;
+                        case "1":
+                            a = "可用"
+                            break;
+                    }
+                    return a;
+                },
+                apply_status_txt(type) {
+                    let a = "";
+                    switch (type) {
+                        case "0":
+                            a = "待审核"
+                            break;
+                        case "1":
+                            a = "通过"
+                            break;
+                        case "2":
+                            a = "拒绝"
+                            break;
+                    }
+                    return a;
+                },
+            }
+        })
+
+        function init_data() {
+            page = 1
+            obj = {};
+            pagestat = 0;
+            obj['limit'] = [pagestat, pagesize].join(",");
+            my_apply(obj)
+        }
+
+        function my_apply(obj) {
+            var url = "/index.php?s=desktop/Market_Shop/get_list";
+            var data = {};
+            data['usertoken'] = user_token;
+            data['order'] = "Add_Date desc";
+            data['Oper'] = JSON.parse(get_cache("user_info")).username;
+            data['apply_person'] = "";
+            data['apply_status'] = "";
+            data['start'] = "";
+            data['end'] = "";
+            var opt = $.extend({}, data, obj)
+            ajax(url, opt, function (retjson) {
+                if (retjson.stat == 1) {
+                    apply_list.shop_list = retjson.data.list
+                    pagecounts = retjson.data.count;
+                    if (retjson.data.list.length == 0) {
+                        apply_list.fade = true;
+                    }
+                    $('.my_page').pagination({
+                        totalData: parseInt(pagecounts),
+                        pageCount: Math.ceil(pagecounts / pagesize),
+                        jump: true,
+                        coping: true,
+                        prevContent: '上页',
+                        current: page,
+                        nextContent: '下页',
+                        callback: function (api) {
+                            console.log(api.getCurrent())
+                            page = api.getCurrent();
+                            pagestat = pagesize * (api.getCurrent() - 1)
+                            var x = {
+                                'limit': [pagestat, pagesize].join(',')
+                            };
+                            var d = $.extend({}, x);
+
+                            my_apply(d)
+                        }
+                    });
+                    setTimeout(function () {
+                        $('.my_page').append(
+                            `<div href="javascript:;" class="cunt" style='padding: 0 4px;' >总记录数： ${retjson.data.count}</div>`
+                        )
+                    }, 500)
+                } else {
+                    showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+
+                }
+            })
+        }
+    </script>
+</body>
+
+</html>

@@ -1,5 +1,5 @@
 @charset "UTF-8";
-.text__1 { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
+.text_1 { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
 
 .index_content_btn { width: 630px; margin: 0 auto; margin-top: 75px; }
 
@@ -449,17 +449,21 @@ nav div { font-size: 16px; color: #fff; }
 
 #edit_shop .btn_con { text-align: center; margin-top: 20px; }
 
-#apply_shop .content_model .modal-content { padding: 20px 13px; }
+#apply_shop .content_model .modal-content, #detail_shop .content_model .modal-content, #approve_shop .content_model .modal-content { padding: 20px 13px; }
 
-#apply_shop .content_model .model_list { display: -webkit-box; display: -ms-flexbox; display: flex; }
+#apply_shop .content_model .model_list, #detail_shop .content_model .model_list, #approve_shop .content_model .model_list { display: -webkit-box; display: -ms-flexbox; display: flex; }
 
-#apply_shop .content_model .model_list div { margin-right: 15px; display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -ms-flex-align: center; align-items: center; margin-bottom: 5px; }
+#apply_shop .content_model .model_list div, #detail_shop .content_model .model_list div, #approve_shop .content_model .model_list div { margin-right: 15px; display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -ms-flex-align: center; align-items: center; margin-bottom: 5px; }
 
-#apply_shop .content_model .model_list div p { width: 110px; text-align: right; margin-bottom: 0; }
+#apply_shop .content_model .model_list div p, #detail_shop .content_model .model_list div p, #approve_shop .content_model .model_list div p { width: 110px; text-align: right; margin-bottom: 0; }
 
-#apply_shop .content_model .model_list div input { vertical-align: middle; height: 25px; margin-left: 5px; }
+#apply_shop .content_model .model_list div input, #detail_shop .content_model .model_list div input, #approve_shop .content_model .model_list div input { vertical-align: middle; height: 25px; margin-left: 5px; }
 
-#apply_shop .content_model .model_list div select { width: 130px; height: 27px; margin-left: 5px; }
+#apply_shop .content_model .model_list div select, #detail_shop .content_model .model_list div select, #approve_shop .content_model .model_list div select { width: 140px; height: 30px; margin-left: 5px; }
 
-#apply_shop .btn_con { text-align: center; margin-top: 20px; }
+#apply_shop .btn_con, #detail_shop .btn_con, #approve_shop .btn_con { text-align: center; margin-top: 20px; }
+
+#detail_shop p { width: 84px !important; }
+
+#detail_shop input { width: 170px; }
 /*# sourceMappingURL=kd.css.map */

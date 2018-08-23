@@ -38,15 +38,15 @@
     <aside class="Hui-aside" id="index_content" style="top: 65px;">
         <div class="menu_dropdown bk_2">
             <dl id="" v-for="(x,$index) in menu_list" v-if="x.Menu_name.length">
-                <dt v-bind:class="{selected:ac_index == $index}" v-on:click='select($index)'>
+                <dt v-bind:class="{selected:ac_index == $index}" v-on:click='select($index)' style="display:flex">
 
                     <template v-if="x.Menu_sons.length">
-                        <i class="Hui-iconfont">&#xe616;</i> {{obj_txt[x.Menu_value] || x.Menu_value}}
+                        <i class="Hui-iconfont text_1">&#xe616;</i> {{obj_txt[x.Menu_value] || x.Menu_value}}
                         <i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
                     </template>
                     <template v-else>
                         <i class="Hui-iconfont">&#xe616;</i>
-                        <a v-bind:data-href="url(x.Menu_value)" v-bind:data-title="x.Menu_value" style="color: #aab8d5">{{obj_txt[x.Menu_value] || x.Menu_value}}</a>
+                        <a class="text_1" v-bind:data-href="url(x.Menu_value)" v-bind:data-title="x.Menu_value" style="color: #aab8d5">{{obj_txt[x.Menu_value] || x.Menu_value}}</a>
 
                     </template>
                 </dt>
@@ -122,7 +122,8 @@
         'updateReport': './temp/update_report.html',
         'onlykits': './temp/onlykits.html',
         'ChangeDate': './temp/change_date.html',
-        'Market_Shop': './temp/market_shop.html',
+        'Market_Shop_get_list': './temp/market_shop.html', //店铺 列表
+        'get_list_applay': './temp/apply_shop_list.html', //申请 列表
     };
 
     $(function () {

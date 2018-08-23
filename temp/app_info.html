@@ -98,7 +98,8 @@
                     </td>
                 </tr>
                 <tr >
-                    <td colspan="7"  v-if="fade" class="NoData">{{obj_txt.NoData}}</td>
+                    <!-- <td colspan="7"  v-if="fade" class="NoData">{{obj_txt.NoData}}</td> -->
+                    <td colspan="7"  v-if="fade" class="NoData">没有数据</td>
                 </tr>
             </tbody>
         </table>
@@ -232,7 +233,9 @@
             if (e.stat == 1) {
                 list.listdata = e.data.list;
                 pagecounts = e.data.count;
-
+                if(e.data.list.length == 0){
+                    list.fade=true
+                }
                 $('.m-style').pagination({
                     totalData: parseInt(pagecounts),
                     pageCount: Math.ceil(pagecounts / pagesize),
