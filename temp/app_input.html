@@ -34,11 +34,11 @@
                         <option value="KN">KN</option>
                         <option value="KG">KG</option>
                     </select>
-                    <input type="text" class="member-code">
+                    <input type="text" class="member-code" name="index_1">
                 </div>
                 <div>
                     <span id="MemberName">{{obj_txt.MemberName}}</span>
-                    <input type="text" class="member-name">
+                    <input type="text" class="member-name" name="index_2">
                 </div>
             </div>
             <div class="list_information">
@@ -48,7 +48,7 @@
                         <option value="KN">KN</option>
                         <option value="KG">KG</option>
                     </select>
-                    <input type="text" class="sponsor-code">
+                    <input type="text" class="sponsor-code" name="index_3">
                 </div>
                 <div>
                     <span id="SponsorName">{{obj_txt.SponsorName}}</span>
@@ -63,7 +63,7 @@
                         <option value="KN">KN</option>
                         <option value="KG">KG</option>
                     </select>
-                    <input type="text" class="plancement-code">
+                    <input type="text" class="plancement-code" name="index_4">
 
                 </div>
                 <div>
@@ -74,12 +74,12 @@
             <div class="list_information">
                 <div class="skin-minimal">
                     <span id="ShopNo">{{obj_txt.ShopNo}}</span>
-                    <input type="text" name="" id="" class="shop-code">
+                    <input type="text"  id="" class="shop-code" name="index_5">
 
                 </div>
                 <div>
                     <span id="Address">{{obj_txt.Address}}</span>
-                    <input type="text" class="address">
+                    <input type="text" class="address" name="index_6">
                 </div>
             </div>
             <div class="list_information">
@@ -95,13 +95,13 @@
                 </div>
                 <div>
                     <span id="BankNumber">{{obj_txt.BankNumber}}</span>
-                    <input type="text" class="bank_num">
+                    <input type="text" class="bank_num" name="index_7">
                 </div>
             </div>
             <div class="list_information">
                 <div>
                     <span id="Handset">{{obj_txt.Handset}}</span>
-                    <input type="text" style="width: 180px" class="mobile">
+                    <input type="text" style="width: 180px" class="mobile" name="index_8">
                 </div>
                 <div style="width: 190px;">
                     <span id="Gender">{{obj_txt.Gender}}</span>
@@ -178,7 +178,8 @@
     </div>
 </body>
 <script>
-    var key = getQueryString('key')
+    var key = getQueryString('key');
+    var input_index ='1'
     $(function () {
         // get_user_info(function (ret) {
         //    // $('.adress_admin').val(ret.username)
@@ -211,7 +212,7 @@
         $('.plancement-code').keyup(function () {
             if ($(this).val().length >= 6) {
                 let data = {}; //RecommendNO
-                data['CCustomerNO'] = $('.plancement_code_prefix').val() + $('.plancement-code').val()
+                data['CustomerNO'] = $('.plancement_code_prefix').val() + $('.plancement-code').val()
                 search_member(data, function (e) {
                     $('.recommendname').val(e.list[0].CustomerName)
                 })
@@ -221,11 +222,21 @@
         $('.plancement_code_prefix').change(function () {
             if ($('.plancement-code').val().length >= 6) {
                 let data = {};
-                data['CCustomerNO'] = $('.plancement_code_prefix').val() + $('.plancement-code').val()
+                data['CustomerNO'] = $('.plancement_code_prefix').val() + $('.plancement-code').val()
                 search_member(data, function (e) {
                     $('.recommendname').val(e.list[0].CustomerName)
                 })
             }
+        })
+
+        $('input[name*="index"]').on('keydown',function(e){
+            if(e.keyCode == 9){
+                e.stopPropagation();
+                e.preventDefault();
+                var nextindex=$(this).attr('name').split('_')[1]*1+1;
+                $(`input[name="index_${nextindex}"]`).focus()
+            }
+
         })
 
     })

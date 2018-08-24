@@ -99,7 +99,8 @@
                         <td>{{s.Region}}</td>
                         <td>{{s.Oper}}</td>
                         <td>
-                            <a title="编辑" class="btn btn-primary size-S radius" href="javascript:;" @click="open_edit_shop(s.Shopno,s.Status)" style="text-decoration: none;">
+                            <a title="编辑" class="btn btn-primary size-S radius" href="javascript:;" @click="open_edit_shop(s.Shopno,s.Status,s.apply_status)"
+                                style="text-decoration: none;">
                                 编辑
                                 <i class="Hui-iconfont Hui-iconfont-edit" style="color: #fff;"></i>
                             </a>
@@ -190,9 +191,15 @@
                                 State
                             </p>
                             <select name="" id="" v-model="State">
-                                <option value="">选择店铺状态</option>
-                                <option value="0">禁用</option>
-                                <option value="1">可用</option>
+                                <option value="CHINA">CHINA</option>
+                                <option value="USA">USA
+                                </option>
+                                <option value="BRITAIN">BRITAIN</option>
+                                <option value="NIGERIA">NIGERIA</option>
+                                <option value="GHANA">GHANA</option>
+                                <option value="BENIN">BENIN</option>
+                                <option value="SOUTH_ARAICA">SOUTH_ARAICA</option>
+                                <option value="OTHERS"></option>
                             </select>
                         </div>
                         <div>
@@ -372,7 +379,7 @@
                 shop_list: [],
                 fade: false,
                 no_data: config_txt.no_data.zn,
-                lang_txt: get_page_txt('Member_list'), // 当前页面的文字信息
+                lang_txt: get_page_txt('market_shop'), // 当前页面的文字信息
                 obj_txt: {}, // 对象拼接
             },
             created() {
@@ -389,10 +396,17 @@
                 search_btn() {
                     page = 1;
                     obj = {};
+                    vm.fade = false;
                     obj['limit'] = [0, pagesize].join(","); //条目数
                     get_shop(obj)
                 },
-                open_edit_shop(s_no, status) {
+                open_edit_shop(s_no, status, apply_status) {
+
+                    if (apply_status == 0) {
+                        showErr('该条信息正在审核中,暂时无法编辑...');
+                        return
+                    }
+
                     edit_shop.Shopno = s_no;
                     edit_shop.Status = status;
                     $('#edit_shop').modal('show')
@@ -486,47 +500,47 @@
                 Direction: '',
                 region_con: get_local_cache('region_data').split(',')
             },
-           
+
             methods: {
                 add_apply_shop() {
-                    if(!!!this.Shopno){
+                    if (!!!this.Shopno) {
                         showErr('请填写 Shopno')
                         return
                     }
-                    if(!!!this.KediID){
+                    if (!!!this.KediID) {
                         showErr('请填写 KediID')
                         return
                     }
-                    if(!!!this.OwnerName){
+                    if (!!!this.OwnerName) {
                         showErr('请填写 OwnerName')
                         return
                     }
-                    if(!!!this.Phone){
+                    if (!!!this.Phone) {
                         showErr('请填写 Phone')
                         return
                     }
-                    if(!!!this.Address){
+                    if (!!!this.Address) {
                         showErr('请填写 Address')
                         return
                     }
-                    if(!!!this.OpenDate){
+                    if (!!!this.OpenDate) {
                         showErr('请填写 OpenDate')
                         return
                     }
-                    if(!!!this.Preparedby){
+                    if (!!!this.Preparedby) {
                         showErr('请填写 Preparedby')
                         return
                     }
 
-                    if(!!!this.Memo){
+                    if (!!!this.Memo) {
                         showErr('请填写 Preparedby')
                         return
                     }
-                    if(!!!this.Region){
+                    if (!!!this.Region) {
                         showErr('请填写 Preparedby')
                         return
                     }
-                    if(!!!this.Direction){
+                    if (!!!this.Direction) {
                         showErr('请填写 Preparedby')
                         return
                     }
@@ -651,7 +665,7 @@
                     showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
                     $('.m-style').css('display', 'none');
                     vm.shop_list = [];
-                    
+
                 }
 
             })

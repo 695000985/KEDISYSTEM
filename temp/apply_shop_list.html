@@ -33,6 +33,10 @@
     <div id="main" v-cloak class="market_shop">
         <div class="search_txt">
             <div>
+                <p>审批人</p>
+                <input type="text" class="approve_name">
+            </div>
+            <div>
                 <p>审批状态</p>
                 <select name="" id="" class="apply_status">
                     <option value="0">待审核</option>
@@ -344,7 +348,7 @@
                     data["apply_info"] = this.apply_info;
                     ajax(url, data, function (retjson) {
                         if (retjson.stat == 1) {
-                            success('审批成功');
+                            success('审批成功'); //Approval_success
                             setTimeout(function () {
                                 $("#approve_shop").modal('hide');
                                 obj = {};
@@ -397,7 +401,7 @@
             data['usertoken'] = user_token;
             data['order'] = "Add_Date desc";
             data['Oper'] = "";
-            data['apply_person'] = "";
+            data['apply_person'] = $(".approve_name").val();
             data['apply_status'] = $('.apply_status').val();
             data['start'] = $('.start_time').val();
             data['end'] = $('.end_time').val();
