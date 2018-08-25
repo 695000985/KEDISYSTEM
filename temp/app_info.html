@@ -66,14 +66,25 @@
                     <th width="40" class="CustomerID">{{obj_txt.CustomerID}}</th>
                     <th width="70" class="CustomerName">
                         {{obj_txt.CustomerName}}</th>
-                    <th width="150" class="CustomerNO">
+                    <th width="100" class="CustomerNO">
                         {{obj_txt.CustomerNO}}</th>
                     <th width="50" class="Status">
                         {{obj_txt.Status}}</th>
                     <th width="100" class="ShopNO">
                         {{obj_txt.ShopNO}}</th>
+
+                    <th width="100" class="RegDate">
+                        {{obj_txt.SponsorNo}}</th>
+                    <th width="200" class="RegDate">
+                        {{obj_txt.SponsorName}}</th>
+
+                    <th width="100" class="RegDate">
+                        {{obj_txt.PlacementNo}}</th>
+                    <th width="200" class="RegDate">
+                        {{obj_txt.PlacementName}}</th>
                     <th width="200" class="RegDate">
                         {{obj_txt.RegDate}}</th>
+
                     <th width="100" class="Operating">
                         {{obj_txt.Operating}}
                     </th>
@@ -86,6 +97,14 @@
                     <td>{{x.CustomerNO}}</td>
                     <td>{{x.Status}}</td>
                     <td>{{x.ShopNO}}</td>
+
+                    <td>{{x.ParentNO}}</td>
+                    <!-- 推荐人 -->
+                    <td>{{x.ParentName}}</td>
+
+                    <td>{{x.RecommendNO}}</td>
+                    <!-- 安置人 -->
+                    <td>{{x.RecommendName}}</td>
                     <td>{{x.CreateTime}}</td>
                     <td>
                         <a title="编辑" href="javascript:;" style="text-decoration:none" v-on:click='open_model(x.CustomerID,x.CustomerName,x.CustomerNO,x.ShopNO,x.ParentNO,x.RecommendNO,x.Mobile)'>
@@ -97,9 +116,9 @@
                         </a>
                     </td>
                 </tr>
-                <tr >
+                <tr>
                     <!-- <td colspan="7"  v-if="fade" class="NoData">{{obj_txt.NoData}}</td> -->
-                    <td colspan="7"  v-if="fade" class="NoData">没有数据</td>
+                    <td colspan="7" v-if="fade" class="NoData">没有数据</td>
                 </tr>
             </tbody>
         </table>
@@ -112,13 +131,13 @@
                     <div>
                         <p class="CustomerNo">
                             {{obj_txt.CustomerNO}}
-                           
+
                         </p>
                         <input type="text" class="cus_no" v-model="mdata.CustomerNO">
                     </div>
                     <div>
                         <p>
-                          {{obj_txt.ShopNO}}
+                            {{obj_txt.ShopNO}}
                         </p>
                         <input type="text" class="cus_no" v-model="mdata.ShopNO">
                     </div>
@@ -126,14 +145,14 @@
                 <div class="model_list">
                     <div>
                         <p>
-                           {{obj_txt.CustomerName}}
-                          
+                            {{obj_txt.CustomerName}}
+
                         </p>
                         <input type="text" class="cus_no" v-model='mdata.CustomerName'>
                     </div>
                     <div>
                         <p class="SponosorNo">
-                           {{obj_txt.SponsorNo}}
+                            {{obj_txt.SponsorNo}}
                         </p>
                         <input type="text" class="cus_no" v-model='mdata.ParentNO'>
                     </div>
@@ -141,7 +160,7 @@
                 <div class="model_list">
                     <div>
                         <p class="Phone">
-                           {{obj_txt.Phone || "phone"}}
+                            {{obj_txt.Phone || "phone"}}
                         </p>
                         <input type="text" class="cus_no" v-model='mdata.Mobile'>
                     </div>
@@ -233,8 +252,8 @@
             if (e.stat == 1) {
                 list.listdata = e.data.list;
                 pagecounts = e.data.count;
-                if(e.data.list.length == 0){
-                    list.fade=true
+                if (e.data.list.length == 0) {
+                    list.fade = true
                 }
                 $('.m-style').pagination({
                     totalData: parseInt(pagecounts),
@@ -250,20 +269,24 @@
                         console.log(api.getCurrent())
                         page = api.getCurrent();
                         pagestat = pagesize * (api.getCurrent() - 1)
-                        var x = { 'limit': [pagestat, 30].join(',') };
+                        var x = {
+                            'limit': [pagestat, 30].join(',')
+                        };
                         var d = $.extend({}, obj, x);
                         search_member(d)
                     }
                 });
                 setTimeout(function () {
-                    $('.m-style').append(`<div href="javascript:;" class="cunt" style='padding: 0 4px;' >总记录数： ${e.data.count}</div>`)
+                    $('.m-style').append(
+                        `<div href="javascript:;" class="cunt" style='padding: 0 4px;' >总记录数： ${e.data.count}</div>`
+                    )
                 }, 1000)
 
             } else {
                 showErr(e.errmsg, e.errmsg_en, e.errcode)
                 $('.m-style').css('display', 'none');
                 list.listdata = [];
-                list.fade=true
+                list.fade = true
 
             }
         })
@@ -274,9 +297,9 @@
 
         data: {
             listdata: [],
-            fade:false,
-            lang_txt: get_page_txt('Member_list'),  // 当前页面的文字信息
-            obj_txt:{} // 对象拼接
+            fade: false,
+            lang_txt: get_page_txt('Member_list'), // 当前页面的文字信息
+            obj_txt: {} // 对象拼接
         },
         mounted() {
             this.lang_toggle()
@@ -299,20 +322,20 @@
                 this.obj_txt = splicing_obj(this.lang_txt)
             }
         },
-        
-       
+
+
     })
 
     var modal_data = new Vue({
         el: '#my_model',
         data: {
             mdata: {},
-            obj_txt:{}
+            obj_txt: {}
 
         },
-        mounted(){
-            this.$nextTick(function(){
-                this.obj_txt =list.obj_txt
+        mounted() {
+            this.$nextTick(function () {
+                this.obj_txt = list.obj_txt
             })
         },
 
@@ -335,7 +358,7 @@
                         } else {
                             obj['Grade'] = '12';
                         }
-                       obj['limit'] = [(page-1)*pagesize, pagesize].join(","); //条目数
+                        obj['limit'] = [(page - 1) * pagesize, pagesize].join(","); //条目数
 
                         search_member(obj)
                     } else {

@@ -33,42 +33,43 @@
     <div id="main" v-cloak class="market_shop">
         <div class="search_txt">
             <div>
-                <p>审批人</p>
-                <input type="text" class="approve_name">
+                <p>{{obj_txt.apply_person}}</p>
+                <input type="text" class="approve_name" :placeholder="obj_txt.apply_person">
             </div>
             <div>
-                <p>审批状态</p>
+                <p>{{obj_txt.apply_status}}</p>
                 <select name="" id="" class="apply_status">
-                    <option value="0">待审核</option>
-                    <option value="1">通过</option>
-                    <option value="2">拒绝</option>
+                    <option value="">{{obj_txt.apply_status}}</option>
+                    <option value="0">{{obj_txt.wait_approve}}</option>
+                    <option value="1">{{obj_txt.Adopt}}</option>
+                    <option value="2">{{obj_txt.Refuse}}</option>
                 </select>
             </div>
             <div>
-                <p>开始时间</p>
+                <p>{{obj_txt.Start_time}}</p>
                 <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate start_time">
             </div>
             <div>
-                <p>结束时间</p>
+                <p>{{obj_txt.End_time}}</p>
                 <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate end_time">
             </div>
-            <input type="button" id="" name="" value="搜索" class="btn btn-success btn-radius btn-serach" style="height: 30px;" @click="search_btn()">
+            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px;" @click="search_btn()">
 
         </div>
         <div class="shop_list">
             <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
                 <thead>
-                    <th style="width: 170px;">Shopno 店铺号</th>
-                    <th style="width: 100px;">Status 店铺状态</th>
-                    <th style="width: 100px;">Phone 手机号</th>
-                    <th style="width: 120px;">apply_person 审批人</th>
-                    <th style="width: 90px;">apply_status 审批状态</th>
-                    <th style="">apply_info 审批信息</th>
-                    <th>OwnerName 店铺所有者</th>
-                    <th>Region 所在地区</th>
-                    <th>Oper 录入人</th>
+                    <th style="width: 170px;">{{obj_txt.Shopno}}</th>
+                    <th style="width: 100px;">{{obj_txt.Status}}</th>
+                    <th style="width: 100px;">{{obj_txt.Phone}}</th>
+                    <th style="width: 120px;">{{obj_txt.apply_person}}</th>
+                    <th style="width: 90px;">{{obj_txt.apply_status}}</th>
+                    <th style="">{{obj_txt.apply_info}}</th>
+                    <th>{{obj_txt.OwnerName}}</th>
+                    <th>{{obj_txt.Region}}</th>
+                    <th>{{obj_txt.Oper}}</th>
                     <th>
-                        操作
+                       
                     </th>
                     </tr>
                 </thead>
@@ -76,7 +77,6 @@
                     <tr v-for="(s,index) in shop_list" v-if='shop_list.length'>
                         <td style="width: 170px;">{{s.Shopno}}</td>
                         <td style="width: 100px;">{{status_txt(s.Status)}}</td>
-
                         <td style="width: 100px;">{{s.Phone}}</td>
                         <td style="width: 120px;">{{s.apply_person}}</td>
                         <td style="width: 90px;">{{apply_status_txt(s.apply_status)}}</td>
@@ -88,12 +88,12 @@
                         <td>{{s.Oper}}</td>
                         <td>
                             <a title="查看" class="btn btn-primary size-S radius" href="javascript:;" @click="open_detail_shop(s.Shopno)" style="text-decoration: none;">
-                                查看
+                                {{obj_txt.Open_detail}}
                                 <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: #fff"></i>
                             </a>
                             <a title="审批" class="btn btn-primary size-S radius" href="javascript:;" @click="open_approve(s.Shopno,s.apply_status,s.apply_info)"
                                 style="text-decoration: none;">
-                                审批
+                                {{obj_txt.Open_approve}}
                                 <i class="Hui-iconfont Hui-iconfont-edit" style="color: #fff;"></i>
                             </a>
                         </td>
@@ -114,13 +114,13 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            Shopno
+                            {{obj_txt.Shopno}}
                         </p>
                         <input type="text" :value="data_detail.Shopno" disabled>
                     </div>
                     <div>
                         <p class="">
-                            RegionPerson
+                            {{obj_txt.RegionPerson}}
                         </p>
                         <input type="text" :value="data_detail.RegionPerson" disabled>
                     </div>
@@ -128,13 +128,13 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            KediID
+                            {{obj_txt.KediID}}
                         </p>
                         <input type="text" :value="data_detail.KediID" disabled>
                     </div>
                     <div>
                         <p class="">
-                            OwnerName
+                            {{obj_txt.OwnerName}}
                         </p>
                         <input type="text" :value="data_detail.OwnerName" disabled>
                     </div>
@@ -142,13 +142,13 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            State
+                            {{obj_txt.State}}
                         </p>
                         <input type="text" :value="data_detail.State" disabled>
                     </div>
                     <div>
                         <p class="">
-                            Phone
+                            {{obj_txt.Phone}}
                         </p>
                         <input type="text" :value="data_detail.Phone" disabled>
                     </div>
@@ -156,13 +156,13 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            Address
+                            {{obj_txt.Address}}
                         </p>
                         <input type="text" :value="data_detail.Address" disabled>
                     </div>
                     <div>
                         <p class="">
-                            OpenDate
+                            {{obj_txt.OpenDate}}
                         </p>
                         <input type="text" :value="data_detail.OpenDate ? data_detail.OpenDate.substring(0,19) : ''" disabled>
                     </div>
@@ -170,13 +170,13 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            CloseDate
+                            {{obj_txt.CloseDate}}
                         </p>
                         <input type="text" :value="data_detail.CloseDate" disabled>
                     </div>
                     <div>
                         <p class="">
-                            Add_Date
+                            {{obj_txt.Add_Date}}
                         </p>
                         <input type="text" :value="!!data_detail.Add_Date?data_detail.Add_Date.substring(0, 19) : ''" disabled>
                     </div>
@@ -184,13 +184,13 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            Preparedby
+                            {{obj_txt.Preparedby}}
                         </p>
                         <input type="text" :value="data_detail.Preparedby" disabled>
                     </div>
                     <div>
                         <p class="">
-                            Memo
+                            {{obj_txt.Memo}}
                         </p>
                         <input type="text" :value="data_detail.Memo" disabled>
                     </div>
@@ -198,14 +198,14 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            UpdateDate
+                            {{obj_txt.UpdateDate}}
                         </p>
                         <input type="text" :value=" !!data_detail.UpdateDate?data_detail.UpdateDate.substring(0,19) : ''" disabled>
                     </div>
 
                 </div>
                 <div class="btn_con" style="text-align: right;">
-                    <input type="button" class="btn btn-default BtnClose" value="关闭" data-dismiss="modal" aria-hidden="true">
+                    <input type="button" class="btn btn-default BtnClose" :value="obj_txt.BtnClose" data-dismiss="modal" aria-hidden="true">
                 </div>
             </div>
 
@@ -217,24 +217,24 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            Shop_no
+                            {{obj_txt.Shopno}}
                         </p>
                         <input type="text" v-model="Shopno" disabled>
                     </div>
                     <div>
                         <p>
-                            apply_status
+                            {{obj_txt.apply_status}}
                         </p>
                         <select name="" id="" v-model="apply_status">
-                            <option value="1">通过</option>
-                            <option value="2">拒绝</option>
+                            <option value="1">{{obj_txt.Adopt}}</option>
+                            <option value="2">{{obj_txt.Refuse}}</option>
                         </select>
                     </div>
                 </div>
                 <div class="model_list" style="margin-top: 15px;">
                     <div>
                         <p class="" style="margin-right: 5px;">
-                            apply_info
+                            {{obj_txt.apply_info}}
                         </p>
                         <textarea v-model="apply_info" name="" id="" style="width: 412px; height: 100px; padding: 5px;" placeholder="填写审批信息" resize="none"></textarea>
                     </div>
@@ -261,11 +261,12 @@
                 shop_list: [],
                 fade: false,
                 no_data: config_txt.no_data.zn,
-                lang_txt: get_page_txt('Member_list'), // 当前页面的文字信息
+                lang_txt: get_page_txt('Market_Shop'), // 当前页面的文字信息
                 obj_txt: {}, // 对象拼接
             },
             mounted() {
-                init_data()
+                init_data(),
+                this.lang_toggle()
             },
             methods: {
                 lang_toggle() {
@@ -331,7 +332,8 @@
             data: {
                 Shopno: '',
                 apply_status: '',
-                apply_info: ''
+                apply_info: '',
+                obj_txt:apply_list.obj_txt
             },
             methods: {
                 approve_shop() {
@@ -367,7 +369,8 @@
             el: "#detail_shop",
             data: {
                 Shopno: '',
-                data_detail: {}
+                data_detail: {},
+                obj_txt:apply_list.obj_txt
             },
             methods: {
                 get_detail() {

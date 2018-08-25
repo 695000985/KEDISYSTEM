@@ -70,7 +70,7 @@ function get_language(fn){
     var data = {};
     data['usertoken'] = get_cache('usertoken');
     // data["page"]='';
-    data["limit"]="0,300";
+    data["limit"]="0,500";
     ajax(url, data, function (e) {
         if (e.stat == 1) {
             fn(e.data)
@@ -171,6 +171,6 @@ var config_year = function () {
     }
     return a
 };
-var  langs=['English','Chinese']
+var  langs=['English','中文']
 var config_month = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 

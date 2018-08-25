@@ -45,29 +45,30 @@
     <div id="main" v-cloak class="market_shop">
         <div class="search_txt">
             <div>
-                <p>审批人</p>
-                <input type="text" class="apply_person" placeholder="审批人">
+                <p>{{obj_txt.apply_person}}</p>
+                <input type="text" class="apply_person" :placeholder="obj_txt.apply_person">
             </div>
             <div>
-                <p>申请状态</p>
+                <p>{{obj_txt.apply_status}}</p>
                 <select name="" id="" class="apply_status">
-                    <option value="">申请状态</option>
-                    <option value="0">待审核</option>
-                    <option value="1">通过</option>
-                    <option value="2">拒绝</option>
+                    <option value="">{{obj_txt.apply_status}}</option>
+                    <option value="0">{{obj_txt.wait_approve}}</option>
+                    <option value="1">{{obj_txt.Adopt}}</option>
+                    <option value="2">{{obj_txt.Refuse}}</option>
                 </select>
             </div>
             <div>
-                <p>开始时间</p>
+                <p>{{obj_txt.Start_time}}</p>
                 <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate start_time">
             </div>
             <div>
-                <p>结束时间</p>
+                <p>{{obj_txt.End_time}}</p>
                 <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate end_time">
             </div>
-            <input type="button" id="" name="" value="搜索" class="btn btn-success btn-radius btn-serach" style="height: 30px;" @click="search_btn()">
+            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
+                @click="search_btn()">
 
-            <input type="button" id="" name="" value="申请店铺" class="btn btn-primary btn-radius" style="height: 30px; margin-left: 15px;"
+            <input type="button" id="" name="" :value="obj_txt.Apply_shop" class="btn btn-primary btn-radius" style="height: 30px; margin-left: 15px;"
                 @click="open_apply_form()">
 
         </div>
@@ -75,16 +76,16 @@
             <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
                 <thead>
                     <tr>
-                        <th style="width: 170px;">Shopno 店铺号</th>
-                        <th style="width: 100px;">Status 店铺状态</th>
-                        <th style="width: 100px;">Phone 手机号</th>
-                        <th style="width: 120px;">apply_person 审批人</th>
-                        <th style="width: 90px;">apply_status 审批状态</th>
-                        <th>OwnerName 店铺所有者</th>
-                        <th>Region 所在地区</th>
-                        <th>Oper 录入人</th>
+                        <th style="width: 170px;">{{obj_txt.Shopno}}</th>
+                        <th style="width: 100px;">{{obj_txt.Status}}</th>
+                        <th style="width: 100px;">{{obj_txt.Phone}}</th>
+                        <th style="width: 120px;">{{obj_txt.apply_person}}</th>
+                        <th style="width: 90px;">{{obj_txt.apply_status}}</th>
+                        <th>{{obj_txt.OwnerName}}</th>
+                        <th>{{obj_txt.Region}}</th>
+                        <th>{{obj_txt.Oper}}</th>
                         <th>
-                            操作
+
                         </th>
                     </tr>
                 </thead>
@@ -101,11 +102,11 @@
                         <td>
                             <a title="编辑" class="btn btn-primary size-S radius" href="javascript:;" @click="open_edit_shop(s.Shopno,s.Status,s.apply_status)"
                                 style="text-decoration: none;">
-                                编辑
+                                {{obj_txt.Open_edit}}
                                 <i class="Hui-iconfont Hui-iconfont-edit" style="color: #fff;"></i>
                             </a>
                             <a title="查看" class="btn btn-primary size-S radius" href="javascript:;" @click="open_detail_shop(s.Shopno)" style="text-decoration: none;">
-                                查看
+                                {{obj_txt.Open_detail}}
                                 <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: #fff"></i>
                             </a>
                         </td>
@@ -126,23 +127,23 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            Shop_no
+                            {{obj_txt.Shopno}}
                         </p>
                         <input type="text" v-model="Shopno">
                     </div>
                     <div>
                         <p>
-                            Status
+                            {{obj_txt.Status}}
                         </p>
                         <select name="" id="" v-model="Status">
-                            <option value="0">禁用</option>
-                            <option value="1">可用</option>
+                            <option value="0">{{obj_txt.Disable}}</option>
+                            <option value="1">{{obj_txt.Available}}</option>
                         </select>
                     </div>
                 </div>
                 <div class="btn_con">
-                    <input type="button" class="btn btn-success BtnUpdate" v-on:click='edit_shop()' value="提交">
-                    <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
+                    <input type="button" class="btn btn-success BtnUpdate" v-on:click='edit_shop()' :value="obj_txt.Submit">
+                    <input type="button" class="btn btn-default BtnClose" :value="obj_txt.BtnClose" data-dismiss="modal" aria-hidden="true">
                 </div>
             </div>
 
@@ -156,13 +157,13 @@
                     <div class="model_list">
                         <div>
                             <p class="">
-                                Shopno
+                                {{obj_txt.Shopno}}
                             </p>
                             <input type="number" v-model="Shopno">
                         </div>
                         <div>
                             <p class="">
-                                RegionPerson
+                                {{obj_txt.RegionPerson}}
                             </p>
                             <select name="" id="" v-model="RegionPerson">
                                 <option :value="r" v-for="r in region_con">{{r}}</option>
@@ -173,13 +174,13 @@
                     <div class="model_list">
                         <div>
                             <p class="">
-                                KediID
+                               {{obj_txt.KediID}}
                             </p>
                             <input type="text" v-model="KediID">
                         </div>
                         <div>
                             <p class="">
-                                OwnerName
+                               {{obj_txt.OwnerName}}
                             </p>
                             <input type="text" v-model="OwnerName">
                         </div>
@@ -188,7 +189,7 @@
                     <div class="model_list">
                         <div>
                             <p class="">
-                                State
+                               {{obj_txt.State}}
                             </p>
                             <select name="" id="" v-model="State">
                                 <option value="CHINA">CHINA</option>
@@ -204,7 +205,7 @@
                         </div>
                         <div>
                             <p class="">
-                                Phone
+                                {{obj_txt.Phone}}
                             </p>
                             <input type="text" v-model="Phone">
                         </div>
@@ -212,13 +213,13 @@
                     <div class="model_list">
                         <div>
                             <p class="">
-                                Address
+                                {{obj_txt.Address}}
                             </p>
                             <input type="text" v-model="Address">
                         </div>
                         <div>
                             <p class="">
-                                OpenDate
+                                {{obj_txt.OpenDate}}
                             </p>
                             <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="Wdate open_date">
 
@@ -227,13 +228,13 @@
                     <div class="model_list">
                         <div>
                             <p class="">
-                                Preparedby
+                                {{obj_txt.Preparedby}}
                             </p>
                             <input type="text" v-model="Preparedby">
                         </div>
                         <div>
                             <p class="">
-                                Memo
+                               {{obj_txt.Memo}}
                             </p>
                             <input type="text" v-model="Memo">
                         </div>
@@ -241,22 +242,21 @@
                     <div class="model_list">
                         <div>
                             <p class="">
-                                Region
+                                {{obj_txt.Region}}
                             </p>
                             <input type="text" v-model="Region">
                         </div>
                         <div>
                             <p class="">
-                                Direction
+                               {{obj_txt.Direction}} 
                             </p>
                             <input type="text" v-model="Direction">
                         </div>
                     </div>
                     <div class="btn_con">
-                        <input type="button" class="btn btn-success BtnUpdate" v-on:click="add_apply_shop" value="提交">
-                        <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
+                        <input type="button" class="btn btn-success BtnUpdate" v-on:click="add_apply_shop" :value="obj_txt.Submit">
+                        <input type="button" class="btn btn-default BtnClose" :value="obj_txt.BtnClose" data-dismiss="modal" aria-hidden="true">
                     </div>
-
                 </form>
 
             </div>
@@ -269,13 +269,13 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            Shopno
+                           {{obj_txt.Shopno}}
                         </p>
                         <input type="text" :value="data_detail.Shopno" disabled>
                     </div>
                     <div>
                         <p class="">
-                            RegionPerson
+                           {{obj_txt.RegionPerson}}
                         </p>
                         <input type="text" :value="data_detail.RegionPerson" disabled>
                     </div>
@@ -283,13 +283,13 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            KediID
+                            {{obj_txt.KediID}}
                         </p>
                         <input type="text" :value="data_detail.KediID" disabled>
                     </div>
                     <div>
                         <p class="">
-                            OwnerName
+                            {{obj_txt.OwnerName}}
                         </p>
                         <input type="text" :value="data_detail.OwnerName" disabled>
                     </div>
@@ -297,13 +297,13 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            State
+                            {{obj_txt.State}}
                         </p>
                         <input type="text" :value="data_detail.State" disabled>
                     </div>
                     <div>
                         <p class="">
-                            Phone
+                            {{obj_txt.Phone}}
                         </p>
                         <input type="text" :value="data_detail.Phone" disabled>
                     </div>
@@ -311,13 +311,13 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            Address
+                            {{obj_txt.Address}}
                         </p>
                         <input type="text" :value="data_detail.Address" disabled>
                     </div>
                     <div>
                         <p class="">
-                            OpenDate
+                            {{obj_txt.OpenDate}}
                         </p>
                         <input type="text" :value="data_detail.OpenDate ? data_detail.OpenDate.substring(0,19) : ''" disabled>
                     </div>
@@ -325,13 +325,13 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            CloseDate
+                            {{obj_txt.CloseDate}}
                         </p>
                         <input type="text" :value="data_detail.CloseDate" disabled>
                     </div>
                     <div>
                         <p class="">
-                            Add_Date
+                            {{obj_txt.Add_Date}}
                         </p>
                         <input type="text" :value="!!data_detail.Add_Date?data_detail.Add_Date.substring(0, 19) : ''" disabled>
                     </div>
@@ -339,13 +339,13 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            Preparedby
+                            {{obj_txt.Preparedby}}
                         </p>
                         <input type="text" :value="data_detail.Preparedby" disabled>
                     </div>
                     <div>
                         <p class="">
-                            Memo
+                            {{obj_txt.Memo}}
                         </p>
                         <input type="text" :value="data_detail.Memo" disabled>
                     </div>
@@ -353,14 +353,14 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                            UpdateDate
+                            {{obj_txt.UpdateDate}}
                         </p>
                         <input type="text" :value=" !!data_detail.UpdateDate?data_detail.UpdateDate.substring(0,19) : ''" disabled>
                     </div>
 
                 </div>
                 <div class="btn_con" style="text-align: right;">
-                    <input type="button" class="btn btn-default BtnClose" value="关闭" data-dismiss="modal" aria-hidden="true">
+                    <input type="button" class="btn btn-default BtnClose" :value="obj_txt.BtnClose" data-dismiss="modal" aria-hidden="true">
                 </div>
             </div>
 
@@ -379,7 +379,7 @@
                 shop_list: [],
                 fade: false,
                 no_data: config_txt.no_data.zn,
-                lang_txt: get_page_txt('market_shop'), // 当前页面的文字信息
+                lang_txt: get_page_txt('Market_Shop'), // 当前页面的文字信息
                 obj_txt: {}, // 对象拼接
             },
             created() {
@@ -387,11 +387,17 @@
             },
             mounted() {
                 this.lang_toggle()
+                // edit_shop.obj_txt=splicing_obj(this.lang_txt);
+                // apply_shop.obj_txt=splicing_obj(this.lang_txt);
+                // detail_shop.obj_txt=splicing_obj(this.lang_txt);
             },
 
             methods: {
                 lang_toggle() {
                     this.obj_txt = splicing_obj(this.lang_txt)
+
+
+
                 },
                 search_btn() {
                     page = 1;
@@ -455,7 +461,8 @@
             el: "#edit_shop",
             data: {
                 Shopno: '',
-                Status: ''
+                Status: '',
+                obj_txt: vm.obj_txt
             },
             methods: {
                 edit_shop() {
@@ -498,7 +505,8 @@
                 Memo: '',
                 Region: '',
                 Direction: '',
-                region_con: get_local_cache('region_data').split(',')
+                region_con: get_local_cache('region_data').split(','),
+                obj_txt: vm.obj_txt
             },
 
             methods: {
@@ -583,7 +591,8 @@
             el: "#detail_shop",
             data: {
                 Shopno: '',
-                data_detail: {}
+                data_detail: {},
+                obj_txt: vm.obj_txt
             },
             methods: {
                 get_detail() {
@@ -670,6 +679,23 @@
 
             })
         }
+
+        // function Parent() {
+        //     this.x = 100;
+        // }
+        // Parent.prototype.getX = function () {
+        //     console.log(this.x);
+        // };
+
+        // function Children() {
+        //     Parent.call(this);
+        //     this.y = 200;
+        // }
+        // Children.prototype = Object.create(Parent.prototype);
+        // Children.prototype.constructor = Children;
+        // Children.prototype.getY = function () {
+        //     console.log(this.y);
+        // };
     </script>
 
 
