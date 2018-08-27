@@ -38,7 +38,7 @@
                 </div>
                 <div>
                     <span id="MemberName">{{obj_txt.MemberName}}</span>
-                    <input type="text" class="member-name" name="index_2">
+                    <input type="text" class="member-name" name="index_5">
                 </div>
             </div>
             <div class="list_information">
@@ -48,7 +48,7 @@
                         <option value="KN">KN</option>
                         <option value="KG">KG</option>
                     </select>
-                    <input type="text" class="sponsor-code" name="index_3">
+                    <input type="text" class="sponsor-code" name="index_2">
                 </div>
                 <div>
                     <span id="SponsorName">{{obj_txt.SponsorName}}</span>
@@ -63,7 +63,7 @@
                         <option value="KN">KN</option>
                         <option value="KG">KG</option>
                     </select>
-                    <input type="text" class="plancement-code" name="index_4">
+                    <input type="text" class="plancement-code" name="index_3">
 
                 </div>
                 <div>
@@ -74,12 +74,12 @@
             <div class="list_information">
                 <div class="skin-minimal">
                     <span id="ShopNo">{{obj_txt.ShopNo}}</span>
-                    <input type="text"  id="" class="shop-code" name="index_5">
+                    <input type="text"  id="" class="shop-code" name="index_4">
 
                 </div>
                 <div>
                     <span id="Address">{{obj_txt.Address}}</span>
-                    <input type="text" class="address" name="index_6">
+                    <input type="text" class="address" name="aa">
                 </div>
             </div>
             <div class="list_information">
@@ -95,13 +95,13 @@
                 </div>
                 <div>
                     <span id="BankNumber">{{obj_txt.BankNumber}}</span>
-                    <input type="text" class="bank_num" name="index_7">
+                    <input type="text" class="bank_num" name="aa">
                 </div>
             </div>
             <div class="list_information">
                 <div>
                     <span id="Handset">{{obj_txt.Handset}}</span>
-                    <input type="text" style="width: 180px" class="mobile" name="index_8">
+                    <input type="text" style="width: 180px" class="mobile" name="index_6">
                 </div>
                 <div style="width: 190px;">
                     <span id="Gender">{{obj_txt.Gender}}</span>
@@ -179,7 +179,8 @@
 </body>
 <script>
     var key = getQueryString('key');
-    var input_index ='1'
+   // set_cache('input_index',1)
+    var input_index =1
     $(function () {
         // get_user_info(function (ret) {
         //    // $('.adress_admin').val(ret.username)
@@ -199,6 +200,8 @@
                 })
             }
         })
+
+        
 
         $('.sponsor_code_prefix').change(function () {
             if ($('.sponsor-code').val().length >= 6) {
@@ -233,10 +236,18 @@
             if(e.keyCode == 9){
                 e.stopPropagation();
                 e.preventDefault();
-                var nextindex=$(this).attr('name').split('_')[1]*1+1;
+                if(!!$(this).attr('name').split('_')){
+                    input_index= $(this).attr('name').split('_')[1]*1;
+                }
+                var nextindex=input_index+1;
                 $(`input[name="index_${nextindex}"]`).focus()
             }
-
+        })
+        $('input[name="aa"]').on('keydown',function(e){
+            if(e.keyCode == 9){
+                e.stopPropagation();
+                e.preventDefault();
+            }
         })
 
     })
