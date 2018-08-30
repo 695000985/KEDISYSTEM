@@ -356,6 +356,8 @@
                                 obj = {};
                                 obj['limit'] = [(page - 1) * pagesize, pagesize].join(","); //条目数
                                 my_apply(obj)
+
+
                             }, 2000)
                         } else {
                             showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
@@ -440,6 +442,8 @@
                         $('.my_page').append(
                             `<div href="javascript:;" class="cunt" style='padding: 0 4px;' >总记录数： ${retjson.data.count}</div>`
                         )
+
+                         window.location.href="#"
                     }, 500)
                 } else {
                     showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)

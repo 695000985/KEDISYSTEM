@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>科迪会员录入系统</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+    <script src="../script/excellentexport.js"></script>
+    <style>
+        .nav>ul>li>a {
+            padding: 0 5px;
+        }
+
+        .tr_active {
+            background: #999;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="order_input_con">
+        <header class="navbar-wrapper">
+            <div class="navbar navbar-black">
+                <div class="cl" style="width: 1100px">
+
+                </div>
+            </div>
+        </header>
+        <div class="kd_content">
+            <div class="left" >
+                <div class="order_left_info " id="top_left">
+                    <div>
+                        <p class="DATE">{{obj_txt.DATE}}
+                            <input class="Wdate" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})"> </p>
+                        <div class="">
+                            <button class="btn_C BtnClear" onclick="_clear()">{{obj_txt.BtnClear}}</button>
+                            <input type="button" :value="obj_txt.BtnSearch" class="btn btn-success BtnSearch" onclick="query_order_report($('.Wdate').val(),$('.select_shop_no').val())">
+                        </div>
+                    </div>
+                    <div>
+                        <p class="ShopNo">
+                            {{obj_txt.ShopCode}}
+                            <input type="text" class="shop_no">
+                        </p>
+                        <p class="Product_Number">
+                           {{obj_txt.Product_Number}}
+                            <input type="text" class="product_no">
+                            <!-- <button  class="query_pro_btn" style="display: none">查找产品</button>
+
+                            设置数量 -->
+                            <input type="number" class="set_num" style="display: none;">
+                            <!-- <button  class="set_num_btn" style="display: none;">set_num</button> -->
+                        </p>
+                        <p style="visibility: hidden;">
+                            <input type="checkbox"> stop_focus
+                        </p>
+                    </div>
+                </div>
+                <div class="order_left_products" style="height: 400px; overflow: auto;">
+                    <table class="table table-border table-bordered table-bg " id="p_list" style="background: #fff;">
+                        <thead>
+                            <tr>
+                                <th width='30'></th>
+                                <th class="ProductID">{{obj_txt.ProductID}}</th>
+                                <th class="ProductName">{{obj_txt.ProductName}}</th>
+                                <th class="Product_Memberprice">{{obj_txt.Product_Memberprice}}</th>
+                                <th class="Product_BV">{{obj_txt.Product_BV}}</th>
+                                <th class="Product_PV">{{obj_txt.Product_PV}}</th>
+                                <th class="Product_QTY">{{obj_txt.Product_QTY}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(x,$index) in listdata" v-bind:class="{ tr_active: $index == index_active }">
+                                <td width='30'></td>
+                                <td>{{x.ProductNO}}</td>
+                                <td>{{x.CName}}</td>
+                                <td>{{x.MemberPrice}}</td>
+                                <td>{{x.BV}}</td>
+                                <td>{{x.PV}}</td>
+                                <td>{{x.Qty}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="order_left_total" id="toatl_con">
+                    <div class="TotalPrice">
+                        {{obj_txt.TotalPrice}}:
+                        <span class="total_price">{{total_data.total_price}}</span>
+                    </div>
+                    <div class="TotalBV">
+                        {{obj_txt.TotalBV}}:
+                        <span class="total_bv">{{total_data.total_bv}}</span>
+                    </div>
+                    <div class="TotalPV">
+                        {{obj_txt.TotalPV}}:
+                        <span class="total_bv">{{total_data.total_pv}}</span>
+                    </div>
+                    <div class="ADD_Order">
+                        <input type="button" class="btn btn-success" :value="obj_txt.ADD_Order" v-on:click='commit()'>
+                    </div>
+                </div>
+            </div>
+            <div class="right">
+                <div class="order_right_condition">
+                    <div>
+                        <p class="ShopCode">{{obj_txt.ShopCode}}
+                            <input type="text" class="select_shop_no">
+                        </p>
+                        <p class="ReportNo">编号：
+                            <input type="text" class="report_no" readonly disabled>
+                        </p>
+                    </div>
+                    <div>
+                        <input type="button" class="btn btn-success" value="Fresh" onclick="fresh()">
+                    </div>
+                </div>
+                <div class="order_right_formrecord">
+                    <div class="form_record_con">
+                        <table class="table table-border table-bordered table-bg " id="sale_list" style="background: #fff; width: 800px;">
+                            <thead>
+                                <tr>
+                                    <th class="Report_SaleNo">
+                                        报单编号
+                                    </th>
+                                    <th class="CustomerNo">会员编号</th>
+                                    <th class="ShopCode">专卖店</th>
+                                    <th class="TotalBV">总BV</th>
+                                    <th class="TotalPV">总PV</th>
+                                    <th class="TotalNaira">总金额</th>
+                                    <th class="ReporterName">录入员</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(x,$index) in sale_list" v-bind:class="{ tr_active: $index == index_active }" @click='on_active($index)'>
+                                    <td>{{x.saleno}}</td>
+                                    <td>{{x.customerno}}</td>
+                                    <td>{{x.shopno}}</td>
+                                    <td>{{x.Total_BV}}</td>
+                                    <td>{{x.Total_PV}}</td>
+                                    <td>{{x.Total_naira}}</td>
+                                    <td>
+                                        {{x.oper_name}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                <div class="order_right_bottom">
+                    <div class="top">
+                        <input type="button" value="DELETE" class="btn btn-danger BtnDelete" onclick="del_sale()">
+                        <div class="Report_BV">
+                            BV
+                            <input type="number" class="total_bv" value="0" disabled>
+                        </div>
+                        <div class="Report_PV">
+                            PV
+                            <input type="number" class="total_pv" value="0" disabled>
+                        </div>
+                        <div class="Report_Naira">
+                            Naira
+                            <input type="number" class="total_naira" value="0" disabled>
+                        </div>
+                    </div>
+                    <div class="bottom">
+                        <a download="data.xls" id="anchorNewApi-xls" href="#" class="btn btn-success ExportReport" onclick="return newApi('xls');exert_report_no()"
+                            style="display: none;">ExportReport</a>
+                        <input type="button" class="btn btn-success ExportReport" id="exprot" value="ExportReport" onclick="testing_export_data()">
+                        <input type="button" class="btn btn-success CreateReport" value="CreateReport" onclick="creat_report()">
+                    </div>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="order_input_footer">
+            <div>
+                查询到
+                <span>0</span>条记录
+            </div>
+            <div class="InsertDate">
+                录入日期：
+                <input class=" order_input_time " type="text">
+            </div>
+            <div class="InsertMent">
+                录入员：
+                <input type="text" disabled class="user_info">
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        var productdata = [];
+        var total_price = 0;
+        var total_bv = 0;
+        var total_pv = 0;
+        var query_stat;
+        var page_all_lang;
+        $(function () {
+            // get_user_info(function (ret) {
+            //     $('.user_info').val(ret.username)
+            // })
+            $('.user_info').val(JSON.parse(get_cache("user_info")).username)
+            $('.Wdate').focus(function () {
+                //  $('.order_input_time').val($('.Wdate').val())
+            })
+
+            $('.product_no').keyup(function (event) {
+                if (event.keyCode == 13) {
+                    btn_query();
+                }
+            });
+            $('.set_num').keyup(function (event) {
+                if (event.keyCode == 13) {
+                    set_num()
+                }
+            });
+            $('.shop_no').keyup(function () {
+                $('.select_shop_no').val($(this).val())
+            })
+            $('.Wdate').val(get_local_time())
+            // $('.order_input_time').val(get_local_time())
+            init()
+        })
+
+        function init() {
+            query_product() // 查询产品列表
+            query_order_report() //查询录入列表
+        }
+
+        function query_product(obj) { // 查询产品列表
+            var url = '/index.php?s=desktop/Tb_Product/get_list';
+            var data = {};
+            data['usertoken'] = get_cache('usertoken');
+            var option = $.extend({}, data, obj);
+            ajax(url, option, function (e) {
+                query_stat = e.stat;
+                if (e.stat == 1) {
+                    productdata = productdata.concat(e.data.list);
+                    productdata.unshift(productdata.pop())
+                    //productdata.remove(productdata.pop())
+                    product_list.listdata = productdata;
+
+                } else {
+                    showErr(e.errmsg, e.errmsg_en, e.errcode)
+                    return
+                }
+            })
+        }
+
+        function btn_query() { //查询产品
+            if (!!!$('.product_no').val()) {
+                showErr('产品编号不能为空')
+                return
+            }
+            var arr = [];
+
+            for (n in productdata) {
+                arr.push(productdata[n].ProductNO)
+            }
+            if (arr.includes($('.product_no').val().toUpperCase())) {
+                var obj = {};
+                obj['ProductNO'] = $('.product_no').val();
+
+                var del_index = $.inArray($('.product_no').val().toUpperCase(), arr);
+                productdata.splice(del_index, 1)
+                query_product(obj)
+                if (query_stat == 1) {
+                    product_list.index_active = 0;
+                    $('.product_no').css('display', 'none')
+                    $('.product_no').val('')
+                    $('.set_num').css('display', 'inline-block').focus()
+                }
+            } else {
+                showErr('输入的产品号不存在')
+            }
+        }
+
+        function set_num() { //设置产品数量
+            if (!!!$('.set_num').val()) {
+                showErr('设置数量不能为空');
+                return
+            }
+            product_list.listdata[0].Qty = $('.set_num').val();
+            total_price = total_price + $('.set_num').val() * product_list.listdata[0].MemberPrice;
+            total_bv = total_bv + $('.set_num').val() * product_list.listdata[0].BV;
+            total_pv = total_pv + $('.set_num').val() * product_list.listdata[0].PV;
+            total.total_data.total_price = total_price;
+            total.total_data.total_pv = total_bv;
+            total.total_data.total_bv = total_pv;
+            $('.set_num').css('display', 'none')
+            $('.set_num').val('')
+            $('.product_no').css('display', 'inline-block').focus();
+        }
+
+        function order_entry_list(obj) { // 产品录入
+            var url = '/index.php?s=desktop/Sale_Entered_By_Front/add';
+            var data = {};
+            data['usertoken'] = get_cache('usertoken');
+            data['Shopno'] = $('.shop_no').val();
+            data['RealDate'] = $('.Wdate').val();
+            data['ProductNO'] = obj;
+            ajax(url, data, function (e) {
+                if (e.stat == 1) {
+                    success(config_txt.success_text.zn_entry, config_txt.success_text.en_entry);
+                    setTimeout(function () {
+                        query_order_report($('.Wdate').val())
+                        _clear()
+                        product_list.index_active = -1;
+                    }, 2000)
+                } else {
+                    showErr(e.errmsg, e.errmsg_en, e.errcode)
+                }
+            })
+        }
+        var left_top = new Vue({
+            el: '#top_left',
+            mounted(){
+                this.lang_toggle();
+                
+            },
+            data: {
+                lang_txt: get_page_txt('Order_Insert'), // 当前页面的文字信息
+                obj_txt: {} // 对象拼接
+            },
+            methods:{
+                lang_toggle() {
+                    this.obj_txt = splicing_obj(this.lang_txt);
+                    page_all_lang=splicing_obj(this.lang_txt)
+                    // total.obj_txt=splicing_obj(this.lang_txt);
+                    // saleList.obj_txt=splicing_obj(this.lang_txt);
+                }
+            }
+
+        })
+
+        var product_list = new Vue({ //产品列表
+            el: '#p_list',
+            data: {
+                listdata: [],
+                sale_list: [],
+                index_active: -1,
+                obj_txt:page_all_lang
+            },
+            methods: {
+                on_active() {
+                    //alert(122)
+                }
+            }
+        })
+        var saleList = new Vue({
+            el: '#sale_list',
+            data: {
+                sale_list: [],
+                index_active: -1,
+                obj_txt:page_all_lang
+            },
+            methods: {
+                on_active(index) {
+                    //alert(122)
+
+                    this.index_active = index
+                }
+            }
+        })
+        let getArrIndex = function (arr, obj) {
+            let index = null;
+            let key = Object.keys(obj)[0];
+            arr.every(function (value, i) {
+                if (value[key] === obj[key]) {
+                    index = i;
+                    return false;
+                }
+                return true;
+            });
+            return index;
+        };
+        var total = new Vue({
+            el: '#toatl_con',
+            data: {
+                total_data: {
+                    total_price: total_price,
+                    total_pv: total_pv,
+                    total_bv: total_bv,
+                },
+                obj_txt:page_all_lang
+            },
+            methods: {
+                commit() {
+                    if (!!!$('.shop_no').val()) {
+                        showErr(config_txt.select_shop_no.zn_select_sn, config_txt.select_shop_no.zn_select_en)
+                        return
+                    }
+                    if (this.total_data.total_price <= 0) {
+                        showErr(config_txt.select_product.zn, config_txt.select_product.en)
+                    } else {
+                        var txt =
+                            `
+                    <table class="table-border">
+            <tr>
+                <td>NAIRA</td>
+                <td>${this.total_data.total_price}</td>
+                <td>BV</td>
+                <td>${this.total_data.total_bv}</td>
+            </tr>
+            <tr>
+                <td>PV</td>
+                <td>${this.total_data.total_pv}</td>
+                <td>SC</td>
+                <td>${$('.shop_no').val()}</td>
+            </tr>
+        </table> `
+
+                        firm('订单产品检测', txt, function () {
+                            var x = [];
+                            $('#p_list tr td:nth-child(7)').each(function () {
+                                if (!!$(this).html()) {
+                                    // alert($(this).html())
+                                    // alert($(this).parent().find('td:nth-child(2)').html())
+                                    var a = {};
+                                    a['ProductNO'] = $(this).parent().find('td:nth-child(2)').html();
+                                    a['Amount'] = $(this).html();
+                                    x.push(a)
+                                }
+                            })
+                            //x.pop()
+                            order_entry_list(JSON.stringify(x))
+                            layer.closeAll()
+                        })
+                    }
+
+
+                }
+            }
+        })
+
+        function query_order_report(time, shopno) { //录入订单列表
+            var url = '/index.php?s=desktop/Sale_Entered_By_Front/get_list';
+            var data = {};
+            data['usertoken'] = get_cache('usertoken');
+            data['RealDate'] = time || $('.Wdate').val();
+            data['Shopno'] = shopno || "";
+            ajax1(url, data, function (e) {
+                if (e.stat == 1) {
+                    saleList.sale_list = e.data.list;
+                    saleList.index_active = -1;
+                    $('.total_bv').val(e.data.Total_BV || 0);
+                    $('.total_pv').val(e.data.Total_PV || 0);
+                    $('.total_naira').val(e.data.Total_naira || 0);
+
+                    $('.select_shop_no').val(e.data.last_date.ShopNO);
+                    $('.shop_no').val(e.data.last_date.ShopNO);
+                    $('.order_input_time').val(e.data.last_date.RealDate.substring(0, 10))
+
+
+                    if (e.data.list.length > 0) {
+                        $('#exprot').css('display', 'none')
+                        $('#anchorNewApi-xls').css('display', 'block')
+                    }
+                } else {
+                    showErr(e.errmsg, e.errmsg_en, e.errcode)
+                    saleList.sale_list = []
+                    $('#exprot').css('display', 'block')
+                    $('#anchorNewApi-xls').css('display', 'none');
+                    $('.total_bv').val(0);
+                    $('.total_pv').val(0);
+                    $('.total_naira').val(0);
+                }
+            })
+        }
+
+        function fresh() { //重新选择删除项
+            saleList.index_active = -1;
+            query_order_report($('.Wdate').val())
+        }
+
+        function del_sale() { // 删除已录入的列表 
+            if (saleList.index_active == -1) {
+                showErr(config_txt.select_sale.zn, config_txt.select_sale.en);
+                return
+            }
+            var url = '/index.php?s=desktop/Sale_Entered_By_Front/Sale_Delete';
+            var data = {};
+            data['usertoken'] = get_cache('usertoken');
+
+            data['SaleNo'] = $('#sale_list tr.tr_active td:nth-child(1)').html();
+            let txt =
+                `
+                    <table class="table-border">
+            <tr>
+                <td class="TotalNaira">Total_naira</td>
+                <td>${$('#sale_list .tr_active td:nth-child(6)').html()}</td>
+                <td class="TotalBV">Total_BV</td>
+                <td>${$('#sale_list tr.tr_active td:nth-child(4)').html()}</td>
+            </tr>
+            <tr>
+                <td class="TotalPV">Total_PV</td>
+                <td>${$('#sale_list tr.tr_active td:nth-child(5)').html()}</td>
+                <td>SC</td>
+                <td>${$('#sale_list tr.tr_active td:nth-child(3)').html()}</td>
+            </tr>
+        </table> 
+        你确定删除已上报单
+        `
+            firm('删除报单', txt, function () {
+                ajax(url, data, function (e) {
+                    if (e.stat == 1) {
+                        query_order_report($('.Wdate').val())
+                    } else {
+                        showErr(e.errmsg, e.errmsg_en, e.errcode)
+                        //saleList.sale_list=[]
+                    }
+                })
+                layer.closeAll()
+            })
+        }
+
+        function _clear() { //清空输入条件
+            $('.order_left_info input[type="text"]').val('');
+            for (x in productdata) {
+                product_list.listdata[x].Qty = ''
+            }
+            $('.order_left_info input[type="number"]').val('');
+            total.total_data.total_price = 0;
+            total.total_data.total_bv = 0;
+            total.total_data.total_pv = 0;
+        }
+
+        function testing_export_data() {
+            showErr(config_txt.export_ext.zn, config_txt.export_ext.en)
+        }
+
+        function newApi(format) { //导出数据
+            return ExcellentExport.convert({
+                anchor: 'anchorNewApi-' + format,
+                filename: 'data.' + format,
+                format: format
+            }, [{
+                name: 'Sheet Name Here 1',
+                from: {
+                    table: 'sale_list'
+                }
+            }]);
+
+        }
+
+        function creat_report() {
+            if (saleList.sale_list.length <= 0) {
+                showErr(config_txt.export_creat.zn, config_txt.export_creat.en);
+                return
+            }
+
+            let txt =
+                `
+                    <table class="table-border">
+            <tr>
+                <td class="TotalNaira">Total_naira</td>
+                <td>${ $('.total_naira').val()}</td>
+                <td class="TotalBV">Total_BV</td>
+                <td>${$('.total_bv').val()}</td>
+            </tr>
+            <tr>
+                <td class="TotalPV">Total_PV</td>
+                <td>${$('.total_pv').val()}</td>
+                <td class="ShopCode">SC</td>
+                <td>${$('.select_shop_no').val()}</td>
+            </tr>
+        </table> 
+        你确定已上报单信息正确
+        `
+            firm('报单汇总', txt, function () {
+                layer.closeAll('page');
+                creat_report_no()
+            })
+        }
+
+        function creat_report_no() { // 生成报表编号
+            var url = '/index.php?s=desktop/Sale_Entered_By_Front/report';
+            var data = {};
+            data['usertoken'] = get_cache('usertoken');
+            data['RealDate'] = $('.order_input_time').val();
+            data['ShopNO'] = $('.select_shop_no').val();
+            data['Naira'] = parseInt($('.total_naira').val());
+            ajax(url, data, function (e) {
+                if (e.stat == 1) {
+                    $('.report_no').val(e.data.GroupID);
+                    open_frame('sale_report',
+                        `sale_report.html?shopno=${$('.select_shop_no').val()}&realdate=${$('.order_input_time').val()}&groupid=${e.data.GroupID}`
+                    )
+                } else {
+                    showErr(e.errmsg, e.errmsg_en, e.errcode)
+                }
+            })
+
+        }
+        // function exert_report_no() {// 生成报表编号
+        //     var url = '/index.php?s=desktop/Sale_Entered_By_Front/report';
+        //     var data = {};
+        //     data['usertoken'] = get_cache('usertoken');
+        //     data['RealDate'] = $('.Wdate').val();
+        //     data['ShopNO'] = $('.select_shop_no').val();
+        //     ajax(url, data, function (e) {
+        //         if (e.stat == 1) {
+        //             $('.report_no').val(e.data.GroupID);
+        //            // open_frame('sale_report', `sale_report.html?shopno=${$('.select_shop_no').val()}&realdate=${$('.Wdate').val()}&groupid=${e.data.GroupID}`)
+        //         } else {
+        //             showErr(e.errmsg, e.errmsg_en, e.errcode)
+        //         }
+        //     })
+        // }
+    </script>
+</body>
+
+</html>

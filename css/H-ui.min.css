@@ -4625,6 +4625,7 @@ only screen and (min-device-pixel-ratio:1.5) {
     border: solid 1px #d0d0d0;
     height: 34px;
     line-height: 34px
+    
 }
 
 .jsselect.radius {

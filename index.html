@@ -46,14 +46,14 @@
                     </template>
                     <template v-else>
                         <i class="Hui-iconfont">&#xe616;</i>
-                        <a class="text_1" v-bind:data-href="url(x.Menu_value)" v-bind:data-title="x.Menu_value" style="color: #aab8d5">{{obj_txt[x.Menu_value] || x.Menu_value}}</a>
+                        <a class="text_1" v-bind:data-href="url(x.Menu_value)" v-bind:data-title="obj_txt[x.Menu_value]" style="color: #aab8d5">{{obj_txt[x.Menu_value] || x.Menu_value}}</a>
 
                     </template>
                 </dt>
                 <dd v-bind:class="{block:ac_index == $index}">
                     <ul>
                         <li v-for='n in x.Menu_sons'>
-                            <a v-bind:data-href="url(n.Menu_value)" v-bind:data-title="n.Menu_value">{{obj_txt[n.Menu_value] || n.Menu_value }}</a>
+                            <a v-bind:data-href="url(n.Menu_value)" v-bind:data-title="obj_txt[n.Menu_value]">{{obj_txt[n.Menu_value] || n.Menu_value }}</a>
                         </li>
                     </ul>
                 </dd>
@@ -102,7 +102,7 @@
         <div id="iframe_box" class="Hui-article">
             <div class="show_iframe">
                 <div style="display:none" class="loading"></div>
-                <iframe scrolling="yes" frameborder="0" src="./temp/main.html"></iframe>
+                <iframe scrolling="yes" id="iframe1" frameborder="0" src="./temp/main.html"></iframe>
             </div>
         </div>
         <div class="status_bar">
@@ -116,7 +116,7 @@
     var open_url = {
         'Member_Insert': './temp/app_input.html', // 会员录入
         'Member_list': './temp/app_info.html', // 会员列表
-        'Order_Insert': './temp/order_input.html', // 订单录入
+        'Order_Insert': './temp/order_insert.html', // 订单录入
         'ManageReport': './temp/ManageReport.html',
         'desktop\/Nversions\/versions_detail': './temp/version.html',
         'updateReport': './temp/update_report.html',

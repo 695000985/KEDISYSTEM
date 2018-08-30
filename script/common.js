@@ -271,7 +271,7 @@ $(function() {
     });
 })
 
-function search_member(obj, fn) { // 搜索会员
+function search_member(obj, fn,Err) { // 搜索会员
     var url = '/index.php?s=desktop/Tb_Customer/get_list';
     var data = {};
     data['usertoken'] = get_cache('usertoken');
@@ -280,7 +280,7 @@ function search_member(obj, fn) { // 搜索会员
         if (e.stat == 1) {
             fn(e.data)
         } else {
-            showErr(e.errmsg, e.errmsg_en, e.errcode)
+            Err(e.errmsg, e.errmsg_en, e.errcode)
         }
     })
 }

@@ -63,28 +63,28 @@
                     <th scope="col" colspan="9">员工列表</th>
                 </tr> -->
                 <tr class="text-c">
-                    <th width="40" class="CustomerID">{{obj_txt.CustomerID}}</th>
-                    <th width="70" class="CustomerName">
+                    <th class="CustomerID">{{obj_txt.CustomerID}}</th>
+                    <th class="CustomerName">
                         {{obj_txt.CustomerName}}</th>
-                    <th width="100" class="CustomerNO">
+                    <th class="CustomerNO">
                         {{obj_txt.CustomerNO}}</th>
-                    <th width="50" class="Status">
+                    <th class="Status">
                         {{obj_txt.Status}}</th>
-                    <th width="100" class="ShopNO">
+                    <th width="100px" class="ShopNO">
                         {{obj_txt.ShopNO}}</th>
 
-                    <th width="100" class="RegDate">
+                    <th style="width: 100px;" class="">
                         {{obj_txt.SponsorNo}}</th>
-                    <th width="200" class="RegDate">
+                    <th style="width: 200px;" class="">
                         {{obj_txt.SponsorName}}</th>
 
-                    <th width="100" class="RegDate">
+                    <th class="">
                         {{obj_txt.PlacementNo}}</th>
-                    <th width="200" class="RegDate">
+                    <th class="">
                         {{obj_txt.PlacementName}}</th>
-                    <th width="200" class="RegDate">
+                    <th class="">
                         {{obj_txt.RegDate}}</th>
-                    <th width="100" class="Operating">
+                    <th class="Operating">
                         {{obj_txt.Operating}}
                     </th>
                 </tr>
@@ -99,11 +99,11 @@
 
                     <td>{{x.ParentNO}}</td>
                     <!-- 推荐人 -->
-                    <td>{{x.ParentName}}</td>
+                    <td style="width: 200px;">{{x.ParentName}}</td>
 
                     <td>{{x.RecommendNO}}</td>
                     <!-- 安置人 -->
-                    <td>{{x.RecommendName}}</td>
+                    <td style="width: 200px;">{{x.RecommendName}}</td>
                     <td>{{x.CreateTime}}</td>
                     <td>
                         <a title="编辑" href="javascript:;" style="text-decoration:none" v-on:click='open_model(x.CustomerID,x.CustomerName,x.CustomerNO,x.ShopNO,x.ParentNO,x.RecommendNO,x.Mobile)'>
@@ -211,6 +211,8 @@
         })
     })
 
+
+
     function statinit() {
         page = 1
         obj = {};
@@ -280,7 +282,7 @@
                         `<div href="javascript:;" class="cunt" style='padding: 0 4px;' >总记录数： ${e.data.count}</div>`
                     )
                 }, 1000)
-
+                window.location.href="#"
             } else {
                 showErr(e.errmsg, e.errmsg_en, e.errcode)
                 $('.m-style').css('display', 'none');

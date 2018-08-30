@@ -197,6 +197,8 @@
                 data['CustomerNO'] = $('.sponsor_code_prefix').val() + $('.sponsor-code').val()
                 search_member(data, function (e) {
                     $('.parentname').val(e.list[0].CustomerName)
+                },function(a,b,c){
+                   $('.parentname').val("")
                 })
             }
         })
@@ -209,6 +211,8 @@
                 data['CustomerNO'] = $('.sponsor_code_prefix').val() + $('.sponsor-code').val()
                 search_member(data, function (e) {
                     $('.parentname').val(e.list[0].CustomerName)
+                },function(a,b,c){
+                    $('.parentname').val("")
                 })
             }
         })
@@ -218,6 +222,8 @@
                 data['CustomerNO'] = $('.plancement_code_prefix').val() + $('.plancement-code').val()
                 search_member(data, function (e) {
                     $('.recommendname').val(e.list[0].CustomerName)
+                },function(a,b,c){
+                    $('.recommendname').val("")
                 })
             }
         })
@@ -228,6 +234,8 @@
                 data['CustomerNO'] = $('.plancement_code_prefix').val() + $('.plancement-code').val()
                 search_member(data, function (e) {
                     $('.recommendname').val(e.list[0].CustomerName)
+                },function(a,b,c){
+                    $('.recommendname').val("")
                 })
             }
         })
@@ -275,7 +283,6 @@
             if (ret.stat == 1) {
                 success(config_txt.success_text.zn_entry, config_txt.success_text.en_entry)
                 search_member_all()
-
                 $('#sale_list').css('display', 'block');
                 $("input[type='text']").val('')
             } else {
