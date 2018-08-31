@@ -65,12 +65,12 @@ function edit_user_passward(obj) { // 修改管理员登录密码
 }
 
 
-function get_language(fn){
+function get_language(fn) {
     var url = "/index.php?s=desktop/Nbutton_Lang/get_Lang_list";
     var data = {};
     data['usertoken'] = get_cache('usertoken');
     // data["page"]='';
-    data["limit"]="0,500";
+    data["limit"] = "0,500";
     ajax(url, data, function (e) {
         if (e.stat == 1) {
             fn(e.data)
@@ -80,25 +80,45 @@ function get_language(fn){
     })
 }
 
-function get_page_txt(pagename){ // 获取对应页面的文字信息
-    var lang_con= JSON.parse(get_local_cache('app_lang'));
-    var x=[];
-    for(i in lang_con.list){
-        if(lang_con.list[i].page == pagename){
-            x.push(lang_con.list[i])
+function get_page_txt(pagename) { // 获取对应页面的文字信息 
+    var lang_con;
+    if (!!!get_local_cache('app_lang')) {
+        get_language(function (e) {
+            set_local_cache('app_lang', JSON.stringify(e));
+            lang_con = JSON.parse(get_local_cache('app_lang'));
+            var x = [];
+            for (i in lang_con.list) {
+                if (lang_con.list[i].page == pagename) {
+                    x.push(lang_con.list[i])
+                }
+            }
+            return x
+        })
+
+    } else {
+        lang_con = JSON.parse(get_local_cache('app_lang'));
+        var x = [];
+        for (i in lang_con.list) {
+            if (lang_con.list[i].page == pagename) {
+                x.push(lang_con.list[i])
+            }
         }
+        return x
     }
-    return x
+
+
+
+
 }
 
-function splicing_obj(txt_list){// 把 信息组成一个对象
-    var obj={};
-    if(get_local_cache("lang")  == 1){
-        for(i in txt_list){
+function splicing_obj(txt_list) { // 把 信息组成一个对象
+    var obj = {};
+    if (get_local_cache("lang") == 1) {
+        for (i in txt_list) {
             obj[txt_list[i].menu_key] = txt_list[i].zh
         }
-    }else{
-        for(i in txt_list){
+    } else {
+        for (i in txt_list) {
             obj[txt_list[i].menu_key] = txt_list[i].eng
         }
     }
@@ -117,51 +137,59 @@ var config_txt = {
     },
     "product_no": {
         "zn_network_err": '产品编号不能为空',
-        "en_network_err": ''
+        "en_network_err": 'Product number cannot be empty'
     },
     "select_shop_no": {
         "zn_select_sn": "填写专卖店编号",
-        "en_select_sn": ""
+        "en_select_sn": "Fill in the store number"
     },
     "select_product": {
         "zn": '请选择产品',
-        "en": '',
+        "en": 'Please select a product',
+    },
+    "not_product_no": {
+        "zn": '输入的产品号不存在',
+        "en": "The product number entered does not exist"
     },
     "select_sale": {
         "zn": "选择删除的报单",
-        "en": ''
+        "en": 'Select deleted order'
     },
     "export_ext": {
         "zn": '没有数据可供导出',
-        "en": ''
+        "en": 'no date'
     },
     "export_creat": {
         "zn": '没有数据可供生成',
-        "en": ''
+        "en": 'no date'
     },
     "confirm_psw": {
         'zn': "密码不一致",
-        "cn": ""
+        "cn": "Inconsistent password"
     },
     "sel_cash": {
         "zn": "选择你要删除的信息",
         "en": "Pls select the line which one you want to delete"
     },
     "del_cash": {
-        "zn": "",
+        "zn": "要删除现金吗？",
         "en": "Do you want to delete the Cash",
     },
     "sel_tellar": {
-        "zn": '',
+        "zn": '请选择要删除的行！',
         "en": "Pls select the line which one you want to delete!"
     },
     "del_tellar": {
-        "zn": '',
+        "zn": '你想删除tellar吗？',
         "en": "Do you want to the delete tellar"
     },
     "no_data": {
         "zn": '暂无数据',
-        "en": ""
+        "en": "No data"
+    },
+    "set_num": {
+        "zn": '设置数量不能为空',
+        "en": "The number of settings cannot be empty"
     }
 }
 var config_year = function () {
@@ -171,6 +199,5 @@ var config_year = function () {
     }
     return a
 };
-var  langs=['English','中文']
+var langs = ['English', '中文']
 var config_month = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
-

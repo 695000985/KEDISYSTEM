@@ -144,47 +144,40 @@
     <script>
         $(function () {
             get_user_info_detail(function (e) {
-                $('.phone').val(e.Phone);
-                $('.Birthday').val(e.Birthday.substring(0, 10));
-                $('.country option').each(function () {
-                    if ($(this).val() == $.trim(e.Region)) {
-                        $(this).attr('selected', 'selected')
+                if (e.length > 0 || JSON.stringify(e) != "{}") {
+                    if(!!e.Phone){
+                        $('.phone').val(e.Phone);
                     }
-                })
-                // $('.religion option').each(function () {
-                //     if ($(this).val() == $.trim(e.religion)) {
-                //         $(this).attr('selected', 'selected')
-                //     }
-                // })
-                $('.ethnicity option').each(function () {
-                    if ($(this).val() == $.trim(e.People)) {
-                        $(this).attr('selected', 'selected')
-                    }
-                })
-                $('.email').val(e.Email);
-                $('.full_name').val(e.FullName);
-                $('.state').val(e.State);
-                $('.present_address').val(e.PresentAddress);
-                $('.hometown_address').val(e.HometownAddress);
-                $("input[name='radio']").each(function () {
-                    if ($(this).val() == $.trim(e.Gender)) {
-                        $(this).attr('checked', 'checked')
-                    }
-                })
+                    if(!!e.Birthday){$('.Birthday').val(e.Birthday.substring(0, 10));}
+                   
+                    $('.country option').each(function () {
+                        if ($(this).val() == $.trim(e.Region)) {
+                            $(this).attr('selected', 'selected')
+                        }
+                    })
+                    // $('.religion option').each(function () {
+                    //     if ($(this).val() == $.trim(e.religion)) {
+                    //         $(this).attr('selected', 'selected')
+                    //     }
+                    // })
+                    $('.ethnicity option').each(function () {
+                        if ($(this).val() == $.trim(e.People)) {
+                            $(this).attr('selected', 'selected')
+                        }
+                    })
+                    $('.email').val(e.Email);
+                    $('.full_name').val(e.FullName);
+                    $('.state').val(e.State);
+                    $('.present_address').val(e.PresentAddress);
+                    $('.hometown_address').val(e.HometownAddress);
+                    $("input[name='radio']").each(function () {
+                        if ($(this).val() == $.trim(e.Gender)) {
+                            $(this).attr('checked', 'checked')
+                        }
+                    })
+                }
+
             });
-            // get_user_info(function (e) {
-            //     $('.realname').val(e.realname);
-            //     $('.username').val(e.username);
-            //     $('.answer').val(e.Answer);
-            //     $('.deptment option').each(function () {
-            //         if ($(this).val() == $.trim(e.Dept)) {
-            //             $(this).attr('selected', 'selected')
-            //         }
-            //     })
-
-
-            // })
-
             $('.realname').val(JSON.parse(get_cache("user_info")).realname);
             $('.username').val(JSON.parse(get_cache("user_info")).username);
             $('.answer').val(JSON.parse(get_cache("user_info")).Answer);

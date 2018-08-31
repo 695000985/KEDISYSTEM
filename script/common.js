@@ -74,6 +74,10 @@ function remove_cache(key) {
     sessionStorage.removeItem(key);
 }
 
+function remove_local_cache(key) {
+    localStorage.removeItem(key);
+}
+
 
 //设置chrome cookie
 function set_chrome_() {
@@ -225,43 +229,6 @@ function hide_loading() {
     $('body').mLoading("hide"); //隐藏loading组件
 }
 
-function set_http() {
-    nw.App.unregisterGlobalHotKey(shortcut);
-    var url_http = prompt("修改服务器地址", setting_host || get_local_cache('http_url'))
-    if (!!url_http) {
-        setting_host = url_http;
-        set_local_cache('http_url', setting_host)
-    }
-    nw.App.registerGlobalHotKey(shortcut);
-}
-var option = {
-    key: "Ctrl+Shift+s",
-    active: function() {
-        console.log("全局快捷键: " + this.key + " 被激活.");
-    },
-    failed: function(msg) {
-        // :(, 无法注册 |key| 或未注册 |key|.
-        console.log(msg);
-    }
-};
-
-// 使用 |option| 注册快捷键
-var shortcut = new nw.Shortcut(option);
-nw.App.registerGlobalHotKey(shortcut);
-// 您还可以监听快捷键的成功或失败事件
-shortcut.on('active', function() {
-    set_http()
-});
-
-shortcut.on('failed', function(msg) {
-    console.log(msg);
-});
-
-
-// 注销全局快捷键
-//nw.App.unregisterGlobalHotKey(shortcut);
-
-
 $(function() {
 
     $('title').html('科迪会员录入系统' + '(' + nw.App.manifest.version + ')')
@@ -351,7 +318,6 @@ function check_time(k) { //小于10  补0；
 }
 
 function get_version(fn) {
-
     var url = '/index.php?s=desktop/Nversions/versions_detail';
     ajax1(url, {}, function(e) {
         if (e.stat == 1) {

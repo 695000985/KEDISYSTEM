@@ -118,34 +118,34 @@
                     </div>
                 </div>
             </div>
-            <div class="right">
+            <div class="right" id="sale_list" >
                 <div class="order_right_condition">
                     <div>
                         <p class="ShopCode">{{obj_txt.ShopCode}}
                             <input type="text" class="select_shop_no">
                         </p>
-                        <p class="ReportNo">编号：
+                        <p class="ReportNo">{{obj_txt.ReportNo}}：
                             <input type="text" class="report_no" readonly disabled>
                         </p>
                     </div>
                     <div>
-                        <input type="button" class="btn btn-success" value="Fresh" onclick="fresh()">
+                        <input type="button" class="btn btn-success" :value="obj_txt.Fresh" onclick="fresh()">
                     </div>
                 </div>
                 <div class="order_right_formrecord">
                     <div class="form_record_con">
-                        <table class="table table-border table-bordered table-bg " id="sale_list" style="background: #fff; width: 800px;">
+                        <table class="table table-border table-bordered table-bg " style="background: #fff; width: 800px;">
                             <thead>
                                 <tr>
                                     <th class="Report_SaleNo">
-                                        报单编号
+                                        {{obj_txt.ReportNo}}
                                     </th>
-                                    <th class="CustomerNo">会员编号</th>
-                                    <th class="ShopCode">专卖店</th>
-                                    <th class="TotalBV">总BV</th>
-                                    <th class="TotalPV">总PV</th>
-                                    <th class="TotalNaira">总金额</th>
-                                    <th class="ReporterName">录入员</th>
+                                    <th class="CustomerNo">{{obj_txt.Customer_No}}</th>
+                                    <th class="ShopCode">{{obj_txt.ShopCode}}</th>
+                                    <th class="TotalBV">{{obj_txt.TotalBV}}</th>
+                                    <th class="TotalPV">{{obj_txt.TotalPV}}</th>
+                                    <th class="TotalNaira">{{obj_txt.TotalNaira}}</th>
+                                    <th class="ReporterName">{{obj_txt.ReporterName}}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -167,41 +167,41 @@
                 </div>
                 <div class="order_right_bottom">
                     <div class="top">
-                        <input type="button" value="DELETE" class="btn btn-danger BtnDelete" onclick="del_sale()">
+                        <input type="button" :value="obj_txt.BtnDelete" class="btn btn-danger BtnDelete" onclick="del_sale()">
                         <div class="Report_BV">
-                            BV
+                           {{obj_txt.ReportBV}}
                             <input type="number" class="total_bv" value="0" disabled>
                         </div>
                         <div class="Report_PV">
-                            PV
+                           {{obj_txt.ReportPV}}
                             <input type="number" class="total_pv" value="0" disabled>
                         </div>
                         <div class="Report_Naira">
-                            Naira
+                            {{obj_txt.Report_Naira}}
                             <input type="number" class="total_naira" value="0" disabled>
                         </div>
                     </div>
                     <div class="bottom">
                         <a download="data.xls" id="anchorNewApi-xls" href="#" class="btn btn-success ExportReport" onclick="return newApi('xls');exert_report_no()"
-                            style="display: none;">ExportReport</a>
-                        <input type="button" class="btn btn-success ExportReport" id="exprot" value="ExportReport" onclick="testing_export_data()">
-                        <input type="button" class="btn btn-success CreateReport" value="CreateReport" onclick="creat_report()">
+                            style="display: none;">{{obj_txt.ExportReport}}</a>
+                        <input type="button" class="btn btn-success ExportReport" id="exprot" :value="obj_txt.ExportReport" onclick="testing_export_data()">
+                        <input type="button" class="btn btn-success CreateReport" :value="obj_txt.CreateReport" onclick="creat_report()">
                     </div>
                 </div>
             </div>
             <div class="clear"></div>
         </div>
         <div class="order_input_footer">
-            <div>
+            <div style="visibility:hidden">
                 查询到
                 <span>0</span>条记录
             </div>
             <div class="InsertDate">
-                录入日期：
+               <span class="InsertDate_txt"></span>：
                 <input class=" order_input_time " type="text">
             </div>
             <div class="InsertMent">
-                录入员：
+                <span class="InsertMent_name"></span> ：
                 <input type="text" disabled class="user_info">
             </div>
         </div>
@@ -269,7 +269,7 @@
 
         function btn_query() { //查询产品
             if (!!!$('.product_no').val()) {
-                showErr('产品编号不能为空')
+                showErr(config_txt.product_no.zn_network_err,config_txt.product_no.en_network_err0)
                 return
             }
             var arr = [];
@@ -291,13 +291,13 @@
                     $('.set_num').css('display', 'inline-block').focus()
                 }
             } else {
-                showErr('输入的产品号不存在')
+                showErr(config_txt.not_product_no.zn,config_txt.not_product_no.en)
             }
         }
 
         function set_num() { //设置产品数量
             if (!!!$('.set_num').val()) {
-                showErr('设置数量不能为空');
+                showErr(config_txt.set_num.zn,config_txt.set_num.en);
                 return
             }
             product_list.listdata[0].Qty = $('.set_num').val();
@@ -346,6 +346,9 @@
                 lang_toggle() {
                     this.obj_txt = splicing_obj(this.lang_txt);
                     page_all_lang=splicing_obj(this.lang_txt)
+
+                    $('.InsertMent_name').html(this.obj_txt.ReporterName)
+                    $('.InsertDate_txt').html(this.obj_txt.InsertDate)
                     // total.obj_txt=splicing_obj(this.lang_txt);
                     // saleList.obj_txt=splicing_obj(this.lang_txt);
                 }
@@ -430,7 +433,7 @@
             </tr>
         </table> `
 
-                        firm('订单产品检测', txt, function () {
+                        firm(this.obj_txt.Order_Product_title, txt, function () {
                             var x = [];
                             $('#p_list tr td:nth-child(7)').each(function () {
                                 if (!!$(this).html()) {

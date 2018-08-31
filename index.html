@@ -124,8 +124,8 @@
         'ChangeDate': './temp/change_date.html',
         'Market_Shop_get_list': './temp/market_shop.html', //店铺 列表
         'get_list_applay': './temp/apply_shop_list.html', //申请 列表
-        "account_password":"./temp/user_password.html", // 设置密码
-        "personal_details":"./temp/user_info.html", // 信息详情
+        "account_password": "./temp/user_password.html", // 设置密码
+        "personal_details": "./temp/user_info.html", // 信息详情
     };
 
     $(function () {
@@ -143,7 +143,7 @@
         detection_version(function (e) {})
         get_user_info(function (ret) {
             $('.user_info').html(ret.username + "(" + ret.Dept + ")")
-            set_cache('user_info',JSON.stringify(ret))
+            set_cache('user_info', JSON.stringify(ret))
         })
 
         get_region(function (e) { /// 获取 地区
@@ -161,10 +161,10 @@
         data: {
             menu_list: [],
             ac_index: -1,
-            lang_txt: get_page_txt('_menu'),  // 当前页面的文字信息
-            obj_txt:{} // 对象拼接
+            lang_txt: get_page_txt('_menu'), // 当前页面的文字信息
+            obj_txt: {} // 对象拼接
         },
-        mounted(){
+        mounted() {
             this.lang_toggle()
         },
         methods: {
@@ -203,6 +203,33 @@
     var networkInterfaces = os.networkInterfaces();
 
     console.info(networkInterfaces);
+
+
+    var option1 = {
+        key: "Ctrl+Shift+c",
+        active: function () {
+            console.log("全局快捷键: " + this.key + " 被激活.");
+        },
+        failed: function (msg) {
+            // :(, 无法注册 |key| 或未注册 |key|.
+            console.log(msg);
+        }
+    };
+
+    var shortcut1 = new nw.Shortcut(option1);
+    nw.App.registerGlobalHotKey(shortcut1);
+    // 您还可以监听快捷键的成功或失败事件
+    shortcut1.on('active', function () {
+        remove_local_cache('app_lang');
+        showErr('缓存清理成功')
+    });
+
+    shortcut1.on('failed', function (msg) {
+        console.log(msg);
+    });
+
+
+
 </script>
 
 </html>
