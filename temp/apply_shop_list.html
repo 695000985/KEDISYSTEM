@@ -33,6 +33,10 @@
     <div id="main" v-cloak class="market_shop">
         <div class="search_txt">
             <div>
+                <p>{{obj_txt.oper_name}}</p>
+                <input type="text" class="oper_name" :placeholder="obj_txt.oper_name">
+            </div>
+            <div>
                 <p>{{obj_txt.apply_person}}</p>
                 <input type="text" class="approve_name" :placeholder="obj_txt.apply_person">
             </div>
@@ -53,7 +57,8 @@
                 <p>{{obj_txt.End_time}}</p>
                 <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate end_time">
             </div>
-            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px;" @click="search_btn()">
+            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
+                @click="search_btn()">
 
         </div>
         <div class="shop_list">
@@ -69,7 +74,7 @@
                     <th>{{obj_txt.Region}}</th>
                     <th>{{obj_txt.Oper}}</th>
                     <th>
-                       
+
                     </th>
                     </tr>
                 </thead>
@@ -266,13 +271,12 @@
             },
             mounted() {
                 init_data(),
-                this.lang_toggle()
+                    this.lang_toggle()
             },
             methods: {
                 lang_toggle() {
                     this.obj_txt = splicing_obj(this.lang_txt)
                 },
-
                 search_btn() {
                     page = 1;
                     obj = {};
@@ -333,7 +337,7 @@
                 Shopno: '',
                 apply_status: '',
                 apply_info: '',
-                obj_txt:apply_list.obj_txt
+                obj_txt: apply_list.obj_txt
             },
             methods: {
                 approve_shop() {
@@ -372,7 +376,7 @@
             data: {
                 Shopno: '',
                 data_detail: {},
-                obj_txt:apply_list.obj_txt
+                obj_txt: apply_list.obj_txt
             },
             methods: {
                 get_detail() {
@@ -401,11 +405,11 @@
         }
 
         function my_apply(obj) {
-            var url = "/index.php?s=desktop/Market_Shop/get_list";
+            var url = "/index.php?s=desktop/Market_Shop/get_list_applay";
             var data = {};
             data['usertoken'] = user_token;
             data['order'] = "Add_Date desc";
-            data['Oper'] = "";
+            data['Oper'] = $(".oper_name").val();
             data['apply_person'] = $(".approve_name").val();
             data['apply_status'] = $('.apply_status').val();
             data['start'] = $('.start_time').val();
@@ -443,7 +447,7 @@
                             `<div href="javascript:;" class="cunt" style='padding: 0 4px;' >总记录数： ${retjson.data.count}</div>`
                         )
 
-                         window.location.href="#"
+                        window.location.href = "#"
                     }, 500)
                 } else {
                     showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)

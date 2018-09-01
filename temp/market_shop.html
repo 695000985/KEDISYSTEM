@@ -100,7 +100,7 @@
                         <td>{{s.Region}}</td>
                         <td>{{s.Oper}}</td>
                         <td>
-                            <a title="编辑" class="btn btn-primary size-S radius" href="javascript:;" @click="open_edit_shop(s.Shopno,s.Status,s.apply_status)"
+                            <a title="编辑" class="btn btn-primary size-S radius" href="javascript:;" @click="open_edit_shop(s)"
                                 style="text-decoration: none;">
                                 {{obj_txt.Open_edit}}
                                 <i class="Hui-iconfont Hui-iconfont-edit" style="color: #fff;"></i>
@@ -141,6 +141,88 @@
                         </select>
                     </div>
                 </div>
+
+                <div class="model_list">
+                    <div>
+                        <p class="">
+                            {{obj_txt.RegionPerson}}
+                        </p>
+                        <select name="" id="" v-model="RegionPerson">
+                                <option :value="r" v-for="r in region_con">{{r}}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p>
+                            {{obj_txt.KediID}}
+                        </p>
+                        <input type="text" name="" id="" v-model="KediID">
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p class="">
+                            {{obj_txt.OwnerName}}
+                        </p>
+                        <input type="text" v-model="OwnerName">
+                    </div>
+                    <div>
+                        <p>
+                            {{obj_txt.State}}
+                        </p>
+                        <input type="text" name="" id="" v-model="State">
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p class="">
+                            {{obj_txt.Phone}}
+                        </p>
+                        <input type="text" v-model="Phone">
+                    </div>
+                    <div>
+                        <p>
+                            {{obj_txt.Address}}
+                        </p>
+                        <input type="text" name="" id="" v-model="Address">
+                    </div>
+                </div>
+
+                <div class="model_list">
+                    <div>
+                        <p class="">
+                            {{obj_txt.OpenDate}}
+                        </p>
+                        <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate OpenDate">
+                    </div>
+                    <div>
+                        <p>
+                            {{obj_txt.Preparedby}}
+                        </p>
+                        <input type="text" name="" id="" v-model="Preparedby">
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p class="">
+                                {{obj_txt.Memo}}
+                        </p>
+                        <input type="text" v-model="Memo">
+                    </div>
+                    <div>
+                        <p>
+                            {{obj_txt.Region}}
+                        </p>
+                        <input type="text" name="" id="" v-model="Region">
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p class="">
+                            {{obj_txt.Direction}}
+                        </p>
+                        <input type="text" v-model="Direction">
+                    </div>
+                </div>
                 <div class="btn_con">
                     <input type="button" class="btn btn-success BtnUpdate" v-on:click='edit_shop()' :value="obj_txt.Submit">
                     <input type="button" class="btn btn-default BtnClose" :value="obj_txt.BtnClose" data-dismiss="modal" aria-hidden="true">
@@ -174,13 +256,13 @@
                     <div class="model_list">
                         <div>
                             <p class="">
-                               {{obj_txt.KediID}}
+                                {{obj_txt.KediID}}
                             </p>
                             <input type="text" v-model="KediID">
                         </div>
                         <div>
                             <p class="">
-                               {{obj_txt.OwnerName}}
+                                {{obj_txt.OwnerName}}
                             </p>
                             <input type="text" v-model="OwnerName">
                         </div>
@@ -189,7 +271,7 @@
                     <div class="model_list">
                         <div>
                             <p class="">
-                               {{obj_txt.State}}
+                                {{obj_txt.State}}
                             </p>
                             <select name="" id="" v-model="State">
                                 <option value="CHINA">CHINA</option>
@@ -234,7 +316,7 @@
                         </div>
                         <div>
                             <p class="">
-                               {{obj_txt.Memo}}
+                                {{obj_txt.Memo}}
                             </p>
                             <input type="text" v-model="Memo">
                         </div>
@@ -248,7 +330,7 @@
                         </div>
                         <div>
                             <p class="">
-                               {{obj_txt.Direction}} 
+                                {{obj_txt.Direction}}
                             </p>
                             <input type="text" v-model="Direction">
                         </div>
@@ -269,13 +351,13 @@
                 <div class="model_list">
                     <div>
                         <p class="">
-                           {{obj_txt.Shopno}}
+                            {{obj_txt.Shopno}}
                         </p>
                         <input type="text" :value="data_detail.Shopno" disabled>
                     </div>
                     <div>
                         <p class="">
-                           {{obj_txt.RegionPerson}}
+                            {{obj_txt.RegionPerson}}
                         </p>
                         <input type="text" :value="data_detail.RegionPerson" disabled>
                     </div>
@@ -395,9 +477,6 @@
             methods: {
                 lang_toggle() {
                     this.obj_txt = splicing_obj(this.lang_txt)
-
-
-
                 },
                 search_btn() {
                     page = 1;
@@ -406,15 +485,26 @@
                     obj['limit'] = [0, pagesize].join(","); //条目数
                     get_shop(obj)
                 },
-                open_edit_shop(s_no, status, apply_status) {
-
-                    if (apply_status == 0) {
+                open_edit_shop(obj) {
+                    
+                    if (obj.apply_status == 0) {
                         showErr('该条信息正在审核中,暂时无法编辑...');
                         return
                     }
+                    edit_shop.Shopno = $.trim(obj.Shopno);
+                    edit_shop.Status = $.trim(obj.Status);
+                    edit_shop.RegionPerson = $.trim(obj.RegionPerson);
+                    edit_shop.KediID = $.trim(obj.KediID);
+                    edit_shop.OwnerName = $.trim(obj.OwnerName);
+                    edit_shop.State = $.trim(obj.State);
+                    edit_shop.Phone = $.trim(obj.Phone);
+                    edit_shop.Address = $.trim(obj.Address);
+                    edit_shop.Preparedby = $.trim(obj.Preparedby);
+                    edit_shop.Memo = $.trim(obj.Memo);
+                    edit_shop.Region = $.trim(obj.Region);
+                    edit_shop.Direction = $.trim(obj.Direction);
 
-                    edit_shop.Shopno = s_no;
-                    edit_shop.Status = status;
+                    $(".OpenDate").val(obj.OpenDate.substring(0,16))
                     $('#edit_shop').modal('show')
                 },
                 open_detail_shop(s_no) {
@@ -462,6 +552,17 @@
             data: {
                 Shopno: '',
                 Status: '',
+                RegionPerson: "",
+                KediID: '',
+                OwnerName: '',
+                State: '',
+                Phone: '',
+                Address: '',
+                Preparedby: '',
+                Memo: '',
+                Region: '',
+                Direction: '',
+                region_con: get_local_cache('region_data').split(','),
                 obj_txt: vm.obj_txt
             },
             methods: {
@@ -471,11 +572,22 @@
                     data['usertoken'] = user_token;
                     data["Shopno"] = this.Shopno;
                     data["Status"] = this.Status;
+
+                    data["RegionPerson"] = this.RegionPerson;
+                    data["KediID"] = this.KediID;
+                    data["OwnerName"] = this.OwnerName;
+                    data["Phone"] = this.Phone;
+                    data["Address"] = this.Address;
+                    data["Preparedby"] = this.Preparedby;
+                    data["Memo"] = this.Memo;
+                    data["Region"] = this.Region;
+                    data["OpenDate"] = $('.OpenDate').val()
+
                     ajax(url, data, function (retjson) {
                         if (retjson.stat == 1) {
-                            success('已提交')
-                            $("#edit_shop").modal('hide');
-
+                            success('已提交');
+                           // edit_shop.update_shop(retjson.data)
+                           $("#edit_shop").modal('hide');
                             obj = {};
                             obj['limit'] = [(page - 1) * pagesize, pagesize].join(","); //条目数
                             get_shop(obj)
@@ -484,7 +596,22 @@
                             $("#edit_shop").modal('hide')
                         }
                     })
+                },
 
+                update_shop(Shopno){
+                    var url="/index.php?s=desktop/Market_Shop/update";
+                    var data={};
+                    data['usertoken']=user_token;
+                    data['Shopno']=Shopno;
+                    data['apply_status']=0;
+                    ajax(url,data,function(retjson){
+                        if (retjson.stat == 1) {
+                            success('已提交');
+                            $("#edit_shop").modal('hide');
+                        } else {
+                            $("#edit_shop").modal('hide');
+                        }
+                    })
                 }
             }
 
@@ -500,7 +627,6 @@
                 State: '',
                 Phone: '',
                 Address: '',
-               
                 Preparedby: '',
                 Memo: '',
                 Region: '',
@@ -512,44 +638,44 @@
             methods: {
                 add_apply_shop() {
                     if (!!!this.Shopno) {
-                        showErr(this.obj_txt.Please_enter+ "   "+this.obj_txt.Shopno)
+                        showErr(this.obj_txt.Please_enter + "   " + this.obj_txt.Shopno)
                         return
                     }
                     if (!!!this.KediID) {
-                        showErr(this.obj_txt.Please_enter + "   "+ this.obj_txt.KediID)
+                        showErr(this.obj_txt.Please_enter + "   " + this.obj_txt.KediID)
                         return
                     }
                     if (!!!this.OwnerName) {
-                        showErr(this.obj_txt.Please_enter + "   "+ this.obj_txt.OwnerName)
+                        showErr(this.obj_txt.Please_enter + "   " + this.obj_txt.OwnerName)
                         return
                     }
                     if (!!!this.Phone) {
-                        showErr(this.obj_txt.Please_enter+ "   "+this.obj_txt.Phone)
+                        showErr(this.obj_txt.Please_enter + "   " + this.obj_txt.Phone)
                         return
                     }
                     if (!!!this.Address) {
-                        showErr(this.obj_txt.Please_enter+ "   "+this.obj_txt.Address)
+                        showErr(this.obj_txt.Please_enter + "   " + this.obj_txt.Address)
                         return
                     }
                     if (!!!$('.open_date').val()) {
-                        showErr(this.obj_txt.Please_enter+ "   "+this.obj_txt.OpenDate)
+                        showErr(this.obj_txt.Please_enter + "   " + this.obj_txt.OpenDate)
                         return
                     }
                     if (!!!this.Preparedby) {
-                        showErr(this.obj_txt.Please_enter+ "   "+this.obj_txt.Preparedby)
+                        showErr(this.obj_txt.Please_enter + "   " + this.obj_txt.Preparedby)
                         return
                     }
 
                     if (!!!this.Memo) {
-                        showErr(this.obj_txt.Please_enter+ "   "+this.obj_txt.Memo)
+                        showErr(this.obj_txt.Please_enter + "   " + this.obj_txt.Memo)
                         return
                     }
                     if (!!!this.Region) {
-                        showErr(this.obj_txt.Please_enter+ " "+this.obj_txt.Region)
+                        showErr(this.obj_txt.Please_enter + " " + this.obj_txt.Region)
                         return
                     }
                     if (!!!this.Direction) {
-                        showErr(this.obj_txt.Please_enter+ "   "+this.obj_txt.Direction)
+                        showErr(this.obj_txt.Please_enter + "   " + this.obj_txt.Direction)
                         return
                     }
 
@@ -670,7 +796,7 @@
                             `<div href="javascript:;" class="cunt" style='padding: 0 4px;' >总记录数： ${retjson.data.count}</div>`
                         )
 
-                         window.location.href="#"
+                        window.location.href = "#"
                     }, 500)
                 } else {
                     showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
