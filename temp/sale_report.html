@@ -33,6 +33,14 @@
             zoom: 140%;
             vertical-align: -webkit-baseline-middle;
         }
+
+       #print_form1 th,#print_form1 td{
+            border-left: 1px solid #000 !important;
+            color: #000 !important;
+            font-size: 14px !important;
+            
+            border-bottom: 1px solid #000 !important;
+        }
     </style>
 </head>
 
@@ -43,13 +51,13 @@
                 <button class="btn btn-primary size-S radius" onclick="opne_print_form()">Preprint</button>
             </div>
             <div>
-                <p class="GroupID">编号：
+                <p class="GroupID">{{obj_txt.GroupID}}：
                     <input type="text" disabled v-bind:value="reportdata.input.GroupID">
                 </p>
-                <p class="RealDate">日期：
+                <p class="RealDate">{{obj_txt.RealDate}}：
                     <input type="text" disabled v-bind:value='reportdata.input.RealDate'>
                 </p>
-                <p class="ShopCode">专卖店：
+                <p class="ShopCode">{{obj_txt.Shop_Code}}：
                     <input type="text" disabled v-bind:value="reportdata.input.ShopNO">
                 </p>
             </div>
@@ -58,17 +66,17 @@
             <table class="table table-border table-bordered table-bg " id="" style="background: #fff; width: 900px;">
                 <thead>
                     <tr>
-                        <th>Code</th>
-                        <th>Products</th>
-                        <th>unit</th>
-                        <th>BV(USD)</th>
-                        <th>BV/PV(%)</th>
-                        <th>PV(USD)</th>
-                        <th>Naira PRICE</th>
-                        <th>QTY</th>
-                        <th>Total BV</th>
-                        <th>Total PV</th>
-                        <th>Total NR</th>
+                        <th>{{obj_txt.Product_code }}</th>
+                        <th>{{obj_txt.Product_name }}</th>
+                        <th>{{obj_txt.Product_unit }}</th>
+                        <th>{{obj_txt.Product_bv_usd}}</th>
+                        <th>{{obj_txt.Product_bv_pv}}</th>
+                        <th>{{obj_txt.Product_pv_usd}}</th>
+                        <th>{{obj_txt.Naira_price}}</th>
+                        <th>{{obj_txt.Product_qty}}</th>
+                        <th>{{obj_txt.Product_total_bv}}</th>
+                        <th>{{obj_txt.Product_total_pv}}</th>
+                        <th>{{obj_txt.Product_total_nr}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -91,63 +99,64 @@
         <div class="sale_rep_bot">
             <div class="left_sale_rep left">
                 <p>
-                    <span>S_Nylon: </span>
+                    <span>{{obj_txt.S_Nylon}}: </span>
                     <input type="text" :value="reportdata.S_Nylon" disabled>
                 </p>
                 <p>
-                    <span>B_Nylon: </span>
+                    <span>{{obj_txt.B_Nylon}}: </span>
                     <input type="text" :value="reportdata.B_Nylon" disabled>
                 </p>
                 <p>
-                    <span>Area: </span>
+                    <span>{{obj_txt.Area}}: </span>
                     <select name="" id="" v-model="aera" class="area">
                         <option :value="n.result" v-for="(n,$index) in reportdata.Aera" v-bind:selected="{'selected' : $index == 0}">{{n.result}}</option>
                     </select>
-                    <p>
-                        <span>Kits: </span>
-                        <input type="text" value="" v-model='kits'>
-                        <input type="checkbox" name="" id="" v-model="french">French
-                    </p>
-                    <p>
-                        <span>Unit Price: </span>
-                        <input type="text" :value="reportdata['Unit Price']" disabled>
-                    </p>
-                    <p>
-                        <span>Operator: </span>
-                        <input type="text" class="operator" disabled :value='operator'>
-                    </p>
+                </p>
+                <p>
+                    <span>{{obj_txt.Kits}}: </span>
+                    <input type="number" value="" v-model='kits'>
+                    <input type="checkbox" name="" id="" v-model="french">French
+                </p>
+                <p>
+                    <span>{{obj_txt.Unit_price}}: </span>
+                    <input type="text" :value="reportdata['Unit Price']" disabled>
+                </p>
+                <p>
+                    <span>{{obj_txt.Operator}}: </span>
+                    <input type="text" class="operator" disabled :value='operator'>
+                </p>
             </div>
             <div class="right_sale_rep right">
                 <p>
-                    <span>System Total: </span>
+                    <span>{{obj_txt.System_Total}}: </span>
                     <input type="text" :value="reportdata['System Total']*1 +　kits*reportdata['Unit Price']" disabled>
-                    <span>Result:</span>
-                    <input type="text" :value="reportdata.Result*1-kits*reportdata['Unit Price'] + debit*1 + tsfer*1 " disabled> </p>
+                    <span>{{obj_txt.Result}}:</span>
+                    <input type="text" :value="reportdata.Result*1-kits*reportdata['Unit Price']  + debit*1 + tsfer*1 + deposit*1 " disabled> </p>
                 <p>
-                    <span>Grand Total: </span>
+                    <span>{{obj_txt.Grand_Total}}: </span>
                     <input type="text" :value="reportdata['Grand Total']*1 + debit*1 + tsfer*1 + deposit*1" disabled>
                 </p>
                 <p>
-                    <span>Cash(NR): </span>
+                    <span>{{obj_txt.Cash_NR}}: </span>
                     <input type="text" :value="reportdata.CashMoney" disabled>
                     <button onclick="opne_cash_data()">...</button>
                 </p>
                 <p>
-                    <span>Bank Deposit: </span>
+                    <span>{{obj_txt.Bank_Deposit}}: </span>
                     <input type="text" disabled v-model="deposit">
                     <button onclick="open_tellar()">...</button>
                     <button onclick="open_distributor()">DIS</button>
                 </p>
                 <p>
-                    <span>Debit: </span>
+                    <span>{{obj_txt.Debit}}: </span>
                     <input type="number" v-model='debit' value="0" placeholder="0">
                 </p>
                 <p>
-                    <span>disct/tsfer: </span>
+                    <span>{{obj_txt.disct_tsfer}}: </span>
                     <input type="number" v-model='tsfer' value="0" placeholder="0">
                 </p>
                 <p>
-                    <span>Cash(usd): </span>
+                    <span>{{obj_txt.Cash_use}}: </span>
                     <input type="number" v-model='cash_usd' value="0" placeholder="0">
                 </p>
             </div>
@@ -268,7 +277,7 @@
         </P>
         <P>
             <span>本次用(Teller)</span>
-            <input type="text" :value="tellar">
+            <input type="text" :value="tellar" disabled>
         </P>
         <P>
             <span>Amount</span>
@@ -479,39 +488,39 @@
     <!--startprint-->
     <div id="canvas_con1">
         <div class="print_row">
-            <P>
+            <P style="font-size: 16px; color:#000;">
                 <span>汇总编号</span>
 
                 <span>{{groupid}}</span>
             </P>
-            <P>
+            <P style="font-size: 16px; color:#000;">
                 <span>所属机构</span>
                 <span>{{affiliated_institutions}}</span>
             </P>
-            <P>
+            <P style="font-size: 16px; color:#000;">
                 <span>制表人</span>
                 <span>{{people}}</span>
             </P>
         </div>
         <div class="print_row">
-            <input type="text" v-model="store_name" style="border: none;">
+            <input type="text" v-model="store_name" style="border: none;font-size: 20px; color:#000;">
         </div>
         <div class="print_row">
-            <P>
+            <P style="font-size: 16px; color:#000;">
                 <span>DATE</span>
-                <input class="Wdate" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" :value='local_time' style="border: none;">
+                <input class="Wdate" style="font-size: 16px; color:#000; border: none;" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" :value='local_time' >
             </P>
-            <P>
+            <P style="font-size: 16px; color:#000;">
                 <span>REGION</span>
                 <span>{{region}}</span>
             </P>
-            <P>
+            <P style="font-size: 16px; color:#000;">
                 <span>SERVICE</span>
                 <span>{{shop_no}}</span>
             </P>
         </div>
         <DIV class="list_data" style="overflow-x: auto;">
-            <table class="table table-border table-bordered table-bg " style="background: #fff; width: 1000px; margin: 0 auto;">
+            <table class="table table-border table-bordered table-bg " style="background: #fff; width: 1000px; margin: 0 auto; border: 1px solid #000;">
                 <thead>
                     <tr>
                         <th>CODE</th>
@@ -697,12 +706,12 @@
     var groupid = queryString('groupid');
     var admin_name;
     $(function () {
-      
+
         v_salereport.operator = JSON.parse(get_cache("user_info")).username;
-            admin_name = JSON.parse(get_cache("user_info")).username;
-            print_form.people = JSON.parse(get_cache("user_info")).username;
-            print_form1.people = JSON.parse(get_cache("user_info")).username;
-       
+        admin_name = JSON.parse(get_cache("user_info")).username;
+        print_form.people = JSON.parse(get_cache("user_info")).username;
+        print_form1.people = JSON.parse(get_cache("user_info")).username;
+
     })
     var v_salereport = new Vue({
         el: '#sale_report_content',
@@ -714,11 +723,17 @@
             cash_usd: '0',
             deposit: 0,
             aera: 'NONE',
-            french:false,
-            reportdata: {}
+            french: false,
+            reportdata: {},
+            lang_txt: get_page_txt('Sale_report'), // 当前页面的文字信息
+            obj_txt: {}, // 对象拼接
         },
         created: function () {
-            report_list()
+            report_list();
+            this.lang_toggle()
+        },
+        mounted() {
+            
         },
         watch: {
             aera(newval, oldval) {
@@ -729,7 +744,10 @@
         methods: {
             Preprint() {
                 edit_report()
-            }
+            },
+            lang_toggle() {
+                this.obj_txt = splicing_obj(this.lang_txt)
+            },
         }
 
     })
@@ -778,7 +796,7 @@
         data['ScNaira'] = v_salereport.reportdata.ScNaira;
         data['ScBV'] = v_salereport.reportdata.ScBV;
         data['ScPV'] = v_salereport.reportdata.ScPV;
-        data['French']=v_salereport.french;
+        data['French'] = v_salereport.french;
 
         ajax(url, data, function (e) {
             if (e.stat == 1) {
@@ -1184,6 +1202,7 @@
                 distributor_con.year = get_local_year();
                 distributor_con.month = get_local_month();
                 distributor_con.date = get_local_time();
+                distributor_con.teller = e.data.Show_TellarTotal;
             } else {
                 showErr(e.errmsg, e.errmsg_en, e.errcode)
             }
@@ -1195,11 +1214,12 @@
         data: {
             dis_data: '',
             tellar: 0,
+            teller:'',
             active_index: -1,
             groupid: groupid,
             sc: shopno,
-            balance: '9999',
-            RegionMoney: '4444',
+            balance: '',
+            RegionMoney: '',
             Region: '',
             Amount: "",
             RegPsw: "",
@@ -1209,7 +1229,14 @@
             date: '',
             Operator: '',
             KEDI_Code: '',
-            DIS_NAME: ''
+            DIS_NAME: '',
+            lang_txt: get_page_txt('Distributor'), // 当前页面的文字信息
+            obj_txt: {}, // 对象拼接
+        },
+        watch:{
+            teller(newval, oldval) {
+                v_salereport.deposit = newval;
+            }
         },
         methods: {
             search() {
@@ -1299,7 +1326,10 @@
             },
             on_active(index) {
                 this.active_index = index
-            }
+            },
+            lang_toggle() {
+                this.obj_txt = splicing_obj(this.lang_txt)
+            },
         }
 
     })

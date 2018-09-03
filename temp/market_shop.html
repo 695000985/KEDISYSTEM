@@ -169,7 +169,18 @@
                         <p>
                             {{obj_txt.State}}
                         </p>
-                        <input type="text" name="" id="" v-model="State">
+                       
+                        <select name="" id="" v-model="State">
+                            <option value="CHINA">CHINA</option>
+                                <option value="USA">USA
+                                </option>
+                                <option value="BRITAIN">BRITAIN</option>
+                                <option value="NIGERIA">NIGERIA</option>
+                                <option value="GHANA">GHANA</option>
+                                <option value="BENIN">BENIN</option>
+                                <option value="SOUTH_ARAICA">SOUTH_ARAICA</option>
+                                <option value="OTHERS">OTHERS</option>
+                        </select>
                     </div>
                 </div>
                 <div class="model_list">
@@ -282,7 +293,7 @@
                                 <option value="GHANA">GHANA</option>
                                 <option value="BENIN">BENIN</option>
                                 <option value="SOUTH_ARAICA">SOUTH_ARAICA</option>
-                                <option value="OTHERS"></option>
+                                <option value="OTHERS">OTHERS</option>
                             </select>
                         </div>
                         <div>
@@ -437,7 +448,7 @@
                         <p class="">
                             {{obj_txt.UpdateDate}}
                         </p>
-                        <input type="text" :value=" !!data_detail.UpdateDate?data_detail.UpdateDate.substring(0,19) : ''" disabled>
+                        <input type="text" :value="!!data_detail.UpdateDate?data_detail.UpdateDate.substring(0,19) : ''" disabled>
                     </div>
 
                 </div>
@@ -455,6 +466,7 @@
         var pagesize = 30;
         var pagestat = 0;
         var user_token = get_cache('usertoken');
+      
         var vm = new Vue({
             el: '#main',
             data: {
@@ -608,6 +620,8 @@
                         if (retjson.stat == 1) {
                             success('已提交');
                             $("#edit_shop").modal('hide');
+
+                           
                         } else {
                             $("#edit_shop").modal('hide');
                         }
