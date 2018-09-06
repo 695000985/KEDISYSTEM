@@ -129,16 +129,16 @@
             <div class="right_sale_rep right">
                 <p>
                     <span>{{obj_txt.System_Total}}: </span>
-                    <input type="text" :value="reportdata['System Total']*1 +　kits*reportdata['Unit Price']" disabled>
+                    <input type="text" :value="(reportdata['System Total']*1 +　kits*reportdata['Unit Price']) " disabled>
                     <span>{{obj_txt.Result}}:</span>
-                    <input type="text" :value="reportdata.Result*1-kits*reportdata['Unit Price']  + debit*1 + tsfer*1 + deposit*1 " disabled> </p>
+                    <input type="text" :value="reportdata.Result*1-kits*reportdata['Unit Price']  + debit*1 + tsfer*1 + deposit*1  " disabled> </p>
                 <p>
                     <span>{{obj_txt.Grand_Total}}: </span>
-                    <input type="text" :value="reportdata['Grand Total']*1 + debit*1 + tsfer*1 + deposit*1" disabled>
+                    <input type="text" :value="reportdata['Grand Total']*1 + debit*1 + tsfer*1 + deposit*1 " disabled>
                 </p>
                 <p>
                     <span>{{obj_txt.Cash_NR}}: </span>
-                    <input type="text" :value="reportdata.CashMoney" disabled>
+                    <input type="text" :value="reportdata.CashMoney " disabled>
                     <button onclick="opne_cash_data()">...</button>
                 </p>
                 <p>
@@ -173,29 +173,29 @@
 <div class="cash_data" id="cash_data" style="display: none">
     <div class="cash_top">
         <p>
-            <span>编号</span>
+            <span>{{obj_txt.Ca_groupid}}</span>
             <input type="text" disabled class="cash_gid" :value="cash_groupid" style="width: 140px;">
         </p>
         <p>
-            <span>日期</span>
+            <span>{{obj_txt.Ca_date}}</span>
             <input type="text" disabled class="cash_time" :value='cash_time'>
         </p>
         <p>
-            <span>SC</span>
+            <span>{{obj_txt.Ca_shopCode}}</span>
             <input type="text" disabled class="cash_sc" :value='cash_sc'>
         </p>
         <p>
-            <span>Total</span>
+            <span>{{obj_txt.Ca_total}}</span>
             <input type="text" disabled class="cash_total" v-model='cash_total'>
         </p>
     </div>
     <div class="cash_top">
         <p>
-            <span>Amount</span>
+            <span>{{obj_txt.Ca_amount}}</span>
             <input type="text" style="width:200px;" class="amount">
         </p>
-        <button class="btn btn-success" onclick="cash_data_add()">ADD</button>
-        <button class="btn btn-danger" v-on:click='del_data(cashid)'>DELETE</button>
+        <button class="btn btn-success" onclick="cash_data_add()">{{obj_txt.Ca_btn_add}}</button>
+        <button class="btn btn-danger" v-on:click='del_data(cashid)'>{{obj_txt.Ca_btn_delete}}</button>
     </div>
     <div class="" style="background: #ccc;
     height: 300px;
@@ -203,13 +203,13 @@
         <table class="table table-border table-bordered table-bg " style="background: #fff;">
             <thead>
                 <tr>
-                    <th>GroupID</th>
-                    <th>CashID</th>
-                    <th>ShopNo</th>
-                    <th>Amount</th>
-                    <th>RealDate</th>
-                    <th>Oper</th>
-                    <th>Memo</th>
+                    <th>{{obj_txt.Ca_groupid}}</th>
+                    <th>{{obj_txt.Ca_cashID}}</th>
+                    <th>{{obj_txt.Ca_shopCode}}</th>
+                    <th>{{obj_txt.Ca_amount}}</th>
+                    <th>{{obj_txt.Ca_RealDate}}</th>
+                    <th>{{obj_txt.Ca_Oper}}</th>
+                    <th>{{obj_txt.Ca_Memo}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -233,36 +233,36 @@
 <div class="distributor" id="distributor" style="display: none;">
     <div class="dis_top">
         <P>
-            <span>GroupID</span>
+            <span>{{obj_txt.Group_ID}}</span>
             <input type="text" v-bind:value="groupid">
         </P>
         <P>
-            <span>KEDI Code</span>
+            <span>{{obj_txt.KEDI_code}}</span>
             <input type="text" v-model="KEDI_Code">
         </P>
         <P>
             <span style="visibility: hidden;">
                 <button class="btn btn-dark">S</button>
             </span>
-            <input type="button" value="Search" class="btn btn-dark" @click="search()">
+            <input type="button" :value="obj_txt.Btn_Search" class="btn btn-dark" @click="search()">
         </P>
         <P>
             <span>
-                <button class="btn btn-danger" @click="del_distr()">DELETE</button>
+                <button class="btn btn-danger" @click="del_distr()">{{obj_txt.Btn_delete}}</button>
             </span>
         </P>
     </div>
     <div class="dis_top">
         <P>
-            <span>DIS Name</span>
+            <span>{{obj_txt.DIS_Name}}</span>
             <input type="text" disabled>
         </P>
         <P>
-            <span>余额(balance)</span>
+            <span>{{obj_txt.Balance}}</span>
             <input type="text" disabled :value="balance">
         </P>
         <P>
-            <span>SC</span>
+            <span>{{obj_txt.Dis_ShopCode}}</span>
             <input type="text" :value="sc">
         </P>
         <P style="visibility: hidden;">
@@ -272,31 +272,31 @@
     </div>
     <div class="dis_top">
         <P>
-            <span>Region</span>
+            <span>{{obj_txt.Dis_region}}</span>
             <input type="text" disabled :value="Region">
         </P>
         <P>
-            <span>本次用(Teller)</span>
+            <span>{{obj_txt.Dis_teller}}</span>
             <input type="text" :value="tellar" disabled>
         </P>
         <P>
-            <span>Amount</span>
+            <span>{{obj_txt.Dis_amount}}</span>
             <input type="text" value="" class="" v-model="Amount">
         </P>
         <P>
             <span>
-                <button class="btn btn-success" @click="add_disre()">ADD</button>
+                <button class="btn btn-success" @click="add_disre()">{{obj_txt.add_disre}}</button>
             </span>
         </P>
     </div>
     <div class="dis_top">
         <P>
-            <span>date</span>
-            <input type="text" v-model:value="date">
+            <span>{{obj_txt.Dis_date}}</span>
+            <input type="text" v-model:value="date" disabled>
         </P>
         <P>
-            <span>Operator</span>
-            <input type="text" v-model="Operator">
+            <span>{{obj_txt.Dis_operator}}</span>
+            <input type="text" v-model="Operator" disabled>
         </P>
         <P style="visibility: hidden;">
             <span></span>
@@ -309,7 +309,7 @@
     </div>
     <div class="dis_top_4">
         <p>
-            <span>业绩所属(TellerMonth)Year</span>
+            <span>{{obj_txt.TellerMonth}}{{obj_txt.Dis_year}}</span>
             <select name="" id="" class="year" v-model="year">
                 <option value="2014">2014</option>
                 <option value="2015">2015</option>
@@ -323,7 +323,7 @@
             </select>
         </p>
         <p>
-            <span>Month</span>
+            <span>{{obj_txt.Dis_month}}</span>
             <select name="" id="" class="month" v-model="month">
                 <option value="1">JAN</option>
                 <option value="2">FEB</option>
@@ -340,11 +340,11 @@
             </select>
         </p>
         <p>
-            <span>RegPsw</span>
+            <span>{{obj_txt.RegPsw}}</span>
             <input type="text" disabled>
         </p>
         <p>
-            <span>ConfirmPsw</span>
+            <span>{{obj_txt.ConfirmPsw}}</span>
             <input type="text" v-model="ConfirmPsw">
         </p>
         <p>
@@ -356,25 +356,25 @@
         <table class="table table-border table-bordered table-bg " style="background: #fff;">
             <thead>
                 <tr>
-                    <th>TellerDetailID</th>
-                    <th>ShopNO</th>
-                    <th>Deposit</th>
-                    <th>Used</th>
-                    <th>Bank</th>
-                    <th>Date</th>
-                    <th>TellerID</th>
-                    <th>GroupID</th>
-                    <th>用途</th>
-                    <th>所预期</th>
-                    <th>systemTellerId</th>
-                    <th>Region</th>
-                    <th>Oper</th>
-                    <th>RegPswStatus</th>
-                    <th>memo1</th>
-                    <th>memo1</th>
-                    <th>FreezeMark</th>
-                    <th>freezeSelect</th>
-                    <th>LastEditdate</th>
+                    <th>{{obj_txt.TellerDetailID}}</th>
+                    <th>{{obj_txt.Dis_ShopNO}}</th>
+                    <th>{{obj_txt.Deposit}}</th>
+                    <th>{{obj_txt.Used}}</th>
+                    <th>{{obj_txt.Dis_bank}}</th>
+                    <th>{{obj_txt.Dis_date}}</th>
+                    <th>{{obj_txt.TellerID}}</th>
+                    <th>{{obj_txt.Dis_groupID}}</th>
+                    <th>{{obj_txt.Purpose}}</th>
+                    <th>{{obj_txt.Expected}}</th>
+                    <th>{{obj_txt.systemTellerId}}</th>
+                    <th>{{obj_txt.Dis_region}}</th>
+                    <th>{{obj_txt.Dis_oper}}</th>
+                    <th>{{obj_txt.RegPswStatus}}</th>
+                    <th>{{obj_txt.memo1}}</th>
+                    <th>{{obj_txt.memo2}}</th>
+                    <th>{{obj_txt.FreezeMark}}</th>
+                    <th>{{obj_txt.freezeSelect}}</th>
+                    <th>{{obj_txt.LastEditdate}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -561,44 +561,44 @@
 <div id="tellardata" class="tellar_data" style="display: none" v-cloak>
     <div class="tell_top">
         <P>
-            <span>编号</span>
+            <span>{{obj_txt.Te_groupid}}</span>
             <input type="text" disabled :value='groupid'>
         </P>
         <P>
-            <span>余额（balance）</span>
+            <span>{{obj_txt.Te_balance}}</span>
             <input type="text" class="balance" disabled :value="banlance">
         </P>
         <P>
-            <span>SC</span>
+            <span>{{obj_txt.Te_shopcode}}</span>
             <input type="text" disabled :value="sc">
         </P>
         <P>
-            <span>RegionMoney</span>
+            <span>{{obj_txt.Te_regionMoney}}</span>
             <input type="text" class="tellar_RegionMoney" disabled :value="RegionMoney">
         </P>
     </div>
     <div class="tell_top">
         <P>
-            <span>DATE</span>
+            <span>{{obj_txt.Te_date}}</span>
             <input type="text" disabled :value="date">
         </P>
         <P>
-            <span>已用Teller</span>
+            <span>{{obj_txt.Te_teller}}</span>
             <input type="text" disabled :value='teller'>
         </P>
         <P>
-            <span>Region</span>
+            <span>{{obj_txt.Te_Region}}</span>
             <input type="text" disabled :value="region">
         </P>
         <P>
-            <span>Amount</span>
+            <span>{{obj_txt.Te_amount}}</span>
             <input type="text" class="tellar_amount">
         </P>
-        <button class="btn btn-success" v-on:click="add_tellar()">ADD</button>
+        <button class="btn btn-success" v-on:click="add_tellar()">{{obj_txt.Te_btn_add}}</button>
     </div>
     <div class="tell_top">
         <p>
-            <span>业绩所属(TellerMonth)Year</span>
+            <span>{{obj_txt.Te_year}}</span>
             <select name="" id="" v-model="year">
                 <option value="2014">2014</option>
                 <option value="2015">2015</option>
@@ -612,7 +612,7 @@
             </select>
         </p>
         <p>
-            <span>Month</span>
+            <span>{{obj_txt.Te_month}}</span>
             <select name="" class="month" id="" v-model="month">
                 <option value="1">JAN</option>
                 <option value="2">FEB</option>
@@ -629,44 +629,44 @@
             </select>
         </p>
         <p>
-            <span>RegPsw</span>
+            <span>{{obj_txt.Te_RegPsw}}</span>
             <input type="text" disabled>
         </p>
     </div>
     <div class="tell_top">
 
         <p>
-            <span>ConfirmPsw</span>
+            <span>{{obj_txt.ConfirmPsw}}</span>
             <input type="text">
         </p>
         <p>
             <span>未注册，Unregister</span>
         </p>
-        <button class="btn btn-danger" v-on:click='del_tellar()'>DELETE</button>
+        <button class="btn btn-danger" v-on:click='del_tellar()'>{{obj_txt.Te_btn_delete}}</button>
     </div>
     <div class="list_data" style="background: #ccc; height: 300px; overflow-x: auto;">
         <table class="table table-border table-bordered table-bg " style="background: #fff;">
             <thead>
                 <tr>
-                    <th>TellerDetailID</th>
-                    <th>ShopNO</th>
-                    <th>Deposit</th>
-                    <th>Used</th>
-                    <th>Bank</th>
-                    <th>Date</th>
-                    <th>TellerID</th>
-                    <th>GroupID</th>
-                    <th>用途</th>
-                    <th>所预期</th>
-                    <th>systemTellerId</th>
-                    <th>Region</th>
-                    <th>Oper</th>
-                    <th>RegPswStatus</th>
-                    <th>memo1</th>
-                    <th>memo2</th>
-                    <th>FreezeMark</th>
-                    <th>freezeSelect</th>
-                    <th>LastEditdate</th>
+                    <th>{{obj_txt.Te_TellerDetailID}}</th>
+                    <th>{{obj_txt.Te_shopcode}}</th>
+                    <th>{{obj_txt.Te_Deposit}}</th>
+                    <th>{{obj_txt.Te_Used}}</th>
+                    <th>{{obj_txt.Te_bank}}</th>
+                    <th>{{obj_txt.Te_date}}</th>
+                    <th>{{obj_txt.Te_TellerID}}</th>
+                    <th>{{obj_txt.Te_groupid}}</th>
+                    <th>{{obj_txt.Te_purpose}}</th>
+                    <th>{{obj_txt.Te_expected}}</th>
+                    <th>{{obj_txt.Te_systemTellerId}}</th>
+                    <th>{{obj_txt.Te_Region}}</th>
+                    <th>{{obj_txt.Te_oper}}</th>
+                    <th>{{obj_txt.Te_regPswStatus}}</th>
+                    <th>{{obj_txt.Te_memo1}}</th>
+                    <th>{{obj_txt.Te_memo2}}</th>
+                    <th>{{obj_txt.Te_freezeMark}}</th>
+                    <th>{{obj_txt.Te_freezeSelect}}</th>
+                    <th>{{obj_txt.Te_lastEditdate}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -706,12 +706,10 @@
     var groupid = queryString('groupid');
     var admin_name;
     $(function () {
-
         v_salereport.operator = JSON.parse(get_cache("user_info")).username;
         admin_name = JSON.parse(get_cache("user_info")).username;
         print_form.people = JSON.parse(get_cache("user_info")).username;
         print_form1.people = JSON.parse(get_cache("user_info")).username;
-
     })
     var v_salereport = new Vue({
         el: '#sale_report_content',
@@ -934,10 +932,13 @@
             cash_sc: shopno,
             cash_total: 0,
             active_index: -1,
-            cashid: 0
+            cashid: 0,
+            lang_txt: get_page_txt('Cash_data'), // 当前页面的文字信息
+            obj_txt: {}, // 对象拼接
         },
         created: function () {
-            cash_data_list()
+            cash_data_list();
+            this.lang_toggle()
         },
         methods: {
             sel_active(index, cashid) {
@@ -950,8 +951,10 @@
                 } else {
                     showErr(config_txt.sel_cash.zn, config_txt.sel_cash.en)
                 }
-
-            }
+            },
+            lang_toggle() {
+                this.obj_txt = splicing_obj(this.lang_txt)
+            },
         }
 
     })
@@ -1103,6 +1106,11 @@
             date: '',
             region: '',
             Amount: "",
+            lang_txt: get_page_txt('Tellar_data'), // 当前页面的文字信息
+            obj_txt: {}, // 对象拼接
+        },
+        created:function(){
+            this.lang_toggle()
         },
         watch: {
             teller(newval, oldval) {
@@ -1170,7 +1178,10 @@
             },
             on_active(index) {
                 this.active_index = index
-            }
+            },
+            lang_toggle() {
+                this.obj_txt = splicing_obj(this.lang_txt)
+            },
         }
 
     })
@@ -1233,11 +1244,16 @@
             lang_txt: get_page_txt('Distributor'), // 当前页面的文字信息
             obj_txt: {}, // 对象拼接
         },
+
+        created:function(){
+            this.lang_toggle()
+        },
         watch:{
             teller(newval, oldval) {
                 v_salereport.deposit = newval;
             }
         },
+        
         methods: {
             search() {
                 var url = "/index.php?s=desktop/Distributor_Teller/Search";
