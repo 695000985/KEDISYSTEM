@@ -23,22 +23,22 @@
         .active_index {
             background: #ccc !important;
         }
-
+        
         [v-cloak] {
             display: none
         }
-
+        
         input[type="checkbox"] {
             width: 20px !important;
             zoom: 140%;
             vertical-align: -webkit-baseline-middle;
         }
-
-       #print_form1 th,#print_form1 td{
+        
+        #print_form1 th,
+        #print_form1 td {
             border-left: 1px solid #000 !important;
             color: #000 !important;
             font-size: 14px !important;
-            
             border-bottom: 1px solid #000 !important;
         }
     </style>
@@ -48,7 +48,7 @@
     <div id="sale_report_content" v-cloak>
         <div class="Preprint_row">
             <div style="padding: 6px 5px;">
-                <button class="btn btn-primary size-S radius" onclick="opne_print_form()">Preprint</button>
+                <button class="btn btn-primary size-S radius" onclick="opne_print_form()">{{obj_txt.Btn_Preprint}}</button>
             </div>
             <div>
                 <p class="GroupID">{{obj_txt.GroupID}}：
@@ -413,15 +413,15 @@
     <div id="canvas_con">
         <div class="print_row">
             <P>
-                <span>汇总编号</span>
+                <span>{{obj_txt.Pr_groupid}}</span>
                 <input type="text" readonly :value="groupid">
             </P>
             <P>
-                <span>所属机构</span>
+                <span>{{obj_txt.Pr_affiliated_institutions}}</span>
                 <input type="text" readonly :value='affiliated_institutions'>
             </P>
             <P>
-                <span>制表人</span>
+                <span>{{obj_txt.Pr_oper}}</span>
                 <input type="text" readonly :value="people ">
             </P>
         </div>
@@ -435,15 +435,15 @@
         </div>
         <div class="print_row">
             <P>
-                <span>DATE</span>
+                <span>{{obj_txt.Pr_date}}</span>
                 <input class="Wdate" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" :value='local_time'>
             </P>
             <P>
-                <span>REGION</span>
+                <span>{{obj_txt.Pr_region}}</span>
                 <input type="text" readonly v-model='region'>
             </P>
             <P>
-                <span>SERVICE</span>
+                <span>{{obj_txt.Pr_service}}</span>
                 <input type="text" readonly v-model="shop_no">
             </P>
         </div>
@@ -451,17 +451,17 @@
             <table class="table table-border table-bordered table-bg " style="background: #fff; width: 1000px;">
                 <thead>
                     <tr>
-                        <th>CODE</th>
-                        <th>Products</th>
-                        <th>unit</th>
-                        <th>BV(USD)</th>
-                        <th>BV/PV%</th>
-                        <th>PV(USD)</th>
-                        <th>Naira Price</th>
-                        <th>QTY</th>
-                        <th>Total BV</th>
-                        <th>Total PV</th>
-                        <th>Total NR</th>
+                        <th>{{obj_txt.Pr_code}}</th>
+                        <th>{{obj_txt.Pr_products}}</th>
+                        <th>{{obj_txt.Pr_unit}}</th>
+                        <th>{{obj_txt.Pr_bv_usd}}</th>
+                        <th>{{obj_txt.Pr_bv_pv}}</th>
+                        <th>{{obj_txt.Pr_pv_usd}}</th>
+                        <th>{{obj_txt.Pr_naira_price}}</th>
+                        <th>{{obj_txt.Pr_qty}}</th>
+                        <th>{{obj_txt.Pr_total_bv}}</th>
+                        <th>{{obj_txt.Pr_total_pv}}</th>
+                        <th>{{obj_txt.Pr_total_NR}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -489,16 +489,16 @@
     <div id="canvas_con1">
         <div class="print_row">
             <P style="font-size: 16px; color:#000;">
-                <span>汇总编号</span>
+                <span>{{obj_txt.Pr_groupid}}</span>
 
                 <span>{{groupid}}</span>
             </P>
             <P style="font-size: 16px; color:#000;">
-                <span>所属机构</span>
+                <span>{{obj_txt.Pr_affiliated_institutions}}</span>
                 <span>{{affiliated_institutions}}</span>
             </P>
             <P style="font-size: 16px; color:#000;">
-                <span>制表人</span>
+                <span>{{obj_txt.Pr_oper}}</span>
                 <span>{{people}}</span>
             </P>
         </div>
@@ -507,15 +507,15 @@
         </div>
         <div class="print_row">
             <P style="font-size: 16px; color:#000;">
-                <span>DATE</span>
-                <input class="Wdate" style="font-size: 16px; color:#000; border: none;" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" :value='local_time' >
+                <span>{{obj_txt.Pr_date}}</span>
+                <input class="Wdate" style="font-size: 16px; color:#000; border: none;" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" :value='local_time'>
             </P>
             <P style="font-size: 16px; color:#000;">
-                <span>REGION</span>
+                <span>{{obj_txt.Pr_region}}</span>
                 <span>{{region}}</span>
             </P>
             <P style="font-size: 16px; color:#000;">
-                <span>SERVICE</span>
+                <span>{{obj_txt.Pr_service}}</span>
                 <span>{{shop_no}}</span>
             </P>
         </div>
@@ -523,17 +523,17 @@
             <table class="table table-border table-bordered table-bg " style="background: #fff; width: 1000px; margin: 0 auto; border: 1px solid #000;">
                 <thead>
                     <tr>
-                        <th>CODE</th>
-                        <th>Products</th>
-                        <th>unit</th>
-                        <th>BV(USD)</th>
-                        <th>BV/PV%</th>
-                        <th>PV(USD)</th>
-                        <th>Naira Price</th>
-                        <th>QTY</th>
-                        <th>Total BV</th>
-                        <th>Total PV</th>
-                        <th>Total NR</th>
+                        <th>{{obj_txt.Pr_code}}</th>
+                        <th>{{obj_txt.Pr_products}}</th>
+                        <th>{{obj_txt.Pr_unit}}</th>
+                        <th>{{obj_txt.Pr_bv_usd}}</th>
+                        <th>{{obj_txt.Pr_bv_pv}}</th>
+                        <th>{{obj_txt.Pr_pv_usd}}</th>
+                        <th>{{obj_txt.Pr_naira_price}}</th>
+                        <th>{{obj_txt.Pr_qty}}</th>
+                        <th>{{obj_txt.Pr_total_bv}}</th>
+                        <th>{{obj_txt.Pr_total_pv}}</th>
+                        <th>{{obj_txt.Pr_total_NR}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -705,7 +705,7 @@
     var shopno = queryString('shopno');
     var groupid = queryString('groupid');
     var admin_name;
-    $(function () {
+    $(function() {
         v_salereport.operator = JSON.parse(get_cache("user_info")).username;
         admin_name = JSON.parse(get_cache("user_info")).username;
         print_form.people = JSON.parse(get_cache("user_info")).username;
@@ -726,12 +726,12 @@
             lang_txt: get_page_txt('Sale_report'), // 当前页面的文字信息
             obj_txt: {}, // 对象拼接
         },
-        created: function () {
+        created: function() {
             report_list();
             this.lang_toggle()
         },
         mounted() {
-            
+
         },
         watch: {
             aera(newval, oldval) {
@@ -759,7 +759,7 @@
         data['GroupID'] = groupid;
         data['Area'] = 'none'
         data['Kits'] = '0';
-        ajax(url, data, function (e) {
+        ajax(url, data, function(e) {
             if (e.stat == 1) {
                 v_salereport.reportdata = e.data;
                 v_salereport.kits = e.data.input.Kits
@@ -796,7 +796,7 @@
         data['ScPV'] = v_salereport.reportdata.ScPV;
         data['French'] = v_salereport.french;
 
-        ajax(url, data, function (e) {
+        ajax(url, data, function(e) {
             if (e.stat == 1) {
                 var total_arry = [];
                 var arr = {};
@@ -902,7 +902,22 @@
             store_name: '专卖店销售汇总表',
             region: 'NONE',
             local_time: get_local_time(),
-            print_data: form_list
+            print_data: form_list,
+            lang_txt: get_page_txt('Print_form'), // 当前页面的文字信息
+            obj_txt: {}, // 对象拼接
+        },
+        watch: {
+            store_name(newval, oldval) {
+                print_form1.store_name = newval
+            }
+        },
+        created: function() {
+            this.lang_toggle()
+        },
+        methods: {
+            lang_toggle() {
+                this.obj_txt = splicing_obj(this.lang_txt)
+            },
         }
     })
 
@@ -916,8 +931,19 @@
             store_name: '专卖店销售汇总表',
             region: 'NONE',
             local_time: get_local_time(),
-            print_data: form_list
+            print_data: form_list,
+            lang_txt: get_page_txt('Print_form'), // 当前页面的文字信息
+            obj_txt: {}, // 对象拼接
+        },
+        created: function() {
+            this.lang_toggle()
+        },
+        methods: {
+            lang_toggle() {
+                this.obj_txt = splicing_obj(this.lang_txt)
+            },
         }
+
     })
 
     function opne_cash_data() {
@@ -936,7 +962,7 @@
             lang_txt: get_page_txt('Cash_data'), // 当前页面的文字信息
             obj_txt: {}, // 对象拼接
         },
-        created: function () {
+        created: function() {
             cash_data_list();
             this.lang_toggle()
         },
@@ -971,7 +997,7 @@
         data['GroupID'] = groupid;
         data['ShopNO'] = shopno;
         data['RealDate'] = realdate;
-        ajax(url, data, function (e) {
+        ajax(url, data, function(e) {
             if (e.stat == 1) {
                 v_cash.cash_data = e.data;
                 v_cash.cash_total = e.data.Total;
@@ -991,7 +1017,7 @@
         data['ShopNO'] = shopno;
         data['RealDate'] = realdate;
         data['Amount'] = $('.amount').val();
-        ajax1(url, data, function (e) {
+        ajax1(url, data, function(e) {
             if (e.stat == 1) {
                 // cash_data_list()
                 cash_data_list()
@@ -1008,12 +1034,12 @@
         data['usertoken'] = get_cache('usertoken');
         data['CashID'] = cid;
         var txt = `<div>${config_txt.del_cash.en}</div>`
-        firm('确认删除', txt, function () {
+        firm('确认删除', txt, function() {
             layer.close(layer.index);
-            ajax1(url, data, function (e) {
+            ajax1(url, data, function(e) {
                 if (e.stat == 1) {
                     success(e.data)
-                    setTimeout(function () {
+                    setTimeout(function() {
                         cash_data_list()
                         report_list();
                         v_cash.active_index = -1;
@@ -1051,7 +1077,7 @@
             var printWindow = window.open(newImg.src);
             // printWindow.document.write(); 
             printWindow.document.write('<img src="' + newImg.src + '" />')
-            setTimeout(function () {
+            setTimeout(function() {
                 printWindow.print()
             }, 1000)
         });
@@ -1059,7 +1085,7 @@
     }
 
     function open_tellar() {
-        open_html('TellarData', '#tellardata', 'v_tellar', function () {
+        open_html('TellarData', '#tellardata', 'v_tellar', function() {
             //Refresh()
         });
 
@@ -1076,7 +1102,7 @@
         data['RealDate'] = realdate;
         data['Region'] = $('.area').val();
         data['FormMark'] = '';
-        ajax(url, data, function (e) {
+        ajax(url, data, function(e) {
             if (e.stat == 1) {
                 v_tellar.tellar_con = e.data;
                 v_tellar.banlance = e.data.banlance.Banlance;
@@ -1109,7 +1135,7 @@
             lang_txt: get_page_txt('Tellar_data'), // 当前页面的文字信息
             obj_txt: {}, // 对象拼接
         },
-        created:function(){
+        created: function() {
             this.lang_toggle()
         },
         watch: {
@@ -1132,15 +1158,15 @@
                 data['Year'] = this.year;
                 data['Month'] = this.month;
                 data['Balance'] = $('.balance').val();
-                ajax1(url, data, function (e) {
-                    if (e.stat == 1) {
-                        this.list_tellar = e.data.Get_Tellar_Info;
-                        get_tellar()
-                    } else {
-                        showErr(e.errmsg, e.errmsg_en, e.errcode)
-                    }
-                })
-                //this.tellar=6666;
+                ajax1(url, data, function(e) {
+                        if (e.stat == 1) {
+                            this.list_tellar = e.data.Get_Tellar_Info;
+                            get_tellar()
+                        } else {
+                            showErr(e.errmsg, e.errmsg_en, e.errcode)
+                        }
+                    })
+                    //this.tellar=6666;
             },
             del_tellar(del_id) {
                 if (v_tellar.active_index == -1) {
@@ -1162,8 +1188,8 @@
                 data['Balance'] = $('.balance').val();
                 data['CashID_Delete'] = $('#tellardata table tr.active_index td:nth-child(1)').html()
 
-                firm('删除报单', config_txt.del_tellar.en, function () {
-                    ajax1(url, data, function (e) {
+                firm('删除报单', config_txt.del_tellar.en, function() {
+                    ajax1(url, data, function(e) {
                         if (e.stat == 1) {
                             v_tellar.active_index = -1;
                             get_tellar()
@@ -1189,7 +1215,7 @@
 
 
     function open_distributor() {
-        open_html('Distributor', '#distributor', 'distributor', function () {
+        open_html('Distributor', '#distributor', 'distributor', function() {
             distributor_con.active_index = -1;
         });
         get_distributor()
@@ -1204,7 +1230,7 @@
         data['RealDate'] = realdate;
         data['Region'] = $('.area').val();
         data['FormMark'] = '';
-        ajax(url, data, function (e) {
+        ajax(url, data, function(e) {
             if (e.stat == 1) {
                 distributor_con.dis_data = e.data;
                 distributor_con.Operator = admin_name;
@@ -1225,7 +1251,7 @@
         data: {
             dis_data: '',
             tellar: 0,
-            teller:'',
+            teller: '',
             active_index: -1,
             groupid: groupid,
             sc: shopno,
@@ -1245,15 +1271,15 @@
             obj_txt: {}, // 对象拼接
         },
 
-        created:function(){
+        created: function() {
             this.lang_toggle()
         },
-        watch:{
+        watch: {
             teller(newval, oldval) {
                 v_salereport.deposit = newval;
             }
         },
-        
+
         methods: {
             search() {
                 var url = "/index.php?s=desktop/Distributor_Teller/Search";
@@ -1273,7 +1299,7 @@
                 data["Month"] = $(`#distributor .month option:nth-child(${this.month*1})`).text();
                 data["RegPsw"] = this.RegPsw;
                 data["ConfirmPsw"] = this.ConfirmPsw;
-                ajax(url, data, function (e) {
+                ajax(url, data, function(e) {
                     if (e.stat == 1) {
                         console.log(e.data);
 
@@ -1298,7 +1324,7 @@
                 data['Year'] = this.year;
                 data['Month'] = $(`#distributor .month option:nth-child(${this.month*1})`).text();
                 data['Balance'] = this.balance;
-                ajax1(url, data, function (e) {
+                ajax1(url, data, function(e) {
                     if (e.stat == 1) {
                         this.list_tellar = e.data.Get_Tellar_Info;
                         get_distributor()
@@ -1327,8 +1353,8 @@
                 data['Balance'] = $('#distributor .balance').val();
                 data['CashID_Delete'] = $('#distributor table tr.active_index td:nth-child(1)').html()
 
-                firm('删除报单', config_txt.del_tellar.en, function () {
-                    ajax1(url, data, function (e) {
+                firm('删除报单', config_txt.del_tellar.en, function() {
+                    ajax1(url, data, function(e) {
                         if (e.stat == 1) {
                             distributor_con.active_index = -1;
                             get_distributor()

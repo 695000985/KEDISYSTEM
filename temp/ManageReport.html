@@ -25,11 +25,13 @@
         [v-cloak] {
             display: none;
         }
-        .lock{
+        
+        .lock {
             background: rgb(255, 182, 193)
         }
-        .unlock{
-            background: rgba(144,238,144)
+        
+        .unlock {
+            background: rgba(144, 238, 144)
         }
     </style>
 </head>
@@ -79,7 +81,7 @@
                         <span>SC_D</span>
                         <input type="text" disabled class="sc_d">
                     </p>
-               
+
                     <p>
                         <span>SC_E</span>
                         <input type="text" disabled class="sc_e">
@@ -107,9 +109,9 @@
             <div class="">
                 <div>
                     <span>From</span>
-                    <input class="Wdate form_time"  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                    <input class="Wdate form_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
                     <span>to</span>
-                    <input class="Wdate to_time"  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                    <input class="Wdate to_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
                     <span>Region</span>
                     <select name="" id="" class="region_index">
                         <option v-bind:value="n" v-for="n in  region">{{n}}</option>
@@ -249,7 +251,7 @@
                         </p>
                         <p>
                             <span>Grand Total</span>
-                            <input type="text" class="grand_total" disabled v-model="input_opt['Grand_Total']">
+                            <input type="text" class="grand_total" disabled v-model="input_opt['Grand_total']">
                         </p>
                     </div>
                     <div>
@@ -265,7 +267,7 @@
                             <span>Cash(NR)</span>
                             <input type="text" class="cash_nr" disabled v-model="input_opt['Cash(NR)']">
                         </p>
-                        <button class="btn btn-default size-S">...</button>
+                        <button class="btn btn-default size-S" style="background: #fff;">...</button>
                     </div>
                     <div>
                         <p>
@@ -280,17 +282,17 @@
                             <span>Bank Deposit</span>
                             <input type="number" class="bank_deposit" disabled :value="input_opt['Bank_Deposit']">
                         </p>
-                        <button disabled class="btn btn-default size-S btn-disabled">...</button>
-                        <button disabled class="btn btn-default size-S btn-disabled">DIS</button>
+                        <div class="" style="width: 20px; height: 17px; border: 1px solid #ccc; margin-right: 5px;">...</div>
+                        <div class="" style="width: 20px; height: 17px; border: 1px solid #ccc;">DIS</div>
                     </div>
                     <div>
                         <p>
                             <span>UNitPRICE</span>
-                            <input type="text" class="unit_price" :value="input_opt['UnitPrice']" disabled>
+                            <input type="text" class="unit_price" :value="input_opt['UnitPrice'] || 4000" disabled>
                         </p>
                         <p>
                             <span>Cash(usd)</span>
-                            <input type="number" class="cash_usd" :value="input_opt['Cash(usd)']">
+                            <input type="number" class="cash_usd" v-model="input_opt['Cash(usd)']">
                         </p>
                         <p>
                             <span>Result</span>
@@ -320,7 +322,7 @@
     <div id="region_lock" style="display: none">
         <div class="regio_l_top">
             <span>时间：</span>
-            <input type="text" class="Wdate lock_time"  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+            <input type="text" class="Wdate lock_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
             <span>地区:</span>
             <select name="" id="" class="lock_region">
                 <option :value="r" v-for="r in lock_region" :key="r">{{r}}</option>
@@ -345,7 +347,9 @@
                 </thead>
                 <tbody>
                     <tr v-for="r in list_data" v-bind:class=" r['״̬']== '未锁定' ? 'unlock' : 'lock' ">
-                        <td><input type="checkbox" :value="r.GroupID" name="" id="" v-bind:checked="ifchecked" ></td>
+                        <td>
+                            <input type="checkbox" :value="r.GroupID" name="" id="" v-bind:checked="ifchecked">
+                        </td>
                         <td>{{r.GroupID}}</td>
                         <td>{{r.ShopNo}}</td>
                         <td>{{r.Region}}</td>
@@ -357,14 +361,14 @@
                         <td>{{r['״̬']}}</td>
                     </tr>
                     <tr v-if="!list_data.length">
-                        <td colspan="10" >暂无数据</td>
+                        <td colspan="10">暂无数据</td>
                     </tr>
                 </tbody>
             </table>
         </div>
         <div class="bot_lock">
             <input type="checkbox" name="" id="" v-model="ifchecked">
-            <span >全选</span>
+            <span>全选</span>
             <button class="btn  btn-primary-outline radius size-S" @click="click_lock()">锁定</button>
             <button class="btn  btn-primary-outline radius size-S" @click="click_unlock()">解锁</button>
         </div>
@@ -379,6 +383,7 @@
                 </p>
                 <p>
                     <span>B</span>
+
                     <input type="text">
                 </p>
                 <p>
@@ -393,15 +398,15 @@
                 </p>
                 <p>
                     <span>GID</span>
-                    <input type="text" >
+                    <input type="text">
                 </p>
                 <p>
                     <span>from</span>
-                    <input type="text" class="Wdate"  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                    <input type="text" class="Wdate" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
                 </p>
                 <p>
                     <span>to</span>
-                    <input type="text" class="Wdate"  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                    <input type="text" class="Wdate" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
                 </p>
                 <p>
                     <span>SC</span>
@@ -543,50 +548,68 @@
     <script>
         $(function() {
             get_region(function(e) {
-                var data = [];
-                e.forEach(element => {
-                    manage_main.region.push(element.result) //regionLock
-                    regionLock.lock_region.push(element.result) //regionLock
-                });
-            })
-            // get_user_info(function(ret) {
-            //    $('.oper_name').val(ret.username)
-            // })
+                    var data = [];
+                    e.forEach(element => {
+                        manage_main.region.push(element.result) //regionLock
+                        regionLock.lock_region.push(element.result) //regionLock
+                    });
+                })
+                // get_user_info(function(ret) {
+                //    $('.oper_name').val(ret.username)
+                // })
             $('.oper_name').val(JSON.parse(get_cache("user_info")).username)
-            
-            $(".sub_sc div p input").keyup(function(){
-                if($(this).val().length > 10){
-                   var x= $(this).parent('p').index()+2;
+
+            $(".sub_sc div p input").keyup(function() {
+                if ($(this).val().length > 10) {
+                    var x = $(this).parent('p').index() + 2;
                     $(`.sub_sc div p:nth-child(${x}) input`).removeAttr('disabled')
                 }
             })
 
-           $('.Wdate').val(
-               get_local_time()
-           )
+            $('.Wdate').val(
+                get_local_time()
+            )
+
+            set_time_refresh(com_data()) //定时刷新
         })
 
-       
+
         var manage_main = new Vue({
             el: "#manage_report",
             data: {
-                index_counter: 0,// 计算点击 复制的位置
+                index_counter: 0, // 计算点击 复制的位置
                 region: [], //区域 地区，
                 //region_top:'NONE',
                 non_month: '',
                 print_twoday: '',
                 //region_index:'NONE'
-                input_opt:{}, // 页面各种默认值
+                input_opt: {}, // 页面各种默认值
                 Report_Manage_data: [], //查询分专卖店编号列表
                 time: '', //当前时间
-                public_fade:false,//  点击生成专卖店汇总按钮
-                public_data:{} // 点击生成专卖店汇总按钮 后的数据
+                public_fade: false, //  点击生成专卖店汇总按钮
+                public_data: {} // 点击生成专卖店汇总按钮 后的数据   
             },
+            mounted() {
 
+            },
             watch: {
-                kits() {
-                    this.system_total = this.kits * this.unit_price
+                input_opt: {
+                    deep: true,
+                    handler(newval, oldval) {
+                        console.log(newval.Kits)
+                        newval.System_Total = newval.Kits * newval.UnitPrice;
+                        newval.Grand_total = newval.Debit * 1 + newval["D/Tsfer"] * 1 + newval["Cash(usd)"] * 1 + newval["Cash(NR)"] * 1
+
+                        newval.Result = newval.Grand_total * 1 - newval.System_Total * 1;
+
+                    }
                 },
+
+
+                // Kits() {
+                //     alert(333)
+                //     this.input_opt.System_Total = this.input_opt.Kits * this.input_opt.UnitPrice
+                // },
                 system_total() {
                     this.result = this.grand_total - this.system_total
                 },
@@ -611,8 +634,8 @@
                 open_region_lock() {
                     open_html('Region_Lock', '#region_lock')
                 },
-                open_return_borrowed(){
-                    open_html("Return_Borrowed",'#return_borrowed')
+                open_return_borrowed() {
+                    open_html("Return_Borrowed", '#return_borrowed')
                 },
                 query_shop_no() { //查询分专卖店编号
                     var xx = com_data()
@@ -649,105 +672,108 @@
                 },
                 clear() {
                     $(".sub_sc input").val('')
-                    $(".sub_sc input").attr('disabled','disabled');
+                    $(".sub_sc input").attr('disabled', 'disabled');
                     $(".sub_sc div p:nth-child(1) input").removeAttr('disabled');
-                    this.index_counter=0;
+                    this.index_counter = 0;
                 },
-                click_input(gid){ //点击将分组 id 赋值到 input 里
+                click_input(gid) { //点击将分组 id 赋值到 input 里
 
-                   this.index_counter=$(".sub_sc div p input[disabled='disabled']:first").parent('p').index()
+                    this.index_counter = $(".sub_sc div p input[disabled='disabled']:first").parent('p').index()
                     this.index_counter++;
                     $(`.sub_sc div p:nth-child(${this.index_counter-1}) input`).val(gid).removeAttr('disabled')
-                    $(`.sub_sc div p:nth-child(${this.index_counter}) input`).removeAttr('disabled')
+                    $(`.sub_sc div p:nth-child(${this.index_counter}) input`).removeAttr('disabled');
+
                 }
 
 
             }
         })
-        var regionLock = new Vue({  //区域店锁定
+        var regionLock = new Vue({ //区域店锁定
             el: "#region_lock",
             data: {
                 lock_region: [],
-                list_data:[],
-                ifchecked:false,
-                
-               // local_time: get_local_time()
+                list_data: [],
+                ifchecked: false,
+
+                // local_time: get_local_time()
             },
             methods: {
-                search_region(){
+                search_region() {
                     query_region_lock()
                 },
-                click_lock(){
+                click_lock() {
                     lock_region()
                 },
-                click_unlock(){
+                click_unlock() {
                     unlock_region()
                 },
-                
-               
+                // open_
+
+
             }
         })
-         
-        function  query_region_lock(){ //查询区域店 
-             var url="/index.php?s=desktop/Region_Lock/button1_Click";
-             var data={};
-             data['usertoken']=get_cache('usertoken');
-             data['date']=$('.lock_time').val();
-             data['Region']=$('.lock_region').val();
-             data['check_all']="";
-             ajax1(url, data, function(e) {
-                if (e.stat == 1) {
-                    regionLock.list_data=e.data
 
-                    regionLock.ifchecked=false
+        function query_region_lock() { //查询区域店 
+            var url = "/index.php?s=desktop/Region_Lock/button1_Click";
+            var data = {};
+            data['usertoken'] = get_cache('usertoken');
+            data['date'] = $('.lock_time').val();
+            data['Region'] = $('.lock_region').val();
+            data['check_all'] = "";
+            ajax1(url, data, function(e) {
+                if (e.stat == 1) {
+                    regionLock.list_data = e.data
+
+                    regionLock.ifchecked = false
                 } else {
                     showErr(e.errmsg, e.errmsg_en, e.errcode)
                 }
             })
         }
 
-        function lock_region(){ //
-            var arry=[]; 
-            var url='/index.php?s=desktop/Region_Lock/button3_Click';
-            var data={};
-             data['usertoken']=get_cache('usertoken');
-             data['date']=$('.lock_time').val();
-             data['Region']=$('.lock_region').val();
-                $('.region_con input:checked').each(function(){
-                    arry.push(`"${$(this).val()}"`)
-                })
-               
-                data['check_all']=`[${arry}]`
-             ajax(url, data, function(e) {
+        function lock_region() { //
+            var arry = [];
+            var url = '/index.php?s=desktop/Region_Lock/button3_Click';
+            var data = {};
+            data['usertoken'] = get_cache('usertoken');
+            data['date'] = $('.lock_time').val();
+            data['Region'] = $('.lock_region').val();
+            $('.region_con input:checked').each(function() {
+                arry.push(`"${$(this).val()}"`)
+            })
+
+            data['check_all'] = `[${arry}]`
+            ajax(url, data, function(e) {
                 if (e.stat == 1) {
-                   success(e.data.msg);
-                   setTimeout(function(){
+                    success(e.data.msg);
+                    setTimeout(function() {
                         query_region_lock()
-                    },3000)
+                    }, 3000)
                 } else {
                     showErr(e.errmsg, e.errmsg_en, e.errcode)
                 }
             })
         }
-        function unlock_region(){
-            var arry=[];
-            var url='/index.php?s=desktop/Region_Lock/button4_Click';
-            var data={};
-             data['usertoken']=get_cache('usertoken');
-             data['date']=$('.lock_time').val();
-             data['Region']=$('.lock_region').val();
-             data['Region']=$('.lock_region').val();
-                $('.region_con input:checked').each(function(){
-                    arry.push(`"${$(this).val()}"`)
-                })
-               
-             data['check_all']=`[${arry}]`
-             ajax(url, data, function(e) {
+
+        function unlock_region() {
+            var arry = [];
+            var url = '/index.php?s=desktop/Region_Lock/button4_Click';
+            var data = {};
+            data['usertoken'] = get_cache('usertoken');
+            data['date'] = $('.lock_time').val();
+            data['Region'] = $('.lock_region').val();
+            data['Region'] = $('.lock_region').val();
+            $('.region_con input:checked').each(function() {
+                arry.push(`"${$(this).val()}"`)
+            })
+
+            data['check_all'] = `[${arry}]`
+            ajax(url, data, function(e) {
                 if (e.stat == 1) {
                     success(e.data.msg)
-                    setTimeout(function(){
+                    setTimeout(function() {
                         query_region_lock()
-                    },3000)
+                    }, 3000)
                 } else {
                     showErr(e.errmsg, e.errmsg_en, e.errcode)
                 }
@@ -762,8 +788,8 @@
             ajax(url, optin, function(e) {
                 if (e.stat == 1) {
                     manage_main.Report_Manage_data = e.data.list
-                    manage_main.input_opt=$.extend({},e.data.input)
-                    manage_main.public_fade=false;
+                    manage_main.input_opt = $.extend({}, e.data.input)
+                    manage_main.public_fade = false;
                 } else {
                     showErr(e.errmsg, e.errmsg_en, e.errcode)
                 }
@@ -779,16 +805,17 @@
                 if (e.stat == 1) {
                     // manage_main.Report_Manage_data = e.data.list
                     //input_opt=$.extend({},e.data.input) 
-                    manage_main.input_opt=$.extend({},e.data.input);
-                    manage_main.public_fade=true;
-                    manage_main.public_data=e.data; //GeT_ReportToForm_ForBIGSC.Get_Result_Mem_Info
+                    manage_main.input_opt = $.extend({}, e.data.input);
+                    manage_main.public_fade = true;
+                    manage_main.public_data = e.data; //GeT_ReportToForm_ForBIGSC.Get_Result_Mem_Info
                     //Object.assign({},manage_main.input_opt,e.data.input)
                     success(e.data.err)
 
-                   // manage_main.clear()
+                    // manage_main.clear()
                 } else {
                     showErr(e.errmsg, e.errmsg_en, e.errcode)
                 }
+
             })
         }
 
@@ -806,6 +833,9 @@
                 }
             })
         }
+
+
+
 
         function day_summary(opt) { //大专卖店汇总 日汇总
             var url = "/index.php?s=desktop/Report_Manage/button2_Click";
@@ -859,7 +889,7 @@
                 if (e.stat == 1) {
                     // manage_main.Report_Manage_data = e.data.list
 
-                    manage_main.input_opt=$.extend({},e.data.input);
+                    manage_main.input_opt = $.extend({}, e.data.input);
                     success(e.data.Update_FrontDesk_BigSC_Report.data)
                     manage_main.clear()
                 } else {
@@ -882,7 +912,7 @@
             })
         }
 
-        function set_time_refresh() { //设置 定时 刷新
+        function set_time_refresh(opt) { //设置 定时 刷新
             var url = "/index.php?s=desktop/Report_Manage/timer1_Tick";
             var data = {};
             data['usertoken'] = get_cache('usertoken');
@@ -890,6 +920,7 @@
             ajax(url, optin, function(e) {
                 if (e.stat == 1) {
                     // manage_main.Report_Manage_data = e.data.list
+                    manage_main.input_opt = $.extend({}, e.data);
                 } else {
                     showErr(e.errmsg, e.errmsg_en, e.errcode)
                 }
@@ -916,7 +947,7 @@
             data['Total_NR'] = $(".total_nr").val();
             data['S_Nylon'] = $(".s_nylon").val();
             data['B_Nylon'] = $(".b_nylon").val();
-            data['Aera'] =$('.region-top').val();
+            data['Aera'] = $('.region-top').val();
             data['Kits'] = $(".kits").val();
             data['UnitPrice'] = $(".unit_price").val();
             data['Oper'] = $('.oper_name').val();
