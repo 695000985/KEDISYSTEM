@@ -13,7 +13,7 @@ nw.App.manifest.version = 'test';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>产品管理</title>
+    <title>货源地国家</title>
     <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
     <link rel="stylesheet" href="../css/H-ui.min.css">
     <link rel="stylesheet" href="../css/common.css">
@@ -26,32 +26,21 @@ nw.App.manifest.version = 'test';
     <script src="../script/loading.js"></script>
 </head>
 <body>
-    <div id="main" v-cloak class="market_shop">
+	<div id="main" v-cloak class="market_shop">
         <div class="search_txt">
             <div>
-                <p>{{obj_txt.ProductNO}}</p>
-                <input type="text" id="search_ProductNO" :placeholder="obj_txt.ProductNO">
-            </div>
-
-            <div>
-                <p>{{obj_txt.CName}}</p>
-                <input type="text" id="search_CName" :placeholder="obj_txt.CName">
+                <p>{{obj_txt.FromCountry}}</p>
+                <input type="text" id="search_FromCountry" :placeholder="obj_txt.FromCountry">
             </div>
             <div>
-                <p>{{obj_txt.EName}}</p>
-                <input type="text" id="search_EName" :placeholder="obj_txt.EName">
+                <p>{{obj_txt.Status}}</p>
+                <select name="" id="search_Status">
+                    <option value="-">==ALL==</option>
+                    <option value="0">{{obj_txt.status_0}}</option>
+                    <option value="1">{{obj_txt.status_1}}</option>
+                </select>
             </div>
 
-
-            <div>
-                <p>{{obj_txt.RetailPrice_low}}</p>
-                <input type="text" id="search_RetailPrice_low" :placeholder="obj_txt.RetailPrice_low">
-            </div>
-
-            <div>
-                <p>{{obj_txt.RetailPrice_high}}</p>
-                <input type="text" id="search_RetailPrice_high" :placeholder="obj_txt.RetailPrice_high">
-            </div>
 
 
 
@@ -62,44 +51,27 @@ nw.App.manifest.version = 'test';
             <input type="button"  :value="obj_txt.BtnAdd" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
                 @click="open_oper_add()">
         </div>
-        <div class="shop_list">
-            <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
+		<div class="shop_list">
+			<table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
                 <thead>
                 <tr>
-                    <th style="width: 170px;">{{obj_txt.ProductID}}</th>
-                    <th style="width: 170px;">{{obj_txt.ProductNO}}</th>
-                    <th style="width: 170px;">{{obj_txt.CategoryID}}</th>
-                    <th style="width: 170px;">{{obj_txt.BrandID}}</th>
-                    <th style="width: 170px;">{{obj_txt.CName}}</th>
-                    <th style="width: 170px;">{{obj_txt.EName}}</th>
-
-
-                    <th style="width: 170px;">{{obj_txt.Status}}</th>
-                    <th style="width: 170px;">{{obj_txt.Memo}}</th>
+                    <th style="width: 170px;">{{obj_txt.FromID}}</th>
+					<th style="width: 170px;">{{obj_txt.FromCountry}}</th>
+					<th style="width: 170px;">{{obj_txt.Status}}</th>
                     <th style="width: 170px;">{{obj_txt.Oper}}</th>
-                    <th style="width: 170px;">{{obj_txt.Dept}}</th>
-                    <th style="width: 170px;">{{obj_txt.LastEditDate}}</th>
-                    
+					<th style="width: 170px;">{{obj_txt.LastEditDate}}</th>
+					
                     
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(s,index) in list" v-if='list.length'>
-                        <td style="width: 170px;">{{s.ProductID}}</td>
-                        <td style="width: 170px;">{{s.ProductNO}}</td>
-                        <td style="width: 170px;">{{s.CategoryID}}</td>
-                        <td style="width: 170px;">{{s.BrandID}}</td> 
-                        <td style="width: 170px;">{{s.CName}}</td>   
-                        <td style="width: 170px;">{{s.EName}}</td>
-                        
-                                             
-
+                        <td style="width: 170px;">{{s.FromID}}</td>
+						<td style="width: 170px;">{{s.FromCountry}}</td>
                         <td style="width: 170px;">{{status(s.Status)}}</td>
-                        <th style="width: 170px;">{{s.Memo}}</th>
-                        <th style="width: 170px;">{{s.Oper}}</th>
-                        <th style="width: 170px;">{{s.Dept}}</th>
-                        <th style="width: 170px;">{{s.LastEditDate}}</th>
+                        <td style="width: 170px;">{{s.Oper}}</td>
+						<th style="width: 170px;">{{s.LastEditDate}}</th>
                         <td>
                             <a title="修改" class="btn btn-primary size-S radius" href="javascript:;" @click="open_oper_edit(s)" style="text-decoration: none;">
                                 {{obj_txt.edit}}
@@ -116,8 +88,8 @@ nw.App.manifest.version = 'test';
             <div class="my_page m-style">
 
             </div>
-        </div>
-    </div>
+		</div>
+	</div>
 
 
     <!-- 修改窗口    -->
@@ -127,33 +99,17 @@ nw.App.manifest.version = 'test';
                 <div v-if="is_add">Add</div>
                 <div v-if="!is_add">Edit</div>
                 <div class="model_list">
-                    <!-- 类型名 中文-->
+                    <!-- 货源地国家-->
                     <div>
                         <p class="">
-                            {{obj_txt.TypeName}}
+                            {{obj_txt.FromCountry}}
                         </p>
-                        <input type="text" v-model="data.TypeName" >
-                    </div>
-                    <!-- 类型名 英文-->
-                    <div>
-                        <p class="">
-                            {{obj_txt.TypeName_E}}
-                        </p>
-                        <input type="text" v-model="data.TypeName_E" >
+                        <input type="text" v-model="data.FromCountry" >
                     </div>
 
 
 
-                    <!-- 说明 -->
-                    <div>
-                            <p>
-                                {{obj_txt.Memo}}
-                            </p>
-                            <input type="text" v-model="data.Memo">
-                            
-                        </div>
-                    </div>
-                    <!-- 状态 -->
+
                     
                     <div>
                             <p>
@@ -164,14 +120,6 @@ nw.App.manifest.version = 'test';
                                 <option value="1">{{obj_txt.status_1}}</option>
                             </select>
                         </div>
-                    </div>
-
-                    <!-- 说明  -->
-                    <div>
-                        <p class="">
-                            {{obj_txt.StockShow}}
-                        </p>
-                        <input type="text" v-model="data.StockShow" >
                     </div>
                     
 
@@ -194,17 +142,17 @@ var user_token = get_cache('usertoken'),
 Vdata_list, //列表VUE
 Vedit;
 
-    $(function(){
-        shoplist = [];
+	$(function(){
+		shoplist = [];
 
-        var Vdata_list = new Vue({
-            el:"#main",
-            data:{
+		var Vdata_list = new Vue({
+			el:"#main",
+			data:{
                 list:[],
                 no_data: config_txt.no_data.zn,
-                obj_txt: splicing_obj(get_page_txt('stock_sys_product')), // 对象拼接
+                obj_txt: splicing_obj(get_page_txt('stock_sys_fromcontry')), // 对象拼接
             },
-            
+			
             mounted: function(){
                 getDatalist();
             },
@@ -229,7 +177,7 @@ Vedit;
                     $('#W_edit').modal("show");
                 }
             }
-        });
+		});
 
 
 
@@ -239,22 +187,12 @@ Vedit;
         function getDatalist(opt){
             opt = opt || {};
             opt["usertoken"] = user_token;
-            opt['CName']  = $("#search_CName").val();
-            opt['EName']  = $("#search_EName").val();
-            opt['EName']  = $("#search_ProductNO").val();
-            opt['RetailPrice_low'] = $("#search_RetailPrice_low").val(); //最底价
-            opt['RetailPrice_high'] = $("#search_RetailPrice_high").val(); //最商价
-            opt['order']  = 'ProductID desc';
-            opt['limit']  = '0,50';
-            if(!opt['RetailPrice_low']){
-                delete opt['RetailPrice_low'];
-            }
-            if(!opt['RetailPrice_high']){
-                delete opt['RetailPrice_high'];
-            }
+            opt['FromCountry'] = $("#search_FromCountry").val();
+            opt['Status']     = $("#search_Status").val();
+            
 
 
-            var url = "/index.php?s=desktop/Product/search";
+            var url = "/index.php?s=desktop/Stock_From/Search";
             ajax(url, opt, function (retjson) {
                 if (retjson.stat == 1) {
                     
@@ -271,11 +209,10 @@ Vedit;
             el:'#W_edit',
             data:{
                 data:{
-                    TypeName:'',
-                    TypeName_E:'',
+                    FromCountry:'',
+
                     Status:1,
-                    Memo:'',
-                    Dept:''
+
                 },
                 fromcountrylist:[],
                 fade:false,
@@ -289,17 +226,17 @@ Vedit;
 
                     var data = this.data;
 
-                    if(!data.TypeName){
-                        alert('TypeName can not be empty!!');
+                    if(!data.FromCountry){
+                        alert('FromCountry can not be empty!!');
                         return;
                     }
 
                     data.usertoken = user_token;
                     var url = '';
                     if(this.is_add){
-                        url = '/index.php?s=desktop/Manage_Stock_Out_Type/AddStockOutType';
+                        url = '/index.php?s=desktop/Stock_From/add';
                     }else{
-                        url = '/index.php?s=desktop/Manage_Stock_Out_Type/StartUse';
+                        url = '/index.php?s=desktop/Stock_From/update';
                     }
                     ajax(url, data, function (retjson) {
                         if (retjson.stat == 1) {
@@ -316,7 +253,7 @@ Vedit;
             }
         });
 
-    });
+	});
 
 
 </script>

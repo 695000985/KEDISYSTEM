@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+<!-- <script>
+/*为了在普通浏览器里调试加了此代码。 可以随时删除*/
+nw={};
+nw.App={};
+nw.App.manifest={};
+nw.App.manifest.version = 'test';
+</script> -->
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -17,6 +26,265 @@
     <script src="../script/loading.js"></script>
 </head>
 <body>
+	<div id="main" v-cloak class="market_shop">
+        <div class="search_txt">
+            <div>
+                <p>{{obj_txt.TypeName}}</p>
+                <input type="text" id="search_TypeName" :placeholder="obj_txt.TypeName">
+            </div>
+            <div>
+                <p>{{obj_txt.Memo}}</p>
+                <input type="text" id="search_Memo" :placeholder="obj_txt.Memo">
+            </div>
+
+
+
+
+            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
+                @click="search_btn()">
+
+
+            <input type="button"  :value="obj_txt.BtnAdd" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
+                @click="open_oper_add()">
+        </div>
+		<div class="shop_list">
+			<table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
+                <thead>
+                <tr>
+                    <th style="width: 170px;">{{obj_txt.StockTypeID}}</th>
+					<th style="width: 170px;">{{obj_txt.TypeName}}</th>
+					<th style="width: 170px;">{{obj_txt.TypeName_E}}</th>
+					<th style="width: 170px;">{{obj_txt.Status}}</th>
+					<th style="width: 170px;">{{obj_txt.Memo}}</th>
+					<th style="width: 170px;">{{obj_txt.Oper}}</th>
+					<th style="width: 170px;">{{obj_txt.Dept}}</th>
+					<th style="width: 170px;">{{obj_txt.LastEditDate}}</th>
+					
+                    
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(s,index) in list" v-if='list.length'>
+                        <td style="width: 170px;">{{s.StockTypeID}}</td>
+						<td style="width: 170px;">{{s.TypeName}}</td>
+						<td style="width: 170px;">{{s.TypeName_E}}</td>
+						<td style="width: 170px;">{{status(s.Status)}}</td>
+						<th style="width: 170px;">{{s.Memo}}</th>
+						<th style="width: 170px;">{{s.Oper}}</th>
+						<th style="width: 170px;">{{s.Dept}}</th>
+						<th style="width: 170px;">{{s.LastEditDate}}</th>
+                        <td>
+                            <a title="修改" class="btn btn-primary size-S radius" href="javascript:;" @click="open_oper_edit(s)" style="text-decoration: none;">
+                                {{obj_txt.edit}}
+                                <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: #fff"></i>
+                            </a>
+                            
+                        </td>
+                    </tr>
+                    <tr v-if="!list.length">
+                        <td colspan="10">{{no_data}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="my_page m-style">
+
+            </div>
+		</div>
+	</div>
+
+
+    <!-- 修改窗口    -->
+    <div id="W_edit" class="model modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="content_model modal-dialog "> 
+            <div class="modal-content">
+                <div v-if="is_add">Add</div>
+                <div v-if="!is_add">Edit</div>
+                <div class="model_list">
+                    <!-- 类型名 中文-->
+                    <div>
+                        <p class="">
+                            {{obj_txt.TypeName}}
+                        </p>
+                        <input type="text" v-model="data.TypeName" >
+                    </div>
+                    <!-- 类型名 英文-->
+                    <div>
+                        <p class="">
+                            {{obj_txt.TypeName_E}}
+                        </p>
+                        <input type="text" v-model="data.TypeName_E" >
+                    </div>
+
+
+
+                    <!-- 说明 -->
+                    <div>
+                            <p>
+                                {{obj_txt.Memo}}
+                            </p>
+                            <input type="text" v-model="data.Memo">
+                            
+                        </div>
+                    </div>
+                    <!-- 状态 -->
+                    
+                    <div>
+                            <p>
+                                {{obj_txt.Status}}
+                            </p>
+                            <select name="" id="" v-model="data.Status">
+                                <option value="0">{{obj_txt.status_0}}</option>
+                                <option value="1">{{obj_txt.status_1}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 说明  -->
+                    <div>
+                        <p class="">
+                            {{obj_txt.StockShow}}
+                        </p>
+                        <input type="text" v-model="data.StockShow" >
+                    </div>
+                    
+
+                <div class="btn_con">
+                    <input type="button" class="btn btn-success BtnUpdate" v-on:click='editsave()' value="提交">
+                    <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
 </body>
-ddddddddddddd
+<script>
+
+
+
+var user_token = get_cache('usertoken'),
+Vdata_list, //列表VUE
+Vedit;
+
+	$(function(){
+		shoplist = [];
+
+		var Vdata_list = new Vue({
+			el:"#main",
+			data:{
+                list:[],
+                no_data: config_txt.no_data.zn,
+                obj_txt: splicing_obj(get_page_txt('stock_sys_type')), // 对象拼接
+            },
+			
+            mounted: function(){
+                getDatalist();
+            },
+            methods:{
+                //搜索按钮
+                search_btn : function(){
+                    getDatalist();
+                },
+
+                //解析状态
+                status:function(stat){ if(this.obj_txt && this.obj_txt['status_'+stat]) return this.obj_txt['status_'+stat]; return '未知状态'; },
+                //打开修改窗口
+                open_oper_edit : function(s){
+                    Vedit.data = s;
+                    Vedit.is_add = false;
+                    Vedit.data.FromID = s.FromID
+                    $('#W_edit').modal("show");
+                },
+                open_oper_add : function(){
+                    Vedit.data = {};
+                    Vedit.is_add = true;
+                    $('#W_edit').modal("show");
+                }
+            }
+		});
+
+
+
+
+
+        //获取列表
+        function getDatalist(opt){
+            opt = opt || {};
+            opt["usertoken"] = user_token;
+            opt['TypeName'] = $("#search_TypeName").val();
+            opt['Memo']     = $("#search_Memo").val();
+            
+
+
+            var url = "/index.php?s=desktop/Manage_Stock_Out_Type/search";
+            ajax(url, opt, function (retjson) {
+                if (retjson.stat == 1) {
+                    
+                    Vdata_list.list = retjson.data;
+                    
+                } else {
+                    showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+
+                }
+            })
+        }
+
+        Vedit = new  Vue({
+            el:'#W_edit',
+            data:{
+                data:{
+                    TypeName:'',
+                    TypeName_E:'',
+                    Status:1,
+                    Memo:'',
+                    Dept:''
+                },
+                fromcountrylist:[],
+                fade:false,
+                no_data: config_txt.no_data.zn,
+                obj_txt: Vdata_list.obj_txt, // 对象拼接
+                is_add : false, //是否是新增，或是修改
+            },
+            methods:{
+                //保存
+                editsave : function(){
+
+                    var data = this.data;
+
+                    if(!data.TypeName){
+                        alert('TypeName can not be empty!!');
+                        return;
+                    }
+
+                    data.usertoken = user_token;
+                    var url = '';
+                    if(this.is_add){
+                        url = '/index.php?s=desktop/Manage_Stock_Out_Type/AddStockOutType';
+                    }else{
+                        url = '/index.php?s=desktop/Manage_Stock_Out_Type/StartUse';
+                    }
+                    ajax(url, data, function (retjson) {
+                        if (retjson.stat == 1) {
+                            Vedit.fromcountrylist = retjson.data;
+                        } else {
+                            showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+                        }
+                    })
+
+                    console.log(data);
+
+                    alert('未完');
+                }
+            }
+        });
+
+	});
+
+
+</script>
+
+
+
 </html>
