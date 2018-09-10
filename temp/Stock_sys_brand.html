@@ -25,6 +25,15 @@ nw.App.manifest.version = 'test';
     <script src="../script/common.js"></script>
     <script src="../script/kedi.js"></script>
     <script src="../script/loading.js"></script>
+    <style>
+        .pic{
+            width:100px;
+        }
+    </style>
+
+
+
+
 </head>
 
 <body>
@@ -71,8 +80,13 @@ nw.App.manifest.version = 'test';
                 <tbody>
                     <tr v-for="(s,index) in list" v-if='list.length'>
                         <td style="width: 170px;">{{s.BrandID}}</td>
+<<<<<<< HEAD
                         <td style="width: 170px;"><img :src="s.Pic" /></td>
 
+=======
+                        <td style="width: 170px;"><img  class="pic" :src="img(s.Pic)" /></td>
+                        
+>>>>>>> 7de1438b5d0a7fbbfecdb7887e8b5306466fd2d7
                         <td style="width: 170px;">{{s.BrandNO}}</td>
                         <td style="width: 170px;">{{s.CName}}</td>
                         <th style="width: 170px;">{{s.EName}}</th>
@@ -192,6 +206,10 @@ nw.App.manifest.version = 'test';
                 search_btn: function() {
                     getDatalist();
                 },
+                //图片
+                img:function(data){
+                   return 'data:image/jpeg;base64,'+showimg(data);
+                },
 
                 //解析状态
                 status: function(stat) {
@@ -291,6 +309,33 @@ nw.App.manifest.version = 'test';
         });
 
     });
+function showimg(data){
+
+    var len = data.length,
+        i,ch1,ch2,ch3,
+    str = '',
+    ss = [],
+    b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    var yu = Math.ceil(len/2) % 3;
+    for(i =0; i<len; i+=6){
+        ch1 = parseInt(data.substr(i, 2), 16);
+        ch2 = parseInt(data.substr(i+2,2), 16);
+        ch3 = parseInt(data.substr(i+4,2), 16);
+        ss.push( b64.substr(String.fromCharCode(ch1).charCodeAt(0)>>2, 1));
+        ss.push(b64.substr( ((String.fromCharCode(ch1).charCodeAt(0) & 0x03)<<4)  +  (String.fromCharCode(ch2).charCodeAt(0)>>4) , 1));
+        ss.push(b64.substr( ((String.fromCharCode(ch2).charCodeAt(0)& 0x0F)<<2) + ((String.fromCharCode(ch3).charCodeAt(0)& 0xC0)>>6)  , 1));
+        ss.push(b64.substr(String.fromCharCode(ch3).charCodeAt(0)&0x3F, 1));
+    }
+    if(yu >= 1){
+        ss[ss.length - 1] = '=';
+    }
+    if(yu == 1){
+        ss[ss.length - 2] = '=';
+    }
+    return ss.join('');
+}
+
+
 </script>
 
 
