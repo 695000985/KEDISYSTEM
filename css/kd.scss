@@ -22,7 +22,6 @@
         &:hover {
             border: 1px solid #0078da;
             background: #e5f2fb;
-             
         }
         &.active {
             border: 1px solid #0078da;
@@ -177,6 +176,7 @@ nav {
     color: #bdbdbd;
     font-size: 14px;
 }
+
 
 /*会员录入*/
 
@@ -1091,6 +1091,7 @@ nav {
     }
 }
 
+
 /* 专卖店 申请 */
 
 .search_txt {
@@ -1105,7 +1106,7 @@ nav {
         display: flex;
         align-items: center;
         margin-right: 15px;
-        P{
+        P {
             margin-bottom: 0;
         }
         input {
@@ -1113,7 +1114,7 @@ nav {
             margin-left: 5px;
             height: 25px;
         }
-        select{
+        select {
             border: 1px solid #ccc;
             margin-left: 5px;
             height: 30px;
@@ -1148,7 +1149,7 @@ nav {
                     height: 25px;
                     margin-left: 5px;
                 }
-                select{
+                select {
                     width: 130px;
                     height: 27px;
                     margin-left: 5px;
@@ -1161,7 +1162,10 @@ nav {
         margin-top: 20px;
     }
 }
-#apply_shop,#detail_shop,#approve_shop {
+
+#apply_shop,
+#detail_shop,
+#approve_shop {
     .content_model {
         .modal-content {
             padding: 20px 13px;
@@ -1183,7 +1187,7 @@ nav {
                     height: 25px;
                     margin-left: 5px;
                 }
-                select{
+                select {
                     width: 140px;
                     height: 30px;
                     margin-left: 5px;
@@ -1196,12 +1200,47 @@ nav {
         margin-top: 20px;
     }
 }
-#detail_shop{
-    p{
+
+#detail_shop {
+    p {
         width: 84px !important;
     }
-    input{
+    input {
         width: 170px;
     }
 }
 
+#W_edit {
+    .content_model {
+        .modal-content {
+            padding: 20px 13px;
+        }
+        .model_list {
+            display: flex;
+            div {
+                margin-right: 15px;
+                display: flex;
+                align-items: center;
+                margin-bottom: 5px;
+                p {
+                    width: 110px;
+                    text-align: right;
+                    margin-bottom: 0;
+                }
+                input {
+                    vertical-align: middle;
+                    height: 22px;
+                    margin-left: 5px;
+                }
+                select {
+                    width: 140px;
+                    height: 26px;
+                    margin-left: 5px;
+                }
+            }
+        }
+    }
+    .btn_con {
+        text-align: center;
+    }
+}

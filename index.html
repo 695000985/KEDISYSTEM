@@ -126,17 +126,17 @@
         'get_list_applay': './temp/apply_shop_list.html', //申请 列表
         "account_password": "./temp/user_password.html", // 设置密码
         "personal_details": "./temp/user_info.html", // 信息详情
-        'stock_sys_from':'./temp/Stock_frommanage.html', //库存_货源地管理
-        'stock_sys_fromcontry':'./temp/Stock_sys_fromcontry.html', //库存_货源地管理
-        'stock_sys_manage':'./temp/Stock_manage.html',   //库存_仓库管理
-        'stock_sys_type':'./temp/Stock_sys_type.html',//出入库类型管理
-        'stock_sys_product':'./temp/Stock_sys_product.html',//产品管理
-        'stock_sys_brand':'./temp/Stock_sys_brand.html', //品牌
-        'stock_sys_cat':'./temp/Stock_sys_cat.html', //商品分类
+        'stock_sys_from': './temp/Stock_frommanage.html', //库存_货源地管理
+        'stock_sys_fromcontry': './temp/Stock_sys_fromcontry.html', //库存_货源地管理
+        'stock_sys_manage': './temp/Stock_manage.html', //库存_仓库管理
+        'stock_sys_type': './temp/Stock_sys_type.html', //出入库类型管理
+        'stock_sys_product': './temp/Stock_sys_product.html', //产品管理
+        'stock_sys_brand': './temp/Stock_sys_brand.html', //品牌
+        'stock_sys_cat': './temp/Stock_sys_cat.html', //商品分类
     };
 
-    $(function () {
-        $(".index_content_btn div").click(function () {
+    $(function() {
+        $(".index_content_btn div").click(function() {
             $(this).addClass('active').siblings().removeClass('active')
         })
 
@@ -147,13 +147,13 @@
             index: 0,
         });
         get_menu(); //获取菜单；
-        detection_version(function (e) {})
-        get_user_info(function (ret) {
+        detection_version(function(e) {})
+        get_user_info(function(ret) {
             $('.user_info').html(ret.username + "(" + ret.Dept + ")")
             set_cache('user_info', JSON.stringify(ret))
         })
 
-        get_region(function (e) { /// 获取 地区
+        get_region(function(e) { /// 获取 地区
             var data = [];
             e.forEach(element => {
                 data.push(element.result) //regionLock
@@ -196,7 +196,7 @@
         var url = "/index.php/desktop/menu/getmenus";
         var data = {};
         data['usertoken'] = user_token;
-        ajax(url, data, function (e) {
+        ajax(url, data, function(e) {
             if (e.stat == 1) {
                 index.menu_list = e.data
             } else {
@@ -234,9 +234,6 @@
     shortcut1.on('failed', function (msg) {
         console.log(msg);
     });
-
-
-
 </script>
 
 </html>

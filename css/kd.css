@@ -466,4 +466,18 @@ nav div { font-size: 16px; color: #fff; }
 #detail_shop p { width: 84px !important; }
 
 #detail_shop input { width: 170px; }
+
+#W_edit .content_model .modal-content { padding: 20px 13px; }
+
+#W_edit .content_model .model_list { display: -webkit-box; display: -ms-flexbox; display: flex; }
+
+#W_edit .content_model .model_list div { margin-right: 15px; display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -ms-flex-align: center; align-items: center; margin-bottom: 5px; }
+
+#W_edit .content_model .model_list div p { width: 110px; text-align: right; margin-bottom: 0; }
+
+#W_edit .content_model .model_list div input { vertical-align: middle; height: 22px; margin-left: 5px; }
+
+#W_edit .content_model .model_list div select { width: 140px; height: 26px; margin-left: 5px; }
+
+#W_edit .btn_con { text-align: center; }
 /*# sourceMappingURL=kd.css.map */

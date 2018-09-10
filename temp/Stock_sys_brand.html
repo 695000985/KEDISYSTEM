@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<!-- <script>
+    <!-- <script>
 /*为了在普通浏览器里调试加了此代码。 可以随时删除*/
 nw={};
 nw.App={};
@@ -25,6 +26,7 @@ nw.App.manifest.version = 'test';
     <script src="../script/kedi.js"></script>
     <script src="../script/loading.js"></script>
 </head>
+
 <body>
     <div id="main" v-cloak class="market_shop">
         <div class="search_txt">
@@ -40,54 +42,52 @@ nw.App.manifest.version = 'test';
 
 
 
-            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
-                @click="search_btn()">
+            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 10px;" @click="search_btn()">
 
 
-            <input type="button"  :value="obj_txt.BtnAdd" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
-                @click="open_oper_add()">
+            <input type="button" :value="obj_txt.BtnAdd" class="btn btn-success btn-radius btn-serach" style="height: 30px;" @click="open_oper_add()">
         </div>
         <div class="shop_list">
             <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
                 <thead>
-                <tr>
-                    <th style="width: 170px;">{{obj_txt.BrandID}}</th>
-                    <th style="width: 170px;">{{obj_txt.Pic}}</th>
-                    <th style="width: 170px;">{{obj_txt.BrandNO}}</th>
-                    <th style="width: 170px;">{{obj_txt.CName}}</th>
-                    <th style="width: 170px;">{{obj_txt.EName}}</th>
-                    <th style="width: 170px;">{{obj_txt.BrandType}}</th>
+                    <tr>
+                        <th style="width: 170px;">{{obj_txt.BrandID}}</th>
+                        <th style="width: 170px;">{{obj_txt.Pic}}</th>
+                        <th style="width: 170px;">{{obj_txt.BrandNO}}</th>
+                        <th style="width: 170px;">{{obj_txt.CName}}</th>
+                        <th style="width: 170px;">{{obj_txt.EName}}</th>
+                        <th style="width: 170px;">{{obj_txt.BrandType}}</th>
 
-                    <th style="width: 170px;">{{obj_txt.Introduce}}</th>
-                    <th style="width: 170px;">{{obj_txt.Memo}}</th>
-                    
-                    
-                    <th style="width: 170px;">{{obj_txt.LastEditDate}}</th>
-                    
-                    
-                    <th></th>
-                </tr>
+                        <th style="width: 170px;">{{obj_txt.Introduce}}</th>
+                        <th style="width: 170px;">{{obj_txt.Memo}}</th>
+
+
+                        <th style="width: 170px;">{{obj_txt.LastEditDate}}</th>
+
+
+                        <th></th>
+                    </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(s,index) in list" v-if='list.length'>
                         <td style="width: 170px;">{{s.BrandID}}</td>
-                        <td style="width: 170px;"><img src="{{s.Pic}}" /></td>
-                        
+                        <td style="width: 170px;"><img :src="s.Pic" /></td>
+
                         <td style="width: 170px;">{{s.BrandNO}}</td>
                         <td style="width: 170px;">{{s.CName}}</td>
                         <th style="width: 170px;">{{s.EName}}</th>
                         <th style="width: 170px;">{{s.BrandType}}</th>
                         <td style="width: 170px;">{{s.Introduce}}</td>
                         <th style="width: 170px;">{{s.Memo}}</th>
-                        
-                        
+
+
                         <th style="width: 170px;">{{s.LastEditDate}}</th>
                         <td>
                             <a title="修改" class="btn btn-primary size-S radius" href="javascript:;" @click="open_oper_edit(s)" style="text-decoration: none;">
                                 {{obj_txt.edit}}
                                 <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: #fff"></i>
                             </a>
-                            
+
                         </td>
                     </tr>
                     <tr v-if="!list.length">
@@ -104,7 +104,7 @@ nw.App.manifest.version = 'test';
 
     <!-- 修改窗口    -->
     <div id="W_edit" class="model modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="content_model modal-dialog "> 
+        <div class="content_model modal-dialog ">
             <div class="modal-content">
                 <div v-if="is_add">Add</div>
                 <div v-if="!is_add">Edit</div>
@@ -115,98 +115,97 @@ nw.App.manifest.version = 'test';
                         <p class="">
                             {{obj_txt.BrandNO}}
                         </p>
-                        <input type="text" v-model="data.BrandNO" >
+                        <input type="text" v-model="data.BrandNO">
                     </div>
                     <!-- 类型名 中文-->
                     <div>
                         <p class="">
                             {{obj_txt.CName}}
                         </p>
-                        <input type="text" v-model="data.CName" >
+                        <input type="text" v-model="data.CName">
                     </div>
-                    <!-- 类型名 英文-->
+                </div>
+
+                <div class="model_list">
                     <div>
                         <p class="">
                             {{obj_txt.EName}}
                         </p>
-                        <input type="text" v-model="data.EName" >
+                        <input type="text" v-model="data.EName">
                     </div>
                     <!-- 类型-->
                     <div>
                         <p class="">
                             {{obj_txt.BrandType}}
                         </p>
-                        <input type="text" v-model="data.BrandType" >
+                        <input type="text" v-model="data.BrandType">
                     </div>
-                    <!-- 介绍 -->
+                </div>
+                <div class="model_list">
                     <div>
                         <p class="">
                             {{obj_txt.Introduce}}
                         </p>
-                        <input type="text" v-model="data.Introduce" >
+                        <input type="text" v-model="data.Introduce">
                     </div>
 
                     <!-- 说明 -->
                     <div>
-                            <p>
-                                {{obj_txt.Memo}}
-                            </p>
-                            <input type="text" v-model="data.Memo">
-                            
-                        </div>
+                        <p>
+                            {{obj_txt.Memo}}
+                        </p>
+                        <input type="text" v-model="data.Memo">
+
                     </div>
-
-                    
-
+                </div>
                 <div class="btn_con">
                     <input type="button" class="btn btn-success BtnUpdate" v-on:click='editsave()' value="提交">
                     <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
                 </div>
-
-
             </div>
         </div>
+    </div>
     </div>
 
 </body>
 <script>
+    var user_token = get_cache('usertoken'),
+        Vdata_list, //列表VUE
+        Vedit;
 
-
-
-var user_token = get_cache('usertoken'),
-Vdata_list, //列表VUE
-Vedit;
-
-    $(function(){
+    $(function() {
         shoplist = [];
 
         var Vdata_list = new Vue({
-            el:"#main",
-            data:{
-                list:[],
+            el: "#main",
+            data: {
+                list: [],
                 no_data: config_txt.no_data.zn,
                 obj_txt: splicing_obj(get_page_txt('stock_sys_brand')), // 对象拼接
             },
-            
-            mounted: function(){
+
+            mounted: function() {
                 getDatalist();
             },
-            methods:{
+            methods: {
                 //搜索按钮
-                search_btn : function(){
+                search_btn: function() {
                     getDatalist();
                 },
 
                 //解析状态
-                status:function(stat){ if(this.obj_txt && this.obj_txt['status_'+stat]) return this.obj_txt['status_'+stat]; return '未知状态'; },
+                status: function(stat) {
+                    if (this.obj_txt && this.obj_txt['status_' + stat]) return this.obj_txt['status_' + stat];
+                    return '未知状态';
+                },
                 //打开修改窗口
-                open_oper_edit : function(s){
+                open_oper_edit: function(s) {
                     Vedit.data = s;
                     Vedit.is_add = false;
                     Vedit.data.FromID = s.FromID
                     $('#W_edit').modal("show");
                 },
-                open_oper_add : function(){
+                open_oper_add: function() {
                     Vedit.data = {};
                     Vedit.is_add = true;
                     $('#W_edit').modal("show");
@@ -219,21 +218,21 @@ Vedit;
 
 
         //获取列表
-        function getDatalist(opt){
+        function getDatalist(opt) {
             opt = opt || {};
             opt["usertoken"] = user_token;
             opt['CName'] = $("#search_CName").val();
-            opt['EName']     = $("#search_EName").val();
+            opt['EName'] = $("#search_EName").val();
             opt['order'] = 'BrandID desc';
             opt['limit'] = '0, 100';
 
 
             var url = "/index.php?s=desktop/brand/search";
-            ajax(url, opt, function (retjson) {
+            ajax(url, opt, function(retjson) {
                 if (retjson.stat == 1) {
-                    
+
                     Vdata_list.list = retjson.data;
-                    
+
                 } else {
                     showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
 
@@ -241,42 +240,42 @@ Vedit;
             })
         }
 
-        Vedit = new  Vue({
-            el:'#W_edit',
-            data:{
-                data:{
-                    BrandNO:'',
-                    CName:'',
-                    EName:'',
-                    BrandType:'',
-                    Introduce:'',
-                    Memo:''
+        Vedit = new Vue({
+            el: '#W_edit',
+            data: {
+                data: {
+                    BrandNO: '',
+                    CName: '',
+                    EName: '',
+                    BrandType: '',
+                    Introduce: '',
+                    Memo: ''
                 },
-                fromcountrylist:[],
-                fade:false,
+                fromcountrylist: [],
+                fade: false,
                 no_data: config_txt.no_data.zn,
                 obj_txt: Vdata_list.obj_txt, // 对象拼接
-                is_add : false, //是否是新增，或是修改
+                is_add: false, //是否是新增，或是修改
             },
-            methods:{
+            methods: {
                 //保存
-                editsave : function(){
+                editsave: function() {
 
                     var data = this.data;
 
-                    if(!data.CName){
+                    if (!data.CName) {
                         alert('CName can not be empty!!');
                         return;
                     }
 
                     data.usertoken = user_token;
                     var url = '';
-                    if(this.is_add){
+                    if (this.is_add) {
                         url = '/index.php?s=desktop/brand/add';
-                    }else{
+                    } else {
                         url = '/index.php?s=desktop/brand/update';
                     }
-                    ajax(url, data, function (retjson) {
+                    ajax(url, data, function(retjson) {
                         if (retjson.stat == 1) {
                             Vedit.fromcountrylist = retjson.data;
                         } else {
@@ -292,8 +291,6 @@ Vedit;
         });
 
     });
-
-
 </script>
 
 

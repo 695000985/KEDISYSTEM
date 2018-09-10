@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<!-- <script>
+    <!-- <script>
 /*为了在普通浏览器里调试加了此代码。 可以随时删除*/
 nw={};
 nw.App={};
@@ -25,43 +26,41 @@ nw.App.manifest.version = 'test';
     <script src="../script/kedi.js"></script>
     <script src="../script/loading.js"></script>
 </head>
+
 <body>
-	<div id="main" v-cloak class="market_shop">
-		<div class="search_txt">
+    <div id="main" v-cloak class="market_shop">
+        <div class="search_txt">
             <div>
                 <p>{{obj_txt.FromName}}</p>
                 <input type="text" id="search_FromPlace" :placeholder="obj_txt.FromName">
             </div>
 
-            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
-                @click="search_btn()">
+            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 10px;" @click="search_btn()">
 
 
-            <input type="button"  :value="obj_txt.BtnAdd" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
-                @click="open_oper_add()">
-		</div>
-		<div class="shop_list">
-			<table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
+            <input type="button" :value="obj_txt.BtnAdd" class="btn btn-success btn-radius btn-serach" style="height: 30px;" @click="open_oper_add()">
+        </div>
+        <div class="shop_list">
+            <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
                 <thead>
-                <tr>
-                    <th style="width: 170px;">{{obj_txt.FromDetailID}}</th>
-                    <th style="width: 100px;">{{obj_txt.FromDetailName}}</th>
-                    <th style="width: 100px;">{{obj_txt.FromName}}</th>
-                    <th style="width: 100px;">{{obj_txt.Oper}}</th>
-                    <th style="width: 100px;">{{obj_txt.Status}}</th>
-                    <th></th>
-                </tr>
+                    <tr>
+                        <th style="width: 170px;">{{obj_txt.FromDetailID}}</th>
+                        <th style="width: 100px;">{{obj_txt.FromDetailName}}</th>
+                        <th style="width: 100px;">{{obj_txt.FromName}}</th>
+                        <th style="width: 100px;">{{obj_txt.Oper}}</th>
+                        <th style="width: 100px;">{{obj_txt.Status}}</th>
+                        <th></th>
+                    </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(s,index) in fromlist" v-if='fromlist.length' >
+                    <tr v-for="(s,index) in fromlist" v-if='fromlist.length'>
                         <td style="width: 170px;">{{s.FromDetailID}}</td>
                         <td style="width: 170px;">{{s.FromCountry}}</td>
                         <td style="width: 170px;">{{s.FromPlace}}</td>
                         <td style="width: 170px;">{{s.Oper}}</td>
                         <td>{{status(s.Status)}}</td>
                         <td>
-                            <a class="btn btn-primary size-S radius" href="javascript:;" @click="open_oper_edit(s)"
-                                style="text-decoration: none;">
+                            <a class="btn btn-primary size-S radius" href="javascript:;" @click="open_oper_edit(s)" style="text-decoration: none;">
                                 {{obj_txt.Oper_edit}}
                                 <i class="Hui-iconfont Hui-iconfont-edit" style="color: #fff;"></i>
                             </a>
@@ -75,12 +74,12 @@ nw.App.manifest.version = 'test';
             <div class="my_page m-style">
 
             </div>
-		</div>
-	</div>
+        </div>
+    </div>
 
     <!-- 修改窗口    -->
     <div id="W_edit" class="model modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="content_model modal-dialog "> 
+        <div class="content_model modal-dialog ">
             <div class="modal-content">
                 <div v-if="is_add">Add</div>
                 <div v-if="!is_add">Edit</div>
@@ -90,122 +89,125 @@ nw.App.manifest.version = 'test';
                         <p class="">
                             {{obj_txt.FromName}}
                         </p>
-                        <input type="text" v-model="data.FromPlace" >
+                        <input type="text" v-model="data.FromPlace">
                     </div>
                     <!-- 货源地国家 -->
                     <div>
-                            <p>
-                                {{obj_txt.FromDetailName}}
-                            </p>
-                            <select name="FromID" id="" v-model="data.FromID">
+                        <p>
+                            {{obj_txt.FromDetailName}}
+                        </p>
+                        <select name="FromID" id="" v-model="data.FromID">
                                 <option   v-for=" s in fromcountrylist"  :value="s.FromID" >{{s.FromCountry}}</option>
                                 
                             </select>
-                        </div>
                     </div>
-                    <!-- 状态 -->
-                    
+                </div>
+                <!-- 状态 -->
+                <div class="model_list">
                     <div>
-                            <p>
-                                {{obj_txt.Status}}
-                            </p>
-                            <select name="" id="" v-model="data.Status">
-                                <option value="0">{{obj_txt.status_0}}</option>
-                                <option value="1">{{obj_txt.status_1}}</option>
-                            </select>
-                        </div>
+                        <p>
+                            {{obj_txt.Status}}
+                        </p>
+                        <select name="" id="" v-model="data.Status">
+                                    <option value="0">{{obj_txt.status_0}}</option>
+                                    <option value="1">{{obj_txt.status_1}}</option>
+                                </select>
                     </div>
-
-                    <!-- 说明  -->
                     <div>
                         <p class="">
                             {{obj_txt.Memo}}
                         </p>
-                        <input type="text" v-model="data.Memo" >
+                        <input type="text" v-model="data.Memo">
                     </div>
-                    
-
+                </div>
                 <div class="btn_con">
                     <input type="button" class="btn btn-success BtnUpdate" v-on:click='editsave()' value="提交">
                     <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
                 </div>
-
-
             </div>
+
+
+
         </div>
+    </div>
     </div>
 
 </body>
 <script>
-var user_token = get_cache('usertoken'),
-fromcountrylist = [],           //货源地国家列表
-Vfrom_list,   //货源地数据VUE
-Vedit; //货源地数据修改VUE
+    var user_token = get_cache('usertoken'),
+        fromcountrylist = [], //货源地国家列表
+        Vfrom_list, //货源地数据VUE
+        Vedit; //货源地数据修改VUE
 
 
-ajax('/index.php?s=desktop/Stock_From/Search', {usertoken:user_token}, function (retjson) {
-    if (retjson.stat == 1) {
-        Vedit.fromcountrylist = retjson.data;
-    } else {
-        showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
-    }
-})
+    ajax('/index.php?s=desktop/Stock_From/Search', {
+        usertoken: user_token
+    }, function(retjson) {
+        if (retjson.stat == 1) {
+            Vedit.fromcountrylist = retjson.data;
+        } else {
+            showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+        }
+    })
 
 
 
-	$(function(){
+    $(function() {
 
-		Vfrom_list = new Vue({
-			el:"#main",
+        Vfrom_list = new Vue({
+            el: "#main",
 
-			data:{
-                fromlist:[],
-                fade:false,
+            data: {
+                fromlist: [],
+                fade: false,
                 no_data: config_txt.no_data.zn,
                 obj_txt: splicing_obj(get_page_txt('stock_sys_from')), // 对象拼接
             },
-			methods : {
-                search_btn : function(){
+            methods: {
+                search_btn: function() {
                     getStocklist();
                 },
                 //解析状态
-                status:function(stat){ if(this.obj_txt['status_'+stat]) return this.obj_txt['status_'+stat]; return '未知状态'; },
+                status: function(stat) {
+                    if (this.obj_txt['status_' + stat]) return this.obj_txt['status_' + stat];
+                    return '未知状态';
+                },
 
                 //打开修改窗口
-                open_oper_edit : function(s){
+                open_oper_edit: function(s) {
                     Vedit.data = s;
                     Vedit.is_add = false;
                     Vedit.data.FromID = s.FromID
                     $('#W_edit').modal("show");
                 },
-                open_oper_add : function(){
+                open_oper_add: function() {
                     Vedit.data = {};
                     Vedit.is_add = true;
                     $('#W_edit').modal("show");
                 }
             },
-            mounted: function(){
+            mounted: function() {
                 getStocklist();
             }
-            
-		});
+
+        });
 
 
 
 
         //获取货源地列表
-        function getStocklist(opt){
+        function getStocklist(opt) {
             opt = opt || {};
             opt["usertoken"] = user_token;
             opt['FromPlace'] = $("#search_FromPlace").val()
 
 
             var url = "/index.php?s=desktop/Stock_From_Detail/search";
-            ajax(url, opt, function (retjson) {
+            ajax(url, opt, function(retjson) {
                 if (retjson.stat == 1) {
-                    
+
                     Vfrom_list.fromlist = retjson.data;
-                    
+
                 } else {
                     showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
 
@@ -214,41 +216,41 @@ ajax('/index.php?s=desktop/Stock_From/Search', {usertoken:user_token}, function 
         }
 
 
-        Vedit = new  Vue({
-            el:'#W_edit',
-            data:{
-                data:{
-                    FromPlace:'',
-                    FromDetailID:0,
-                    FromID:0,
-                    Status:0,
-                    Memo:''
+        Vedit = new Vue({
+            el: '#W_edit',
+            data: {
+                data: {
+                    FromPlace: '',
+                    FromDetailID: 0,
+                    FromID: 0,
+                    Status: 0,
+                    Memo: ''
                 },
-                fromcountrylist:[],
-                fade:false,
+                fromcountrylist: [],
+                fade: false,
                 no_data: config_txt.no_data.zn,
                 obj_txt: Vfrom_list.obj_txt, // 对象拼接
-                is_add : false, //是否是新增，或是修改
+                is_add: false, //是否是新增，或是修改
             },
-            methods:{
+            methods: {
                 //保存
-                editsave : function(){
+                editsave: function() {
 
                     var data = this.data;
 
-                    if(!data.FromPlace){
+                    if (!data.FromPlace) {
                         alert('FromPlace can not be empty!!');
                         return;
                     }
 
                     data.usertoken = user_token;
                     var url = '';
-                    if(this.is_add){
+                    if (this.is_add) {
                         url = '/index.php?s=desktop/Stock_From_Detail/add';
-                    }else{
+                    } else {
                         url = '/index.php?s=desktop/Stock_From_Detail/update';
                     }
-                    ajax(url, data, function (retjson) {
+                    ajax(url, data, function(retjson) {
                         if (retjson.stat == 1) {
                             Vedit.fromcountrylist = retjson.data;
                         } else {
@@ -263,9 +265,7 @@ ajax('/index.php?s=desktop/Stock_From/Search', {usertoken:user_token}, function 
             }
         });
 
-	});
-
-
+    });
 </script>
 
 
