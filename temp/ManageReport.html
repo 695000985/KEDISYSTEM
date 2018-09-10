@@ -50,7 +50,7 @@
             </div>
             <div>
                 <button class="btn btn btn-primary-outline radius size-S" @click="query_shop_no()">查询分专卖店编号</button>
-                <button class="btn btn btn-primary-outline radius size-S" @click='open_region_lock()'>区域店锁定</button>
+                <!-- <button class="btn btn btn-primary-outline radius size-S" @click='open_region_lock()'>区域店锁定</button> -->
             </div>
             <div class="check_con">
                 <p>
@@ -363,60 +363,7 @@
         </div>
     </div>
 
-    <div id="region_lock" style="display: none">
-        <div class="regio_l_top">
-            <span>时间：</span>
-            <input type="text" class="Wdate lock_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
-            <span>地区:</span>
-            <select name="" id="" class="lock_region">
-                <option :value="r" v-for="r in lock_region" :key="r">{{r}}</option>
-            </select>
-            <button class="btn  btn-primary-outline radius size-S" @click="search_region()">搜索区域</button>
-        </div>
-        <div class="region_con" style="height: 350px; overflow: auto; background: rgb(204, 204, 204); padding: 4px 0px; margin-top: 5px;">
-            <table class="table table-border table-bordered table-bg" style="width: 700px; background: #fff;">
-                <thead>
-                    <tr>
-                        <th>选择</th>
-                        <th>GroupID</th>
-                        <th>ShopNo</th>
-                        <th>Region</th>
-                        <th>Kits</th>
-                        <th>TotalMoney</th>
-                        <th>Cash</th>
-                        <th>Teller</th>
-                        <th>Debt</th>
-                        <th>状态</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="r in list_data" v-bind:class=" r['״̬']== '未锁定' ? 'unlock' : 'lock' ">
-                        <td>
-                            <input type="checkbox" :value="r.GroupID" name="" id="" v-bind:checked="ifchecked">
-                        </td>
-                        <td>{{r.GroupID}}</td>
-                        <td>{{r.ShopNo}}</td>
-                        <td>{{r.Region}}</td>
-                        <td>{{r.Kits}}</td>
-                        <td>{{r.TotalMoney}}</td>
-                        <td>{{r.Cash}}</td>
-                        <td>{{r.Teller}}</td>
-                        <td>{{r.Debt}}</td>
-                        <td>{{r['״̬']}}</td>
-                    </tr>
-                    <tr v-if="!list_data.length">
-                        <td colspan="10">暂无数据</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="bot_lock">
-            <input type="checkbox" name="" id="" v-model="ifchecked">
-            <span>全选</span>
-            <button class="btn  btn-primary-outline radius size-S" @click="click_lock()">锁定</button>
-            <button class="btn  btn-primary-outline radius size-S" @click="click_unlock()">解锁</button>
-        </div>
-    </div>
+  
     <div class="return_borrowed" id="return_borrowed" style="display: none; margin-bottom: 15px;">
         <div class="return_top">
             <div>
@@ -595,7 +542,7 @@
                     var data = [];
                     e.forEach(element => {
                         manage_main.region.push(element.result) //regionLock
-                        regionLock.lock_region.push(element.result) //regionLock
+                      
                     });
                 })
                 // get_user_info(function(ret) {
@@ -655,9 +602,9 @@
 
             },
             methods: {
-                open_region_lock() {
-                    open_html('Region_Lock', '#region_lock')
-                },
+                // open_region_lock() {
+                //     open_html('Region_Lock', '#region_lock')
+                // },
                 open_return_borrowed() {
                     open_html("Return_Borrowed", '#return_borrowed')
                 },
@@ -720,26 +667,26 @@
 
             }
         })
-        var regionLock = new Vue({ //区域店锁定
-            el: "#region_lock",
-            data: {
-                lock_region: [],
-                list_data: [],
-                ifchecked: false,
-                // local_time: get_local_time()
-            },
-            methods: {
-                search_region() {
-                    query_region_lock()
-                },
-                click_lock() {
-                    lock_region()
-                },
-                click_unlock() {
-                    unlock_region()
-                },
-            }
-        })
+        // var regionLock = new Vue({ //区域店锁定
+        //     el: "#region_lock",
+        //     data: {
+        //         lock_region: [],
+        //         list_data: [],
+        //         ifchecked: false,
+        //         // local_time: get_local_time()
+        //     },
+        //     methods: {
+        //         search_region() {
+        //             query_region_lock()
+        //         },
+        //         click_lock() {
+        //             lock_region()
+        //         },
+        //         click_unlock() {
+        //             unlock_region()
+        //         },
+        //     }
+        // })
 
         var cash_data = new Vue({
             el: '#cash_data',
@@ -791,72 +738,6 @@
 
         })
 
-        function query_region_lock() { //查询区域店 
-            var url = "/index.php?s=desktop/Region_Lock/button1_Click";
-            var data = {};
-            data['usertoken'] = get_cache('usertoken');
-            data['date'] = $('.lock_time').val();
-            data['Region'] = $('.lock_region').val();
-            data['check_all'] = "";
-            ajax1(url, data, function(e) {
-                if (e.stat == 1) {
-                    regionLock.list_data = e.data
-
-                    regionLock.ifchecked = false
-                } else {
-                    showErr(e.errmsg, e.errmsg_en, e.errcode)
-                }
-            })
-        }
-
-        function lock_region() { //
-            var arry = [];
-            var url = '/index.php?s=desktop/Region_Lock/button3_Click';
-            var data = {};
-            data['usertoken'] = get_cache('usertoken');
-            data['date'] = $('.lock_time').val();
-            data['Region'] = $('.lock_region').val();
-            $('.region_con input:checked').each(function() {
-                arry.push(`"${$(this).val()}"`)
-            })
-
-            data['check_all'] = `[${arry}]`
-            ajax(url, data, function(e) {
-                if (e.stat == 1) {
-                    success(e.data.msg);
-                    setTimeout(function() {
-                        query_region_lock()
-                    }, 3000)
-                } else {
-                    showErr(e.errmsg, e.errmsg_en, e.errcode)
-                }
-            })
-        }
-
-        function unlock_region() {
-            var arry = [];
-            var url = '/index.php?s=desktop/Region_Lock/button4_Click';
-            var data = {};
-            data['usertoken'] = get_cache('usertoken');
-            data['date'] = $('.lock_time').val();
-            data['Region'] = $('.lock_region').val();
-            data['Region'] = $('.lock_region').val();
-            $('.region_con input:checked').each(function() {
-                arry.push(`"${$(this).val()}"`)
-            })
-
-            data['check_all'] = `[${arry}]`
-            ajax(url, data, function(e) {
-                if (e.stat == 1) {
-                    success(e.data.msg)
-                    setTimeout(function() {
-                        query_region_lock()
-                    }, 3000)
-                } else {
-                    showErr(e.errmsg, e.errmsg_en, e.errcode)
-                }
-            })
-        }
 
         function manage_init(opt) { //查询分专卖店编号
             var url = "/index.php?s=desktop/Report_Manage/button8_Click";
