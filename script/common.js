@@ -231,14 +231,14 @@ function hide_loading() {
 
 $(function() {
 
-    $('title').html('科迪会员录入系统' + '(' + nw.App.manifest.version + ')')
+    //  $('title').html('科迪会员录入系统' + '(' + nw.App.manifest.version + ')')
 
     $(document).ajaxError(function(e, xhr, settings, error) {
         console.log(error);
     });
 })
 
-function search_member(obj, fn,Err) { // 搜索会员
+function search_member(obj, fn, Err) { // 搜索会员
     var url = '/index.php?s=desktop/Tb_Customer/get_list';
     var data = {};
     data['usertoken'] = get_cache('usertoken');
@@ -282,8 +282,8 @@ function DateMinus(date1, date2) { //date1:小日期   date2:大日期
     return day;
 }
 
-function is_overdue(){
-   return  DateMinus(get_local_cache('localtime'), get_local_time()) >=7
+function is_overdue() {
+    return DateMinus(get_local_cache('localtime'), get_local_time()) >= 7
 }
 
 function times(unixtimestamp) {

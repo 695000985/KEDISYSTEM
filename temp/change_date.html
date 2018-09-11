@@ -25,50 +25,51 @@
     <div class="change_date_con" id="change_date">
         <div class="change_top">
             <p>
-                <span>日期</span>
+                <span>{{obj_txt.Cd_date}}</span>
                 <input type="text" class="Wdate old_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
             </p>
             <select name="" id="" class="region">
                 <option :value="r" v-for="r in region">{{r}}</option>
             </select>
-            <button class="btn btn-disabled" @click="query()">查询</button>
+            <button class="btn btn-primary" @click="query()">{{obj_txt.Cd_btn_search}}</button>
             <p>
-                <span>新日期</span>
+                <span>{{obj_txt.Cd_new_date}}</span>
                 <input type="text" class="Wdate new_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
             </p>
-            <button class="btn btn-primary" @click="whole()">区域店日期迁移</button>
+            <button class="btn btn-primary" @click="whole()">{{obj_txt.Cd_regional_migration}}</button>
             <input type="text" disabled class="gid_name" v-bind:value='gid_name' style="width: 180px;">
-            <button class="btn btn-primary" @click="alone()">专卖店店日期迁移</button>
+            <button class="btn btn-primary" @click="alone()">{{obj_txt.Cd_shop_migration}}</button>
         </div>
         <div class="list_con" style="background: #ccc;">
             <table v-if="fade" class="table table-border table-bordered table-bg" style="width: 2300px; margin: 0 auto; margin-bottom: 10px; background: #ffffff;">
                 <thead>
                     <tr>
-                        <td>GroupID</td>
-                        <td>Realdate</td>
-                        <td>ShopNo</td>
-                        <td>Area</td>
-                        <td>Kits</td>
-                        <td>TotalMoney</td>
-                        <td>CashMoney</td>
-                        <td>TellarMoney</td>
-                        <td>DebitMoney</td>
-                        <td>Disc_Trsfer</td>
-                        <td>Cash_USD</td>
-                        <td>ScBV</td>
-                        <td>ScPV</td>
-                        <td>ScNaira</td>
-                        <td>ReportType</td>
-                        <td>Oper_Name</td>
-                        <td>ReportStatus</td>
-                        <td>BelongdSC</td>
-                        <td>Teller_Oper</td>
-                        <td>RegionNO</td>
-                        <td>ReturnBorrowedStatus</td>
-                        <td>KitsLanguage</td>
-                        <td>WarehouseMark</td>
-                        <td>DeductBorrowKits</td>
-                        <td>DataFrom</td>
+                        <td>{{obj_txt.Cd_GroupID}}</td>
+                        <td>{{obj_txt.Cd_Realdate}}</td>
+                        <td>{{obj_txt.Cd_shopNo}}</td>
+                        <td>{{obj_txt.Cd_area}}</td>
+                        <td>{{obj_txt.Cd_kits}}</td>
+                        <td>{{obj_txt.Cd_total_money}}</td>
+                        <td>{{obj_txt.Cd_cash_money}}</td>
+                        <td>{{obj_txt.Cd_tellar_monry}}</td>
+                        <td>{{obj_txt.Cd_debit_money}}</td>
+                        <td>{{obj_txt.Cd_disc_trsfer}}</td>
+                        <td>{{obj_txt.Cd_cash_usd}}</td>
+                        <td>{{obj_txt.Cd_ScBV}}</td>
+                        <td>{{obj_txt.Cd_ScPV}}</td>
+                        <td>{{obj_txt.Cd_ScNaira}}</td>
+                        <td>{{obj_txt.Cd_ReportType}}</td>
+                        <td>{{obj_txt.Cd_open_name}}</td>
+                        <td>{{obj_txt.Cd_reportStatus}}</td>
+                        <td>{{obj_txt.Cd_BelongdSC}}</td>
+                        <td>{{obj_txt.Cd_Teller_Oper}}</td>
+                        <td>{{obj_txt.Cd_RegionNO}}</td>
+                        <td>{{obj_txt.Cd_ReturnBorrowedStatus}}</td>
+                        <td>{{obj_txt.Cd_KitsLanguage}}</td>
+                        <td>{{obj_txt.Cd_WarehouseMark}}</td>
+                       
+                        <td>{{obj_txt.Cd_DeductBorrowKits}}</td>
+                        <td>{{obj_txt.Cd_DataFrom}}</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -100,7 +101,7 @@
                         <td>{{x.DataFrom}}</td>
                     </tr>
                     <tr v-if="!list_data.length">
-                        <td colspan="17">暂无数据</td>
+                        <td colspan="17">{{no_data}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -108,10 +109,7 @@
     </div>
     <script>
         $(function () {
-            // get_user_info(function (ret) {
-            //     $('.oper_name').val(ret.username)
-            // })
-
+          
              $('.oper_name').val(JSON.parse(get_cache("user_info")).username)
             $('.Wdate').val(get_local_time())
         })
@@ -121,7 +119,9 @@
                 region: get_local_cache('region_data').split(','),
                 list_data:[],
                 gid_name:'',
-                fade:false
+                fade:false,
+                no_data: config_txt.no_data.zn,
+                obj_txt: splicing_obj(get_page_txt('Change_date')), // 对象拼接
             },
             methods: {
                 query() {

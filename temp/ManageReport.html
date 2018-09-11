@@ -50,7 +50,7 @@
             </div>
             <div>
                 <button class="btn btn btn-primary-outline radius size-S" @click="query_shop_no()">查询分专卖店编号</button>
-                <button class="btn btn btn-primary-outline radius size-S" @click='open_region_lock()'>区域店锁定</button>
+                <!-- <button class="btn btn btn-primary-outline radius size-S" @click='open_region_lock()'>区域店锁定</button> -->
             </div>
             <div class="check_con">
                 <p>
@@ -149,7 +149,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(g,$index) in Report_Manage_data" v-on:click="click_input(g.GroupID)">
+                    <tr v-for="(g,$index) in Report_Manage_data" v-on:click="click_input(g.GroupID,g.SC)">
                         <td>{{g.GroupID}}</td>
                         <td>{{g.SC}}</td>
                         <td>{{g.Status}}</td>
@@ -210,30 +210,30 @@
                 <div>
                     <p>
                         <span>BigSCGroupID</span>
-                        <input type="text" style="width: 150px;" :value="input_opt['BigSCGroupID']" disabled class="bigsc_groupid">
+                        <input type="text" style="width: 150px;" :value="input_opt['BigSCGroupID'] || 0" disabled class="bigsc_groupid">
                     </p>
                     <p>
                         <span>Total_BV</span>
-                        <input class="total_bv" disabled type="text" :value="input_opt['Total_BV']">
+                        <input class="total_bv" disabled type="text" :value="input_opt['Total_BV'] || 0">
                     </p>
                     <p>
                         <span>Total_PV</span>
-                        <input class="total_pv" type="text" disabled :value="input_opt['Total_PV']">
+                        <input class="total_pv" type="text" disabled :value="input_opt['Total_PV'] || 0">
                     </p>
                     <p>
                         <span>Total_NR</span>
-                        <input class="total_nr" type="text" disabled :value="input_opt['Total_NR']">
+                        <input class="total_nr" type="text" disabled :value="input_opt['Total_NR'] || 0">
                     </p>
                 </div>
                 <div class="info">
                     <div>
                         <p>
                             <span>S_nylon</span>
-                            <input type="text" class="s_nylon" v-model="input_opt['S_Nylon']" disabled>
+                            <input type="text" class="s_nylon" :value="input_opt['S_Nylon'] || 0" disabled>
                         </p>
                         <p>
                             <span>Oper</span>
-                            <input type="text" class="oper_name" disabled v-model="input_opt['Oper']">
+                            <input type="text" class="oper_name" disabled :value="input_opt['Oper']">
                         </p>
                         <p>
                             <span>System Total</span>
@@ -243,7 +243,7 @@
                     <div>
                         <p>
                             <span>B_nylon</span>
-                            <input type="text" class="b_nylon" disabled v-model="input_opt['B_Nylon']">
+                            <input type="text" class="b_nylon" disabled :value="input_opt['B_Nylon'] || 0">
                         </p>
                         <p>
                             <span>Date</span>
@@ -267,7 +267,7 @@
                             <span>Cash(NR)</span>
                             <input type="text" class="cash_nr" disabled v-model="input_opt['Cash(NR)']">
                         </p>
-                        <button class="btn btn-default size-S" style="background: #fff;">...</button>
+                        <button class="btn btn-default size-S" style="background: #fff;" @click="open_cash_date()">...</button>
                     </div>
                     <div>
                         <p>
@@ -319,60 +319,51 @@
             </div>
         </div>
     </div>
-    <div id="region_lock" style="display: none">
-        <div class="regio_l_top">
-            <span>时间：</span>
-            <input type="text" class="Wdate lock_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
-            <span>地区:</span>
-            <select name="" id="" class="lock_region">
-                <option :value="r" v-for="r in lock_region" :key="r">{{r}}</option>
-            </select>
-            <button class="btn  btn-primary-outline radius size-S" @click="search_region()">搜索区域</button>
+    <div id="cash_data" style="display: none">
+        <div class="cash_data_top" style="padding: 5px;">
+            <span>编号：</span> <input type="text" disabled v-model="cash_groupid">
+            <span>时间：</span> <input type="text" disabled v-model="cash_time">
+            <span>SC：</span> <input type="text" disabled v-model="cash_sc">
+            <span>Total：</span> <input type="text" disabled v-model="cash_total">
+            <br>
+            <span>Amount：</span> <input type="text" v-model="cash_amount">
+            <button class="btn btn-danger  " style="margin-left: 10px;margin-top: 5px;">DELETE</button>
+            <button class="btn btn-success  " style="margin-left: 10px;margin-top: 5px;">ADD</button>
+
         </div>
-        <div class="region_con" style="height: 350px; overflow: auto; background: rgb(204, 204, 204); padding: 4px 0px; margin-top: 5px;">
+        <div class="list_data">
             <table class="table table-border table-bordered table-bg" style="width: 700px; background: #fff;">
                 <thead>
                     <tr>
-                        <th>选择</th>
                         <th>GroupID</th>
+                        <th>CashID</th>
                         <th>ShopNo</th>
-                        <th>Region</th>
-                        <th>Kits</th>
-                        <th>TotalMoney</th>
-                        <th>Cash</th>
-                        <th>Teller</th>
-                        <th>Debt</th>
-                        <th>状态</th>
+                        <th>Amount</th>
+                        <th>RealDate</th>
+                        <th>Oper</th>
+                        <th>Memo</th>
+
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="r in list_data" v-bind:class=" r['״̬']== '未锁定' ? 'unlock' : 'lock' ">
-                        <td>
-                            <input type="checkbox" :value="r.GroupID" name="" id="" v-bind:checked="ifchecked">
-                        </td>
-                        <td>{{r.GroupID}}</td>
-                        <td>{{r.ShopNo}}</td>
-                        <td>{{r.Region}}</td>
-                        <td>{{r.Kits}}</td>
-                        <td>{{r.TotalMoney}}</td>
-                        <td>{{r.Cash}}</td>
-                        <td>{{r.Teller}}</td>
-                        <td>{{r.Debt}}</td>
-                        <td>{{r['״̬']}}</td>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
-                    <tr v-if="!list_data.length">
-                        <td colspan="10">暂无数据</td>
+                    <tr>
+                        <td colspan="7"></td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="bot_lock">
-            <input type="checkbox" name="" id="" v-model="ifchecked">
-            <span>全选</span>
-            <button class="btn  btn-primary-outline radius size-S" @click="click_lock()">锁定</button>
-            <button class="btn  btn-primary-outline radius size-S" @click="click_unlock()">解锁</button>
-        </div>
     </div>
+
+  
     <div class="return_borrowed" id="return_borrowed" style="display: none; margin-bottom: 15px;">
         <div class="return_top">
             <div>
@@ -551,13 +542,17 @@
                     var data = [];
                     e.forEach(element => {
                         manage_main.region.push(element.result) //regionLock
-                        regionLock.lock_region.push(element.result) //regionLock
+                      
                     });
                 })
                 // get_user_info(function(ret) {
                 //    $('.oper_name').val(ret.username)
                 // })
-            $('.oper_name').val(JSON.parse(get_cache("user_info")).username)
+
+            if (!!get_cache("user_info")) {
+                $('.oper_name').val(JSON.parse(get_cache("user_info")).username)
+
+            }
 
             $(".sub_sc div p input").keyup(function() {
                 if ($(this).val().length > 10) {
@@ -598,42 +593,18 @@
                     handler(newval, oldval) {
                         console.log(newval.Kits)
                         newval.System_Total = newval.Kits * newval.UnitPrice;
-                        newval.Grand_total = newval.Debit * 1 + newval["D/Tsfer"] * 1 + newval["Cash(usd)"] * 1 + newval["Cash(NR)"] * 1
+                        newval.Grand_total = newval.Debit * 1 + newval["D/Tsfer"] * 1 + newval["Cash(usd)"] * 1 + newval["Cash(NR)"] * 1+newval["Cash(NR)"]*1
 
                         newval.Result = newval.Grand_total * 1 - newval.System_Total * 1;
 
                     }
                 },
 
-
-                // Kits() {
-                //     alert(333)
-                //     this.input_opt.System_Total = this.input_opt.Kits * this.input_opt.UnitPrice
-                // },
-                system_total() {
-                    this.result = this.grand_total - this.system_total
-                },
-                d_tsfer() {
-                    this.grand_total = this.d_tsfer * 1 + this.debit * 1 + this.cash_usd * 1;
-                    this.result = this.grand_total - this.system_total
-                },
-                debit() {
-                    this.grand_total = this.d_tsfer * 1 + this.debit * 1 + this.cash_usd * 1;
-                    this.result = this.grand_total - this.system_total
-                },
-                cash_usd() {
-                    this.grand_total = this.d_tsfer * 1 + this.debit * 1 + this.cash_usd * 1;
-                    this.result = this.grand_total - this.system_total
-                },
-                grand_total() {
-                    this.result = this.grand_total - this.system_total;
-                },
-
             },
             methods: {
-                open_region_lock() {
-                    open_html('Region_Lock', '#region_lock')
-                },
+                // open_region_lock() {
+                //     open_html('Region_Lock', '#region_lock')
+                // },
                 open_return_borrowed() {
                     open_html("Return_Borrowed", '#return_borrowed')
                 },
@@ -676,109 +647,97 @@
                     $(".sub_sc div p:nth-child(1) input").removeAttr('disabled');
                     this.index_counter = 0;
                 },
-                click_input(gid) { //点击将分组 id 赋值到 input 里
+                click_input(gid,sc) { //点击将分组 id 赋值到 input 里
 
                     this.index_counter = $(".sub_sc div p input[disabled='disabled']:first").parent('p').index()
                     this.index_counter++;
-                    $(`.sub_sc div p:nth-child(${this.index_counter-1}) input`).val(gid).removeAttr('disabled')
+                    $(`.sub_sc div p:nth-child(${this.index_counter-1}) input`).val(gid).attr("data-sc",sc).removeAttr('disabled')
                     $(`.sub_sc div p:nth-child(${this.index_counter}) input`).removeAttr('disabled');
-
+                },
+                open_cash_date() {
+                    if(!!$('.sc_a').val()){
+                        cash_data.cash_groupid=$('.sc_a').val().trim();
+                        cash_data.cash_sc=$('.sc_a').attr("data-sc").trim();
+                        open_html("CashData", "#cash_data", "CashData");
+                        cash_data.get_cash_data()
+                    }
+                   
                 }
 
 
             }
         })
-        var regionLock = new Vue({ //区域店锁定
-            el: "#region_lock",
-            data: {
-                lock_region: [],
-                list_data: [],
-                ifchecked: false,
+        // var regionLock = new Vue({ //区域店锁定
+        //     el: "#region_lock",
+        //     data: {
+        //         lock_region: [],
+        //         list_data: [],
+        //         ifchecked: false,
+        //         // local_time: get_local_time()
+        //     },
+        //     methods: {
+        //         search_region() {
+        //             query_region_lock()
+        //         },
+        //         click_lock() {
+        //             lock_region()
+        //         },
+        //         click_unlock() {
+        //             unlock_region()
+        //         },
+        //     }
+        // })
 
-                // local_time: get_local_time()
+        var cash_data = new Vue({
+            el: '#cash_data',
+            data: {
+                cash_data: {},
+                cash_groupid: "",
+                cash_time: "",
+                cash_sc: "",
+                cash_total: 0,
+                active_index: -1,
+                cashid: 0,
+                cash_amount: '0',
+                lang_txt: get_page_txt('Cash_data'), // 当前页面的文字信息
+                obj_txt: {}, // 对象拼接
+            },
+            created: function() {
+                //this.get_cash_data();
+                this.lang_toggle()
             },
             methods: {
-                search_region() {
-                    query_region_lock()
+                lang_toggle() {
+                    this.obj_txt = splicing_obj(this.lang_txt)
                 },
-                click_lock() {
-                    lock_region()
-                },
-                click_unlock() {
-                    unlock_region()
-                },
-                // open_
+                add_cash() {
 
+                },
+                det_cash() {
 
+                },
+                get_cash_data() {
+                    var url = '/index.php?s=desktop/Front_Desk_Cash/CashData';
+                    var data = {};
+                    data['usertoken'] = get_cache('usertoken');
+                    data['GroupID'] = this.cash_groupid;
+                    data['ShopNO'] = this.cash_sc;
+                    data['RealDate'] = "";
+                    ajax(url, data, function(e) {
+                        if (e.stat == 1) {
+                            cash_data.cash_data = e.data;
+                            cash_data.cash_total = e.data.Total;
+                        } else {
+                         
+                            showErr(e.errmsg, e.errmsg_en, e.errcode)
+                        }
+                    })
+                }
             }
+
+
         })
 
-        function query_region_lock() { //查询区域店 
-            var url = "/index.php?s=desktop/Region_Lock/button1_Click";
-            var data = {};
-            data['usertoken'] = get_cache('usertoken');
-            data['date'] = $('.lock_time').val();
-            data['Region'] = $('.lock_region').val();
-            data['check_all'] = "";
-            ajax1(url, data, function(e) {
-                if (e.stat == 1) {
-                    regionLock.list_data = e.data
-
-                    regionLock.ifchecked = false
-                } else {
-                    showErr(e.errmsg, e.errmsg_en, e.errcode)
-                }
-            })
-        }
-
-        function lock_region() { //
-            var arry = [];
-            var url = '/index.php?s=desktop/Region_Lock/button3_Click';
-            var data = {};
-            data['usertoken'] = get_cache('usertoken');
-            data['date'] = $('.lock_time').val();
-            data['Region'] = $('.lock_region').val();
-            $('.region_con input:checked').each(function() {
-                arry.push(`"${$(this).val()}"`)
-            })
-
-            data['check_all'] = `[${arry}]`
-            ajax(url, data, function(e) {
-                if (e.stat == 1) {
-                    success(e.data.msg);
-                    setTimeout(function() {
-                        query_region_lock()
-                    }, 3000)
-                } else {
-                    showErr(e.errmsg, e.errmsg_en, e.errcode)
-                }
-            })
-        }
-
-        function unlock_region() {
-            var arry = [];
-            var url = '/index.php?s=desktop/Region_Lock/button4_Click';
-            var data = {};
-            data['usertoken'] = get_cache('usertoken');
-            data['date'] = $('.lock_time').val();
-            data['Region'] = $('.lock_region').val();
-            data['Region'] = $('.lock_region').val();
-            $('.region_con input:checked').each(function() {
-                arry.push(`"${$(this).val()}"`)
-            })
-
-            data['check_all'] = `[${arry}]`
-            ajax(url, data, function(e) {
-                if (e.stat == 1) {
-                    success(e.data.msg)
-                    setTimeout(function() {
-                        query_region_lock()
-                    }, 3000)
-                } else {
-                    showErr(e.errmsg, e.errmsg_en, e.errcode)
-                }
-            })
-        }
 
         function manage_init(opt) { //查询分专卖店编号
             var url = "/index.php?s=desktop/Report_Manage/button8_Click";

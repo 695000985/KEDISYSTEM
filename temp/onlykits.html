@@ -25,30 +25,32 @@
     <div class="onlykits_con" id="add_kits">
         <div class="info">
             <p>
-                <span>Date</span>
+                <span>{{obj_txt.On_date}}</span>
                 <input type="text" class="Wdate" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
             </p>
             <p>
-                <span>Kits</span>
+                <span>{{obj_txt.On_kits}}</span>
                 <input type="number" class="kits">
             </p>
+        </div>
+        <div class="info">
             <p>
-                <span>Region</span>
+                <span>{{obj_txt.On_region}}</span>
                 <select name="" id="" class="region">
                     <option :value="r" v-for="r in region">{{r}}</option>
                 </select>
             </p>
             <p>
-                <span>SC</span>
+                <span>{{obj_txt.On_shopCode}}</span>
                 <input type="text" class="sc">
             </p>
         </div>
         <div class="kits_btn">
             <p>
-                <span>Oper</span>
+                <span>{{obj_txt.On_oper}}</span>
                 <input type="text" disabled class="oper_name">
             </p>
-            <button class="btn btn-success" @click="add()">OK</button>
+            <button class="btn btn-success" @click="add()">{{obj_txt.On_add}}</button>
         </div>
     </div>
     <script>
@@ -62,7 +64,9 @@
         var vm = new Vue({
             el: '#add_kits',
             data: {
-                region: get_local_cache('region_data').split(',')
+                region: get_local_cache('region_data').split(','),
+                no_data: config_txt.no_data.zn,
+                obj_txt: splicing_obj(get_page_txt('Only_kits')), // 对象拼接
             },
             methods: {
                 add() {

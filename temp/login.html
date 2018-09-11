@@ -20,11 +20,11 @@
         body {
             height: 100%
         }
-
+        
         body {
             font-size: 14px
         }
-
+        
         .header,
         .footer {
             position: absolute;
@@ -33,13 +33,13 @@
             width: 100%;
             z-index: 99
         }
-
+        
         .header {
             top: 0;
             height: 60px;
             background: #426374 url(../images/logo.png) no-repeat 0 center
         }
-
+        
         .loginWraper {
             position: absolute;
             width: 100%;
@@ -50,7 +50,7 @@
             z-index: 1;
             background: #3283AC url(../images/admin-login-bg.jpg) no-repeat center
         }
-
+        
         .loginBox {
             position: absolute;
             width: 617px;
@@ -62,7 +62,7 @@
             margin-top: -184px;
             padding-top: 38px
         }
-
+        
         @media (max-width:617px) {
             .loginbox {
                 width: 100%;
@@ -71,30 +71,30 @@
                 margin-left: 0;
             }
         }
-
+        
         .loginBox .row {
             margin-top: 20px;
         }
-
+        
         .loginBox .row .form-label .Hui-iconfont {
             font-size: 24px
         }
-
+        
         .loginBox .input-text {
             width: 360px
         }
-
+        
         @media (max-width:617px) {
             .loginBox .input-text {
                 width: 80%
             }
         }
-
+        
         .yzm a {
             color: #426374;
             font-size: 12px
         }
-
+        
         #span_msg {
             font-size: 14px;
             color: Red;
@@ -105,7 +105,7 @@
             ;
             float: left
         }
-
+        
         .hd_msg {
             font-size: 12px;
             color: #fff;
@@ -115,16 +115,16 @@
             padding-left: 50px;
             padding-top: 5px
         }
-
+        
         .hd_msg a {
             color: #fff
         }
-
+        
         .hd_msg a:hover {
             color: #fff;
             text-decoration: underline
         }
-
+        
         .footer {
             height: 46px;
             line-height: 46px;
@@ -134,7 +134,7 @@
             font-size: 12px;
             background-color: #426374
         }
-
+        
         #ie6-warning {
             background: #fff url(/jscss/demoimg/201006/warning.gif) no-repeat 3px center;
             position: absolute;
@@ -146,7 +146,7 @@
             padding: 2px 15px 2px 23px;
             text-align: left
         }
-
+        
         #ie6-warning a {
             text-decoration: none
         }
@@ -198,12 +198,12 @@
     <script src="../script/kedi.js"></script>
     <script>
         var version_con = []
-        $(function () {
+        $(function() {
             if (top.location != self.location) {
                 top.location = self.location;
             }
 
-            get_version(function (e) {
+            get_version(function(e) {
                 version_con = e;
 
                 if_version()
@@ -230,7 +230,7 @@
             },
 
             methods: {
-                toggle: function (index) {
+                toggle: function(index) {
                     this.lang_toggle = index;
                     set_local_cache("lang", index)
                 }
@@ -247,7 +247,7 @@
             data['username'] = $('.uname').val()
             data['password'] = $('.upassword').val()
             data['code'] = ''
-            ajax(url, data, function (retjson) {
+            ajax(url, data, function(retjson) {
                 $('input[type="button"]').attr('disabled', false);
                 $(a).css('filter', 'none');
                 hide_loading()
@@ -255,7 +255,7 @@
                     set_cache('usertoken', retjson.data.usertoken);
                     if (is_overdue()) {
                         get_local_cache('localtime', get_local_time())
-                        get_language(function (e) {
+                        get_language(function(e) {
                             set_local_cache('app_lang', JSON.stringify(e));
                             window.location.href = '../index.html';
                         })
@@ -263,7 +263,7 @@
                         if (!!get_local_cache('app_lang')) {
                             window.location.href = '../index.html'
                         } else {
-                            get_language(function (e) {
+                            get_language(function(e) {
                                 set_local_cache('app_lang', JSON.stringify(e))
                                 window.location.href = '../index.html'
                             })
@@ -310,32 +310,30 @@
             }
             //nw.App.registerGlobalHotKey(shortcut);
         }
-        var option = {
-            key: "Ctrl+Shift+s",
-            active: function () {
-                console.log("全局快捷键: " + this.key + " 被激活.");
-            },
-            failed: function (msg) {
-                // :(, 无法注册 |key| 或未注册 |key|.
-                console.log(msg);
-            }
-        };
+        // var option = {
+        //     key: "Ctrl+Shift+s",
+        //     active: function () {
+        //         console.log("全局快捷键: " + this.key + " 被激活.");
+        //     },
+        //     failed: function (msg) {
+        //         // :(, 无法注册 |key| 或未注册 |key|.
+        //         console.log(msg);
+        //     }
+        // };
 
-        // 使用 |option| 注册快捷键
-        var shortcut = new nw.Shortcut(option);
-        nw.App.registerGlobalHotKey(shortcut);
-        // 您还可以监听快捷键的成功或失败事件
-        shortcut.on('active', function () {
-            set_http()
-        });
+        // // 使用 |option| 注册快捷键
+        // var shortcut = new nw.Shortcut(option);
+        // nw.App.registerGlobalHotKey(shortcut);
+        // // 您还可以监听快捷键的成功或失败事件
+        // shortcut.on('active', function () {
+        //     set_http()
+        // });
 
-        shortcut.on('failed', function (msg) {
-            console.log(msg);
-        });
+        // shortcut.on('failed', function (msg) {
+        //     console.log(msg);
+        // });
         // 注销全局快捷键
         //nw.App.unregisterGlobalHotKey(shortcut);
-
-     
     </script>
 </body>
 

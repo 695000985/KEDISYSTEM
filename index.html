@@ -123,6 +123,7 @@
         'updateReport': './temp/update_report.html',
         'onlykits': './temp/onlykits.html',
         'ChangeDate': './temp/change_date.html',
+        "RegionLock":'./temp/region_lock.html',
         'Market_Shop_get_list': './temp/market_shop.html', //店铺 列表
         'get_list_applay': './temp/apply_shop_list.html', //申请 列表
         "account_password": "./temp/user_password.html", // 设置密码
@@ -138,8 +139,8 @@
 
     };
 
-    $(function () {
-        $(".index_content_btn div").click(function () {
+    $(function() {
+        $(".index_content_btn div").click(function() {
             $(this).addClass('active').siblings().removeClass('active')
         })
 
@@ -150,13 +151,13 @@
             index: 0,
         });
         get_menu(); //获取菜单；
-        detection_version(function (e) {})
-        get_user_info(function (ret) {
+        detection_version(function(e) {})
+        get_user_info(function(ret) {
             $('.user_info').html(ret.username + "(" + ret.Dept + ")")
             set_cache('user_info', JSON.stringify(ret))
         })
 
-        get_region(function (e) { /// 获取 地区
+        get_region(function(e) { /// 获取 地区
             var data = [];
             e.forEach(element => {
                 data.push(element.result) //regionLock
@@ -199,7 +200,7 @@
         var url = "/index.php/desktop/menu/getmenus";
         var data = {};
         data['usertoken'] = user_token;
-        ajax(url, data, function (e) {
+        ajax(url, data, function(e) {
             if (e.stat == 1) {
                 index.menu_list = e.data
             } else {
@@ -208,38 +209,35 @@
         })
 
     }
-    var os = require("os");
+    // var os = require("os");
 
-    var networkInterfaces = os.networkInterfaces();
+    // var networkInterfaces = os.networkInterfaces();
 
-    console.info(networkInterfaces);
-
-
-    var option1 = {
-        key: "Ctrl+Shift+c",
-        active: function () {
-            console.log("全局快捷键: " + this.key + " 被激活.");
-        },
-        failed: function (msg) {
-            // :(, 无法注册 |key| 或未注册 |key|.
-            console.log(msg);
-        }
-    };
-
-    var shortcut1 = new nw.Shortcut(option1);
-    nw.App.registerGlobalHotKey(shortcut1);
-    // 您还可以监听快捷键的成功或失败事件
-    shortcut1.on('active', function () {
-        remove_local_cache('app_lang');
-        showErr('缓存清理成功')
-    });
-
-    shortcut1.on('failed', function (msg) {
-        console.log(msg);
-    });
+    // console.info(networkInterfaces);
 
 
+    // var option1 = {
+    //     key: "Ctrl+Shift+c",
+    //     active: function () {
+    //         console.log("全局快捷键: " + this.key + " 被激活.");
+    //     },
+    //     failed: function (msg) {
+    //         // :(, 无法注册 |key| 或未注册 |key|.
+    //         console.log(msg);
+    //     }
+    // };
 
+    // var shortcut1 = new nw.Shortcut(option1);
+    // nw.App.registerGlobalHotKey(shortcut1);
+    // // 您还可以监听快捷键的成功或失败事件
+    // shortcut1.on('active', function () {
+    //     remove_local_cache('app_lang');
+    //     showErr('缓存清理成功')
+    // });
+
+    // shortcut1.on('failed', function (msg) {
+    //     console.log(msg);
+    // });
 </script>
 
 </html>
