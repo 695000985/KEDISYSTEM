@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>入库</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <style>
+        
+    </style>
+
+
+
+
+</head>
+<body>
+
+    
+
+    <div id="main" v-cloak class="market_shop">
+        <div class="search_txt">
+            <div>
+                <p>{{obj_txt.from}}</p>
+                <input type="text" id="search_from" :placeholder="obj_txt.from">
+            </div>
+            <div>
+                <p>{{obj_txt.to}}</p>
+                <input type="text" id="search_to" :placeholder="obj_txt.to">
+            </div>
+            <div>
+                <p>{{obj_txt.name}}</p>
+                <input type="text" id="search_name" :placeholder="obj_txt.name">
+            </div>
+            <div>
+                <p>{{obj_txt.bank}}</p>
+                <input type="text" id="search_bank" :placeholder="obj_txt.bank">
+            </div>
+
+
+
+            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
+                @click="search_btn()">
+
+
+            <input type="button"  :value="obj_txt.BtnCash" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
+                @click="searchcash_btn()">
+        </div>
+        <div class="shop_list">
+            <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
+                <thead>
+                <tr>
+                    
+                    
+                    
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(s,index) in list" v-if='list.length'>
+                        
+                        <td>
+    
+                            
+                        </td>
+                    </tr>
+                    <tr v-if="!list.length">
+                        <td colspan="10">{{no_data}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="my_page m-style">
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 修改窗口    -->
+    <div id="W_edit" class="model modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="content_model modal-dialog "> 
+            <div class="modal-content">
+                <div v-if="is_add">Add</div>
+                <div v-if="!is_add">Edit</div>
+                <div class="model_list">
+
+                    <!-- 选择仓库 -->
+                    <div>
+                        <p class="">
+                            {{obj_txt.Stockname}}
+                        </p>
+                        <input type="text" v-model="data.BrandNO" >
+                    </div>
+                    <!-- 商品号 -->
+                    <div>
+                        <p class="">
+                            {{obj_txt.Stockname}}
+                        </p>
+                        <input type="text" v-model="data.BrandNO" >
+                    </div>
+                    <!-- 批次号 -->
+                    <div>
+                        <p class="">
+                            {{obj_txt.Stockname}}
+                        </p>
+                        <input type="text" v-model="data.BrandNO" >
+                    </div>  
+                    <!-- 数量 -->
+                    <div>
+                        <p class="">
+                            {{obj_txt.Stockname}}
+                        </p>
+                        <!-- 统一数量两位小数。无小数时不显示小数部分 -->
+                        <input type="text" v-model="data.BrandNO" >
+                    </div> 
+
+                    <!-- 备注 -->
+                    <div>
+                        <p class="">
+                            {{obj_txt.Stockname}}
+                        </p>
+                        <input type="text" v-model="data.BrandNO" >
+                    </div> 
+
+                <div class="btn_con">
+                    <input type="button" class="btn btn-success BtnUpdate" v-on:click='editsave()' value="提交">
+                    <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</body>
+<script>
+
+
+
+var user_token = get_cache('usertoken'),
+Vdata_list, //列表VUE
+Vresult;
+
+    $(function(){
+
+        var Vdata_list = new Vue({
+            el:"#main",
+            data:{
+                list:[],
+                no_data: config_txt.no_data.zn,
+                obj_txt: splicing_obj(get_page_txt('SummaryCheck')), // 对象拼接
+            },
+            
+            mounted: function(){
+                getDatalist();
+            },
+            methods:{
+                //搜索按钮
+                search_btn : function(){
+                    getDatalist();
+                },
+            }
+        });
+
+
+
+
+        //获取列表
+        function getDatalist(opt){
+            opt = opt || {};
+            opt["usertoken"] = user_token;
+            opt['CName'] = $("#search_CName").val();
+            opt['EName']     = $("#search_EName").val();
+            opt['order'] = 'BrandID desc';
+            opt['limit'] = '0, 100';
+
+
+            var url = "....";
+            ajax(url, opt, function (retjson) {
+                if (retjson.stat == 1) {
+                    
+                    Vdata_list.list = retjson.data;
+                    
+                } else {
+                    showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+
+                }
+            })
+        }
+
+
+
+    });
+
+
+
+</script>
+
+
+
+</html>
