@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="../css/layer.css">
     <script src="../script/vue.min.js"></script>
     <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.admin.js"></script>
     <script src="../script/H-ui.min.js"></script>
     <script src="../script/common.js"></script>
     <script src="../script/kedi.js"></script>
@@ -762,13 +763,14 @@
             var optin = $.extend({}, data, opt)
             ajax(url, optin, function(e) {
                 if (e.stat == 1) {
-                    // manage_main.Report_Manage_data = e.data.list
-                    //input_opt=$.extend({},e.data.input) 
+                   
                     manage_main.input_opt = $.extend({}, e.data.input);
                     manage_main.public_fade = true;
                     manage_main.public_data = e.data; //GeT_ReportToForm_ForBIGSC.Get_Result_Mem_Info
-                    //Object.assign({},manage_main.input_opt,e.data.input)
+                  
                     success(e.data.err)
+                    set_local_cache("bigscgroup_box",JSON.stringify(e.data))  //生成大专卖店的数据添加缓存
+                   // creatIframe("./temp/sale_report.html?biggroup=1",'OrderPay')
 
                     // manage_main.clear()
                 } else {

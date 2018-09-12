@@ -45,21 +45,22 @@
 </head>
 
 <body>
-    <div id="sale_report_content" v-cloak>
+    <div id="sale_report_content" style="width: 90%;margin: 10px auto;">
         <div class="Preprint_row">
             <div style="padding: 6px 5px;">
                 <button class="btn btn-primary size-S radius" onclick="opne_print_form()">{{obj_txt.Btn_Preprint}}</button>
             </div>
-            <div>
+            <div style="padding: 10px;">
                 <p class="GroupID">{{obj_txt.GroupID}}：
-                    <input type="text" disabled v-bind:value="reportdata.input.GroupID">
+                    <input type="text"  id="sa_groupid" >
                 </p>
                 <p class="RealDate">{{obj_txt.RealDate}}：
-                    <input type="text" disabled v-bind:value='reportdata.input.RealDate'>
+                    <input type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})"  id="sa_real_date">
                 </p>
                 <p class="ShopCode">{{obj_txt.Shop_Code}}：
-                    <input type="text" disabled v-bind:value="reportdata.input.ShopNO">
+                    <input type="text"  id="sa_shopcode">
                 </p>
+                <button class="btn btn-primary" onclick="report_list();cash_data_list();">搜索</button>
             </div>
         </div>
         <div class="product_con">
@@ -704,12 +705,43 @@
     var realdate = queryString('realdate');
     var shopno = queryString('shopno');
     var groupid = queryString('groupid');
+    var biggroup=queryString('biggroup');
     var admin_name;
     $(function() {
         v_salereport.operator = JSON.parse(get_cache("user_info")).username;
         admin_name = JSON.parse(get_cache("user_info")).username;
         print_form.people = JSON.parse(get_cache("user_info")).username;
         print_form1.people = JSON.parse(get_cache("user_info")).username;
+
+        if(biggroup){
+
+            var bigsc_con = JSON.parse(get_local_cache("bigscgroup_box"))
+            var a=bigsc_con.input;
+            var obj={};
+            obj.input=bigsc_con.input;
+            obj.list=bigsc_con.GeT_ReportToForm_ForBIGSC.Get_Result_Mem_Info;
+            var c=$.extend({},obj,a);
+            console.log(c)
+            v_salereport.reportdata = c;
+            v_salereport.kits = c.input.Kits
+
+        }else{
+            if(!!realdate){
+                 $("#sa_real_date").val(realdate)
+            }
+            if(!!shopno){
+                $("#sa_shopcode").val(shopno)
+            }
+            if(!!groupid){
+                $("#sa_groupid").val(groupid)
+            }
+            if(!!realdate && !!shopno && !!groupid){
+                report_list();
+                cash_data_list();
+            }
+        }
+
+       
     })
     var v_salereport = new Vue({
         el: '#sale_report_content',
@@ -727,11 +759,8 @@
             obj_txt: {}, // 对象拼接
         },
         created: function() {
-            report_list();
+            //report_list();
             this.lang_toggle()
-        },
-        mounted() {
-
         },
         watch: {
             aera(newval, oldval) {
@@ -754,9 +783,9 @@
         var url = '/index.php?s=desktop/Sale_Entered_By_Front/report_list';
         var data = {};
         data['usertoken'] = get_cache('usertoken');
-        data['RealDate'] = realdate;
-        data['ShopNO'] = shopno;
-        data['GroupID'] = groupid;
+        data['RealDate'] = realdate || $("#sa_real_date").val().trim();
+        data['ShopNO'] = shopno || $("#sa_shopcode").val().trim();
+        data['GroupID'] = groupid || $("#sa_groupid").val().trim();
         data['Area'] = 'none'
         data['Kits'] = '0';
         ajax(url, data, function(e) {
@@ -963,7 +992,7 @@
             obj_txt: {}, // 对象拼接
         },
         created: function() {
-            cash_data_list();
+            //cash_data_list();
             this.lang_toggle()
         },
         methods: {
@@ -994,9 +1023,9 @@
         var url = '/index.php?s=desktop/Front_Desk_Cash/CashData';
         var data = {};
         data['usertoken'] = get_cache('usertoken');
-        data['GroupID'] = groupid;
-        data['ShopNO'] = shopno;
-        data['RealDate'] = realdate;
+        data['GroupID'] = groupid || $("#sa_groupid").val().trim();
+        data['ShopNO'] = shopno || $("#sa_shopcode").val().trim();
+        data['RealDate'] = realdate ||  $("#sa_real_date").val();
         ajax(url, data, function(e) {
             if (e.stat == 1) {
                 v_cash.cash_data = e.data;

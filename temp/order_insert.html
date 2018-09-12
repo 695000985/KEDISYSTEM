@@ -14,6 +14,7 @@
     <script src="../script/vue.min.js"></script>
     <script src="../script/jquery-2.1.1.min.js"></script>
     <script src="../script/H-ui.min.js"></script>
+    <script src="../script/H-ui.admin.js"></script>
     <script src="../script/common.js"></script>
     <script src="../script/kedi.js"></script>
     <script src="../script/loading.js"></script>
@@ -606,9 +607,10 @@
             ajax(url, data, function (e) {
                 if (e.stat == 1) {
                     $('.report_no').val(e.data.GroupID);
-                    open_frame('sale_report',
-                        `sale_report.html?shopno=${$('.select_shop_no').val()}&realdate=${$('.order_input_time').val()}&groupid=${e.data.GroupID}`
-                    )
+                    // open_frame('sale_report',
+                    //     `sale_report.html?shopno=${$('.select_shop_no').val()}&realdate=${$('.order_input_time').val()}&groupid=${e.data.GroupID}`
+                    // )
+                    creatIframe(`./temp/sale_report.html?shopno=${$('.select_shop_no').val()}&realdate=${$('.order_input_time').val()}&groupid=${e.data.GroupID}`,'OrderPay')
                 } else {
                     showErr(e.errmsg, e.errmsg_en, e.errcode)
                 }
