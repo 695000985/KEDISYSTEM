@@ -190,6 +190,10 @@ var config_txt = {
     "set_num": {
         "zn": '设置数量不能为空',
         "en": "The number of settings cannot be empty"
+    },
+    "report_num":{
+        'zn':"填完所有的保单号",
+        "en":""
     }
 }
 var config_year = function () {

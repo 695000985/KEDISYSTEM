@@ -80,13 +80,7 @@ nw.App.manifest.version = 'test';
                 <tbody>
                     <tr v-for="(s,index) in list" v-if='list.length'>
                         <td style="width: 170px;">{{s.BrandID}}</td>
-<<<<<<< HEAD
-                        <td style="width: 170px;"><img :src="s.Pic" /></td>
-
-=======
                         <td style="width: 170px;"><img  class="pic" :src="img(s.Pic)" /></td>
-                        
->>>>>>> 7de1438b5d0a7fbbfecdb7887e8b5306466fd2d7
                         <td style="width: 170px;">{{s.BrandNO}}</td>
                         <td style="width: 170px;">{{s.CName}}</td>
                         <th style="width: 170px;">{{s.EName}}</th>

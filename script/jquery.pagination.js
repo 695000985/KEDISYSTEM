@@ -55,7 +55,7 @@
         nextContent: '>', //下一页内容
         activeCls: 'active', //当前页选中状态
         coping: false, //首页和尾页
-        isHide: true, //当前页数为0页或者1页时不显示分页
+        isHide: false, //当前页数为0页或者1页时不显示分页
         homePage: '', //首页节点内容
         endPage: '', //尾页节点内容
         keepShowPN: false, //是否一直显示上一页下一页
