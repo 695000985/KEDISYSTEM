@@ -27,7 +27,7 @@
         }
 
         .active_index {
-            background: #ccc;
+            background: #eee;
         }
     </style>
 </head>
@@ -39,12 +39,12 @@
                 <button class="btn btn-default size-S"> 记载经销商数据</button>
                 <button class="btn btn btn-primary-outline  size-S" @click="open_shop_acheivement()">专卖店汇总</button>
                 <button class="btn btn btn-primary-outline  size-S" @click="open_AcheiveMentNow()">当前业绩</button>
-                <button class="btn btn btn-primary-outline  size-S">加入单录入OnlyKits</button>
+                <!-- <button class="btn btn btn-primary-outline  size-S">加入单录入OnlyKits</button> -->
                 <input type="text" style="width: 100px; padding: 3px 0;">
                 <button class="btn btn-primary-outline size-S ">PrePrint</button>
                 <input type="checkbox" name="" id="" value="PrintBIGSC" v-model="printbigsc">
                 <span>PrintBIGSC</span>
-                <input type="text" name="" id="" style="margin-left: 20px; width: 50px; padding: 3px 0;">
+                <input type="text" name="" disabled id="" v-bind:value="printbigsc_name"  style="margin-left: 20px; width: 50px; padding: 3px 0;">
             </div>
             <div class="check_con">
                 <p>
@@ -59,7 +59,7 @@
                 <div>
                     <p>
                         <span>日期Date:</span>
-                        <input type="text" class="Wdate real_date" v-bind:value="local_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                        <input type="text" class="Wdate real_date date1"  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
                     </p>
                     <p>
                         <span>新店号 ChangeSC</span>
@@ -67,7 +67,6 @@
                     </p>
                 </div>
                 <div>
-
                     <p>
                         <span>区域Region</span>
                         <select name="" id="" v-model="Area">
@@ -115,7 +114,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-if="table_list.data_report" v-for="(item,$index) in table_list.data_report">
+                    <tr v-if="table_list.data_report" v-for="(item,$index) in table_list.data_report" @click="click_select($index,item)" :class="{'active_index' : $index == list_active_index}">
                         <td>{{item.SC}}</td>
                         <td>{{item.Status}}</td>
                         <td>{{item.Kits}}</td>
@@ -145,44 +144,44 @@
                     <div>
                         <p>
                             <span>S_nylon</span>
-                            <input type="text">
+                            <input type="text" disabled v-model="info_bot_left.S_nylon">
                         </p>
                         <p>
                             <span>Result</span>
-                            <input type="text">
+                            <input type="text" disabled :value="Result">
                         </p>
                         <p>
                             <span>System Total</span>
-                            <input type="text">
+                            <input type="text" disabled :value="sys_tol">
                         </p>
                     </div>
                     <div>
                         <p>
                             <span>B_nylon</span>
-                            <input type="text">
+                            <input type="text" disabled v-model="info_bot_left.B_Nylon">
                         </p>
                         <p>
                             <span>Grand Total</span>
-                            <input type="text">
+                            <input type="text" disabled :value="g_tol">
                         </p>
                         <p>
                             <span>Region</span>
-                            <input type="text">
+                            <input type="text" disabled v-model="info_bot_left.Region">
                         </p>
                     </div>
                     <div>
                         <p>
                             <span>Cash(NR)</span>
-                            <input type="text">
+                            <input type="text" disabled v-model="info_bot_left.Cash_NR">
                             <button>...</button>
                         </p>
                         <p>
                             <span style="width: 79px;">Unit Price</span>
-                            <input type="text">
+                            <input type="text" disabled v-model="info_bot_left.Unit_Price">
                         </p>
                         <p>
                             <span>Bank Deposit</span>
-                            <input type="text">
+                            <input type="text" disabled v-model="info_bot_left.Bank_Deposit">
                         </p>
                         <button>...</button>
                         <button>DIS</button>
@@ -190,41 +189,41 @@
                     <div>
                         <p>
                             <span>Kits</span>
-                            <input type="text">
+                            <input type="text" v-model="info_bot_left.Kits">
                         </p>
                         <p>
                             <span>Debit</span>
-                            <input type="text">
+                            <input type="text" v-model="info_bot_left.Debit">
                         </p>
                         <p>
                             <span>Oper</span>
-                            <input type="text">
+                            <input type="text" disabled v-model="info_bot_left.Oper">
                         </p>
 
                     </div>
                     <div>
                         <p>
                             <span>Disct/Tsfer</span>
-                            <input type="text">
+                            <input type="text" v-model="info_bot_left.Disc_Trsfer">
                         </p>
                         <p>
                             <span>Date</span>
-                            <input type="text">
+                            <input type="text" disabled v-model="info_bot_left.Date">
                         </p>
                         <p>
                             <span>Cash(USd)</span>
-                            <input type="text">
+                            <input type="text" v-model="info_bot_left.Cash_USD">
                         </p>
 
                     </div>
                     <div>
                         <p>
                             <span>BorrowedCash</span>
-                            <input type="text">
+                            <input type="text" disabled v-model="info_bot_left.BorrowedCash">
                         </p>
                         <p>
                             <span>BrwCashToteller</span>
-                            <input type="text">
+                            <input type="text" disabled v-model="info_bot_left.BrwCashToTeller">
                         </p>
                     </div>
                 </div>
@@ -347,7 +346,7 @@
             })
           
             update_report_main.oper_name = JSON.parse(get_cache("user_info")).username
-
+            $(".real_date").val(get_local_time())
         })
         var update_report_main = new Vue({
             el: "#update_report",
@@ -356,27 +355,70 @@
                 oper_name: '',
                 local_time: get_local_time(),
                 printbigsc: '',
+                printbigsc_name: '',
                 error_report: '',
                 table_list: {},
                 list_active_index: -1,
                 Area: 'NONE', // 区域Region
                 GroupID: '', //汇总NO
+                info_bot_left:{
+                  S_nylon:0,  
+                  System_Total:0,  
+                  Result:0,  
+                  B_Nylon:0,  
+                  Grand_Total:0,  
+                  Region:0,  
+                  Cash_NR:0,  
+                  Unit_Price:get_cache("Unit_Price"),  
+                  Bank_Deposit:0,  
+                  Kits:0,  
+                  Debit:0,  
+                  Oper: JSON.parse(get_cache("user_info")).username,  
+                  Disc_Trsfer:0,  
+                  Date:'',  
+                  Cash_USD:0,  
+                  BorrowedCash:0,  
+                  BrwCashToTeller:0,  
+                }
             },
-            created() {
-
+            computed:{
+                sys_tol:function(){
+                  return  this.info_bot_left.Kits*this.info_bot_left.Unit_Price+this.info_bot_left.System_Total*1
+                },
+                g_tol:function(){
+                    return this.info_bot_left.Cash_USD*1+this.info_bot_left.Disc_Trsfer*1+this.info_bot_left.Debit*1+this.info_bot_left.Cash_NR*1+this.info_bot_left.Bank_Deposit*1
+                },
+                Result:function(){
+                    return this.g_tol-this.sys_tol
+                }
             },
             methods: {
-                RegionSearch_btn() {
+                RegionSearch_btn() { //区域查询RegionSearch
                     region_search()
                 },
                 updata_btn() {
-                    update()
+
+                    if(!!this.GroupID){
+                        update()
+                    }else{
+                        showErr('')
+                    }
+                    
                 },
-                open_shop_acheivement() {
+                open_shop_acheivement() { //专卖店汇总
                     open_html('Shop_acheivement', '#shop_Acheivement')
                 },
-                open_AcheiveMentNow() {
+                open_AcheiveMentNow() { //当前业绩
                     open_html('AcheiveMentNow', '#acheivement_now')
+                },
+                click_select(index,obj){ // 选中数据列表
+                    this.list_active_index =index;
+                    this.GroupID=obj.ID;
+                    this.info_bot_left.Date=$('.date1').val();
+                    this.info_bot_left.Region=obj.Region;
+                    this.info_bot_left.Kits=obj.kits;
+                    this.info_bot_left.System_Total=obj.NR;
+                    this.printbigsc_name=obj.SC
                 }
             }
         })
@@ -410,7 +452,7 @@
         }
 
         function region_search() {
-            var url = "desktop/Front_Desk_Report/Get_ReportDetail_Mem_Info";
+            var url = "/desktop/Front_Desk_Report/Get_ReportDetail_Mem_Info";
             var data = {};
             data["usertoken"] = get_cache('usertoken');
             data["GroupID"] = update_report_main.GroupID;

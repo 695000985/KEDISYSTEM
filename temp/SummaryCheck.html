@@ -8,22 +8,25 @@ nw.App={};
 nw.App.manifest={};
 nw.App.manifest.version = 'test';
 </script> -->
-
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>员工录入业绩查询</title>
+    <title>科迪会员录入系统</title>
     <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
     <link rel="stylesheet" href="../css/H-ui.min.css">
     <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/iconfont.css">
     <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
     <script src="../script/vue.min.js"></script>
     <script src="../script/jquery-2.1.1.min.js"></script>
     <script src="../script/H-ui.min.js"></script>
     <script src="../script/common.js"></script>
     <script src="../script/kedi.js"></script>
     <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+    <script src="../script/jquery.pagination.js"></script>
     <style>
         .pic{
             width:100px;
@@ -39,85 +42,155 @@ nw.App.manifest.version = 'test';
 
 </head>
 <body>
-    <div id="main" v-cloak class="market_shop">
+    <div id="main" v-cloak class=" summary_check" >
         <div class="search_txt">
             <div>
                 <p>{{obj_txt.from}}</p>
-                <input type="text" id="search_from" :placeholder="obj_txt.from">
+                
+                <input type="text" id="search_from" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate lock_time">
             </div>
             <div>
                 <p>{{obj_txt.to}}</p>
-                <input type="text" id="search_to" :placeholder="obj_txt.to">
+                
+                <input type="text" id="search_to" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate lock_time">
+                
             </div>
             <div>
                 <p>{{obj_txt.name}}</p>
-                <input type="text" id="search_name" :placeholder="obj_txt.name">
+                <select name="" id="search_name">
+                    <option :value="n.realname" v-for="n in name_con" >{{n.realname}}</option>
+                </select>
             </div>
             <div>
                 <p>{{obj_txt.bank}}</p>
-                <input type="text" id="search_bank" :placeholder="obj_txt.bank">
+                <select name="" id="search_bank">
+                    <option v-for="b in bank_con" :value="b">{{b}}</option>
+                </select>
             </div>
-
-
-
-            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
-                @click="search_btn()">
+            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 10px;"
+                @click="search_all()">
 
 
             <input type="button"  :value="obj_txt.BtnCash" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
                 @click="searchcash_btn()">
         </div>
         <div class="shop_list">
-            <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
+            <table v-show="fade3" class="table table-border table-bordered table-bg" style="width: 600px;  margin-bottom: 10px;">
                 <thead>
                 <tr>
-                    
-                    
-                    
-                    <th></th>
+                    <th>GroupID</th>
+                    <th>Cash</th>
+                    <th>Amount</th>
+                    <th>SC</th>
+                    <th>Date</th>
                 </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(s,index) in list" v-if='list.length'>
-                        
-                        <td>
-
-                            
-                        </td>
+                    <tr v-for="(s,index) in cash_list.frontdesk_cash" >
+                        <td>{{s.GroupID}}</td>
+                        <td>{{s.Cash}}</td>
+                        <td>{{s.Amount}}</td>
+                        <td>{{s.SC}}</td>
+                        <td>{{s.Date}}</td>
                     </tr>
-                    <tr v-if="!list.length">
-                        <td colspan="10">{{no_data}}</td>
+                    <tr v-if="fade1">
+                        <td colspan="5">{{no_data}}</td>
                     </tr>
                 </tbody>
             </table>
-            <div class="my_page m-style">
 
+            <table v-show="!fade3" class="table table-border table-bordered table-bg" style=" width: 3200px; margin: 0 auto; margin-bottom: 10px;">
+                <thead>
+                <tr>
+                     <th>GroupID</th>
+                        <th>Realdate</td>
+                        <th>ShopNo</td>
+                        <th>Area</td>
+                        <th>Kits</td>
+                        <th>TotalMoney</td>
+                        <th>CashMoney</td>
+                        <th>TellarMoney</td>
+                        <th>DebitMoney</td>
+                        <th>Disc_Trsfer</td>
+                        <th>Cash_USD</td>
+                        <th>ScBV</td>
+                        <th>ScPV</td>
+                        <th>ScNaira</td>
+                        <th>ReportType</td>
+                        <th>Oper_Name</td>
+                        <th>ReportStatus</td>
+                        <th>BelongedSC</td>
+                        <th>Teller_Oper</td>
+                        <th>RegionNO</td>
+                        <th>ReturnBorrowedStatus</td>
+                        <th>KitsLanguage</td>
+                        <th>WarehouseMark</td>
+                        <th>DeductBoorowKits</td>
+                        <th>DataFrom</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(s,index) in all_list.Get_ReportDetail_Mem_Info">
+                        <td>{{s.GroupID}}</td>
+                        <td>{{s.Realdate}}</td>
+                        <td>{{s.ShopNo}}</td>
+                        <td>{{s.Area}}</td>
+                        <td>{{s.Kits}}</td>
+                        <td>{{s.TotalMoney}}</td>
+                        <td>{{s.CashMoney}}</td>
+                        <td>{{s.TellarMoney}}</td>
+                        <td>{{s.DebitMoney}}</td>
+                        <td>{{s.Disc_trsfer}}</td>
+                        <td>{{s.Cash_USD}}</td>
+                        <td>{{s.ScBV}}</td>
+                        <td>{{s.ScPV}}</td>
+                        <td>{{s.ScNaira}}</td>
+                        <td>{{s.ReportType}}</td>
+                        <td>{{s.Oper_Name}}</td>
+                        <td>{{s.ReportStatus}}</td>
+                        <td>{{s.BelongedSC}}</td>
+                        <td>{{s.Teller_Oper}}</td>
+                        <td>{{s.RegionNO}}</td>
+                        <td>{{s.ReturnBorrowedStatus}}</td>
+                        <td>{{s.KitsLanguage}}</td>
+                        <td>{{s.WarehouseMark}}</td>
+                        <td>{{s.DeductBoorowKits}}</td>
+                        <td>{{s.DataFrom}}</td>
+                    </tr>
+                    <tr v-if="fade2">
+                        <td colspan="25">{{no_data}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- <div class="my_page m-style">
+
+            </div> -->
+        </div>
+        <div id="result">
+            <div>
+                <p>{{obj_txt.t_kits}}</p>
+                <input type="text" id="result_t_kits" :value="bottom_totall_con.Kits" :placeholder="obj_txt.t_kits" disabled >
             </div>
+            <div>
+                <p>{{obj_txt.t_money}}</p>
+                <input type="text" id="result_t_money" :value="bottom_totall_con.TellarMoney" :placeholder="obj_txt.t_money" disabled>
+            </div>
+            <div>
+                <p>{{obj_txt.t_teller}}</p>
+                <input type="text" id="result_t_teller" :value="bottom_totall_con.disc_trsfer" :placeholder="obj_txt.t_teller" disabled>
+            </div>
+            <div>
+                <p>{{obj_txt.t_cash}}</p>
+                <input type="text" id="result_t_cash" :value="bottom_totall_con.CashMoney" :placeholder="obj_txt.t_cash" disabled>
+            </div>
+            <div>
+                <p>{{obj_txt.t_debit}}</p>
+                <input type="text" id="result_t_debit" :value="bottom_totall_con.debitmoney" :placeholder="obj_txt.t_debit" disabled>
+            </div>		
         </div>
     </div>
 	<!-- 统计信息 -->
-    <div id="result">
-        <div>
-            <p>{{obj_txt.t_kits}}</p>
-            <input type="text" id="result_t_kits" :placeholder="obj_txt.t_kits" disabled>
-        </div>
-        <div>
-            <p>{{obj_txt.t_money}}</p>
-            <input type="text" id="result_t_money" :placeholder="obj_txt.t_money" disabled>
-        </div>
-        <div>
-            <p>{{obj_txt.t_teller}}</p>
-            <input type="text" id="result_t_teller" :placeholder="obj_txt.t_teller" disabled>
-        </div>
-        <div>
-            <p>{{obj_txt.t_cash}}</p>
-            <input type="text" id="result_t_cash" :placeholder="obj_txt.t_cash" disabled>
-        </div>
-        <div>
-            <p>{{obj_txt.t_debit}}</p>
-            <input type="text" id="result_t_debit" :placeholder="obj_txt.t_debit" disabled>
-        </div>		
-    </div>
+    
 
 
 </body>
@@ -130,63 +203,81 @@ Vdata_list, //列表VUE
 Vresult;
 
     $(function(){
-
-        var Vdata_list = new Vue({
+        $(".lock_time").val(get_local_time())
+        get_option_list()
+    });
+    var Vdata_list = new Vue({
             el:"#main",
             data:{
-                list:[],
+                cash_list:{},
+                all_list:{},
+                fade1:true,
+                fade2:true,
+                fade3:true,
+                bottom_totall_con:{},
+                name_con:[],
+                bank_con:[],
                 no_data: config_txt.no_data.zn,
                 obj_txt: splicing_obj(get_page_txt('SummaryCheck')), // 对象拼接
             },
-            
             mounted: function(){
-                getDatalist();
+                //getDatalist();
             },
             methods:{
                 //搜索按钮
-                search_btn : function(){
+                search_all : function(){
                     getDatalist();
+                    this.fade3=false;
                 },
+                searchcash_btn(){
+                    getCashlist()
+                    this.fade3=true;
+
+                }
             }
         });
 
-Vresult = new Vue({
-            el:"#result",
-            data:{
-                list:[],
-                no_data: config_txt.no_data.zn,
-                obj_txt: Vdata_list.obj_txt, // 对象拼接
-            },
-            
-            mounted: function(){
-                getDatalist();
-            },
-            methods:{
-                //搜索按钮
-                search_btn : function(){
-                    getDatalist();
-                },
-            }
-        });
-
-
-
+        // Vresult = new Vue({
+        //     el:"#result",
+        //     data:{
+        //         list:[],
+        //         no_data: config_txt.no_data.zn,
+        //         obj_txt: Vdata_list.obj_txt, // 对象拼接
+        //     },
+        //     mounted: function(){
+        //         //getDatalist();
+        //     },
+        //     methods:{
+        //         //搜索按钮
+        //         search_btn : function(){
+        //             getDatalist();
+        //         },
+        //     }
+        // });
         //获取列表
         function getDatalist(opt){
             opt = opt || {};
             opt["usertoken"] = user_token;
-            opt['CName'] = $("#search_CName").val();
-            opt['EName']     = $("#search_EName").val();
-            opt['order'] = 'BrandID desc';
-            opt['limit'] = '0, 100';
-
-
-            var url = "....";
+            opt['OldDate'] =$("#search_from").val();
+            opt['NewDate'] =$("#search_to").val();
+            opt['Name'] =$("#search_name").val();
+            opt['Bank'] =$("#search_bank").val();
+            opt['Kits'] =$("#result_t_kits").val();
+            opt['Money'] =$("#result_t_money").val();
+            opt['Teller'] =$("#result_t_teller").val();
+            opt['Cash'] =$("#result_t_cash").val();
+            opt['Debit'] =$("#result_t_debit").val();
+            var url = "/index.php?s=desktop/User_Workdetail/button1_Click";
             ajax(url, opt, function (retjson) {
                 if (retjson.stat == 1) {
-                    
-                    Vdata_list.list = retjson.data;
-                    
+                    Vdata_list.all_list=retjson.data
+                    Vdata_list.bottom_totall_con = retjson.data.Get_ReportDetail_ForUserWork[0];
+                    if(retjson.data.Get_ReportDetail_Mem_Info.length){
+                        Vdata_list.fade2=false;
+
+                    }else{
+                        Vdata_list.fade2=true;
+                    }
                 } else {
                     showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
 
@@ -195,9 +286,55 @@ Vresult = new Vue({
         }
 
 
+         function getCashlist(opt){
+            opt = opt || {};
+            opt["usertoken"] = user_token;
+            opt['OldDate'] =$("#search_from").val();
+            opt['NewDate'] =$("#search_to").val();
+            opt['Name'] =$("#search_name").val();
+            opt['Bank'] =$("#search_bank").val();
+            opt['Kits'] =$("#result_t_kits").val();
+            opt['Money'] =$("#result_t_money").val();
+            opt['Teller'] =$("#result_t_teller").val();
+            opt['Cash'] =$("#result_t_cash").val();
+            opt['Debit'] =$("#result_t_debit").val();
+            var url = "/index.php?s=desktop/User_Workdetail/button3_Click";
+            ajax(url, opt, function (retjson) {
+                if (retjson.stat == 1) {
+                    
+                    Vdata_list.cash_list = retjson.data;
+                    if(retjson.data.frontdesk_cash.length){
+                        Vdata_list.fade1=false;
 
-    });
+                    }else{
+                        Vdata_list.fade1=true;
+                    }
+                } else {
+                    showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
 
+                }
+            })
+        }
+        //获取参数列表
+        function get_option_list(){
+            let url="/index.php?s=desktop/User_Workdetail/UserWorkdetail_Load";
+            let data={};
+            data['usertoken']=user_token;
+            data['OldDate']=$("#search_from").val();
+            data['NewDate']=$("#search_to").val();
+            data['Name']="ALL";
+            data['Bank']="ALL";
+            ajax(url,data,function(retjson){
+                if (retjson.stat == 1) {
+                    Vdata_list.name_con=retjson.data.Name;
+                    Vdata_list.bank_con=retjson.data.Bank;
+                } else {
+                    showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+
+                }
+            })
+           
+        }
 
 
 </script>

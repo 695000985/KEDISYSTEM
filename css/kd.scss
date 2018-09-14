@@ -1244,3 +1244,31 @@ nav {
         text-align: center;
     }
 }
+/*
+    员工录入业绩查讯
+*/
+.summary_check{
+    width: 90%;
+    margin: 10px auto;
+    .shop_list{
+        width: 100%;
+        background: #eee;
+        min-height: 400px;
+        max-height: 500px;
+        overflow: auto;
+        table{
+            background: #fff;
+        }
+    }
+    #result {
+        display: flex;
+        margin-top: 10px;
+        div{
+            display: flex;
+            align-items:center; 
+            p{
+                margin: 0 10px;;
+            }
+         }
+    }
+}

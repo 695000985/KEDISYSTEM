@@ -697,27 +697,7 @@
 
             }
         })
-        // var regionLock = new Vue({ //区域店锁定
-        //     el: "#region_lock",
-        //     data: {
-        //         lock_region: [],
-        //         list_data: [],
-        //         ifchecked: false,
-        //         // local_time: get_local_time()
-        //     },
-        //     methods: {
-        //         search_region() {
-        //             query_region_lock()
-        //         },
-        //         click_lock() {
-        //             lock_region()
-        //         },
-        //         click_unlock() {
-        //             unlock_region()
-        //         },
-        //     }
-        // })
-
+       
         var cash_data = new Vue({
             el: '#cash_data',
             data: {
@@ -841,7 +821,7 @@
                     manage_main.public_data = e.data; //GeT_ReportToForm_ForBIGSC.Get_Result_Mem_Info
                   
                     success(e.data.err)
-                    set_local_cache("bigscgroup_box",JSON.stringify(e.data))  //生成大专卖店的数据添加缓存
+                   // set_local_cache("bigscgroup_box",JSON.stringify(e.data))  //生成大专卖店的数据添加缓存
                    // creatIframe("./temp/sale_report.html?biggroup=1",'OrderPay')
 
                     // manage_main.clear()

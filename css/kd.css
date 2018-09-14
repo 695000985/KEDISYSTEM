@@ -480,4 +480,17 @@ nav div { font-size: 16px; color: #fff; }
 #W_edit .content_model .model_list div select { width: 140px; height: 26px; margin-left: 5px; }
 
 #W_edit .btn_con { text-align: center; }
+
+/* 员工录入业绩查讯 */
+.summary_check { width: 90%; margin: 10px auto; }
+
+.summary_check .shop_list { width: 100%; background: #eee; min-height: 400px; max-height: 500px; overflow: auto; }
+
+.summary_check .shop_list table { background: #fff; }
+
+.summary_check #result { display: -webkit-box; display: -ms-flexbox; display: flex; margin-top: 10px; }
+
+.summary_check #result div { display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -ms-flex-align: center; align-items: center; }
+
+.summary_check #result div p { margin: 0 10px; }
 /*# sourceMappingURL=kd.css.map */

@@ -253,6 +253,7 @@
                 hide_loading()
                 if (retjson.stat == 1) {
                     set_cache('usertoken', retjson.data.usertoken);
+                    set_cache("Unit_Price",'4000')
                     if (is_overdue()) {
                         get_local_cache('localtime', get_local_time())
                         get_language(function(e) {
