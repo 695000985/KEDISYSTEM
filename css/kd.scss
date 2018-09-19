@@ -5,6 +5,10 @@
     overflow: hidden;
 }
 
+.min-table{
+    min-width: 1200px;
+}
+
 .index_content_btn {
     width: 630px;
     margin: 0 auto;
@@ -1000,6 +1004,7 @@ nav {
         align-items: center;
         p {
             margin: 0 10px;
+            display: flex;
             input {
                 width: 88px;
                 margin-left: 6px;

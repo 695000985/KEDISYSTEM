@@ -24,6 +24,7 @@ nw.App.manifest.version = 'test';
     <script src="../script/common.js"></script>
     <script src="../script/kedi.js"></script>
     <script src="../script/loading.js"></script>
+    <script src="../script/jquery.pagination.js"></script>
     <style>
 /*        tr.level_1{
             background-color: #FFF;
@@ -79,8 +80,6 @@ nw.App.manifest.version = 'test';
                     <th style="width: 170px;">{{obj_txt.Status}}</th>
                     <th style="width: 170px;">{{obj_txt.CategoryType}}</th>
                     <th style="width: 170px;">{{obj_txt.LastEditDate}}</th>
-                    
-                    
                     <th></th>
                 </tr>
                 </thead>
@@ -122,6 +121,22 @@ nw.App.manifest.version = 'test';
                 <div v-if="is_add">Add</div>
                 <div v-if="!is_add">Edit</div>
                 <div class="model_list">
+                    <div>
+                        <p class="">
+                            ParentId
+                        </p>
+                        <input type="text" v-model="parent_info.CategoryID"  :disabled="!is_add">
+                    </div>
+                    <!-- 类型名 中文-->
+                    <div>
+                        <p class="">
+                          ParentCName
+                        </p>
+                        <input type="text" v-model="parent_info.CName" :disabled="!is_add">
+                    </div>
+                </div>
+
+                <div class="model_list">
 
                     <!-- 分类号 -->
                     <div>
@@ -138,6 +153,9 @@ nw.App.manifest.version = 'test';
                         <input type="text" v-model="data.CName" >
                     </div>
                     <!-- 类型名 英文-->
+                    
+                </div>
+                <div class="model_list">
                     <div>
                         <p class="">
                             {{obj_txt.EName}}
@@ -151,32 +169,30 @@ nw.App.manifest.version = 'test';
                         </p>
                         <input type="text" v-model="data.CategoryType" >
                     </div>
-                    <!-- 介绍 -->
-                    <div>
-                        <p class="">
-                            {{obj_txt.Introduce}}
-                        </p>
-                        <input type="text" v-model="data.Introduce" >
-                    </div>
-
-                    <!-- 说明 -->
-                    <div>
-                            <p>
-                                {{obj_txt.Memo}}
-                            </p>
-                            <input type="text" v-model="data.Memo">
-                            
-                        </div>
-                    </div>
-
-                    
-
-                <div class="btn_con">
-                    <input type="button" class="btn btn-success BtnUpdate" v-on:click='editsave()' value="提交">
-                    <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
+                          
                 </div>
-
-
+                <div class="model_list">
+                      <!-- 介绍 -->
+                      <div>
+                            <p class="">
+                                {{obj_txt.Introduce}}
+                            </p>
+                            <input type="text" v-model="data.Introduce" >
+                        </div>
+    
+                        <!-- 说明 -->
+                        <div>
+                                <p>
+                                    {{obj_txt.Memo}}
+                                </p>
+                                <input type="text" v-model="data.Memo">
+                        </div>
+                       
+                </div>
+                <div class="btn_con">
+                        <input type="button" class="btn btn-success BtnUpdate" v-on:click='editsave()' value="提交">
+                        <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
+                </div>
             </div>
         </div>
     </div>
@@ -189,12 +205,11 @@ nw.App.manifest.version = 'test';
 var user_token = get_cache('usertoken'),
 Vdata_list, //列表VUE
 Vedit;
-
+var pagecounts,page=1,pagesize=3,pagestat=0,obj;
     $(function(){
         shoplist = [];
-
         var Vdata_list = new Vue({
-            el:"#main",
+            el:"#main",   
             data:{
                 list:[],
                 no_data: config_txt.no_data.zn,
@@ -202,12 +217,16 @@ Vedit;
             },
             
             mounted: function(){
-                getDatalist();
+                page = 1
+                obj = {};
+                getDatalist(obj);
             },
             methods:{
                 //搜索按钮
                 search_btn : function(){
-                    getDatalist();
+                    page = 1
+                    obj = {};
+                    getDatalist(obj);
                 },
                 //重复字串
                 rep : function(str, n){
@@ -221,14 +240,39 @@ Vedit;
                 //打开修改窗口
                 open_oper_edit : function(s){
                     Vedit.data = s;
+                    Vedit.parent_info= this.search_parent(s.ParentID)
                     Vedit.is_add = false;
                     Vedit.data.FromID = s.FromID
+                    Vedit.data.ParentID = this.search_parent(s.ParentID).CategoryNo
                     $('#W_edit').modal("show");
                 },
                 open_oper_add : function(){
-                    Vedit.data = {};
+                    Vedit.data = {
+                        CategoryNo:'',
+                        ParentID:'',
+                        EName:'',
+                        CName:'',
+                        Introduce:'',
+                        Memo:'',
+                        Status:1,
+                        parent_info:{},
+                    };
+                    Vedit.parent_info={};
                     Vedit.is_add = true;
                     $('#W_edit').modal("show");
+                },
+                search_parent(pid){ //获取的是父元素的信息
+                   if(pid != 0){
+                       for(item in this.list){
+                           console.log(this.list[item].CategoryID)
+                            if(this.list[item].CategoryID == pid){
+                                    return this.list[item]
+                            }
+                       }
+                       
+                   }else{
+                       return 0
+                   }
                 }
             }
         });
@@ -238,21 +282,45 @@ Vedit;
 
 
         //获取列表
-        function getDatalist(opt){
-            opt = opt || {};
+        function getDatalist(obj){
+            var opt = {};
             opt["usertoken"] = user_token;
             opt['CName'] = $("#search_CName").val();
-            opt['EName']     = $("#search_EName").val();
+            opt['EName'] = $("#search_EName").val();
             opt['order'] = 'ParentId desc, ';
-            opt['limit'] = '0, 100';
-
-
+            opt['limit'] = [pagestat, pagesize].join(","); //条目数
             var url = "/index.php?s=desktop/Category/search";
-            ajax(url, opt, function (retjson) {
+            var data=$.extend({},opt,obj)
+            ajax(url, data, function (retjson) {
                 if (retjson.stat == 1) {
-                    
-                    Vdata_list.list = retjson.data;
-                    
+                    Vdata_list.list = retjson.data.list;
+
+                    $('.m-style').pagination({
+                    totalData: parseInt(pagecounts),
+                    pageCount: Math.ceil(pagecounts / pagesize),
+                    jump: true,
+                    coping: true,
+                    // homePage: '首页',
+                    //   endPage: '末页',
+                    prevContent: '上页',
+                    current: page,
+                    nextContent: '下页',
+                    callback: function (api) {
+                        console.log(api.getCurrent())
+                        page = api.getCurrent();
+                        pagestat = pagesize * (api.getCurrent() - 1)
+                        var x = {
+                            'limit': [pagestat, 30].join(',')
+                        };
+                        var d = $.extend({}, obj, x);
+                        getDatalist(d)
+                    }
+                });
+                setTimeout(function () {
+                    $('.m-style').append(
+                        `<div href="javascript:;" class="cunt" style='padding: 0 4px;' >总记录数： ${retjson.data.count}</div>`
+                    )
+                }, 1000)
                 } else {
                     showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
 
@@ -270,8 +338,9 @@ Vedit;
                     CName:'',
                     Introduce:'',
                     Memo:'',
-                    Status:1
+                    Status:1,
                 },
+                parent_info:{},
                 fromcountrylist:[],
                 fade:false,
                 no_data: config_txt.no_data.zn,
@@ -281,14 +350,11 @@ Vedit;
             methods:{
                 //保存
                 editsave : function(){
-
                     var data = this.data;
-
                     if(!data.CName){
                         alert('CName can not be empty!!');
                         return;
                     }
-
                     data.usertoken = user_token;
                     var url = '';
                     if(this.is_add){
@@ -303,10 +369,6 @@ Vedit;
                             showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
                         }
                     })
-
-                    console.log(data);
-
-                    alert('未完');
                 }
             }
         });

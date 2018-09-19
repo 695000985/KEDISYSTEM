@@ -1,6 +1,8 @@
 @charset "UTF-8";
 .text_1 { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
 
+.min-table { min-width: 1200px; }
+
 .index_content_btn { width: 630px; margin: 0 auto; margin-top: 75px; }
 
 .index_content_btn div { background: #e1e1e1; font-size: 16px; text-align: center; display: inline-block; height: 100px; line-height: 100px; width: 130px; border: 1px solid #c1c1c1; margin: 10px 10px; }
@@ -384,7 +386,7 @@ nav div { font-size: 16px; color: #fff; }
 
 .shop_Acheivement .acheivement_top { display: -webkit-box; display: -ms-flexbox; display: flex; display: -webkit-flex; -webkit-box-pack: start; -ms-flex-pack: start; justify-content: flex-start; background: #eee; padding: 5px 10px; -webkit-box-align: center; -ms-flex-align: center; align-items: center; }
 
-.shop_Acheivement .acheivement_top p { margin: 0 10px; }
+.shop_Acheivement .acheivement_top p { margin: 0 10px; display: -webkit-box; display: -ms-flexbox; display: flex; }
 
 .shop_Acheivement .acheivement_top p input { width: 88px; margin-left: 6px; margin-right: 3px; }
 

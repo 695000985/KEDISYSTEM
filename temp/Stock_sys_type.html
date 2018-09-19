@@ -40,7 +40,7 @@ nw.App.manifest.version = 'test';
 
 
 
-            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
+            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 10px;"
                 @click="search_btn()">
 
 
@@ -59,8 +59,6 @@ nw.App.manifest.version = 'test';
 					<th style="width: 170px;">{{obj_txt.Oper}}</th>
 					<th style="width: 170px;">{{obj_txt.Dept}}</th>
 					<th style="width: 170px;">{{obj_txt.LastEditDate}}</th>
-					
-                    
                     <th></th>
                 </tr>
                 </thead>
@@ -115,40 +113,34 @@ nw.App.manifest.version = 'test';
                         </p>
                         <input type="text" v-model="data.TypeName_E" >
                     </div>
-
-
-
-                    <!-- 说明 -->
+                </div>
+                <div class="model_list">
+                     <!-- 说明 -->
                     <div>
-                            <p>
-                                {{obj_txt.Memo}}
-                            </p>
-                            <input type="text" v-model="data.Memo">
-                            
-                        </div>
+                        <p>
+                            {{obj_txt.Memo}}
+                        </p>
+                        <input type="text" v-model="data.Memo">
+                        
                     </div>
-                    <!-- 状态 -->
-                    
                     <div>
-                            <p>
-                                {{obj_txt.Status}}
-                            </p>
-                            <select name="" id="" v-model="data.Status">
-                                <option value="0">{{obj_txt.status_0}}</option>
-                                <option value="1">{{obj_txt.status_1}}</option>
-                            </select>
-                        </div>
+                        <p>
+                            {{obj_txt.Status}}
+                        </p>
+                        <select name="" id="" v-model="data.Status">
+                            <option value="0">{{obj_txt.status_0}}</option>
+                            <option value="1">{{obj_txt.status_1}}</option>
+                        </select>
                     </div>
-
-                    <!-- 说明  -->
+                </div>
+                <div class="model_list">
                     <div>
                         <p class="">
-                            {{obj_txt.StockShow}}
+                            {{obj_txt.Dept}}
                         </p>
-                        <input type="text" v-model="data.StockShow" >
+                        <input type="text" v-model="data.Dept" >
                     </div>
-                    
-
+                </div>
                 <div class="btn_con">
                     <input type="button" class="btn btn-success BtnUpdate" v-on:click='editsave()' value="提交">
                     <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
@@ -215,9 +207,7 @@ Vedit;
             opt["usertoken"] = user_token;
             opt['TypeName'] = $("#search_TypeName").val();
             opt['Memo']     = $("#search_Memo").val();
-            
-
-
+          
             var url = "/index.php?s=desktop/Manage_Stock_Out_Type/search";
             ajax(url, opt, function (retjson) {
                 if (retjson.stat == 1) {
@@ -268,14 +258,17 @@ Vedit;
                     ajax(url, data, function (retjson) {
                         if (retjson.stat == 1) {
                             Vedit.fromcountrylist = retjson.data;
+                            success(retjson.data)
+                            setTimeout(function(){
+                                $("#W_edit").modal('hide');
+                                getDatalist()
+                            },2000)
                         } else {
                             showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
                         }
                     })
 
-                    console.log(data);
-
-                    alert('未完');
+                    
                 }
             }
         });

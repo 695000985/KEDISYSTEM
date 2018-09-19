@@ -44,7 +44,7 @@ nw.App.manifest.version = 'test';
 
 
 
-            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
+            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 10px;"
                 @click="search_btn()">
 
 
@@ -106,11 +106,6 @@ nw.App.manifest.version = 'test';
                         </p>
                         <input type="text" v-model="data.FromCountry" >
                     </div>
-
-
-
-
-                    
                     <div>
                             <p>
                                 {{obj_txt.Status}}
@@ -135,9 +130,6 @@ nw.App.manifest.version = 'test';
 
 </body>
 <script>
-
-
-
 var user_token = get_cache('usertoken'),
 Vdata_list, //列表VUE
 Vedit;
@@ -178,29 +170,18 @@ Vedit;
                 }
             }
 		});
-
-
-
-
-
         //获取列表
         function getDatalist(opt){
             opt = opt || {};
             opt["usertoken"] = user_token;
             opt['FromCountry'] = $("#search_FromCountry").val();
             opt['Status']     = $("#search_Status").val();
-            
-
-
             var url = "/index.php?s=desktop/Stock_From/Search";
             ajax(url, opt, function (retjson) {
                 if (retjson.stat == 1) {
-                    
-                    Vdata_list.list = retjson.data;
-                    
+                    Vdata_list.list = retjson.data.list;
                 } else {
                     showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
-
                 }
             })
         }
@@ -210,9 +191,7 @@ Vedit;
             data:{
                 data:{
                     FromCountry:'',
-
                     Status:1,
-
                 },
                 fromcountrylist:[],
                 fade:false,
@@ -223,14 +202,11 @@ Vedit;
             methods:{
                 //保存
                 editsave : function(){
-
                     var data = this.data;
-
                     if(!data.FromCountry){
                         alert('FromCountry can not be empty!!');
                         return;
                     }
-
                     data.usertoken = user_token;
                     var url = '';
                     if(this.is_add){
@@ -245,7 +221,6 @@ Vedit;
                             showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
                         }
                     })
-
                     console.log(data);
 
                     alert('未完');

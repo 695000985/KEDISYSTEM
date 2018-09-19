@@ -162,7 +162,7 @@ function showErr(msg_cn, msg_en, code) { //信息弹出框
 }
 
 function success(msg_cn) { //信息弹出框
-    $.Huimodalalert(msg_cn, 3000)
+    $.Huimodalalert(msg_cn, 2000)
 }
 
 function firm(title, txt, fun) { // 确认框

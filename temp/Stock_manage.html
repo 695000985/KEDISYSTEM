@@ -225,7 +225,7 @@ nw.App.manifest.version = 'test';
                 editsave: function() {
                     var data = this.data;
                     if (!data.StockName) {
-                        alert('StockName can not be empty!!');
+                        showErr('StockName can not be empty!!');
                         return;
                     }
                     data.usertoken = user_token;
@@ -239,6 +239,9 @@ nw.App.manifest.version = 'test';
                         if (retjson.stat == 1) {
                             Vedit.fromcountrylist = retjson.data;
                             success(retjson.data)
+                            setTimeout(function(){
+                                $("#W_edit").modal('hide')
+                            },2000)
                         } else {
                             showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
                         }

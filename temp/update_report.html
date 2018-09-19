@@ -229,7 +229,7 @@
                 </div>
             </div>
             <div class="right operate">
-                <button class="btn btn-primary-outline">Update</button>
+                <button class="btn btn-primary-outline" @click="updata_btn()">Update</button>
                 <br>
                 <button class="btn btn-primary-outline">TransferToB</button>
                 <br>
@@ -257,17 +257,17 @@
         <div class="acheivement_top">
             <p>
                 <span>From</span>
-                <input type="text" v-bind:value="local_time" class="Wdate real_date" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                <input type="text" v-bind:value="local_time" class="Wdate real_date acheivement_from_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
                 <span>to</span>
-                <input type="text" class="Wdate real_date" v-bind:value="local_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                <input type="text" class="Wdate real_date acheivement_to_time" v-bind:value="local_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
             </p>
             <p>
                 <span>SC</span>
-                <input type="text">
+                <input type="text" v-model="sc">
             </p>
             <P>
-                <button class="btn  btn-outline-dark size-S">查询</button>
-                <button class="btn  btn-outline-dark size-S">专卖店汇总</button>
+                <button class="btn  btn-outline-dark size-S" @click='shop_query()'>查询</button>
+                <button class="btn  btn-outline-dark size-S" @click="shop_summary()">专卖店汇总</button>
             </P>
             <p>
                 <select name="" id="" v-model="year">
@@ -279,7 +279,7 @@
             </p>
         </div>
         <div class="table_list" style="height: 350px; overflow: auto; background: #ccc; padding: 4px 0;margin-top: 5px;">
-            <table class="table table-border table-bordered table-bg " id="update_list" style="background: #fff; width: 180px">
+            <table class="table table-border table-bordered table-bg " id="update_list" style="background: #fff; width: 220px">
                 <thead>
                     <tr>
                         <th>shopNo</th>
@@ -322,8 +322,8 @@
             <table class="table table-border table-bordered table-bg " id="update_list" style="background: #fff; width: 180px">
                 <thead>
                     <tr>
-                        <th>shopNo</th>
-                        <th>Acheive</th>
+                        <th style="width: 100px;">shopNo</th>
+                        <th style="width: 100px;">Acheive</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -336,6 +336,7 @@
         </div>
     </div>
     <script>
+        var usertoken=get_cache('usertoken')
         $(function () {
             get_region(function (e) {
                 var data = [];
@@ -397,11 +398,30 @@
                     region_search()
                 },
                 updata_btn() {
-
                     if(!!this.GroupID){
-                        update()
+                        var url = "/index.php?s=desktop/Front_Desk_Report/Update";
+                        var data = {};
+                        data["usertoken"] = get_cache('usertoken');
+                        data['GroupID'] = this.GroupID;
+                        data['CashMoney'] = '';
+                        data['TellarMoney'] = '';
+                        data['DebitMoney'] = '';
+                        data['Disc_Trsfer'] = '';
+                        data['Cash_USD'] = '';
+                        data['shopno'] = '';
+                        data['Area'] = '';
+                        data['Kits'] = '';
+                        data['ReportStatus'] = '';
+                        data['Teller_Oper'] = '';
+                        ajax(url, data, function (e) {
+                            if (e.stat == 1) {
+                                success(e.data.data)
+                            } else {
+                                showErr(e.errmsg, e.errmsg_en, e.errcode)
+                            }
+                        })
                     }else{
-                        showErr('')
+                        showErr('请选择一条数据')
                     }
                     
                 },
@@ -427,14 +447,48 @@
             el: "#shop_Acheivement",
             data: {
                 month_list: config_month,
-                year_list: config_year,
-                data_list: {},
+                year_list: config_year(),
+                data_list: [],
                 local_time: get_local_time(),
                 year: get_local_year(),
                 month: get_local_month(),
+                sc:''
             },
             methods: {
-
+                shop_query(){
+                    if(!!this.sc){
+                        var url="/index.php?s=desktop/Front_Desk_Report/search";
+                        var data={};
+                        data["usertoken"]=usertoken;
+                        data["shopno"]=this.sc;
+                        data["start"]=$('.acheivement_from_time').val();
+                        data["end"]=$(".acheivement_to_time").val();
+                        ajax(url,data,function(e){
+                            if (e.stat == 1) {
+                                console.log(JSON.stringify(e));
+                            } else {
+                                showErr(e.errmsg, e.errmsg_en, e.errcode)
+                            }
+                        })
+                    }else{
+                        showErr('请输入专卖店号')
+                    }
+                },
+                shop_summary(){
+                    var url="/index.php?s=desktop/Front_Desk_Report/search";
+                    var data={};
+                    data["usertoken"]=usertoken;
+                    data["shopno"]=this.sc;
+                    data["start"]=$('.acheivement_from_time').val();
+                    data["end"]=$(".acheivement_to_time").val();
+                    ajax(url,data,function(e){
+                        if (e.stat == 1) {
+                       
+                        } else {
+                            showErr(e.errmsg, e.errmsg_en, e.errcode)
+                        }
+                    })
+                }
             }
         })
 
@@ -461,31 +515,6 @@
             ajax(url, data, function (e) {
                 if (e.stat == 1) {
                     update_report_main.table_list = e.data
-                } else {
-                    showErr(e.errmsg, e.errmsg_en, e.errcode)
-                }
-            })
-        }
-
-        function update() {
-            var url = "/index.php?s=desktop/Front_Desk_Report/Update";
-            var data = {};
-            data["usertoken"] = get_cache('usertoken');
-            data['GroupID'] = '';
-            data['CashMoney'] = '';
-            data['TellarMoney'] = '';
-            data['DebitMoney'] = '';
-            data['Disc_Trsfer'] = '';
-            data['Cash_USD'] = '';
-            data['shopno'] = '';
-            data['Area'] = '';
-            data['Kits'] = '';
-            data['ReportStatus'] = '';
-            data['Teller_Oper'] = '';
-            ajax(url, data, function (e) {
-                if (e.stat == 1) {
-
-                    success(e.data)
                 } else {
                     showErr(e.errmsg, e.errmsg_en, e.errcode)
                 }

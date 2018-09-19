@@ -169,10 +169,6 @@ Vresult;
                 },
             }
         });
-
-
-
-
         //获取列表
         function getDatalist(opt){
             opt = opt || {};
@@ -181,8 +177,6 @@ Vresult;
             opt['EName']     = $("#search_EName").val();
             opt['order'] = 'BrandID desc';
             opt['limit'] = '0, 100';
-
-
             var url = "....";
             ajax(url, opt, function (retjson) {
                 if (retjson.stat == 1) {

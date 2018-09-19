@@ -198,8 +198,8 @@ var config_txt = {
 }
 var config_year = function () {
     var a = [];
-    for (var i = 0; i < 15; i++) {
-        a[i] = get_local_year() + i;
+    for (var i = 0; i < 6; i++) {
+        a[i] = get_local_year() - i;
     }
     return a
 };

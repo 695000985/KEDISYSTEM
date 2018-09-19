@@ -138,8 +138,6 @@ nw.App.manifest.version = 'test';
         fromcountrylist = [], //货源地国家列表
         Vfrom_list, //货源地数据VUE
         Vedit; //货源地数据修改VUE
-
-
     ajax('/index.php?s=desktop/Stock_From/Search', {
         usertoken: user_token
     }, function(retjson) {
@@ -191,23 +189,15 @@ nw.App.manifest.version = 'test';
             }
 
         });
-
-
-
-
         //获取货源地列表
         function getStocklist(opt) {
             opt = opt || {};
             opt["usertoken"] = user_token;
             opt['FromPlace'] = $("#search_FromPlace").val()
-
-
             var url = "/index.php?s=desktop/Stock_From_Detail/search";
             ajax(url, opt, function(retjson) {
                 if (retjson.stat == 1) {
-
                     Vfrom_list.fromlist = retjson.data;
-
                 } else {
                     showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
 
@@ -253,14 +243,15 @@ nw.App.manifest.version = 'test';
                     ajax(url, data, function(retjson) {
                         if (retjson.stat == 1) {
                             Vedit.fromcountrylist = retjson.data;
+                            success(retjson.data)
+                            setTimeout(function(){
+                                $("#W_edit").modal("hide");
+                                getStocklist()
+                            },2000)
                         } else {
                             showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
                         }
                     })
-
-                    console.log(data);
-
-                    alert('未完');
                 }
             }
         });
