@@ -190,7 +190,7 @@ nw.App.manifest.version = 'test';
 var user_token = get_cache('usertoken'),
 Vdata_list, //列表VUE
 Vedit;
-var pagecounts,page=1,pagesize=30,pagestat=0,obj;
+var pagecounts,page=1,pagesize=30,pagestat=0,obj; // 分页相关的参数
     $(function(){
         shoplist = [];
     });
@@ -236,13 +236,10 @@ var pagecounts,page=1,pagesize=30,pagestat=0,obj;
             }
         });
 
-
-
-
-
         //获取列表
         function getDatalist(obj){
-
+            /*
+            *分页初始化*/ 
             $('.m-style').pagination({
                 totalData: 0,
                 pageCount: 0,
@@ -270,26 +267,28 @@ var pagecounts,page=1,pagesize=30,pagestat=0,obj;
                     Vdata_list.list = retjson.data.list;
                     pagecounts = retjson.data.count;
                     $('.m-style').pagination({
-                    totalData: parseInt(pagecounts),
-                    pageCount: Math.ceil(pagecounts / pagesize),
-                    jump: true,
-                    coping: true,
-                    // homePage: '首页',
-                    //   endPage: '末页',
-                    prevContent: '上页',
-                    current: page,
-                    nextContent: '下页',
-                    callback: function (api) {
-                        console.log(api.getCurrent())
-                        page = api.getCurrent();
-                        pagestat = pagesize * (api.getCurrent() - 1)
-                        var x = {
-                            'limit': [pagestat, 30].join(',')
-                        };
-                        var d = $.extend({}, obj, x);
-                        getDatalist(d)
-                    }
-                });
+                        totalData: parseInt(pagecounts),
+                        pageCount: Math.ceil(pagecounts / pagesize),
+                        jump: true,
+                        coping: true,
+                        // homePage: '首页',
+                        //   endPage: '末页',
+                        prevContent: '上页',
+                        current: page,
+                        nextContent: '下页',
+                        callback: function (api) {
+                            console.log(api.getCurrent())
+                            page = api.getCurrent();
+                            pagestat = pagesize * (api.getCurrent() - 1)
+                            var x = {
+                                'limit': [pagestat, 30].join(',')
+                            };
+                            var d = $.extend({}, obj, x);
+                            getDatalist(d)
+                        }
+                    });
+
+                    // 数据的总条数
                 setTimeout(function () {
                     $('.m-style').append(
                         `<div href="javascript:;" class="cunt" style='padding: 0 4px;' >总记录数： ${retjson.data.count}</div>`
@@ -320,14 +319,11 @@ var pagecounts,page=1,pagesize=30,pagestat=0,obj;
             methods:{
                 //保存
                 editsave : function(){
-
                     var data = this.data;
-
                     if(!data.TypeName){
                         alert('TypeName can not be empty!!');
                         return;
                     }
-
                     data.usertoken = user_token;
                     var url = '';
                     if(this.is_add){
@@ -338,6 +334,8 @@ var pagecounts,page=1,pagesize=30,pagestat=0,obj;
                     ajax(url, data, function (retjson) {
                         if (retjson.stat == 1) {
                             Vedit.fromcountrylist = retjson.data;
+
+                            
                         } else {
                             showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
                         }

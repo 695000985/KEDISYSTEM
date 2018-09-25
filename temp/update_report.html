@@ -63,7 +63,7 @@
                     </p>
                     <p>
                         <span>新店号 ChangeSC</span>
-                        <input type="text" class="change_sc">
+                        <input type="text" class="change_sc" v-model="new_sc">
                     </p>
                 </div>
                 <div>
@@ -84,9 +84,9 @@
                     <button class="btn btn-primary-outline" @click="RegionSearch_btn()">区域查询RegionSearch</button>
                     <button class="btn btn-primary-outline">添加业绩AddsaleForm_RemoveReport</button>
                     <br>
-                    <button class="btn btn-primary-outline">汇总详细ReprtDetail</button>
-                    <button class="btn btn-primary-outline">更新店号ChangeSC</button>
-                    <button class="btn btn-primary-outline">更新数据不一致</button>
+                    <button class="btn btn-primary-outline">汇总详细ReprtDetail</button> 
+                    <button class="btn btn-primary-outline" @click="updata_sc()">更新店号ChangeSC</button>
+                    <button class="btn btn-primary-outline" @click="updata()">更新数据不一致</button>
                 </div>
             </div>
 
@@ -117,7 +117,7 @@
                     <tr v-if="table_list.data_report" v-for="(item,$index) in table_list.data_report" @click="click_select($index,item)" :class="{'active_index' : $index == list_active_index}">
                         <td>{{item.SC}}</td>
                         <td>{{item.Status}}</td>
-                        <td>{{item.Kits}}</td>
+                        <td>{{item.kits}}</td>
                         <td>{{item.Total}}</td>
                         <td>{{item.Cash}}</td>
                         <td>{{item.Teller}}</td>
@@ -287,9 +287,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td></td>
-                        <td></td>
+                    <tr v-for="item in data_list" >
+                        <td>{{item.ShopNo}}</td>
+                        <td>{{item.Acheive}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -299,12 +299,12 @@
         <div class="acheivement_top">
             <p>
                 <span>From</span>
-                <input type="text" v-bind:value="local_time" class="Wdate real_date" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                <input type="text" v-bind:value="local_time " class="Wdate real_date acheivement_now_time_start" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
                 <span>to</span>
-                <input type="text" class="Wdate real_date" v-bind:value="local_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                <input type="text" class="Wdate real_date acheivement_now_time_end" v-bind:value="local_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
             </p>
             <P>
-                <button class="btn  btn-outline-dark size-S">当月查询</button>
+                <button class="btn  btn-outline-dark size-S" @click="query_same_month()">当月查询</button>
             </P>
             <p>
                 <select name="" id="" v-model="year">
@@ -319,17 +319,25 @@
             </P>
         </div>
         <div class="table_list" style="height: 350px; overflow: auto; background: #ccc; padding: 4px 0;margin-top: 5px;">
-            <table class="table table-border table-bordered table-bg " id="update_list" style="background: #fff; width: 180px">
+            <table v-if="data_list"  class="table table-border table-bordered table-bg " id="update_list" style="background: #fff; width: 780px">
                 <thead>
                     <tr>
-                        <th style="width: 100px;">shopNo</th>
-                        <th style="width: 100px;">Acheive</th>
+                        <th style="width: 100px;">加入数量</th>
+                        <th style="width: 100px;">美金</th>
+                        <th style="width: 100px;">Teller（奈拉）</th>
+                        <th style="width: 100px;">欠款（奈拉）</th>
+                        <th style="width: 100px;">总业绩(美金含kits)</th>
+                        <th style="width: 100px;">总业绩(奈拉含kits)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td></td>
-                        <td></td>
+                        <td>{{data_list.data.kits}}</td>
+                        <td>{{data_list.data.scpv}}</td>
+                        <td>{{data_list.data.tellarmoney}}</td>
+                        <td>{{data_list.data.debitmoney}}</td>
+                        <td>{{data_list.data['scpv_all']}}</td>
+                        <td>{{data_list.data['kits_all']}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -362,6 +370,7 @@
                 list_active_index: -1,
                 Area: 'NONE', // 区域Region
                 GroupID: '', //汇总NO
+                new_sc:'', // 新店铺号
                 info_bot_left:{
                   S_nylon:0,  
                   System_Total:0,  
@@ -395,9 +404,13 @@
             },
             methods: {
                 RegionSearch_btn() { //区域查询RegionSearch
+                    this.GroupID="";
+                    this.list_active_index=-1;
+                    this.printbigsc_name="";
                     region_search()
+                   
                 },
-                updata_btn() {
+                updata_btn() {  // 更新数据Updata_btn
                     if(!!this.GroupID){
                         var url = "/index.php?s=desktop/Front_Desk_Report/Update";
                         var data = {};
@@ -409,15 +422,15 @@
                         data['Disc_Trsfer'] = '';
                         data['Cash_USD'] = '';
                         data['shopno'] = '';
-                        data['Area'] = '';
-                        data['Kits'] = '';
+                        data['Area'] = '';  
+                        data['Kits'] = this.info_bot_left.kits;
                         data['ReportStatus'] = '';
                         data['Teller_Oper'] = '';
                         ajax(url, data, function (e) {
                             if (e.stat == 1) {
                                 success(e.data.data)
                             } else {
-                                showErr(e.errmsg, e.errmsg_en, e.errcode)
+                                showErr(e.data.errmsg, e.data.errmsg_en, e.data.e.errcode)
                             }
                         })
                     }else{
@@ -431,6 +444,32 @@
                 open_AcheiveMentNow() { //当前业绩
                     open_html('AcheiveMentNow', '#acheivement_now')
                 },
+                query_detail(){
+
+                },
+                updata_sc(){ // 更新专卖店号
+                    if(!!this.GroupID){
+                        var url = "/index.php?s=desktop/Front_Desk_Report/UpdateSale_FDSC";
+                        var data = {};
+                        data["usertoken"] = get_cache('usertoken');
+                        data["GroupID"] = this.GroupID;
+                        data["newShopno"] = this.new_sc;
+                        ajax(url, data, function (e) {
+                            if (e.stat == 1) {
+                            success(e.data);
+                            update_report_main.GroupID="";
+                            update_report_main.list_active_index=-1;
+                            update_report_main.printbigsc_name="";
+                            region_search()
+                            } else {
+                                showErr(e.errmsg, e.errmsg_en, e.errcode)
+                            }
+                        })
+                    }else{
+                        showErr('请选择一条数据')
+                    }
+                    
+                },
                 click_select(index,obj){ // 选中数据列表
                     this.list_active_index =index;
                     this.GroupID=obj.ID;
@@ -439,6 +478,27 @@
                     this.info_bot_left.Kits=obj.kits;
                     this.info_bot_left.System_Total=obj.NR;
                     this.printbigsc_name=obj.SC
+                },
+                updata(){ // 更新数据不一致
+                    if(!!this.GroupID){
+                        var url="/index.php?s=desktop/Front_Desk_Report/UpdateReportDifferent";
+                        var data = {};
+                        data["usertoken"] = get_cache('usertoken');
+                        data["GroupID"] = this.GroupID;
+                        ajax(url, data, function (e) {
+                            if (e.stat == 1) {
+                                success(e.data);
+                                update_report_main.GroupID="";
+                                update_report_main.list_active_index=-1;
+                                update_report_main.printbigsc_name="";
+                                region_search()
+                            } else {
+                                showErr(e.errmsg, e.errmsg_en, e.errcode)
+                            }
+                        })
+                    }else{
+                        showErr('请选择一条数据')
+                    }
                 }
             }
         })
@@ -483,7 +543,36 @@
                     data["end"]=$(".acheivement_to_time").val();
                     ajax(url,data,function(e){
                         if (e.stat == 1) {
-                       
+                            acheivement.data_list=e.data 
+                        } else {
+                            showErr(e.errmsg, e.errmsg_en, e.errcode)
+                        }
+                    })
+                }
+            }
+        })
+
+
+        var acheivement_now=new Vue({
+            el:"#acheivement_now",
+            data:{
+                month_list: config_month,
+                year_list: config_year(),
+                data_list: '',
+                local_time: get_local_time(),
+                year: get_local_year(),
+                month: get_local_month(),
+            },
+            methods:{
+                query_same_month(){  //当月查询
+                    var url="/index.php?s=desktop/Front_Desk_Report/AcheiveMentNow";
+                    var data={};
+                    data["usertoken"]=usertoken;
+                    data["start"]=$('.acheivement_now_time_start').val();
+                    data["end"]=$('.acheivement_now_time_end').val();
+                    ajax(url,data,function(e){
+                        if (e.stat == 1) {
+                            acheivement_now.data_list=e.data
                         } else {
                             showErr(e.errmsg, e.errmsg_en, e.errcode)
                         }
@@ -505,11 +594,11 @@
             }]);
         }
 
-        function region_search() {
+        function region_search() { //区域店查讯
             var url = "/desktop/Front_Desk_Report/Get_ReportDetail_Mem_Info";
             var data = {};
             data["usertoken"] = get_cache('usertoken');
-            data["GroupID"] = update_report_main.GroupID;
+            //data["GroupID"] = update_report_main.GroupID;
             data["Area"] = update_report_main.Area;
             data["Realdate"] = $('.real_date').val();
             ajax(url, data, function (e) {

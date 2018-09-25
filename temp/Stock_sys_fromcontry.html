@@ -41,9 +41,6 @@ nw.App.manifest.version = 'test';
                 </select>
             </div>
 
-
-
-
             <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 10px;"
                 @click="search_btn()">
 
@@ -107,15 +104,15 @@ nw.App.manifest.version = 'test';
                         <input type="text" v-model="data.FromCountry" >
                     </div>
                     <div>
-                            <p>
-                                {{obj_txt.Status}}
-                            </p>
-                            <select name="" id="" v-model="data.Status">
-                                <option value="0">{{obj_txt.status_0}}</option>
-                                <option value="1">{{obj_txt.status_1}}</option>
-                            </select>
-                        </div>
+                        <p>
+                            {{obj_txt.Status}}
+                        </p>
+                        <select name="" id="" v-model="data.Status">
+                            <option value="0">{{obj_txt.status_0}}</option>
+                            <option value="1">{{obj_txt.status_1}}</option>
+                        </select>
                     </div>
+                </div>
                     
 
                 <div class="btn_con">
@@ -153,7 +150,6 @@ Vedit;
                 search_btn : function(){
                     getDatalist();
                 },
-
                 //解析状态
                 status:function(stat){ if(this.obj_txt && this.obj_txt['status_'+stat]) return this.obj_txt['status_'+stat]; return '未知状态'; },
                 //打开修改窗口
@@ -217,13 +213,12 @@ Vedit;
                     ajax(url, data, function (retjson) {
                         if (retjson.stat == 1) {
                             Vedit.fromcountrylist = retjson.data;
+                            getDatalist()
+                            $('#W_edit').modal("hide");
                         } else {
                             showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
                         }
                     })
-                    console.log(data);
-
-                    alert('未完');
                 }
             }
         });

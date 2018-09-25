@@ -181,24 +181,16 @@
     </div>
 </body>
 <script>
-    var pagecounts;
-    var page = 1;
-    var obj;
-    var pagesize = 30;
-    var pagestat = 0;
+    var pagecounts,page = 1,obj,pagesize = 30,pagestat = 0; //分页相关的参数
     $(function () {
-        // search_member()
         statinit()
         $('.btn-serach').click(function () {
-            // pagestat = 0;
-            // pagesize = 30;
             page = 1
             obj = {};
             if (!!$('.u1_name').val() && !!$('.u1_name1').val()) {
                 obj[$('#u1_input1').val()] = $('.u1_name1').val()
                 obj[$('#u1_input').val()] = $('.u1_name').val();
             } else if (!!$('.u1_name1').val()) {
-
                 obj[$('#u1_input1').val()] = $('.u1_name1').val()
             } else if (!!$('.u1_name').val()) {
                 obj[$('#u1_input').val()] = $('.u1_name').val();

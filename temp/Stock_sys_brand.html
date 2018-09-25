@@ -25,6 +25,7 @@ nw.App.manifest.version = 'test';
     <script src="../script/common.js"></script>
     <script src="../script/kedi.js"></script>
     <script src="../script/loading.js"></script>
+    <script src="../script/jquery.pagination.js"></script>
     <style>
         .pic{
             width:100px;
@@ -47,12 +48,7 @@ nw.App.manifest.version = 'test';
                 <p>{{obj_txt.EName}}</p>
                 <input type="text" id="search_EName" :placeholder="obj_txt.EName">
             </div>
-
-
-
-
             <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 10px;" @click="search_btn()">
-
 
             <input type="button" :value="obj_txt.BtnAdd" class="btn btn-success btn-radius btn-serach" style="height: 30px;" @click="open_oper_add()">
         </div>
@@ -66,14 +62,9 @@ nw.App.manifest.version = 'test';
                         <th style="width: 170px;">{{obj_txt.CName}}</th>
                         <th style="width: 170px;">{{obj_txt.EName}}</th>
                         <th style="width: 170px;">{{obj_txt.BrandType}}</th>
-
                         <th style="width: 170px;">{{obj_txt.Introduce}}</th>
                         <th style="width: 170px;">{{obj_txt.Memo}}</th>
-
-
                         <th style="width: 170px;">{{obj_txt.LastEditDate}}</th>
-
-
                         <th></th>
                     </tr>
                 </thead>
@@ -87,8 +78,6 @@ nw.App.manifest.version = 'test';
                         <th style="width: 170px;">{{s.BrandType}}</th>
                         <td style="width: 170px;">{{s.Introduce}}</td>
                         <th style="width: 170px;">{{s.Memo}}</th>
-
-
                         <th style="width: 170px;">{{s.LastEditDate}}</th>
                         <td>
                             <a title="修改" class="btn btn-primary size-S radius" href="javascript:;" @click="open_oper_edit(s)" style="text-decoration: none;">
@@ -117,7 +106,6 @@ nw.App.manifest.version = 'test';
                 <div v-if="is_add">Add</div>
                 <div v-if="!is_add">Edit</div>
                 <div class="model_list">
-
                     <!-- 品牌号 -->
                     <div>
                         <p class="">
@@ -156,14 +144,12 @@ nw.App.manifest.version = 'test';
                         </p>
                         <input type="text" v-model="data.Introduce">
                     </div>
-
                     <!-- 说明 -->
                     <div>
                         <p>
                             {{obj_txt.Memo}}
                         </p>
                         <input type="text" v-model="data.Memo">
-
                     </div>
                 </div>
                 <div class="btn_con">
@@ -180,129 +166,168 @@ nw.App.manifest.version = 'test';
     var user_token = get_cache('usertoken'),
         Vdata_list, //列表VUE
         Vedit;
-
+    var pagecounts,page=1,pagesize=30,pagestat=0,obj; // 分页相关的参数
     $(function() {
         shoplist = [];
-
-        var Vdata_list = new Vue({
-            el: "#main",
-            data: {
-                list: [],
-                no_data: config_txt.no_data.zn,
-                obj_txt: splicing_obj(get_page_txt('stock_sys_brand')), // 对象拼接
-            },
-
-            mounted: function() {
-                getDatalist();
-            },
-            methods: {
-                //搜索按钮
-                search_btn: function() {
-                    getDatalist();
-                },
-                //图片
-                img:function(data){
-                   return 'data:image/jpeg;base64,'+showimg(data);
-                },
-
-                //解析状态
-                status: function(stat) {
-                    if (this.obj_txt && this.obj_txt['status_' + stat]) return this.obj_txt['status_' + stat];
-                    return '未知状态';
-                },
-                //打开修改窗口
-                open_oper_edit: function(s) {
-                    Vedit.data = s;
-                    Vedit.is_add = false;
-                    Vedit.data.FromID = s.FromID
-                    $('#W_edit').modal("show");
-                },
-                open_oper_add: function() {
-                    Vedit.data = {};
-                    Vedit.is_add = true;
-                    $('#W_edit').modal("show");
-                }
-            }
-        });
-
-
-
-
-
-        //获取列表
-        function getDatalist(opt) {
-            opt = opt || {};
-            opt["usertoken"] = user_token;
-            opt['CName'] = $("#search_CName").val();
-            opt['EName'] = $("#search_EName").val();
-            opt['order'] = 'BrandID desc';
-            opt['limit'] = '0, 100';
-
-
-            var url = "/index.php?s=desktop/brand/search";
-            ajax(url, opt, function(retjson) {
-                if (retjson.stat == 1) {
-
-                    Vdata_list.list = retjson.data;
-
-                } else {
-                    showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
-
-                }
-            })
-        }
-
-        Vedit = new Vue({
-            el: '#W_edit',
-            data: {
-                data: {
-                    BrandNO: '',
-                    CName: '',
-                    EName: '',
-                    BrandType: '',
-                    Introduce: '',
-                    Memo: ''
-                },
-                fromcountrylist: [],
-                fade: false,
-                no_data: config_txt.no_data.zn,
-                obj_txt: Vdata_list.obj_txt, // 对象拼接
-                is_add: false, //是否是新增，或是修改
-            },
-            methods: {
-                //保存
-                editsave: function() {
-
-                    var data = this.data;
-
-                    if (!data.CName) {
-                        alert('CName can not be empty!!');
-                        return;
-                    }
-
-                    data.usertoken = user_token;
-                    var url = '';
-                    if (this.is_add) {
-                        url = '/index.php?s=desktop/brand/add';
-                    } else {
-                        url = '/index.php?s=desktop/brand/update';
-                    }
-                    ajax(url, data, function(retjson) {
-                        if (retjson.stat == 1) {
-                            Vedit.fromcountrylist = retjson.data;
-                        } else {
-                            showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
-                        }
-                    })
-
-                    console.log(data);
-
-                    alert('未完');
-                }
-            }
-        });
-
     });
+    var Vdata_list = new Vue({
+        el: "#main",
+        data: {
+            list: [],
+            no_data: config_txt.no_data.zn,
+            obj_txt: splicing_obj(get_page_txt('stock_sys_brand')), // 对象拼接
+        },
+
+        mounted: function() {
+            page = 1;
+            obj = {};
+            obj['limit'] = [0, pagesize].join(","); //条目数
+            getDatalist(obj);
+           
+        },
+        methods: {
+            //搜索按钮
+            search_btn: function() {
+                page = 1;
+                obj = {};
+                obj['limit'] = [0, pagesize].join(","); //条目数
+                getDatalist(obj);
+            },
+            //图片
+            img:function(data){
+                return 'data:image/jpeg;base64,'+showimg(data);
+            },
+
+            //解析状态
+            status: function(stat) {
+                if (this.obj_txt && this.obj_txt['status_' + stat]) return this.obj_txt['status_' + stat];
+                return '未知状态';
+            },
+            //打开修改窗口
+            open_oper_edit: function(s) {
+                Vedit.data = s;
+                Vedit.is_add = false;
+                Vedit.data.FromID = s.FromID
+                $('#W_edit').modal("show");
+            },
+            open_oper_add: function() {
+                Vedit.data = {};
+                Vedit.is_add = true;
+                $('#W_edit').modal("show");
+            }
+        }
+    });
+
+
+
+
+
+    //获取列表
+    function getDatalist(obj) {
+         $('.m-style').pagination({
+                totalData: 0,
+                pageCount: 0,
+                current: 0
+        })
+        var opt={};
+        opt["usertoken"] = user_token;
+        opt['CName'] = $("#search_CName").val();
+        opt['EName'] = $("#search_EName").val();
+        opt['order'] = 'BrandID desc';
+        opt['limit'] = [pagestat, pagesize].join(","); //条目数
+        var data=$.extend({},opt,obj)
+        var url = "/index.php?s=desktop/brand/search";
+        ajax(url, data, function(retjson) {
+            if (retjson.stat == 1) {
+                Vdata_list.list = retjson.data.list;
+                pagecounts = retjson.data.count;
+                    $('.m-style').pagination({
+                        totalData: parseInt(pagecounts),
+                        pageCount: Math.ceil(pagecounts / pagesize),
+                        jump: true,
+                        coping: true,
+                        // homePage: '首页',
+                        // endPage: '末页',
+                        prevContent: '上页',
+                        current: page,
+                        nextContent: '下页',
+                        callback: function (api) {
+                            console.log(api.getCurrent())
+                            page = api.getCurrent();
+                            pagestat = pagesize * (api.getCurrent() - 1)
+                            var x = {
+                                'limit': [pagestat, 30].join(',')
+                            };
+                            var d = $.extend({}, obj, x);
+                            getDatalist(d)
+                        }
+                    });
+                    // 数据的总条数
+                    setTimeout(function () {
+                        $('.m-style').append(
+                            `<div href="javascript:;" class="cunt" style='padding: 0 4px;' >总记录数： ${retjson.data.count}</div>`
+                        )
+                    }, 1000)
+                    window.location.href="#"
+            } else {
+                showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+
+            }
+        })
+    }
+
+    Vedit = new Vue({
+        el: '#W_edit',
+        data: {
+            data: {
+                BrandNO: '',
+                CName: '',
+                EName: '',
+                BrandType: '',
+                Introduce: '',
+                Memo: ''
+            },
+            fromcountrylist: [],
+            fade: false,
+            no_data: config_txt.no_data.zn,
+            obj_txt: Vdata_list.obj_txt, // 对象拼接
+            is_add: false, //是否是新增，或是修改
+        },
+        methods: {
+            //保存
+            editsave: function() {
+
+                var data = this.data;
+
+                if (!data.CName) {
+                    alert('CName can not be empty!!');
+                    return;
+                }
+
+                data.usertoken = user_token;
+                var url = '';
+                if (this.is_add) {
+                    url = '/index.php?s=desktop/brand/add';
+                } else {
+                    url = '/index.php?s=desktop/brand/update';
+                }
+                ajax(url, data, function(retjson) {
+                    if (retjson.stat == 1) {
+                        success('已提交');
+                        $('#W_edit').modal("hide");
+                        Vedit.fromcountrylist = retjson.data;
+                        obj = {};
+                        obj['limit'] = [(page - 1) * pagesize, pagesize].join(","); //条目数
+                        getDatalist(obj)
+                    } else {
+                        showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+                    }
+                })
+            }
+        }
+    });
+
+    
 function showimg(data){
 
     var len = data.length,
