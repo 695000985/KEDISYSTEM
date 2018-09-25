@@ -281,8 +281,7 @@
         function if_version() {
             var arr = [];
             var local_version = nw.App.manifest.version;
-            //  var timestamp = Date.parse(new Date());// 当前时间戳 1527907044
-            // alert(local_version)
+            
             for (a in version_con) {
                 arr.push(version_con[a].Versions_code)
             }
@@ -303,36 +302,38 @@
 
 
         function set_http() {
-            //nw.App.unregisterGlobalHotKey(shortcut);
+            nw.App.unregisterGlobalHotKey(shortcut);
             var url_http = prompt("修改服务器地址", setting_host || get_local_cache('http_url'))
             if (!!url_http) {
                 setting_host = url_http;
                 set_local_cache('http_url', setting_host)
             }
-            //nw.App.registerGlobalHotKey(shortcut);
+           
         }
-        // var option = {
-        //     key: "Ctrl+Shift+s",
-        //     active: function () {
-        //         console.log("全局快捷键: " + this.key + " 被激活.");
-        //     },
-        //     failed: function (msg) {
-        //         // :(, 无法注册 |key| 或未注册 |key|.
-        //         console.log(msg);
-        //     }
-        // };
+        var option = {
+            key: "Ctrl+Shift+s",
+            active: function () {
+                console.log("全局快捷键: " + this.key + " 被激活.");
+            },
+            failed: function (msg) {
+                // :(, 无法注册 |key| 或未注册 |key|.
+                console.log(msg);
+            }
+        };
 
-        // // 使用 |option| 注册快捷键
-        // var shortcut = new nw.Shortcut(option);
-        // nw.App.registerGlobalHotKey(shortcut);
-        // // 您还可以监听快捷键的成功或失败事件
-        // shortcut.on('active', function () {
-        //     set_http()
-        // });
+        // 使用 |option| 注册快捷键
+        var shortcut = new nw.Shortcut(option);
+        nw.App.registerGlobalHotKey(shortcut);
+        // 您还可以监听快捷键的成功或失败事件
+        shortcut.on('active', function () {
+            set_http()
+        });
 
-        // shortcut.on('failed', function (msg) {
-        //     console.log(msg);
-        // });
+        shortcut.on('failed', function (msg) {
+            console.log(msg);
+        });
+
+
         // 注销全局快捷键
         //nw.App.unregisterGlobalHotKey(shortcut);
     </script>

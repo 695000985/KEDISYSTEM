@@ -19,8 +19,8 @@
     <script src="../script/loading.js"></script>
     <script src="../DatePicker/WdatePicker.js"></script>
     <script src="../script/layer.js"></script>
-    <script src="../script/excellentexport.js"></script>
-
+    <script src="../script/excellentexport.js"></script> 
+    
     <style>
         [v-cloak] {
             display: none;
@@ -114,7 +114,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-if="table_list.data_report" v-for="(item,$index) in table_list.data_report" @click="click_select($index,item)" :class="{'active_index' : $index == list_active_index}">
+                    <tr v-if="table_list.data_report" v-for="(item,$index) in table_list.data_report" @click="click_select($index,item,table_list.data_report_sum)" :class="{'active_index' : $index == list_active_index}">
                         <td>{{item.SC}}</td>
                         <td>{{item.Status}}</td>
                         <td>{{item.kits}}</td>
@@ -129,7 +129,7 @@
                         <td>{{item.NR}}</td>
                         <td>{{item.Oper}}</td>
                         <td>{{item.ID}}</td>
-                        <td>{{item.Cash_usd}}</td>
+                        <td>{{item.Cash_USD}}</td>
                         <td>{{item.WM}}</td>
                     </tr>
                     <tr v-else>
@@ -173,7 +173,7 @@
                         <p>
                             <span>Cash(NR)</span>
                             <input type="text" disabled v-model="info_bot_left.Cash_NR">
-                            <button>...</button>
+                            <button @click="open_cash()">...</button>
                         </p>
                         <p>
                             <span style="width: 79px;">Unit Price</span>
@@ -183,8 +183,8 @@
                             <span>Bank Deposit</span>
                             <input type="text" disabled v-model="info_bot_left.Bank_Deposit">
                         </p>
-                        <button>...</button>
-                        <button>DIS</button>
+                        <button @click="open_tellardata()">...</button>
+                        <button @click="open_dis()">DIS</button>
                     </div>
                     <div>
                         <p>
@@ -225,6 +225,10 @@
                             <span>BrwCashToteller</span>
                             <input type="text" disabled v-model="info_bot_left.BrwCashToTeller">
                         </p>
+                        <p>
+                            <span>当前状态（Status）</span>
+                            <input type="text" disabled v-model="info_bot_left.status">
+                        </p>
                     </div>
                 </div>
             </div>
@@ -257,9 +261,9 @@
         <div class="acheivement_top">
             <p>
                 <span>From</span>
-                <input type="text" v-bind:value="local_time" class="Wdate real_date acheivement_from_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                <input type="text"  class="Wdate real_date acheivement_from_time" :value="local_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
                 <span>to</span>
-                <input type="text" class="Wdate real_date acheivement_to_time" v-bind:value="local_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                <input type="text" class="Wdate real_date acheivement_to_time"  :value="local_time"  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
             </p>
             <p>
                 <span>SC</span>
@@ -291,6 +295,9 @@
                         <td>{{item.ShopNo}}</td>
                         <td>{{item.Acheive}}</td>
                     </tr>
+                    <tr v-if="!data_list.length">
+                        <td colspan="2">{{no_data}}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -299,9 +306,9 @@
         <div class="acheivement_top">
             <p>
                 <span>From</span>
-                <input type="text" v-bind:value="local_time " class="Wdate real_date acheivement_now_time_start" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                <input type="text"  class="Wdate real_date acheivement_now_time_start" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
                 <span>to</span>
-                <input type="text" class="Wdate real_date acheivement_now_time_end" v-bind:value="local_time" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                <input type="text" class="Wdate real_date acheivement_now_time_end"  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
             </p>
             <P>
                 <button class="btn  btn-outline-dark size-S" @click="query_same_month()">当月查询</button>
@@ -343,6 +350,383 @@
             </table>
         </div>
     </div>
+    <div class="cash_data" id="cash_data" style="display: none">
+        <div class="cash_top">
+            <p>
+                <span>{{obj_txt.Ca_groupid}}</span>
+                <input type="text" disabled class="cash_gid" :value="cash_groupid" style="width: 140px;">
+            </p>
+            <p>
+                <span>{{obj_txt.Ca_date}}</span>
+                <input type="text" disabled class="cash_time" :value='cash_time'>
+            </p>
+            <p>
+                <span>{{obj_txt.Ca_shopCode}}</span>
+                <input type="text" disabled class="cash_sc" :value='cash_sc'>
+            </p>
+            <p>
+                <span>{{obj_txt.Ca_total}}</span>
+                <input type="text" disabled class="cash_total" v-model='cash_total'>
+            </p>
+        </div>
+        <div class="cash_top">
+            <p>
+                <span>{{obj_txt.Ca_amount}}</span>
+                <input type="text" style="width:200px;" class="amount">
+            </p>
+            <button class="btn btn-success" onclick="cash_data_add()">{{obj_txt.Ca_btn_add}}</button>
+            <button class="btn btn-danger" v-on:click='del_data(cashid)'>{{obj_txt.Ca_btn_delete}}</button>
+        </div>
+        <div class="" style="background: #ccc;
+        height: 300px;
+        overflow-x: auto;">
+            <table class="table table-border table-bordered table-bg " style="background: #fff;">
+                <thead>
+                    <tr>
+                        <th>{{obj_txt.Ca_groupid}}</th>
+                        <th>{{obj_txt.Ca_cashID}}</th>
+                        <th>{{obj_txt.Ca_shopCode}}</th>
+                        <th>{{obj_txt.Ca_amount}}</th>
+                        <th>{{obj_txt.Ca_RealDate}}</th>
+                        <th>{{obj_txt.Ca_Oper}}</th>
+                        <th>{{obj_txt.Ca_Memo}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for='(x,$index) in cash_data.list' v-if='cash_data' v-bind:class="{active_index:$index == active_index}" @click="sel_active($index,x.CashID)">
+                        <td>{{x.GroupID}}</td>
+                        <td>{{x.CashID}}</td>
+                        <td>{{x.ShopNo}}</td>
+                        <td>{{x.Amount}}</td>
+                        <td>{{x.RealDate.substring(0,10)}}</td>
+                        <td>{{x.Oper}}</td>
+                        <td>{{x.Memo}}</td>
+                    </tr>
+                    <tr v-else>
+                        <td colspan="7">没有数据</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="distributor" id="distributor" style="display: none;">
+        <div class="dis_top">
+            <P>
+                <span>{{obj_txt.Group_ID}}</span>
+                <input type="text" v-bind:value="groupid">
+            </P>
+            <P>
+                <span>{{obj_txt.KEDI_code}}</span>
+                <input type="text" v-model="KEDI_Code">
+            </P>
+            <P>
+                <span style="visibility: hidden;">
+                    <button class="btn btn-dark">S</button>
+                </span>
+                <input type="button" :value="obj_txt.Btn_Search" class="btn btn-dark" @click="search()">
+            </P>
+            <P>
+                <span>
+                    <button class="btn btn-danger" @click="del_distr()">{{obj_txt.Btn_delete}}</button>
+                </span>
+            </P>
+        </div>
+        <div class="dis_top">
+            <P>
+                <span>{{obj_txt.DIS_Name}}</span>
+                <input type="text" disabled>
+            </P>
+            <P>
+                <span>{{obj_txt.Balance}}</span>
+                <input type="text" disabled :value="balance">
+            </P>
+            <P>
+                <span>{{obj_txt.Dis_ShopCode}}</span>
+                <input type="text" :value="sc">
+            </P>
+            <P style="visibility: hidden;">
+                <span></span>
+                <input type="text">
+            </P>
+        </div>
+        <div class="dis_top">
+            <P>
+                <span>{{obj_txt.Dis_region}}</span>
+                <input type="text" disabled :value="Region">
+            </P>
+            <P>
+                <span>{{obj_txt.Dis_teller}}</span>
+                <input type="text" :value="tellar" disabled>
+            </P>
+            <P>
+                <span>{{obj_txt.Dis_amount}}</span>
+                <input type="text" value="" class="" v-model="Amount">
+            </P>
+            <P>
+                <span>
+                    <button class="btn btn-success" @click="add_disre()">{{obj_txt.add_disre}}</button>
+                </span>
+            </P>
+        </div>
+        <div class="dis_top">
+            <P>
+                <span>{{obj_txt.Dis_date}}</span>
+                <input type="text" v-model:value="date" disabled>
+            </P>
+            <P>
+                <span>{{obj_txt.Dis_operator}}</span>
+                <input type="text" v-model="Operator" disabled>
+            </P>
+            <P style="visibility: hidden;">
+                <span></span>
+                <input type="button" value="">
+            </P>
+            <P style="visibility: hidden;">
+                <span></span>
+                <input type="text">
+            </P>
+        </div>
+        <div class="dis_top_4">
+            <p>
+                <span>{{obj_txt.TellerMonth}}{{obj_txt.Dis_year}}</span>
+                <select name="" id="" class="year" v-model="year">
+                    <option value="2014">2014</option>
+                    <option value="2015">2015</option>
+                    <option value="2016">2016</option>
+                    <option value="2017">2017</option>
+                    <option value="2018">2018</option>
+                    <option value="2019">2019</option>
+                    <option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                </select>
+            </p>
+            <p>
+                <span>{{obj_txt.Dis_month}}</span>
+                <select name="" id="" class="month" v-model="month">
+                    <option value="1">JAN</option>
+                    <option value="2">FEB</option>
+                    <option value="3">MAR</option>
+                    <option value="4">APR</option>
+                    <option value="5">MAY</option>
+                    <option value="6">JUN</option>
+                    <option value="7">JUL</option>
+                    <option value="8">AUG</option>
+                    <option value="9">SEP</option>
+                    <option value="10">OCT</option>
+                    <option value="11">NOV</option>
+                    <option value="12">DEC</option>
+                </select>
+            </p>
+            <p>
+                <span>{{obj_txt.RegPsw}}</span>
+                <input type="text" disabled>
+            </p>
+            <p>
+                <span>{{obj_txt.ConfirmPsw}}</span>
+                <input type="text" v-model="ConfirmPsw" placeholder="ConfirmPsw">
+            </p>
+            <p>
+                <span>未注册，Unregister</span>
+            </p>
+    
+        </div>
+        <div class="list_data" style="background: #ccc; height: 300px; overflow-x: auto;">
+            <table class="table table-border table-bordered table-bg " style="background: #fff;">
+                <thead>
+                    <tr>
+                        <th>{{obj_txt.TellerDetailID}}</th>
+                        <th>{{obj_txt.Dis_ShopNO}}</th>
+                        <th>{{obj_txt.Deposit}}</th>
+                        <th>{{obj_txt.Used}}</th>
+                        <th>{{obj_txt.Dis_bank}}</th>
+                        <th>{{obj_txt.Dis_date}}</th>
+                        <th>{{obj_txt.TellerID}}</th>
+                        <th>{{obj_txt.Dis_groupID}}</th>
+                        <th>{{obj_txt.Purpose}}</th>
+                        <th>{{obj_txt.Expected}}</th>
+                        <th>{{obj_txt.systemTellerId}}</th>
+                        <th>{{obj_txt.Dis_region}}</th>
+                        <th>{{obj_txt.Dis_oper}}</th>
+                        <th>{{obj_txt.RegPswStatus}}</th>
+                        <th>{{obj_txt.memo1}}</th>
+                        <th>{{obj_txt.memo2}}</th>
+                        <th>{{obj_txt.FreezeMark}}</th>
+                        <th>{{obj_txt.freezeSelect}}</th>
+                        <th>{{obj_txt.LastEditdate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(t,$index) in dis_data.Get_Tellar_Info" v-if='dis_data.Get_Tellar_Info' v-on:click="on_active($index)" :class="{active_index :  $index == active_index }">
+                        <td>{{t.TellerDetailID}}</td>
+                        <td>{{t.ShopNO}}</td>
+                        <td>{{t.Deposit}}</td>
+                        <td>{{t.Used}}</td>
+                        <td>{{t.Bank}}</td>
+                        <td>{{t.Date}}</td>
+                        <td>{{t.TellerID}}</td>
+                        <td>{{t['用途']}}</td>
+                        <td>{{t['所预期']}}</td>
+                        <td>{{t.systemTellerId}}</td>
+                        <td>{{t.Region}}</td>
+                        <td>{{t.Oper}}</td>
+                        <td>{{t.RegPswStatus}}</td>
+                        <td>{{t.Memo1}}</td>
+                        <td>{{t.Memo2}}</td>
+                        <td>{{t.FreezeMark}}</td>
+                        <td>{{t.FreezeSelect}}</td>
+                        <td>{{t.LastEditDate}}</td>
+                        <td>{{t.ROW_NUMBER}}</td>
+                    </tr>
+                    <tr v-else>
+                        <td colspan="18">没有数据</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div id="tellardata" class="tellar_data" style="display: none" v-cloak>
+        <div class="tell_top">
+            <P>
+                <span>{{obj_txt.Te_groupid}}</span>
+                <input type="text" disabled :value='groupid'>
+            </P>
+            <P>
+                <span>{{obj_txt.Te_balance}}</span>
+                <input type="text" class="balance" disabled :value="banlance">
+            </P>
+            <P>
+                <span>{{obj_txt.Te_shopcode}}</span>
+                <input type="text" disabled :value="sc">
+            </P>
+            <P>
+                <span>{{obj_txt.Te_regionMoney}}</span>
+                <input type="text" class="tellar_RegionMoney" disabled :value="RegionMoney">
+            </P>
+        </div>
+        <div class="tell_top">
+            <P>
+                <span>{{obj_txt.Te_date}}</span>
+                <input type="text" disabled :value="date">
+            </P>
+            <P>
+                <span>{{obj_txt.Te_teller}}</span>
+                <input type="text" disabled :value='teller'>
+            </P>
+            <P>
+                <span>{{obj_txt.Te_Region}}</span>
+                <input type="text" disabled :value="region">
+            </P>
+            <P>
+                <span>{{obj_txt.Te_amount}}</span>
+                <input type="text" class="tellar_amount">
+            </P>
+            <button class="btn btn-success" v-on:click="add_tellar()">{{obj_txt.Te_btn_add}}</button>
+        </div>
+        <div class="tell_top">
+            <p>
+                <span>{{obj_txt.Te_year}}</span>
+                <select name="" id="" v-model="year">
+                    <option value="2014">2014</option>
+                    <option value="2015">2015</option>
+                    <option value="2016">2016</option>
+                    <option value="2017">2017</option>
+                    <option value="2018">2018</option>
+                    <option value="2019">2019</option>
+                    <option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                </select>
+            </p>
+            <p>
+                <span>{{obj_txt.Te_month}}</span>
+                <select name="" class="month" id="" v-model="month">
+                    <option value="1">JAN</option>
+                    <option value="2">FEB</option>
+                    <option value="3">MAR</option>
+                    <option value="4">APR</option>
+                    <option value="5">MAY</option>
+                    <option value="6">JUN</option>
+                    <option value="7">JUL</option>
+                    <option value="8">AUG</option>
+                    <option value="9">SEP</option>
+                    <option value="10">OCT</option>
+                    <option value="11">NOV</option>
+                    <option value="12">DEC</option>
+                </select>
+            </p>
+            <p>
+                <span>{{obj_txt.Te_RegPsw}}</span>
+                <input type="text" disabled>
+            </p>
+        </div>
+        <div class="tell_top">
+    
+            <p>
+                <span>{{obj_txt.ConfirmPsw}}</span>
+                <input type="text">
+            </p>
+            <p>
+                <span>未注册，Unregister</span>
+            </p>
+            <button class="btn btn-danger" v-on:click='del_tellar()'>{{obj_txt.Te_btn_delete}}</button>
+        </div>
+        <div class="list_data" style="background: #ccc; height: 300px; overflow-x: auto;">
+            <table class="table table-border table-bordered table-bg " style="background: #fff;">
+                <thead>
+                    <tr>
+                        <th>{{obj_txt.Te_TellerDetailID}}</th>
+                        <th>{{obj_txt.Te_shopcode}}</th>
+                        <th>{{obj_txt.Te_Deposit}}</th>
+                        <th>{{obj_txt.Te_Used}}</th>
+                        <th>{{obj_txt.Te_bank}}</th>
+                        <th>{{obj_txt.Te_date}}</th>
+                        <th>{{obj_txt.Te_TellerID}}</th>
+                        <th>{{obj_txt.Te_groupid}}</th>
+                        <th>{{obj_txt.Te_purpose}}</th>
+                        <th>{{obj_txt.Te_expected}}</th>
+                        <th>{{obj_txt.Te_systemTellerId}}</th>
+                        <th>{{obj_txt.Te_Region}}</th>
+                        <th>{{obj_txt.Te_oper}}</th>
+                        <th>{{obj_txt.Te_regPswStatus}}</th>
+                        <th>{{obj_txt.Te_memo1}}</th>
+                        <th>{{obj_txt.Te_memo2}}</th>
+                        <th>{{obj_txt.Te_freezeMark}}</th>
+                        <th>{{obj_txt.Te_freezeSelect}}</th>
+                        <th>{{obj_txt.Te_lastEditdate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(t,$index) in tellar_con.detail" v-if='tellar_con.detail' v-on:click="on_active($index)" :class="{active_index :  $index == active_index }">
+                        <td>{{t.TellerDetailID}}</td>
+                        <td>{{t.ShopNO}}</td>
+                        <td>{{t.Deposit}}</td>
+                        <td>{{t.Used}}</td>
+                        <td>{{t.Bank}}</td>
+                        <td>{{t.Date}}</td>
+                        <td>{{t.TellerID}}</td>
+                        <td>{{t['用途']}}</td>
+                        <td>{{t['所预期']}}</td>
+                        <td>{{t.systemTellerId}}</td>
+                        <td>{{t.Region}}</td>
+                        <td>{{t.Oper}}</td>
+                        <td>{{t.RegPswStatus}}</td>
+                        <td>{{t.Memo1}}</td>
+                        <td>{{t.Memo2}}</td>
+                        <td>{{t.FreezeMark}}</td>
+                        <td>{{t.FreezeSelect}}</td>
+                        <td>{{t.LastEditDate}}</td>
+                        <td>{{t.ROW_NUMBER}}</td>
+                    </tr>
+                    <tr v-else>
+                        <td colspan="18">没有数据</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
     <script>
         var usertoken=get_cache('usertoken')
         $(function () {
@@ -372,9 +756,10 @@
                 GroupID: '', //汇总NO
                 new_sc:'', // 新店铺号
                 info_bot_left:{
+                 shop_no:'',
                   S_nylon:0,  
                   System_Total:0,  
-                  Result:0,  
+                  Result:'',  
                   B_Nylon:0,  
                   Grand_Total:0,  
                   Region:0,  
@@ -388,7 +773,9 @@
                   Date:'',  
                   Cash_USD:0,  
                   BorrowedCash:0,  
-                  BrwCashToTeller:0,  
+                  BrwCashToTeller:0, 
+                  status:'',
+                  TellarMoney:''
                 }
             },
             computed:{
@@ -403,32 +790,65 @@
                 }
             },
             methods: {
+                open_cash(){
+                    if(!!this.GroupID){
+                        opne_cash_data();
+                        v_cash.cash_groupid=update_report_main.GroupID;
+                        v_cash.cash_time=update_report_main.info_bot_left.Date;
+                        v_cash.cash_sc=update_report_main.info_bot_left.shop_no;
+                    }else{
+                        showErr('请选中一条数据')
+                    }
+                },
+                open_tellardata(){
+                    if(!!this.GroupID){
+                        open_tellar();
+                        v_tellar.groupid=update_report_main.GroupID;
+                        v_tellar.date=update_report_main.info_bot_left.Date;
+                        v_tellar.sc=update_report_main.info_bot_left.shop_no;
+                        v_tellar.region=update_report_main.info_bot_left.Region;
+                    }else{
+                        showErr('请选中一条数据')
+                    }
+                },
+                open_dis(){
+                    if(!!this.GroupID){
+                        open_distributor();
+                        distributor_con.groupid=update_report_main.GroupID;
+                        distributor_con.date=update_report_main.info_bot_left.Date;
+                        distributor_con.sc=update_report_main.info_bot_left.shop_no;
+                        distributor_con.Region=update_report_main.info_bot_left.Region;
+                    }else{
+                        showErr('请选中一条数据')
+                    }
+                },
                 RegionSearch_btn() { //区域查询RegionSearch
                     this.GroupID="";
                     this.list_active_index=-1;
                     this.printbigsc_name="";
                     region_search()
-                   
                 },
-                updata_btn() {  // 更新数据Updata_btn
+                updata_btn() {  // 更新数据Updata 按钮
                     if(!!this.GroupID){
                         var url = "/index.php?s=desktop/Front_Desk_Report/Update";
                         var data = {};
                         data["usertoken"] = get_cache('usertoken');
                         data['GroupID'] = this.GroupID;
-                        data['CashMoney'] = '';
-                        data['TellarMoney'] = '';
-                        data['DebitMoney'] = '';
-                        data['Disc_Trsfer'] = '';
-                        data['Cash_USD'] = '';
-                        data['shopno'] = '';
-                        data['Area'] = '';  
-                        data['Kits'] = this.info_bot_left.kits;
-                        data['ReportStatus'] = '';
-                        data['Teller_Oper'] = '';
+                        data['CashMoney'] = this.info_bot_left.Cash_NR;
+                        data['TellarMoney'] = this.info_bot_left.TellarMoney;
+                        data['DebitMoney'] = this.info_bot_left.Debit;
+                        data['Disc_Trsfer'] = this.info_bot_left.Disc_Trsfer;
+                        data['Cash_USD'] = this.info_bot_left.Cash_USD;
+                        data['shopno'] = this.info_bot_left.shop_no;
+                        data['Area'] = this.info_bot_left.Region;  
+                        data['Kits'] = this.info_bot_left.Kits;
+                        data['ReportStatus'] = this.info_bot_left.status;
+                        data['Teller_Oper'] = this.info_bot_left.Oper;
                         ajax(url, data, function (e) {
                             if (e.stat == 1) {
-                                success(e.data.data)
+                                success(e.data)
+                               update_report_main.list_active_index =-1;
+                               update_report_main.RegionSearch_btn()
                             } else {
                                 showErr(e.data.errmsg, e.data.errmsg_en, e.data.e.errcode)
                             }
@@ -470,7 +890,7 @@
                     }
                     
                 },
-                click_select(index,obj){ // 选中数据列表
+                click_select(index,obj,sum){ // 选中数据列表
                     this.list_active_index =index;
                     this.GroupID=obj.ID;
                     this.info_bot_left.Date=$('.date1').val();
@@ -478,6 +898,15 @@
                     this.info_bot_left.Kits=obj.kits;
                     this.info_bot_left.System_Total=obj.NR;
                     this.printbigsc_name=obj.SC
+                    this.info_bot_left.shop_no=obj.SC
+                    this.info_bot_left.status=obj.Status
+
+                    this.info_bot_left.TellarMoney=sum.TellarMoney;
+                    this.info_bot_left.Cash_NR=sum.CashMoney;
+                    this.info_bot_left.Disc_Trsfer=sum.disc_trsfer;
+                    this.info_bot_left.Debit=sum.debitmoney;
+                    this.info_bot_left.TellarMoney=sum.TellarMoney;
+                    
                 },
                 updata(){ // 更新数据不一致
                     if(!!this.GroupID){
@@ -509,7 +938,9 @@
                 month_list: config_month,
                 year_list: config_year(),
                 data_list: [],
-                local_time: get_local_time(),
+                // local_time: get_local_time(),
+                local_time:'',
+                no_data:config_txt.no_data.zn,
                 year: get_local_year(),
                 month: get_local_month(),
                 sc:''
@@ -526,6 +957,7 @@
                         ajax(url,data,function(e){
                             if (e.stat == 1) {
                                 console.log(JSON.stringify(e));
+                                acheivement.data_list=e.data 
                             } else {
                                 showErr(e.errmsg, e.errmsg_en, e.errcode)
                             }
@@ -559,7 +991,7 @@
                 month_list: config_month,
                 year_list: config_year(),
                 data_list: '',
-                local_time: get_local_time(),
+               // local_time: get_local_time(),
                 year: get_local_year(),
                 month: get_local_month(),
             },
@@ -578,6 +1010,9 @@
                         }
                     })
                 }
+
+
+                
             }
         })
 
@@ -609,6 +1044,408 @@
                 }
             })
         }
+
+    function opne_cash_data() {
+        open_html('cashData', '#cash_data', 'cash_data')
+        setTimeout(function(){
+            cash_data_list()
+        },100)
+        
+    }
+
+    function cash_data_list() {
+        var url = '/index.php?s=desktop/Front_Desk_Cash/CashData';
+        var data = {};
+        data['usertoken'] = get_cache('usertoken');
+        data['GroupID'] = v_cash.cash_groupid;
+        data['ShopNO'] = v_cash.cash_sc;
+        data['RealDate'] = v_cash.cash_time;
+        ajax(url, data, function(e) {
+            if (e.stat == 1) {
+                v_cash.cash_data = e.data;
+                v_cash.cash_total = e.data.Total;
+               update_report_main.info_bot_left.Cash_NR=e.data.Total
+            } else {
+                v_cash.cash_data = 0;
+                v_cash.cash_total = 0;
+                update_report_main.info_bot_left.Cash_NR=0;
+                showErr(e.errmsg, e.errmsg_en, e.errcode)
+            }
+        })
+    }
+
+    function cash_data_add() {
+        var url = '/index.php?s=desktop/Front_Desk_Cash/Add_Cash';
+        var data = {};
+        data['usertoken'] = get_cache('usertoken');
+        data['GroupID'] = v_cash.cash_groupid;
+        data['ShopNO'] = v_cash.cash_sc;
+        data['RealDate'] = v_cash.cash_time;
+        data['Amount'] = $('.amount').val();
+        ajax1(url, data, function(e) {
+            if (e.stat == 1) {
+                // cash_data_list()
+                cash_data_list()
+                
+            } else {
+                showErr(e.errmsg, e.errmsg_en, e.errcode)
+            }
+        })
+    }
+
+    function cash_data_del(cid) {
+        var url = '/index.php?s=desktop/Front_Desk_Cash/Delete_Cash';
+        var data = {};
+        data['usertoken'] = get_cache('usertoken');
+        data['CashID'] = cid;
+        var txt = `<div>${config_txt.del_cash.en}</div>`
+        firm('确认删除', txt, function() {
+            layer.close(layer.index);
+            ajax1(url, data, function(e) {
+                if (e.stat == 1) {
+                    success(e.data)
+                    setTimeout(function() {
+                        cash_data_list()
+                       
+                        v_cash.active_index = -1;
+                        v_cash.cashid = 0;
+                    }, 2000)
+
+                } else {
+                    showErr(e.errmsg, e.errmsg_en, e.errcode)
+                }
+            })
+        })
+    }
+    var v_cash = new Vue({
+        el: "#cash_data",
+        data: {
+            cash_data: {},
+            cash_groupid: '',
+            cash_time:'',
+            cash_sc: '',
+            cash_total: 0,
+            active_index: -1,
+            cashid: 0,
+            lang_txt: get_page_txt('Cash_data'), // 当前页面的文字信息
+            obj_txt: {}, // 对象拼接
+        },
+        created: function() {
+            //cash_data_list();
+            this.lang_toggle()
+        },
+        methods: {
+            sel_active(index, cashid) {
+                this.active_index = index;
+                this.cashid = cashid
+            },
+            del_data(cid) {
+                if (cid) {
+                    cash_data_del(cid)
+                } else {
+                    showErr(config_txt.sel_cash.zn, config_txt.sel_cash.en)
+                }
+            },
+            lang_toggle() {
+                this.obj_txt = splicing_obj(this.lang_txt)
+            },
+        }
+
+    })
+
+    function open_tellar() {
+        open_html('TellarData', '#tellardata', 'v_tellar', function() {
+            //Refresh()
+        });
+        setTimeout(function(){
+            get_tellar();
+        },100)
+        
+    }
+
+    function get_tellar() { // 获取 TellarData 信息
+        var url = '/index.php?s=desktop/Teller_Account_Reg/TellarData_Load';
+        var data = {};
+        data['usertoken'] = get_cache('usertoken');
+        data['GroupID'] = v_tellar.groupid;
+        data['ShopNO'] = v_tellar.sc;
+        data['RealDate'] = v_tellar.date;
+        data['Region'] =v_tellar.region;
+        data['FormMark'] = '';
+        ajax(url, data, function(e) {
+            if (e.stat == 1) {
+                v_tellar.tellar_con = e.data;
+                v_tellar.banlance = e.data.banlance.Banlance;
+                v_tellar.RegionMoney = e.data.RegionMoney;
+                v_tellar.date = e.data.input.RealDate;
+                v_tellar.region = e.data.input.Region;
+                v_tellar.teller = e.data.total;
+            } else {
+                showErr(e.errmsg, e.errmsg_en, e.errcode)
+            }
+        })
+    }
+    var v_tellar = new Vue({
+        el: "#tellardata",
+        data: {
+            tellar_con: {},
+            tellar: 0,
+            teller: '0',
+            active_index: -1,
+            year: get_local_year(),
+            month: get_local_month(),
+            list_tellar: [],
+            groupid: '',
+            banlance: '',
+            sc: '',
+            RegionMoney: '',
+            date: '',
+            region: '',
+            Amount: "",
+            lang_txt: get_page_txt('Tellar_data'), // 当前页面的文字信息
+            obj_txt: {}, // 对象拼接
+        },
+        created: function() {
+            this.lang_toggle()
+        },
+        watch: {
+            teller(newval, oldval) {
+                update_report_main.info_bot_left.Bank_Deposit=newval
+            }
+        },
+        methods: {
+            add_tellar() {
+                var url = '/index.php?s=desktop/Teller_Account_Reg/add';
+                var data = {};
+                data['usertoken'] = get_cache('usertoken')
+                data['GroupID'] = this.groupid;
+                data['SC'] = this.sc;
+                data['Date'] = this.date;
+                data['Region'] = this.region;
+                data['FormMark'] = '';
+                data['RegionMoney'] = $('.tellar_RegionMoney').val();
+                data['Amount'] = $('.tellar_amount').val();
+                data['Year'] = this.year;
+                data['Month'] = this.month;
+                data['Balance'] = $('.balance').val();
+                ajax1(url, data, function(e) {
+                        if (e.stat == 1) {
+                            this.list_tellar = e.data.Get_Tellar_Info;
+                            get_tellar()
+                        } else {
+                            showErr(e.errmsg, e.errmsg_en, e.errcode)
+                        }
+                    })
+                    
+            },
+            del_tellar(del_id) {
+                if (v_tellar.active_index == -1) {
+                    showErr(config_txt.sel_tellar.zn, config_txt.sel_tellar.en);
+                    return
+                }
+                var url = '/index.php?s=desktop/Teller_Account_Reg/DELETE';
+                var data = {};
+                data['usertoken'] = get_cache('usertoken')
+                data['GroupID'] = this.groupid;
+                data['SC'] =  this.sc;
+                data['Date'] = this.date;
+                data['Region'] = this.region;
+                data['FormMark'] = '';
+                data['RegionMoney'] = $('.RegionMoney').val()
+                data['Amount'] = $('#tellardata table tr.active_index td:nth-child(4)').html();
+                data['Year'] = this.year;
+                data['Month'] = this.month;
+                data['Balance'] = $('.balance').val();
+                data['CashID_Delete'] = $('#tellardata table tr.active_index td:nth-child(1)').html()
+
+                firm('删除报单', config_txt.del_tellar.en, function() {
+                    ajax1(url, data, function(e) {
+                        if (e.stat == 1) {
+                            v_tellar.active_index = -1;
+                            get_tellar()
+                            layer.close(layer.index);
+                        } else {
+                            showErr(e.errmsg, e.errmsg_en, e.errcode)
+                        }
+                    })
+
+                })
+
+            },
+            on_active(index) {
+                this.active_index = index
+            },
+            lang_toggle() {
+                this.obj_txt = splicing_obj(this.lang_txt)
+            },
+        }
+
+    })
+
+
+
+    function open_distributor() {
+        open_html('Distributor', '#distributor', 'distributor', function() {
+            distributor_con.active_index = -1;
+        });
+        setTimeout(function(){
+            get_distributor()
+        },100)
+        
+    }
+
+    function get_distributor() {
+        var url = '/index.php?s=desktop/Distributor_Teller/DistributorTeller_Load';
+        var data = {};
+        data['usertoken'] = get_cache('usertoken');
+        data['GroupID'] = distributor_con.groupid;
+        data['SC'] = distributor_con.sc;
+        data['RealDate'] = distributor_con.date;
+        data['Region'] = distributor_con.Region;
+        data['FormMark'] = '';
+        ajax(url, data, function(e) {
+            if (e.stat == 1) {
+                distributor_con.dis_data = e.data;
+                distributor_con.Operator = JSON.parse(get_cache("user_info")).username;
+                distributor_con.Region = e.data.input.Region;
+                distributor_con.tellar = e.data.Show_TellarTotal;
+                distributor_con.year = get_local_year();
+               distributor_con.month = get_local_month();
+                distributor_con.teller = e.data.Show_TellarTotal;
+            } else {
+                showErr(e.errmsg, e.errmsg_en, e.errcode)
+            }
+        })
+    }
+
+    var distributor_con = new Vue({
+        el: '#distributor',
+        data: {
+            dis_data: '',
+            tellar: 0,
+            teller: '',
+            active_index: -1,
+            groupid: '',
+            sc: '',
+            balance: '',
+            RegionMoney: '',
+            Region: '',
+            Amount: "",
+            RegPsw: "",
+            ConfirmPsw: '',
+            year: '',
+            month: '',
+            date: '',
+            Operator: '',
+            KEDI_Code: '',
+            DIS_NAME: '',
+            lang_txt: get_page_txt('Distributor'), // 当前页面的文字信息
+            obj_txt: {}, // 对象拼接
+        },
+        created: function() {
+            this.lang_toggle()
+        },
+        watch: {
+            teller(newval, oldval) {
+                update_report_main.info_bot_left.Bank_Deposit=newval
+            }
+        },
+
+        methods: {
+            search() {
+                var url = "/index.php?s=desktop/Distributor_Teller/Search";
+                var data = {};
+                data['usertoken'] = get_cache('usertoken');
+                data["GroupID"] = this.groupid;
+                data["KEDI_Code"] = this.KEDI_Code;
+                data["DIS_NAME"] = this.DIS_NAME;
+                data["banlance"] = this.balance;
+                data["Region"] = this.Region;
+                data["Teller"] = this.tellar;
+                data["SC"] = this.sc;
+                data["DATE"] = get_local_time();
+                data["Operator"] = this.Operator;
+                data["Amount"] = this.Amount;
+                data["Year"] = this.year;
+                data["Month"] = $(`#distributor .month option:nth-child(${this.month*1})`).text();
+                data["RegPsw"] = this.RegPsw;
+                data["ConfirmPsw"] = this.ConfirmPsw;
+                ajax(url, data, function(e) {
+                    if (e.stat == 1) {
+                        console.log(e.data);
+
+                        distributor_con.balance = e.data.input.Balance;
+                        distributor_con.sc = e.data.input.SC;
+                    } else {
+                        showErr(e.errmsg, e.errmsg_en, e.errcode)
+                    }
+                })
+            },
+            add_disre() {
+                var url = '/index.php?s=desktop/Teller_Account_Reg/add';
+                var data = {};
+                data['usertoken'] = get_cache('usertoken')
+                data['GroupID'] = this.groupid;
+                data['SC'] = this.sc;
+                data['Date'] = this.date;
+                data['Region'] = this.Region;
+                data['FormMark'] = '';
+                data['RegionMoney'] = this.RegionMoney;
+                data['Amount'] = this.Amount;
+                data['Year'] = this.year;
+                data['Month'] = $(`#distributor .month option:nth-child(${this.month*1})`).text();
+                data['Balance'] = this.balance;
+                ajax1(url, data, function(e) {
+                    if (e.stat == 1) {
+                        this.list_tellar = e.data.Get_Tellar_Info;
+                        get_distributor()
+                    } else {
+                        showErr(e.errmsg, e.errmsg_en, e.errcode)
+                    }
+                })
+            },
+            del_distr(del_id) {
+                if (this.active_index == -1) {
+                    showErr(config_txt.sel_tellar.zn, config_txt.sel_tellar.en);
+                    return
+                }
+                var url = '/index.php?s=desktop/Teller_Account_Reg/DELETE';
+                var data = {};
+                data['usertoken'] = get_cache('usertoken')
+                data['GroupID'] = this.groupid;
+                data['SC'] = this.sc;
+                data['Date'] = this.date;
+                data['Region'] = this.Region;
+                data['FormMark'] = '';
+                data['RegionMoney'] = $('#distributor .RegionMoney').val()
+                data['Amount'] = $('#distributor table tr.active_index td:nth-child(4)').html();
+                data['Year'] = this.year;
+                data['Month'] = $(`#distributor .month option:nth-child(${this.month*1})`).text();
+                data['Balance'] = $('#distributor .balance').val();
+                data['CashID_Delete'] = $('#distributor table tr.active_index td:nth-child(1)').html()
+
+                firm('删除报单', config_txt.del_tellar.en, function() {
+                    ajax1(url, data, function(e) {
+                        if (e.stat == 1) {
+                            distributor_con.active_index = -1;
+                            get_distributor()
+                            layer.close(layer.index);
+                        } else {
+                            showErr(e.errmsg, e.errmsg_en, e.errcode)
+                        }
+                    })
+                })
+
+            },
+            on_active(index) {
+                this.active_index = index
+            },
+            lang_toggle() {
+                this.obj_txt = splicing_obj(this.lang_txt)
+            },
+        }
+
+    })
     </script>
 </body>
 

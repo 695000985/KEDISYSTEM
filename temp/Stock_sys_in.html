@@ -18,10 +18,6 @@
     <style>
         
     </style>
-
-
-
-
 </head>
 <body>
 
@@ -45,13 +41,8 @@
                 <p>{{obj_txt.bank}}</p>
                 <input type="text" id="search_bank" :placeholder="obj_txt.bank">
             </div>
-
-
-
             <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
                 @click="search_btn()">
-
-
             <input type="button"  :value="obj_txt.BtnCash" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
                 @click="searchcash_btn()">
         </div>
@@ -59,9 +50,6 @@
             <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
                 <thead>
                 <tr>
-                    
-                    
-                    
                     <th></th>
                 </tr>
                 </thead>
@@ -131,7 +119,7 @@
                     </div> 
 
                 <div class="btn_con">
-                    <input type="button" class="btn btn-success BtnUpdate" v-on:click='editsave()' value="提交">
+                    <input type="button" class="btn btn-success BtnUpdate" v-on:click='editsave()' value="提交" style="margin-right: 15px;">
                     <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
                 </div>
 
@@ -174,24 +162,18 @@ Vresult;
             opt = opt || {};
             opt["usertoken"] = user_token;
             opt['CName'] = $("#search_CName").val();
-            opt['EName']     = $("#search_EName").val();
+            opt['EName'] = $("#search_EName").val();
             opt['order'] = 'BrandID desc';
             opt['limit'] = '0, 100';
             var url = "....";
             ajax(url, opt, function (retjson) {
                 if (retjson.stat == 1) {
-                    
                     Vdata_list.list = retjson.data;
-                    
                 } else {
                     showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
-
                 }
             })
         }
-
-
-
     });
 
 

@@ -1,7 +1,7 @@
 @charset "UTF-8";
 .text_1 { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
 
-.min-table { min-width: 1200px; }
+.min-table { min-width: 1400px; }
 
 .index_content_btn { width: 630px; margin: 0 auto; margin-top: 75px; }
 
@@ -160,7 +160,7 @@ nav div { font-size: 16px; color: #fff; }
 
 .tellar_data .tell_top:nth-child(3) input { width: 50px; }
 
-.tellar_data .list_data table { width: 1500px; }
+.tellar_data .list_data table { width: 1800px; }
 
 .distributor .dis_top { display: -webkit-box; display: -ms-flexbox; display: flex; display: -webkit-flex; }
 
@@ -176,7 +176,7 @@ nav div { font-size: 16px; color: #fff; }
 
 .distributor .list_data { margin: 5px 0; }
 
-.distributor .list_data table { width: 1500px; }
+.distributor .list_data table { width: 1800px; }
 
 .printForm .print_btn { width: 100%; border-bottom: 1px solid #ccc; background: #c3c3c3; padding: 3px 5px; -webkit-box-align: center; -ms-flex-align: center; align-items: center; }
 

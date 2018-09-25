@@ -407,6 +407,147 @@
         </table>
     </div>
 </div>
+
+<div id="tellardata" class="tellar_data" style="display: none" v-cloak>
+    <div class="tell_top">
+        <P>
+            <span>{{obj_txt.Te_groupid}}</span>
+            <input type="text" disabled :value='groupid'>
+        </P>
+        <P>
+            <span>{{obj_txt.Te_balance}}</span>
+            <input type="text" class="balance" disabled :value="banlance">
+        </P>
+        <P>
+            <span>{{obj_txt.Te_shopcode}}</span>
+            <input type="text" disabled :value="sc">
+        </P>
+        <P>
+            <span>{{obj_txt.Te_regionMoney}}</span>
+            <input type="text" class="tellar_RegionMoney" disabled :value="RegionMoney">
+        </P>
+    </div>
+    <div class="tell_top">
+        <P>
+            <span>{{obj_txt.Te_date}}</span>
+            <input type="text" disabled :value="date">
+        </P>
+        <P>
+            <span>{{obj_txt.Te_teller}}</span>
+            <input type="text" disabled :value='teller'>
+        </P>
+        <P>
+            <span>{{obj_txt.Te_Region}}</span>
+            <input type="text" disabled :value="region">
+        </P>
+        <P>
+            <span>{{obj_txt.Te_amount}}</span>
+            <input type="text" class="tellar_amount">
+        </P>
+        <button class="btn btn-success" v-on:click="add_tellar()">{{obj_txt.Te_btn_add}}</button>
+    </div>
+    <div class="tell_top">
+        <p>
+            <span>{{obj_txt.Te_year}}</span>
+            <select name="" id="" v-model="year">
+                <option value="2014">2014</option>
+                <option value="2015">2015</option>
+                <option value="2016">2016</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+            </select>
+        </p>
+        <p>
+            <span>{{obj_txt.Te_month}}</span>
+            <select name="" class="month" id="" v-model="month">
+                <option value="1">JAN</option>
+                <option value="2">FEB</option>
+                <option value="3">MAR</option>
+                <option value="4">APR</option>
+                <option value="5">MAY</option>
+                <option value="6">JUN</option>
+                <option value="7">JUL</option>
+                <option value="8">AUG</option>
+                <option value="9">SEP</option>
+                <option value="10">OCT</option>
+                <option value="11">NOV</option>
+                <option value="12">DEC</option>
+            </select>
+        </p>
+        <p>
+            <span>{{obj_txt.Te_RegPsw}}</span>
+            <input type="text" disabled>
+        </p>
+    </div>
+    <div class="tell_top">
+
+        <p>
+            <span>{{obj_txt.ConfirmPsw}}</span>
+            <input type="text">
+        </p>
+        <p>
+            <span>未注册，Unregister</span>
+        </p>
+        <button class="btn btn-danger" v-on:click='del_tellar()'>{{obj_txt.Te_btn_delete}}</button>
+    </div>
+    <div class="list_data" style="background: #ccc; height: 300px; overflow-x: auto;">
+        <table class="table table-border table-bordered table-bg " style="background: #fff;">
+            <thead>
+                <tr>
+                    <th>{{obj_txt.Te_TellerDetailID}}</th>
+                    <th>{{obj_txt.Te_shopcode}}</th>
+                    <th>{{obj_txt.Te_Deposit}}</th>
+                    <th>{{obj_txt.Te_Used}}</th>
+                    <th>{{obj_txt.Te_bank}}</th>
+                    <th>{{obj_txt.Te_date}}</th>
+                    <th>{{obj_txt.Te_TellerID}}</th>
+                    <th>{{obj_txt.Te_groupid}}</th>
+                    <th>{{obj_txt.Te_purpose}}</th>
+                    <th>{{obj_txt.Te_expected}}</th>
+                    <th>{{obj_txt.Te_systemTellerId}}</th>
+                    <th>{{obj_txt.Te_Region}}</th>
+                    <th>{{obj_txt.Te_oper}}</th>
+                    <th>{{obj_txt.Te_regPswStatus}}</th>
+                    <th>{{obj_txt.Te_memo1}}</th>
+                    <th>{{obj_txt.Te_memo2}}</th>
+                    <th>{{obj_txt.Te_freezeMark}}</th>
+                    <th>{{obj_txt.Te_freezeSelect}}</th>
+                    <th>{{obj_txt.Te_lastEditdate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(t,$index) in tellar_con.detail" v-if='tellar_con.detail' v-on:click="on_active($index)" :class="{active_index :  $index == active_index }">
+                    <td>{{t.TellerDetailID}}</td>
+                    <td>{{t.ShopNO}}</td>
+                    <td>{{t.Deposit}}</td>
+                    <td>{{t.Used}}</td>
+                    <td>{{t.Bank}}</td>
+                    <td>{{t.Date}}</td>
+                    <td>{{t.TellerID}}</td>
+                    <td>{{t['用途']}}</td>
+                    <td>{{t['所预期']}}</td>
+                    <td>{{t.systemTellerId}}</td>
+                    <td>{{t.Region}}</td>
+                    <td>{{t.Oper}}</td>
+                    <td>{{t.RegPswStatus}}</td>
+                    <td>{{t.Memo1}}</td>
+                    <td>{{t.Memo2}}</td>
+                    <td>{{t.FreezeMark}}</td>
+                    <td>{{t.FreezeSelect}}</td>
+                    <td>{{t.LastEditDate}}</td>
+                    <td>{{t.ROW_NUMBER}}</td>
+                </tr>
+                <tr v-else>
+                    <td colspan="18">没有数据</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 <div class="printForm" id="print_form" style="display: none;" v-cloak>
     <div class="print_btn">
         <button class="btn btn-group-sm" onclick="myPrint()">打印浏览P</button>
@@ -559,146 +700,7 @@
 </div>
 <div id="cavas_img">
 </div>
-<div id="tellardata" class="tellar_data" style="display: none" v-cloak>
-    <div class="tell_top">
-        <P>
-            <span>{{obj_txt.Te_groupid}}</span>
-            <input type="text" disabled :value='groupid'>
-        </P>
-        <P>
-            <span>{{obj_txt.Te_balance}}</span>
-            <input type="text" class="balance" disabled :value="banlance">
-        </P>
-        <P>
-            <span>{{obj_txt.Te_shopcode}}</span>
-            <input type="text" disabled :value="sc">
-        </P>
-        <P>
-            <span>{{obj_txt.Te_regionMoney}}</span>
-            <input type="text" class="tellar_RegionMoney" disabled :value="RegionMoney">
-        </P>
-    </div>
-    <div class="tell_top">
-        <P>
-            <span>{{obj_txt.Te_date}}</span>
-            <input type="text" disabled :value="date">
-        </P>
-        <P>
-            <span>{{obj_txt.Te_teller}}</span>
-            <input type="text" disabled :value='teller'>
-        </P>
-        <P>
-            <span>{{obj_txt.Te_Region}}</span>
-            <input type="text" disabled :value="region">
-        </P>
-        <P>
-            <span>{{obj_txt.Te_amount}}</span>
-            <input type="text" class="tellar_amount">
-        </P>
-        <button class="btn btn-success" v-on:click="add_tellar()">{{obj_txt.Te_btn_add}}</button>
-    </div>
-    <div class="tell_top">
-        <p>
-            <span>{{obj_txt.Te_year}}</span>
-            <select name="" id="" v-model="year">
-                <option value="2014">2014</option>
-                <option value="2015">2015</option>
-                <option value="2016">2016</option>
-                <option value="2017">2017</option>
-                <option value="2018">2018</option>
-                <option value="2019">2019</option>
-                <option value="2020">2020</option>
-                <option value="2021">2021</option>
-                <option value="2022">2022</option>
-            </select>
-        </p>
-        <p>
-            <span>{{obj_txt.Te_month}}</span>
-            <select name="" class="month" id="" v-model="month">
-                <option value="1">JAN</option>
-                <option value="2">FEB</option>
-                <option value="3">MAR</option>
-                <option value="4">APR</option>
-                <option value="5">MAY</option>
-                <option value="6">JUN</option>
-                <option value="7">JUL</option>
-                <option value="8">AUG</option>
-                <option value="9">SEP</option>
-                <option value="10">OCT</option>
-                <option value="11">NOV</option>
-                <option value="12">DEC</option>
-            </select>
-        </p>
-        <p>
-            <span>{{obj_txt.Te_RegPsw}}</span>
-            <input type="text" disabled>
-        </p>
-    </div>
-    <div class="tell_top">
 
-        <p>
-            <span>{{obj_txt.ConfirmPsw}}</span>
-            <input type="text">
-        </p>
-        <p>
-            <span>未注册，Unregister</span>
-        </p>
-        <button class="btn btn-danger" v-on:click='del_tellar()'>{{obj_txt.Te_btn_delete}}</button>
-    </div>
-    <div class="list_data" style="background: #ccc; height: 300px; overflow-x: auto;">
-        <table class="table table-border table-bordered table-bg " style="background: #fff;">
-            <thead>
-                <tr>
-                    <th>{{obj_txt.Te_TellerDetailID}}</th>
-                    <th>{{obj_txt.Te_shopcode}}</th>
-                    <th>{{obj_txt.Te_Deposit}}</th>
-                    <th>{{obj_txt.Te_Used}}</th>
-                    <th>{{obj_txt.Te_bank}}</th>
-                    <th>{{obj_txt.Te_date}}</th>
-                    <th>{{obj_txt.Te_TellerID}}</th>
-                    <th>{{obj_txt.Te_groupid}}</th>
-                    <th>{{obj_txt.Te_purpose}}</th>
-                    <th>{{obj_txt.Te_expected}}</th>
-                    <th>{{obj_txt.Te_systemTellerId}}</th>
-                    <th>{{obj_txt.Te_Region}}</th>
-                    <th>{{obj_txt.Te_oper}}</th>
-                    <th>{{obj_txt.Te_regPswStatus}}</th>
-                    <th>{{obj_txt.Te_memo1}}</th>
-                    <th>{{obj_txt.Te_memo2}}</th>
-                    <th>{{obj_txt.Te_freezeMark}}</th>
-                    <th>{{obj_txt.Te_freezeSelect}}</th>
-                    <th>{{obj_txt.Te_lastEditdate}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(t,$index) in tellar_con.detail" v-if='tellar_con.detail' v-on:click="on_active($index)" :class="{active_index :  $index == active_index }">
-                    <td>{{t.TellerDetailID}}</td>
-                    <td>{{t.ShopNO}}</td>
-                    <td>{{t.Deposit}}</td>
-                    <td>{{t.Used}}</td>
-                    <td>{{t.Bank}}</td>
-                    <td>{{t.Date}}</td>
-                    <td>{{t.TellerID}}</td>
-                    <td>{{t['用途']}}</td>
-                    <td>{{t['所预期']}}</td>
-                    <td>{{t.systemTellerId}}</td>
-                    <td>{{t.Region}}</td>
-                    <td>{{t.Oper}}</td>
-                    <td>{{t.RegPswStatus}}</td>
-                    <td>{{t.Memo1}}</td>
-                    <td>{{t.Memo2}}</td>
-                    <td>{{t.FreezeMark}}</td>
-                    <td>{{t.FreezeSelect}}</td>
-                    <td>{{t.LastEditDate}}</td>
-                    <td>{{t.ROW_NUMBER}}</td>
-                </tr>
-                <tr v-else>
-                    <td colspan="18">没有数据</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
 <script src="https://cdn.bootcss.com/jQuery.print/1.5.1/jQuery.print.min.js"></script>
 <script src="../script/html2canvas.js"></script>
 <script>

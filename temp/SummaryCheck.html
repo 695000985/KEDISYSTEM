@@ -301,7 +301,6 @@ Vresult;
             var url = "/index.php?s=desktop/User_Workdetail/button3_Click";
             ajax(url, opt, function (retjson) {
                 if (retjson.stat == 1) {
-                    
                     Vdata_list.cash_list = retjson.data;
                     if(retjson.data.frontdesk_cash.length){
                         Vdata_list.fade1=false;

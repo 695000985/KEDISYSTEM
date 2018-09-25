@@ -181,7 +181,7 @@ function firm(title, txt, fun) { // 确认框
     });
 }
 
-function open_frame(title, url) {
+function open_frame(title, url) { 
     layer.open({
         type: 2,
         title: title,
@@ -213,7 +213,7 @@ function open_html(title, ht_id, id) {
     });
 }
 
-function queryString(e) {
+function queryString(e) { //url 传值取值
     var t = new RegExp("(^|&)" + e + "=([^&]*)(&|$)");
     var a = window.location.search.substr(1).match(t);
     if (a != null) return a[2];
@@ -230,9 +230,7 @@ function hide_loading() {
 }
 
 $(function() {
-
     //  $('title').html('科迪会员录入系统' + '(' + nw.App.manifest.version + ')')
-
     $(document).ajaxError(function(e, xhr, settings, error) {
         console.log(error);
     });
@@ -282,7 +280,7 @@ function DateMinus(date1, date2) { //date1:小日期   date2:大日期
     return day;
 }
 
-function is_overdue() {
+function is_overdue() {  // 是否过期  语言包缓存7天，
     return DateMinus(get_local_cache('localtime'), get_local_time()) >= 7
 }
 
@@ -317,7 +315,7 @@ function check_time(k) { //小于10  补0；
     return k;
 }
 
-function get_version(fn) {
+function get_version(fn) { // 获取软件的版本号
     var url = '/index.php?s=desktop/Nversions/versions_detail';
     ajax1(url, {}, function(e) {
         if (e.stat == 1) {

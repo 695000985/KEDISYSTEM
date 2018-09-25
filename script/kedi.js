@@ -65,12 +65,12 @@ function edit_user_passward(obj) { // 修改管理员登录密码
 }
 
 
-function get_language(fn) {
+function get_language(fn) { //获取语言包
     var url = "/index.php?s=desktop/Nbutton_Lang/get_Lang_list";
     var data = {};
     data['usertoken'] = get_cache('usertoken');
     // data["page"]='';
-    data["limit"] = "0,500";
+    data["limit"] = "0,1000";
     ajax(url, data, function (e) {
         if (e.stat == 1) {
             fn(e.data)
@@ -105,9 +105,6 @@ function get_page_txt(pagename) { // 获取对应页面的文字信息
         }
         return x
     }
-
-
-
 
 }
 
