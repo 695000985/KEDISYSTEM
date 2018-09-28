@@ -49,18 +49,35 @@
             <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
                 <thead>
                 <tr>
+                    <th style="width: 100px;">ProductNo</th>
+                    <th style="width: 100px;">Name</th>
+                    <th style="width: 100px;">StockQTY</th>
+                    <th style="width: 200px;">Memo</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(s,index) in list" v-if='list.length'>
                         <td>
-    
-                            
                         </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            <a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
+                            check
+                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+                            <a title="删除" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
+                            delete
+                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+                        </td>
+
                     </tr>
                     <tr v-if="!list.length">
-                        <td colspan="10">{{no_data}}</td>
+                        <td colspan="5">{{no_data}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -130,13 +147,14 @@
             </div>
             <div class="">
                 <button class="btn btn-success btn-radius btn-serach" @click="Add_Memo()">Add_Memo</button>
-                <button class="btn btn-success btn-radius btn-serach" @click="save_stock()">保存Save</button>
+                <button class="btn btn-success btn-radius btn-serach" id="save_btn" @click="save_stock()" v-if="!save_list.length">保存Save</button>
+                <button class="btn btn-success btn-radius btn-serach" id="edit_btn" @click="edit_stock()" v-if="save_list.length">编辑Edit</button>
                 <button class="btn btn-success btn-radius btn-serach">审核Check</button>
             </div>
         </div>
     </div>
     <div class="detail">
-        <div>
+        <div v-if="!save_list.length">
             <table class="table table-border table-bordered table-bg" style="width: 550px;">
                 <thead>
                     <th style="width: 100px;">ProductNO</th>
@@ -155,8 +173,27 @@
                         </tr>
                 </table>
             </div>
-           
+        </div>
 
+        <div class="svae_stock_list" v-if="save_list.length">
+                <table class="table table-border table-bordered table-bg" style="width: 550px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 100px;">ProductNO</th>
+                            <th style="width: 190px;" class="text_1">Name</th>
+                            <th style="width: 80px;" >StockQTY</th>
+                            <th style="width: 200px;">说明Memo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in save_list">
+                            <td style="width: 100px;">{{item.ProductNo}}</td>
+                            <td style="width: 190px;">{{item.Name}}</td>
+                            <td style="width: 80px;">{{item.StockQTY}}</td>
+                            <td style="width: 200px;">{{item['说明Memo']}}</td>
+                        </tr>
+                    </tbody>
+                </table>
         </div>
     </div>
 </div>
@@ -175,7 +212,7 @@
         el:"#main",
         data:{
             list:[],
-            no_data: config_txt.no_data.zn,
+            no_data: config_txt.no_data.zn, 
             obj_txt: splicing_obj(get_page_txt('SummaryCheck')), // 对象拼接
         },
         mounted: function(){
@@ -205,7 +242,8 @@
             memo:'', // 入库说明
             stock_type:[], //仓库类型
             stock_manage:[],
-            stock_from:[] //来源
+            stock_from:[], //来源,
+            save_list:[] // 保存后得到的数据
         },
         methods:{
             click_product(s,a){
@@ -230,7 +268,16 @@
                 }
             },
             save_stock(){
-                save()
+                let txt= `<div>进货单即将进入库${$("#StockName").val()},货源地：${$('#from_name').val()},入库类型：${$("#StockType").val()}; 请核对单据目录 正确点击 ‘确定’ 否则点击 ‘取消’ </div>`;
+                firm('保存进货单',txt,function(){
+                    layer.close(layer.index);
+                    add_stock.product_no=''
+                    add_stock.product_id=''
+                    save()
+                })
+            },
+            edit_stock(){
+                this.save_list =[]
             }
         }
     })
@@ -248,7 +295,6 @@
     }
     function save(){
         var arr=[];
-
         $('.product_list table tr td:nth-child(3)').each(function(){
             if (!!$(this).html()){
                 let obj={};
@@ -263,6 +309,11 @@
                 arr.push(JSON.stringify(obj))
             }
         })
+
+        if(arr.length <=0){
+            showErr('请填写数据和 说明')
+            return 
+        }
 
         var url="/index.php?s=desktop/Stock_In_Management/save";
         var data={};
@@ -282,7 +333,8 @@
         data["products"]=`[${arr}]`
         ajax(url,data,function (e) { 
             if(e.stat == 1){
-
+                add_stock.save_list=e.data.GetSearchStock;
+                success('保存成功')
             }else{
                 showErr(e.errmsg, e.errmsg_en, e.errcode)
             }
@@ -344,7 +396,7 @@
         })
    }
 
-   function get_from(opt){
+   function get_from(opt){ // 获取来源
         opt = opt || {};
         opt["usertoken"] = user_token;
         opt["Status"] = 1;
@@ -357,7 +409,34 @@
             }
         })
    }
-
+    function check_stock(){
+        var url="/index.php?s=desktop/Stock_In_Management/check";
+        var data={};
+        data["usertoken"]=user_token;
+        data["Date"]=user_token;
+        data["StockInID"]=user_token;
+        data["GroupID"]=user_token;
+        data["From"]=user_token;
+        data["StockName"]=user_token;
+        data["StockType"]=user_token;
+        data["Stock_Memo"]=user_token;
+        data["Product"]=user_token;
+        data["Product_Memo"]=user_token;
+        data["check_Products"]=user_token;
+        data["check_Material"]=user_token;
+        data["Up"]=user_token;
+        data["products"]=user_token;
+        data["button5_Text"]=user_token;
+       ajax(url,data,function(retjson){
+        if (retjson.stat == 1) {
+               
+            } else {
+                showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+            }
+       })
+    }
+   
+   
 </script>
 
 
