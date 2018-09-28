@@ -299,8 +299,6 @@
 
 
         }
-
-
         function set_http() {
             nw.App.unregisterGlobalHotKey(shortcut);
             var url_http = prompt("修改服务器地址", setting_host || get_local_cache('http_url'))
@@ -308,7 +306,7 @@
                 setting_host = url_http;
                 set_local_cache('http_url', setting_host)
             }
-           
+            nw.App.registerGlobalHotKey(shortcut);
         }
         var option = {
             key: "Ctrl+Shift+s",
@@ -316,7 +314,6 @@
                 console.log("全局快捷键: " + this.key + " 被激活.");
             },
             failed: function (msg) {
-                // :(, 无法注册 |key| 或未注册 |key|.
                 console.log(msg);
             }
         };
@@ -332,8 +329,6 @@
         shortcut.on('failed', function (msg) {
             console.log(msg);
         });
-
-
         // 注销全局快捷键
         //nw.App.unregisterGlobalHotKey(shortcut);
     </script>

@@ -9,10 +9,8 @@
     "width": 1600,
     "height": 800,
     "single-instance": true,
-    "min-width": 1600,
-    "min-height": 700,
-    "max-width": 1900,
-    "max-height": 1000,
+    "min_width": 1300,
+    "min_height": 700,
     "position": "center",
     "icon": "images/kd_bot_logo.png"
   }

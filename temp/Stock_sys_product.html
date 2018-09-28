@@ -70,7 +70,7 @@ nw.App.manifest.version = 'test';
                 @click="open_oper_add()">
         </div>
         <div class="shop_list">
-            <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
+            <table class="table table-border table-bordered table-bg min-table" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
                 <thead>
                 <tr>
                     <th style="width: 170px;">{{obj_txt.ProductID}}</th>
@@ -80,11 +80,13 @@ nw.App.manifest.version = 'test';
                     <th style="width: 170px;">{{obj_txt.CName}}</th>
                     <th style="width: 170px;">{{obj_txt.EName}}</th>
                     <th style="width: 170px;">{{obj_txt.Pic}}</th>
+                    <th style="width: 170px;">{{obj_txt.MemberPrice}}</th>
                     <th style="width: 170px;">{{obj_txt.Status}}</th>
-                    <th style="width: 170px;">{{obj_txt.Memo}}</th>
+                    <!-- <th style="width: 170px;">{{obj_txt.Memo}}</th>
                     <th style="width: 170px;">{{obj_txt.Oper}}</th>
-                    <th style="width: 170px;">{{obj_txt.Dept}}</th>
-                    <th style="width: 170px;">{{obj_txt.LastEditDate}}</th>
+                    <th style="width: 170px;">{{obj_txt.Dept}}</th> -->
+                    <th style="width: 170px;">{{obj_txt.PV}}</th>
+                    <th style="width: 170px;">{{obj_txt.product_edit_time}}</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -97,11 +99,13 @@ nw.App.manifest.version = 'test';
                         <td style="width: 170px;">{{s.CName}}</td>   
                         <td style="width: 170px;">{{s.EName}}</td>
                         <td style="width: 170px;"><img class="pic" :src="img(s.Pic)" /></td>
+                        <td style="width: 170px;">{{s.MemberPrice}}</td>
                         <td style="width: 170px;">{{status(s.Status)}}</td>
-                        <th style="width: 170px;">{{s.Memo}}</th>
-                        <th style="width: 170px;">{{s.Oper}}</th>
-                        <th style="width: 170px;">{{s.Dept}}</th>
-                        <th style="width: 170px;">{{s.LastEditDate}}</th>
+                        <!-- <td style="width: 170px;">{{s.Memo}}</td>
+                        <td style="width: 170px;">{{s.Oper}}</td>
+                        <td style="width: 170px;">{{s.Dept}}</td> -->
+                        <td style="width: 170px;">{{s.PV}}</td>
+                        <td style="width: 170px;">{{s.LastEditDate}}</td>
                         <td>
                             <a title="修改" class="btn btn-primary size-S radius" href="javascript:;" @click="open_oper_edit(s)" style="text-decoration: none;">
                                 {{obj_txt.edit}}
@@ -111,7 +115,7 @@ nw.App.manifest.version = 'test';
                         </td>
                     </tr>
                     <tr v-if="!list.length">
-                        <td colspan="13">{{no_data}}</td>
+                        <td colspan="12">{{no_data}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -132,48 +136,192 @@ nw.App.manifest.version = 'test';
                     <!-- 类型名 中文-->
                     <div>
                         <p class="">
-                            {{obj_txt.Pro_TypeName}}
+                            {{obj_txt.EName}}
                         </p>
-                        <input type="text" v-model="data.TypeName" >
+                        <input type="text" v-model="data.EName">
                     </div>
                     <!-- 类型名 英文-->
                     <div>
                         <p class="">
-                            {{obj_txt.Pro_TypeName_E}}
+                            {{obj_txt.CName}}
                         </p>
-                        <input type="text" v-model="data.TypeName_E" >
+                        <input type="text" v-model="data.CName">
                     </div>
-                    <!-- 说明 -->
-                  
+                </div>
+               
+                <div class="model_list">
+                   
+                    <div>
+                        <p>{{obj_txt.ProductNO}}</p>
+                        <input type="text" v-model="data.ProductNO">
+                    </div>
+                    <div>
+                        <p>BranchID</p>
+                        <input type="text" v-model="data.BranchID">
+                    </div>
                 </div>
                 <div class="model_list">
                     <div>
-                        <p>
-                            {{obj_txt.Pro_Memo}}
-                        </p>
+                        <p>{{obj_txt.CategoryID}}</p>
+                        <input type="text" v-model="data.CategoryID">
+                    </div>
+                    <div>
+                        <p>{{obj_txt.BrandID}}</p>
+                        <input type="text" v-model="data.BrandID">
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p>SerialID</p>
+                        <input type="text" v-model="data.SerialID">
+                    </div>
+                    <div>
+                        <p>ProductType</p>
+                        <input type="text" v-model="data.ProductType">
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p>RetailPrice</p>
+                        <input type="text" v-model="data.RetailPrice">
+                    </div>
+                    <div>
+                        <p>{{obj_txt.MemberPrice}}</p>
+                        <input type="text" v-model="data.MemberPrice">
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p>RebatePrice</p>
+                        <input type="text" v-model="data.RebatePrice">
+                    </div>
+                    <div>
+                        <p>PresentPrice</p>
+                        <input type="text" v-model="data.PresentPrice">
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p>{{obj_txt.PV}}</p>
+                        <input type="text" v-model="data.PV">
+                    </div>
+                    <div>
+                        <p>InPrice</p>
+                        <input type="text" v-model="data.InPrice">
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p>Unit</p>
+                        <input type="text" v-model="data.Unit">
+                    </div>
+                    <div>
+                        <p>ProduceDate</p>
+                        <input type="text" v-model="data.ProduceDate">
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p>DeadLine</p>
+                        <input type="text" v-model="data.DeadLine">
+                    </div>
+                    <div>
+                        <p>Entry</p>
+                        <input type="text" v-model="data.Entry">
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p>Introduce</p>
+                        <input type="text" v-model="data.Introduce">
+                    </div>
+                    <div>
+                        <p>{{obj_txt.Pic}}</p>
+                        <input type="text" >
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p>{{obj_txt.Pro_Memo}}</p>
                         <input type="text" v-model="data.Memo">
                     </div>
-                    <!-- 状态 -->
                     <div>
-                        <p>
-                            {{obj_txt.Status}}
-                        </p>
+                        <p>SmallPic</p>
+                        <input type="text" v-model="data.SmallPic">
+                    </div>
+                </div>
+
+                <div class="model_list">
+                    <div>
+                        <p>MarketPrice</p>
+                        <input type="text" v-model="data.MarketPrice">
+                    </div>
+                    <div>
+                        <p>ShopPrice</p>
+                        <input type="text" v-model="data.ShopPrice">
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p>Point</p>
+                        <input type="text" v-model="data.Point">
+                    </div>
+                    <div>
+                        <p>IsDS</p>
+                        <input type="text" v-model="data.IsDS">
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p>IsPresent</p>
+                        <input type="text" v-model="data.IsPresent">
+                    </div>
+                    <div>
+                        <p>IsRecommend</p>
+                        <input type="text" v-model="data.IsRecommend"> 
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p>IsNew</p>
+                        <input type="text" v-model="data.IsNew">
+                    </div>
+                    <div>
+                        <p>OnSaleDate</p>
+                        <input type="text" v-model="data.OnSaleDate">
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p>Parameter</p>
+                        <input type="text" v-model="data.Parameter">
+                    </div>
+                    <div>
+                        <p>IsRebate</p>
+                        <input type="text" v-model="data.IsRebate">
+                    </div>
+                </div>
+                <div class="model_list">
+                    <div>
+                        <p>IsElite</p>
+                        <input type="text" v-model="data.IsElite">
+                    </div>
+                    <div>
+                        <p>Spec</p>
+                        <input type="text" v-model="data.Spec">
+                    </div>
+                </div>
+
+                <div class="model_list">
+                    <div>
+                        <p>Status</p>
                         <select name="" id="" v-model="data.Status">
-                            <option value="0">{{obj_txt.status_0}}</option>
-                            <option value="1">{{obj_txt.status_1}}</option>
+                            <option value="">未知状态</option>
+                            <option value="0">禁用</option>
+                            <option value="1">可用</option>
                         </select>
                     </div>
                 </div>
-                <div class="model_list">
-                    <!-- 说明  -->
-                    <div>
-                        <p class="">
-                            {{obj_txt.StockShow}}
-                        </p>
-                        <input type="text" v-model="data.StockShow" >
-                    </div>
-                </div>
-                
                 <div class="btn_con">
                     <input type="button" class="btn btn-success BtnUpdate" v-on:click='editsave()' value="提交">
                     <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
@@ -181,7 +329,6 @@ nw.App.manifest.version = 'test';
             </div>
         </div>
     </div>
-
 </body>
 <script>
 
@@ -223,7 +370,7 @@ var pagecounts,page=1,pagesize=30,pagestat=0,obj; // 分页相关的参数
                 status:function(stat){ if(this.obj_txt && this.obj_txt['status_'+stat]) return this.obj_txt['status_'+stat]; return '未知状态'; },
                 //打开修改窗口
                 open_oper_edit : function(s){
-                    Vedit.data = s;
+                    Vedit.data = $.extend({},Vedit.data,s);
                     Vedit.is_add = false;
                     Vedit.data.FromID = s.FromID
                     $('#W_edit').modal("show");
@@ -249,7 +396,7 @@ var pagecounts,page=1,pagesize=30,pagestat=0,obj; // 分页相关的参数
             opt["usertoken"] = user_token;
             opt['CName']  = $("#search_CName").val();
             opt['EName']  = $("#search_EName").val();
-            opt['EName']  = $("#search_ProductNO").val();
+            opt['ProductNO']  = $("#search_ProductNO").val();
             opt['RetailPrice_low'] = $("#search_RetailPrice_low").val(); //最底价
             opt['RetailPrice_high'] = $("#search_RetailPrice_high").val(); //最商价
             opt['order']  = 'ProductID desc';
@@ -304,11 +451,42 @@ var pagecounts,page=1,pagesize=30,pagestat=0,obj; // 分页相关的参数
             el:'#W_edit',
             data:{
                 data:{
-                    TypeName:'',
-                    TypeName_E:'',
-                    Status:1,
+                    ProductNO:'',
+                    CategoryID:'',
+                    BrandID:'',
+                    SerialID:'',
+                    CName:'',
+                    EName:'',
+                    ProductType:'',
+                    RetailPrice:'',
+                    MemberPrice:'',
+                    RebatePrice:'',
+                    PresentPrice:'',
+                    PV:'',
+                    InPrice:'',
+                    Unit:'',
+                    ProduceDate:'',
+                    DeadLine:'',
+                    Entry:'',
+                    Introduce:'',
+                    Pic:'',
                     Memo:'',
-                    Dept:''
+                    Status:'',
+                    SmallPic:'',
+                    MarketPrice:'',
+                    ShopPrice:'',
+                    Point:'',
+                    IsDS:'',
+                    IsPresent:'',
+                    IsRecommend:'',
+                    IsNew:'',
+                    OnSaleDate:'',
+                    Parameter:'',
+                    IsRebate:'',
+                    IsElite:'',
+                    Spec:'',
+                    BranchID:''
+
                 },
                 fromcountrylist:[],
                 fade:false,
@@ -327,9 +505,9 @@ var pagecounts,page=1,pagesize=30,pagestat=0,obj; // 分页相关的参数
                     data.usertoken = user_token;
                     var url = '';
                     if(this.is_add){
-                        url = '/index.php?s=desktop/Manage_Stock_Out_Type/AddStockOutType';
+                        url = '/index.php?s=desktop/Product/add';
                     }else{
-                        url = '/index.php?s=desktop/Manage_Stock_Out_Type/StartUse';
+                        url = '/index.php?s=desktop/Product/update';
                     }
                     ajax(url, data, function (retjson) {
                         if (retjson.stat == 1) {

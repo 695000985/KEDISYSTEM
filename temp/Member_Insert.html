@@ -146,7 +146,7 @@
             </div>
         </div>
         <div class="infomation_show" id="entry_list"  style="overflow-x: auto; height: 320px;">
-            <table class="table table-border table-bordered table-bg " id="sale_list" style="background: #fff; width: 800px; display: none;">
+            <table class="table table-border table-bordered table-bg " id="sale_list" style="background: #fff; width: 762px; display: none;">
                 <thead>
                     <tr>
                         <th style="width: 90px"> {{obj_txt.MemberCode}}
@@ -179,12 +179,11 @@
 </body>
 <script>
     var key = getQueryString('key');
-   // set_cache('input_index',1)
-    var input_index =1
+  
+    var input_index =1;
+    var time;
     $(function () {
-        // get_user_info(function (ret) {
-        //    // $('.adress_admin').val(ret.username)
-        // })
+        query_time()
         $('.adress_admin').val(JSON.parse(get_cache("user_info")).username)
 
         $('.clear').click(function () {
@@ -260,7 +259,16 @@
 
     })
 
-
+    function query_time(){ // 获取服务器的时间
+    var url="/index.php?s=desktop/common/get_time";
+    ajax(url,{"usertoken":get_cache('usertoken')},function(e){
+        if(e.stat == 1){
+            time=e.data
+        }else{
+            showErr(e.errmsg, e.errmsg_en, e.errcode)
+        }
+    })
+}
     function member_add() {
         var url = '/index.php?s=desktop/Tb_Customer/customer_create';
         var data = {};
@@ -308,9 +316,9 @@
         data['usertoken'] = get_cache('usertoken');
         data['ShopNO'] = $('.shop-code').val();
         data['order'] = 'CustomerID asc';
-        data['limit'] = '0,80'; //
-        data['Start'] = get_local_time() + ' 00:00:00'; //
-        data['End'] = get_local_time() + ' 23:59:59'; //
+        data['limit'] = '0,100'; //
+        data['Start'] = time.substring(0,10)+ ' 00:00:00'; //
+        data['End'] = time.substring(0,10) + ' 23:59:59'; //
         var opt = $.extend({}, data, obj)
         ajax1(url, opt, function (e) {
             if (e.stat == 1) {
@@ -321,6 +329,8 @@
             }
         })
     }
+
+
     var member_entry = new Vue({
         el: '#main',
         data: {

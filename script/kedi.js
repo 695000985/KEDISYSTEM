@@ -123,6 +123,7 @@ function splicing_obj(txt_list) { // 把 信息组成一个对象
     return obj
 }
 
+
 var config_txt = {
     "success_text": {
         "zn_entry": '录入成功',

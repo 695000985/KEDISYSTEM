@@ -8,15 +8,22 @@
     <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
     <link rel="stylesheet" href="../css/H-ui.min.css">
     <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/iconfont.css">
     <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
     <script src="../script/vue.min.js"></script>
     <script src="../script/jquery-2.1.1.min.js"></script>
     <script src="../script/H-ui.min.js"></script>
     <script src="../script/common.js"></script>
     <script src="../script/kedi.js"></script>
     <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+    <script src="../script/jquery.pagination.js"></script>
     <style>
-        
+        .tr_bg{
+            background: #eee;
+        }
     </style>
 </head>
 <body>
@@ -25,26 +32,18 @@
 
     <div id="main" v-cloak class="market_shop">
         <div class="search_txt">
-            <div>
-                <p>{{obj_txt.from}}</p>
-                <input type="text" id="search_from" :placeholder="obj_txt.from">
-            </div>
-            <div>
-                <p>{{obj_txt.to}}</p>
-                <input type="text" id="search_to" :placeholder="obj_txt.to">
-            </div>
-            <div>
+            <!-- <div>
                 <p>{{obj_txt.name}}</p>
                 <input type="text" id="search_name" :placeholder="obj_txt.name">
             </div>
             <div>
                 <p>{{obj_txt.bank}}</p>
                 <input type="text" id="search_bank" :placeholder="obj_txt.bank">
-            </div>
-            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
-                @click="search_btn()">
-            <input type="button"  :value="obj_txt.BtnCash" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
-                @click="searchcash_btn()">
+            </div> -->
+            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
+                @click="">
+            <input type="button"  value="add" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
+                @click="open_add_stock()">
         </div>
         <div class="shop_list">
             <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
@@ -55,7 +54,6 @@
                 </thead>
                 <tbody>
                     <tr v-for="(s,index) in list" v-if='list.length'>
-                        
                         <td>
     
                             
@@ -71,112 +69,294 @@
             </div>
         </div>
     </div>
-
-    <!-- 修改窗口    -->
-    <div id="W_edit" class="model modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="content_model modal-dialog "> 
-            <div class="modal-content">
-                <div v-if="is_add">Add</div>
-                <div v-if="!is_add">Edit</div>
+</body>
+<div id="stock_add" style="display: none;">
+    <div class="add_top">
+        <div class="condition">
                 <div class="model_list">
-
-                    <!-- 选择仓库 -->
-                    <div>
-                        <p class="">
-                            {{obj_txt.Stockname}}
-                        </p>
-                        <input type="text" v-model="data.BrandNO" >
-                    </div>
-                    <!-- 商品号 -->
-                    <div>
-                        <p class="">
-                            {{obj_txt.Stockname}}
-                        </p>
-                        <input type="text" v-model="data.BrandNO" >
-                    </div>
-                    <!-- 批次号 -->
-                    <div>
-                        <p class="">
-                            {{obj_txt.Stockname}}
-                        </p>
-                        <input type="text" v-model="data.BrandNO" >
-                    </div>  
-                    <!-- 数量 -->
-                    <div>
-                        <p class="">
-                            {{obj_txt.Stockname}}
-                        </p>
-                        <!-- 统一数量两位小数。无小数时不显示小数部分 -->
-                        <input type="text" v-model="data.BrandNO" >
-                    </div> 
-
-                    <!-- 备注 -->
-                    <div>
-                        <p class="">
-                            {{obj_txt.Stockname}}
-                        </p>
-                        <input type="text" v-model="data.BrandNO" >
-                    </div> 
-
-                <div class="btn_con">
-                    <input type="button" class="btn btn-success BtnUpdate" v-on:click='editsave()' value="提交" style="margin-right: 15px;">
-                    <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
+                        <div>
+                            <p class="">
+                               Date
+                            </p>
+                            <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate">
+                        </div>
+                        <div>
+                            <p class="">
+                                StockInID
+                            </p>
+                            <input type="text" disabled  v-model="StockInID">
+                        </div>
                 </div>
-
-
+                <div class="model_list">
+                        <div>
+                            <P>GroupID</P>
+                            <input type="text" disabled v-model="GroupID">
+                        </div>
+                        <div>
+                            <P>StockName</P>
+                            <select name="" id="StockName">
+                                <option :value="item.StockName" v-for="(item, index) in stock_manage">{{item.StockName}}</option>
+                              
+                            </select>
+                        </div>
+                </div>
+                <div class="model_list">
+                        <div>
+                            <P>StockType</P>
+                            <select name="" id="StockType">
+                                <option :value="item.TypeName" v-for="item in stock_type">{{item.TypeName}}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <P>来源From</P>
+                            <select name="" id="from_name">
+                                <option :value="item.FromPlace" v-for="(item, index) in stock_from" >{{item.FromPlace}}</option>
+                            </select>
+                        </div>
+                </div>
+        </div>
+        <div class="operate">
+            <div>
+                <p>入库说明</p>
+                <input type="text" v-model="memo">
+            </div>
+            <div>
+                <p>Product</p>
+                <input type="text" v-model="product_no" disabled>
+            </div>
+            <div>
+                <p>产品说明Memo</p>
+                <input type="text" v-model="product_memo">
+            </div>
+            <div class="">
+                <button class="btn btn-success btn-radius btn-serach" @click="Add_Memo()">Add_Memo</button>
+                <button class="btn btn-success btn-radius btn-serach" @click="save_stock()">保存Save</button>
+                <button class="btn btn-success btn-radius btn-serach">审核Check</button>
             </div>
         </div>
     </div>
+    <div class="detail">
+        <div>
+            <table class="table table-border table-bordered table-bg" style="width: 550px;">
+                <thead>
+                    <th style="width: 100px;">ProductNO</th>
+                    <th style="width: 190px;" class="text_1">Name</th>
+                    <th style="width: 80px;" >StockQTY</th>
+                    <th style="width: 200px;">说明Memo</th>
+                </thead>
+            </table>
+            <div class="product_list">
+                    <table class="table table-border table-bordered table-bg " style="width: 550px; background: #fff;">
+                        <tr v-for="(item,$index) in product_list" @click="click_product(item,$index)" :class="{ tr_bg:$index == index_product}">
+                            <td style="width: 100px;">{{item.ProductNO}}</td>
+                            <td style="width: 190px;" class="text_1">{{item.CName}}</td>
+                            <td style="width: 80px;" contenteditable="true" :data-title="item.ProductID+','+ item.memo"></td>
+                            <td style="width: 200px;" contenteditable="false">{{item.memo}}</td>
+                        </tr>
+                </table>
+            </div>
+           
 
-</body>
+        </div>
+    </div>
+</div>
 <script>
-
-
-
-var user_token = get_cache('usertoken'),
-Vdata_list, //列表VUE
-Vresult;
-
+    var user_token = get_cache('usertoken'),
+    Vdata_list, //列表VUE
+    Vresult;
     $(function(){
-
-        var Vdata_list = new Vue({
-            el:"#main",
-            data:{
-                list:[],
-                no_data: config_txt.no_data.zn,
-                obj_txt: splicing_obj(get_page_txt('SummaryCheck')), // 对象拼接
-            },
-            
-            mounted: function(){
-                getDatalist();
-            },
-            methods:{
-                //搜索按钮
-                search_btn : function(){
-                    getDatalist();
-                },
+        $('.Wdate').val(get_local_time())
+        get_product_list()
+        get_stock_type()
+        get_stock_manage()
+        get_from()
+    });
+    Vdata_list = new Vue({
+        el:"#main",
+        data:{
+            list:[],
+            no_data: config_txt.no_data.zn,
+            obj_txt: splicing_obj(get_page_txt('SummaryCheck')), // 对象拼接
+        },
+        mounted: function(){
+           
+        },
+        methods:{
+            open_add_stock(){
+                add()
+               open_html("stockIn",'#stock_add','stock_add')
             }
-        });
-        //获取列表
-        function getDatalist(opt){
-            opt = opt || {};
-            opt["usertoken"] = user_token;
-            opt['CName'] = $("#search_CName").val();
-            opt['EName'] = $("#search_EName").val();
-            opt['order'] = 'BrandID desc';
-            opt['limit'] = '0, 100';
-            var url = "....";
-            ajax(url, opt, function (retjson) {
-                if (retjson.stat == 1) {
-                    Vdata_list.list = retjson.data;
-                } else {
-                    showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
-                }
-            })
         }
     });
 
+   var add_stock=new Vue({
+        el:"#stock_add",
+        data:{
+            StockInID:'',
+            GroupID:'',
+            StockName:'',
+            StockType:'',
+            date:'',
+            product_list:[],
+            index_product:-1,
+            product_no:'',
+            product_id:'',
+            product_memo:'', //产品说明
+            memo:'', // 入库说明
+            stock_type:[], //仓库类型
+            stock_manage:[],
+            stock_from:[] //来源
+        },
+        methods:{
+            click_product(s,a){
+                this.product_no=s.ProductNO
+                this.product_id=s.ProductID
+                this.index_product=a
+            },
+            Add_Memo(){
+                if(!! this.product_id ){
+                    var a=[];
+                    (this.product_list).forEach(function(item,index,arr){
+                        if(item.ProductID == add_stock.product_id){
+                            item.memo=add_stock.product_memo
+                        }else{
+                            
+                        }
+                        a.push(item)
+                    })
+                    this.product_list=a
+                }else{
+                    showErr('请选择数据')
+                }
+            },
+            save_stock(){
+                save()
+            }
+        }
+    })
+    function add(){
+        var url="/index.php?s=desktop/Stock_In_Management/add";
+        ajax(url,{"usertoken":user_token},function(e){
+            if(e.stat == 1){
+                console.log(JSON.stringify(e));
+                add_stock.StockInID=e.data.input.StockInID;
+                add_stock.GroupID=e.data.input.GroupID;
+            }else{
+                showErr(e.errmsg, e.errmsg_en, e.errcode)
+            }
+        })
+    }
+    function save(){
+        var arr=[];
 
+        $('.product_list table tr td:nth-child(3)').each(function(){
+            if (!!$(this).html()){
+                let obj={};
+                obj.ProductID=$(this).attr('data-title').split(',')[0];
+                if($(this).attr('data-title').split(',')[1] == "undefined"){
+                    obj.memo=""
+                }else{
+                    obj.memo=$(this).attr('data-title').split(',')[1]
+                }
+                obj.num=$(this).html();
+
+                arr.push(JSON.stringify(obj))
+            }
+        })
+
+        var url="/index.php?s=desktop/Stock_In_Management/save";
+        var data={};
+        data["usertoken"]=user_token;
+        data["Date"]= $('.Wdate').val();
+        data["StockInID"]=add_stock.StockInID;
+        data["GroupID"]=add_stock.GroupID;
+        data["From"]=$('#from_name').val();
+        data["StockName"]=$("#StockName").val();
+        data["StockType"]=$("#StockType").val();
+        data["Stock_Memo"]=add_stock.memo
+        data["Product"]='1';
+        data["Product_Memo"]='1';
+        data["check_Products"]=1;
+        data["check_Material"]=1;
+        data["Up"]='1';
+        data["products"]=`[${arr}]`
+        ajax(url,data,function (e) { 
+            if(e.stat == 1){
+
+            }else{
+                showErr(e.errmsg, e.errmsg_en, e.errcode)
+            }
+        })
+    }
+
+    function get_product_list(){
+        var url="/index.php?s=desktop/Product/search";
+        var data={};
+        data["usertoken"]=user_token;
+        data['order']='ProductID desc';
+        data['limit']='0,'
+        ajax(url,data,function(e){
+            if( e.stat == 1){
+                add_stock.product_list=e.data.list
+            }else{
+                showErr(e.errmsg, e.errmsg_en, e.errcode)
+            }
+        })
+    }
+
+    function get_stock_type(opt){
+        opt = opt || {};
+        opt["usertoken"] = user_token;
+       
+        var url = "/index.php?s=desktop/Manage_Stock_Out_Type/search";
+        ajax(url, opt, function (retjson) {
+            if (retjson.stat == 1) {
+                 let a=[];
+                retjson.data.forEach(function(val){
+                     if(val.Status == 1){
+                         a.push(val)
+                     }
+                })
+                add_stock.stock_type=a
+            } else {
+                showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+            }
+        })
+    }
+
+   function get_stock_manage(opt){
+        opt = opt || {};
+        opt["usertoken"] = user_token;
+        
+        var url = "/index.php?s=desktop/Manage_Stock_List/Search";
+        ajax(url, opt, function (retjson) {
+            if (retjson.stat == 1) {
+                let a=[];
+                retjson.data.forEach(function(val){
+                     if(val.Status == 1){
+                         a.push(val)
+                     }
+                })
+                add_stock.stock_manage=a
+            } else {
+                showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+            }
+        })
+   }
+
+   function get_from(opt){
+        opt = opt || {};
+        opt["usertoken"] = user_token;
+        opt["Status"] = 1;
+        var url = "/index.php?s=desktop/Stock_From_Detail/search";
+        ajax(url, opt, function (retjson) {
+            if (retjson.stat == 1) {
+                add_stock.stock_from=retjson.data.list
+            } else {
+                showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+            }
+        })
+   }
 
 </script>
 

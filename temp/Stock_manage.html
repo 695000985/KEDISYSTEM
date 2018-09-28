@@ -49,6 +49,7 @@ nw.App.manifest.version = 'test';
                         <th style="width: 100px;">{{obj_txt.StockName}}</th>
                         <th style="width: 100px;">{{obj_txt.Status}}</th>
                         <th style="width: 100px;">{{obj_txt.Oper}}</th>
+                        <th style="width: 100px;">{{obj_txt.StockShow}}</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -58,12 +59,12 @@ nw.App.manifest.version = 'test';
                         <td style="width: 170px;">{{s.StockName}}</td>
                         <td style="width: 170px;">{{status(s.Status)}}</td>
                         <td style="width: 170px;">{{s.Oper}}</td>
+                        <td style="width: 170px;">{{s.StockShow}}</td>
                         <td>
                             <a title="修改" class="btn btn-primary size-S radius" href="javascript:;" @click="open_oper_edit(s)" style="text-decoration: none;">
                                 {{obj_txt.edit}}
                                 <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: #fff"></i>
                             </a>
-
                         </td>
                     </tr>
                     <tr v-if="!list.length">
@@ -183,10 +184,6 @@ nw.App.manifest.version = 'test';
             }
         });
 
-
-
-
-
         //获取货源地列表
         function getStocklist(opt) {
             opt = opt || {};
@@ -195,12 +192,9 @@ nw.App.manifest.version = 'test';
             var url = "/index.php?s=desktop/Manage_Stock_List/Search";
             ajax(url, opt, function(retjson) {
                 if (retjson.stat == 1) {
-
                     Vstock_list.list = retjson.data;
-
                 } else {
                     showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
-
                 }
             })
         }
