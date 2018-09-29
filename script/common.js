@@ -199,17 +199,18 @@ function open_frame(title, url) {
     });
 }
 
-function open_html(title, ht_id, id) {
+function open_html(title, ht_id, id,fn) {
     layer.open({
         type: 1,
         title: title,
         maxmin: true,
         content: $(ht_id), //这里content
         area: ['800px', '500px'],
-
-        // end: function () {
-        //     fn()
-        // }
+        end: function () { // 销毁弹出时 执行
+            if(!!fn){
+                fn()
+            }
+        }
     });
 }
 

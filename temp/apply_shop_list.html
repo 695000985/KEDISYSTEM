@@ -65,41 +65,45 @@
             <table class="table table-border table-bordered table-bg min-table" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
                 <thead>
                     <th style="width: 170px;">{{obj_txt.Shopno}}</th>
-                    <th style="width: 100px;">{{obj_txt.Status}}</th>
-                    <th style="width: 100px;">{{obj_txt.Phone}}</th>
+                    <th>{{obj_txt.OwnerName}}</th>
+                    <th>{{obj_txt.apply_content}}</th>
+                    <!-- <th style="width: 100px;">{{obj_txt.Status}}</th> -->
                     <th style="width: 120px;">{{obj_txt.apply_person}}</th>
                     <th style="width: 90px;">{{obj_txt.apply_status}}</th>
-                    <th style="">{{obj_txt.apply_info}}</th>
-                    <th>{{obj_txt.OwnerName}}</th>
-                    <th>{{obj_txt.Region}}</th>
-                    <th>{{obj_txt.Oper}}</th>
+                    <!-- <th>{{obj_txt.apply_info}}</th> -->
                     <th>
-
                     </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(s,index) in shop_list" v-if='shop_list.length'>
                         <td style="width: 170px;">{{s.Shopno}}</td>
-                        <td style="width: 100px;">{{status_txt(s.Status)}}</td>
-                        <td style="width: 100px;">{{s.Phone}}</td>
+                        <td>{{s.OwnerName}}</td>
+                        <td>{{replace_txt(s.apply_action)}}</td>
                         <td style="width: 120px;">{{s.apply_person}}</td>
                         <td style="width: 90px;">{{apply_status_txt(s.apply_status)}}</td>
-                        <td>
+                        <!-- <td>
                             {{s.apply_info}}
-                        </td>
-                        <td>{{s.OwnerName}}</td>
-                        <td>{{s.Region}}</td>
-                        <td>{{s.Oper}}</td>
+                        </td> -->
                         <td>
-                            <a title="查看" class="btn btn-primary size-S radius" href="javascript:;" @click="open_detail_shop(s.Shopno)" style="text-decoration: none;">
+                            <!-- <a title="查看" class="btn btn-primary size-S radius" href="javascript:;" @click="open_detail_shop(s.Shopno)" style="text-decoration: none;">
                                 {{obj_txt.Open_detail}}
                                 <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: #fff"></i>
-                            </a>
+                            </a> -->
                             <a title="审批" class="btn btn-primary size-S radius" href="javascript:;" @click="open_approve(s.Shopno,s.apply_status,s.apply_info)"
                                 style="text-decoration: none;">
                                 {{obj_txt.Open_approve}}
                                 <i class="Hui-iconfont Hui-iconfont-edit" style="color: #fff;"></i>
+                            </a>
+
+                             <a title="查看变更内容" class="btn btn-primary size-S radius" href="javascript:;" @click="change_con(s.content,0)" style="text-decoration: none;">
+                                {{obj_txt.change_content}}
+                                <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: #fff"></i>
+                            </a>
+
+                             <a title="查看拒绝原因" class="btn btn-primary size-S radius" href="javascript:;" @click="change_con(s.apply_info,1)" style="text-decoration: none;">
+                                {{obj_txt.cause_rejection}}
+                                <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: #fff"></i>
                             </a>
                         </td>
                     </tr>
@@ -113,7 +117,7 @@
             </div>
         </div>
     </div>
-    <div id="detail_shop" class="model modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <!-- <div id="detail_shop" class="model modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="content_model modal-dialog ">
             <div class="modal-content">
                 <div class="model_list">
@@ -215,7 +219,7 @@
             </div>
 
         </div>
-    </div>
+    </div> -->
     <div id="approve_shop" class="model modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="content_model modal-dialog ">
             <div class="modal-content">
@@ -250,6 +254,17 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <div id="change_con" class="model modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="content_model modal-dialog ">
+            <div class="modal-content">
+                <div class="change_con" style="min-height: 200px;padding: 10px;font-size: 14px;"></div>
+                <div class="btn_con" style="padding: 10px;text-align: right">
+                    <input type="button" class="btn btn-default BtnClose" value="取消" data-dismiss="modal" aria-hidden="true">
+                </div>
+            </div>
         </div>
     </div>
 
@@ -323,11 +338,24 @@
                     $('#approve_shop').modal("show");
 
                 },
-                open_detail_shop(s_no) {
-                    detail_shop.Shopno = s_no;
-                    $('#detail_shop').modal('show');
-                    detail_shop.get_detail()
+                // open_detail_shop(s_no) {
+                //     detail_shop.Shopno = s_no;
+                //     $('#detail_shop').modal('show');
+                //     detail_shop.get_detail()
+                // },
+
+                change_con(con,num){
+                    
+                    $('.change_con').html(con)
+                    $('#change_con').modal('show');
                 },
+                replace_txt(txt){
+                    if(txt == 'add'){
+                        return '新增'
+                    }else{
+                        return '修改'
+                    }
+                }
             }
         })
 
@@ -360,8 +388,6 @@
                                 obj = {};
                                 obj['limit'] = [(page - 1) * pagesize, pagesize].join(","); //条目数
                                 my_apply(obj)
-
-
                             }, 2000)
                         } else {
                             showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
@@ -371,30 +397,30 @@
             }
         })
 
-        var detail_shop = new Vue({
-            el: "#detail_shop",
-            data: {
-                Shopno: '',
-                data_detail: {},
-                obj_txt: apply_list.obj_txt
-            },
-            methods: {
-                get_detail() {
-                    var url = "/index.php?s=desktop/Market_Shop/detail";
-                    var data = {};
-                    data["usertoken"] = user_token;
-                    data["Shopno"] = this.Shopno;
-                    ajax(url, data, function (retjson) {
-                        if (retjson.stat == 1) {
-                            detail_shop.data_detail = retjson.data
-                        } else {
-                            showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
-                        }
-                    })
-                }
-            }
+        // var detail_shop = new Vue({
+        //     el: "#detail_shop",
+        //     data: {
+        //         Shopno: '',
+        //         data_detail: {},
+        //         obj_txt: apply_list.obj_txt
+        //     },
+        //     methods: {
+        //         get_detail() {
+        //             var url = "/index.php?s=desktop/Market_Shop/detail";
+        //             var data = {};
+        //             data["usertoken"] = user_token;
+        //             data["Shopno"] = this.Shopno;
+        //             ajax(url, data, function (retjson) {
+        //                 if (retjson.stat == 1) {
+        //                     detail_shop.data_detail = retjson.data
+        //                 } else {
+        //                     showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+        //                 }
+        //             })
+        //         }
+        //     }
 
-        })
+        // })
 
         function init_data() {
             page = 1

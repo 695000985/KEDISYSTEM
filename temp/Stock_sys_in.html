@@ -149,7 +149,7 @@
                 <button class="btn btn-success btn-radius btn-serach" @click="Add_Memo()">Add_Memo</button>
                 <button class="btn btn-success btn-radius btn-serach" id="save_btn" @click="save_stock()" v-if="!save_list.length">保存Save</button>
                 <button class="btn btn-success btn-radius btn-serach" id="edit_btn" @click="edit_stock()" v-if="save_list.length">编辑Edit</button>
-                <button class="btn btn-success btn-radius btn-serach">审核Check</button>
+                <button class="btn btn-success btn-radius btn-serach" @click="check_btn_stock()">审核Check</button>
             </div>
         </div>
     </div>
@@ -221,7 +221,10 @@
         methods:{
             open_add_stock(){
                 add()
-               open_html("stockIn",'#stock_add','stock_add')
+               open_html("stockIn",'#stock_add','stock_add',function(){
+                   
+                Refresh()
+               })
             }
         }
     });
@@ -278,6 +281,9 @@
             },
             edit_stock(){
                 this.save_list =[]
+            },
+            check_btn_stock(){
+                check_stock()
             }
         }
     })
@@ -413,23 +419,23 @@
         var url="/index.php?s=desktop/Stock_In_Management/check";
         var data={};
         data["usertoken"]=user_token;
-        data["Date"]=user_token;
-        data["StockInID"]=user_token;
-        data["GroupID"]=user_token;
-        data["From"]=user_token;
-        data["StockName"]=user_token;
-        data["StockType"]=user_token;
-        data["Stock_Memo"]=user_token;
-        data["Product"]=user_token;
-        data["Product_Memo"]=user_token;
-        data["check_Products"]=user_token;
-        data["check_Material"]=user_token;
-        data["Up"]=user_token;
-        data["products"]=user_token;
-        data["button5_Text"]=user_token;
+        data["Date"]=$('.Wdate').val();;
+        data["StockInID"]=add_stock.StockInID;;
+        data["GroupID"]=add_stock.GroupID;
+        data["From"]=$('#from_name').val();;
+        data["StockName"]=$("#StockName").val();;
+        data["StockType"]=$("#StockType").val();;
+        data["Stock_Memo"]=add_stock.memo;
+        data["Product"]='1';
+        data["Product_Memo"]='1';
+        data["check_Products"]=1;
+        data["check_Material"]=1;
+        data["Up"]='';
+        data["products"]=`${JSON.stringify(add_stock.save_list)}`;
+        data["button5_Text"]='审核Check';
        ajax(url,data,function(retjson){
         if (retjson.stat == 1) {
-               
+               success(retjson.data.ActiveStockIn.data)
             } else {
                 showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
             }
