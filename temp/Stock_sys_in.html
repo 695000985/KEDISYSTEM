@@ -32,16 +32,37 @@
 
     <div id="main" v-cloak class="market_shop">
         <div class="search_txt">
-            <!-- <div>
-                <p>{{obj_txt.name}}</p>
-                <input type="text" id="search_name" :placeholder="obj_txt.name">
+            <div>
+                <p>From</p>
+                <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
             </div>
             <div>
-                <p>{{obj_txt.bank}}</p>
-                <input type="text" id="search_bank" :placeholder="obj_txt.bank">
-            </div> -->
-            <input type="button" id="" name="" :value="obj_txt.BtnSearch" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
+                <p>To</p>
+                <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+            </div>
+            <div>
+                <p>仓库InStock</p>
+               <select name="" id="" style="width: 140px;">
+                   <option value=""></option>
+               </select>
+            </div>
+            <div>
+                <p>筛选</p>
+               <select name="" id="" style="width: 140px;">
+                   <option value=""></option>
+               </select> <input type="checkbox" name="" id=""> OK
+            </div>
+
+            <div>
+                <select name="" id="" style="width: 140px;">
+                    <option value=""></option>
+                </select>
+            </div>
+            
+            <input type="button" id="" name="" value="查询入库单In" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
                 @click="">
+            <input type="button" id="" name="" value="SearchProduct" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
+            @click="">
             <input type="button"  value="add" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
                 @click="open_add_stock()">
         </div>
@@ -95,7 +116,7 @@
                             <p class="">
                                Date
                             </p>
-                            <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate">
+                            <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate add_wdate">
                         </div>
                         <div>
                             <p class="">
@@ -207,22 +228,22 @@
         get_stock_type()
         get_stock_manage()
         get_from()
+        cancel()
     });
     Vdata_list = new Vue({
         el:"#main",
         data:{
             list:[],
             no_data: config_txt.no_data.zn, 
-            obj_txt: splicing_obj(get_page_txt('SummaryCheck')), // 对象拼接
+            obj_txt: splicing_obj(get_page_txt('')), // 对象拼接
         },
         mounted: function(){
            
         },
         methods:{
-            open_add_stock(){
+            open_add_stock(){ //打开入库窗口
                 add()
                open_html("stockIn",'#stock_add','stock_add',function(){
-                   
                 Refresh()
                })
             }
@@ -254,7 +275,7 @@
                 this.product_id=s.ProductID
                 this.index_product=a
             },
-            Add_Memo(){
+            Add_Memo(){ // 添加
                 if(!! this.product_id ){
                     var a=[];
                     (this.product_list).forEach(function(item,index,arr){
@@ -270,7 +291,7 @@
                     showErr('请选择数据')
                 }
             },
-            save_stock(){
+            save_stock(){ // 保存
                 let txt= `<div>进货单即将进入库${$("#StockName").val()},货源地：${$('#from_name').val()},入库类型：${$("#StockType").val()}; 请核对单据目录 正确点击 ‘确定’ 否则点击 ‘取消’ </div>`;
                 firm('保存进货单',txt,function(){
                     layer.close(layer.index);
@@ -282,7 +303,7 @@
             edit_stock(){
                 this.save_list =[]
             },
-            check_btn_stock(){
+            check_btn_stock(){  // 审核
                 check_stock()
             }
         }
@@ -303,6 +324,7 @@
         var arr=[];
         $('.product_list table tr td:nth-child(3)').each(function(){
             if (!!$(this).html()){
+                if( !!!Number($(this).html()) ){showErr('数量必须是数字');return false}
                 let obj={};
                 obj.ProductID=$(this).attr('data-title').split(',')[0];
                 if($(this).attr('data-title').split(',')[1] == "undefined"){
@@ -324,7 +346,7 @@
         var url="/index.php?s=desktop/Stock_In_Management/save";
         var data={};
         data["usertoken"]=user_token;
-        data["Date"]= $('.Wdate').val();
+        data["Date"]= $('.add_wdate').val();
         data["StockInID"]=add_stock.StockInID;
         data["GroupID"]=add_stock.GroupID;
         data["From"]=$('#from_name').val();
@@ -385,7 +407,6 @@
    function get_stock_manage(opt){
         opt = opt || {};
         opt["usertoken"] = user_token;
-        
         var url = "/index.php?s=desktop/Manage_Stock_List/Search";
         ajax(url, opt, function (retjson) {
             if (retjson.stat == 1) {
@@ -419,12 +440,12 @@
         var url="/index.php?s=desktop/Stock_In_Management/check";
         var data={};
         data["usertoken"]=user_token;
-        data["Date"]=$('.Wdate').val();;
-        data["StockInID"]=add_stock.StockInID;;
+        data["Date"]=$('.add_wdate').val();;
+        data["StockInID"]=add_stock.StockInID;
         data["GroupID"]=add_stock.GroupID;
-        data["From"]=$('#from_name').val();;
-        data["StockName"]=$("#StockName").val();;
-        data["StockType"]=$("#StockType").val();;
+        data["From"]=$('#from_name').val();
+        data["StockName"]=$("#StockName").val();
+        data["StockType"]=$("#StockType").val();
         data["Stock_Memo"]=add_stock.memo;
         data["Product"]='1';
         data["Product_Memo"]='1';
@@ -442,9 +463,27 @@
        })
     }
    
+    
+    function query_sys_in_list(){ //查询入库单
+        var url="/index.php?s=desktop/In_Stock_Search/SearchOutStockReport";
+        var data={};
+        data['usertoken']=user_token
+        data['From']="";
+        data['To']="";
+        data['InStock']="";
+        data['selected']="";
+        data['P']="";
+        data['M']="";
+        data['OK']="";
+        data['M_Box']="";
+        ajax(url,data,function(retjson){
+            if(retjson.stat == 1){
+
+            }else{
+
+            }
+        })
+    }
    
 </script>
-
-
-
 </html>

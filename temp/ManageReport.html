@@ -333,7 +333,6 @@
             <span>Amount：</span> <input type="text" v-model="cash_amount">
             <button @click="del_cash()" class="btn btn-danger  " style="margin-left: 10px;margin-top: 5px;">DELETE</button>
             <button @click="add_cash()" class="btn btn-success  " style="margin-left: 10px;margin-top: 5px;">ADD</button>
-
         </div>
         <div class="list_data">
             <table class="table table-border table-bordered table-bg" style="width: 700px; background: #fff;">
@@ -646,12 +645,27 @@
                     }
                 },
                 month() { // 月汇总
-                    var xx = com_data();
+                    if(!!$('.sc_a').val() && !!$('.sc_b').val() && !!$('.sc_c').val() && !!$('.sc_d').val() && !!$('.sc_e').val() && !!$('.sc_f').val() && !!$('.sc_g').val() && !!$('.sc_h').val() ){
+                   
+                        var xx = com_data();
                     month_summary(xx);
+               }else{
+                   showErr(config_txt.report_num.zn,config_txt.report_num.en)
+               }
+
+                   
                 },
                 same_day_summary() { // 日汇总
-                    var xx = com_data();
+
+                     if(!!$('.sc_a').val() && !!$('.sc_b').val() && !!$('.sc_c').val() && !!$('.sc_d').val() && !!$('.sc_e').val() && !!$('.sc_f').val() && !!$('.sc_g').val() && !!$('.sc_h').val() ){
+                   
+                        var xx = com_data();
                     day_summary(xx);
+                    }else{
+                        showErr(config_txt.report_num.zn,config_txt.report_num.en)
+                    }
+
+                   
                 },
                 region_store_summary() { //区域店 汇总
                     var xx = com_data();
@@ -693,8 +707,6 @@
                     }
                    
                 }
-
-
             }
         })
        
