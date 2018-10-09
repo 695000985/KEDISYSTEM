@@ -33,14 +33,14 @@
     <div id="main" v-cloak class="market_shop">
         <div class="search_txt">
             <div>
-                <p>From</p>
+                <p>{{obj_txt.date_from}}</p>
                 <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
             </div>
             <div>
                 <p>To</p>
                 <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
             </div>
-            <div>
+            <!--<div>
                 <p>仓库InStock</p>
                <select name="" id="" style="width: 140px;">
                    <option value=""></option>
@@ -57,7 +57,7 @@
                 <select name="" id="" style="width: 140px;">
                     <option value=""></option>
                 </select>
-            </div>
+            </div>-->
             
             <input type="button" id="" name="" value="查询入库单In" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
                 @click="">
@@ -235,7 +235,7 @@
         data:{
             list:[],
             no_data: config_txt.no_data.zn, 
-            obj_txt: splicing_obj(get_page_txt('')), // 对象拼接
+            obj_txt: splicing_obj(get_page_txt('stock_in')), // 对象拼接
         },
         mounted: function(){
            
@@ -430,7 +430,9 @@
         var url = "/index.php?s=desktop/Stock_From_Detail/search";
         ajax(url, opt, function (retjson) {
             if (retjson.stat == 1) {
-                add_stock.stock_from=retjson.data.list
+                add_stock.stock_from=retjson.data.list;
+                console.log('来源列表');
+                console.log(retjson.data);
             } else {
                 showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
             }
