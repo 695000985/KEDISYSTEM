@@ -25,6 +25,8 @@
         [v-cloak] {
             display: none;
         }
+        
+        .marginbtm_15{margin-bottom: 15px;}
     </style>
 </head>
 
@@ -37,7 +39,7 @@
             </div>
             <div>
                 <p>汇总编号(NO):</p>
-                <input type="text" id="search_EName" :placeholder="obj_txt.EName">
+                <input type="text" id="search_EName" v-model="huizong_num" disabled :placeholder="obj_txt.EName">
             </div>
 
 
@@ -82,8 +84,8 @@
         </div>
         
         <div>
-        	<div class="left" style="width: 45%;">
-        		<div>
+        	<div class="left" style="min-height: 500px; width: 45%;padding: 1%;box-sizing: border-box;">
+        		<div class="marginbtm_15">
         			<div>
 		                <select name="" id="" style="width: 140px;">
 		                    <option value="123"></option>
@@ -100,34 +102,34 @@
 		            <div class="clear"></div>
         		</div>
         		
-        		<div>
-        			<span>SC/Distributor</span>
+        		<div class="marginbtm_15">
+        			<span style="display: inline-block;width: 90px;text-align: right;">SC/Distributor</span>
 		            <input type="text" id="" placeholder="">
         		</div>
-        		<div>
-        			<span>汇总编号No:</span>
+        		<div class="marginbtm_15">
+        			<span style="display: inline-block;width: 90px;text-align: right;">汇总编号No:</span>
 		            <input type="text" id="" placeholder="">
 		            <input type="button" id="" name="" value="SearchAll" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
                 @click="">
         		</div>
-        		<div>
-        			<span>Category:</span>
+        		<div class="marginbtm_15">
+        			<span style="display: inline-block;width: 90px;text-align: right;">Category:</span>
 		            <input type="text" id="" placeholder="">
 		            <input type="button" id="" name="" value="Search" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
                 @click="">
         		</div>
         		
-        		<div>
-        			<table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
+        		<div style="">
+        			<table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;background-color: rgba(200,200,200,.15);">
 		                <thead>
 			                <tr>
 			                    <th style="width: 100px;">GroupID</th>
 			                    <th style="width: 100px;">ShopNO</th>
 			                    <th style="width: 100px;">SaleType</th>
 			                    <th style="width: 150px;">SaleDate</th>
-			                    <th style="width: 100px;">Status</th>
-			                    <th style="width: 100px;">regiontogether</th>
-			                    <th></th>
+			                    <th style="width: 200px;">Status</th>
+			                    <th style="width: 150px;">regiontogether</th>
+			                    <th style="width: 100px;"></th>
 			                </tr>
 		                </thead>
 		                <tbody>
@@ -150,9 +152,27 @@
 		                        </td>
 		
 		                    </tr>
-		                    <tr v-if="!list.length">
-		                        <td colspan="5">{{no_data}}</td>
+		                    <tr @click="a()">
+                                <!--测试
+                                -->
+		                        <td>2018464656562</td>
+		                        <td>123</td>
+		                        <td>出库</td>
+		                        <td>09-25</td>
+		                        <td>
+		                            <a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
+		                            check
+		                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+		                            <a title="删除" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
+		                            delete
+		                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+		                        </td>
+								<td>地区</td>
+								<td></td>
 		                    </tr>
+		                    <!--<tr v-if="!list.length">
+		                        <td colspan="5">{{no_data}}</td>
+		                    </tr>-->
 		                </tbody>
 		            </table>
 		            <div class="my_page m-style">
@@ -161,47 +181,55 @@
         			
         		</div>
         	</div>
-        	<div class="left" style="width: 55%;">
-        		<table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
-		                <thead>
-			                <tr>
-			                    <th style="width: 100px;">ProductNo</th>
-			                    <th style="width: 100px;">PName</th>
-			                    <th style="width: 100px;">Sale</th>
-			                    <th style="width: 200px;">StockOut</th>
-			                    <th style="width: 100px;">BackOrder</th>
-			                    <th></th>
-			                </tr>
-		                </thead>
-		                <tbody>
-		                    <tr v-for="(s,index) in list" v-if='list.length'>
-		                        <td>
-		                        </td>
-		                        <td>
-		                        </td>
-		                        <td>
-		                        </td>
-		                        <td>
-		                        </td>
-		                        <td>
-		                            <a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
-		                            check
-		                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
-		                            <a title="删除" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
-		                            delete
-		                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
-		                        </td>
-		
-		                    </tr>
-		                    <tr v-if="!list.length">
-		                        <td colspan="5">{{no_data}}</td>
-		                    </tr>
-		                </tbody>
-		            </table>
-		            <div class="my_page m-style">
-		
-		            </div>
+        	<!-- 订单详细列表  -->
+        	<div class="left" style="margin-left: 1%; width: 54%;">
+        		<table class="table table-border table-bordered table-bg" style="width: 95%;background-color: rgba(200,200,200,.25); min-height: ; margin: 0 auto; margin-bottom: 10px;">
+	                <thead>
+		                <tr>
+		                    <th style="width: 100px;">ProductNo</th>
+		                    <th style="width: 100px;">PName</th>
+		                    <th style="width: 100px;">Sale</th>
+		                    <th style="width: 200px;">StockOut</th>
+		                    <th style="width: 100px;">BackOrder</th>
+		                    <th></th>
+		                </tr>
+	                </thead>
+	                <tbody>
+	                    <tr v-for="(s,index) in list" v-if='list.length'>
+	                        <td>
+	                        </td>
+	                        <td>
+	                        </td>
+	                        <td>
+	                        </td>
+	                        <td>
+	                        </td>
+	                        <td>
+	                            <a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
+	                            check
+	                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+	                            <a title="删除" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
+	                            delete
+	                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+	                        </td>
+	
+	                    </tr>
+	                    <tr v-if="!list.length">
+	                        <td colspan="6">{{no_data}}</td>
+	                    </tr>
+	                </tbody>
+	            </table>
+	            <div class="my_page m-style">
+	
+	            </div>
         		
+        		
+        		<div style="display: flex;">
+        			<div class="marginbtm_15">
+			            <input type="button" id="" name="" value="SearchAll" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
+	                @click="">
+	        		</div>
+        		</div>
         	</div>
         	<div class="clear"></div>
         </div>
@@ -229,6 +257,7 @@
 	            list:[],
 	            no_data: config_txt.no_data.zn, 
 	            obj_txt: splicing_obj(get_page_txt('stock_in')), // 对象拼接
+	            huizong_num:'2018555555'
 	        },
 	        mounted: function(){
 	           
@@ -239,6 +268,9 @@
 	               open_html("stockIn",'#stock_add','stock_add',function(){
 	                Refresh()
 	               })
+	            },
+	            a(){
+	            	console.log('更新汇总编号');
 	            }
 	        }
 	    });
