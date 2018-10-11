@@ -24,6 +24,7 @@
         .tr_bg{
             background: #eee;
         }
+        select.is_check{background: rgba(140,140,140,0.35);}
     </style>
 </head>
 <body>
@@ -42,15 +43,16 @@
             </div>
             <div>
                 <p>仓库InStock</p>
-               <select name="" id="" style="width: 140px;">
-                   <option value=""></option>
+               <select name="" id="in_stock"  style="width: 140px;">
+                   <option :value="item.StockName" v-for="(item, index) in stock_manage">{{item.StockName}}</option>
                </select>
             </div>
             <div>
                 <p>筛选</p>
-               <select name="" id="" style="width: 140px;">
+               <select class="" name="" id="" :class="{is_check:!is_check}" :disabled="!is_check" style="width: 140px;">
                    <option value=""></option>
-               </select> <input type="checkbox" name="" id=""> OK
+               </select> 
+               <input type="checkbox" v-model="is_check" name="" id=""> OK
             </div>
 
             <div>
@@ -108,6 +110,9 @@
         </div>
     </div>
 </body>
+<!----------------
+	//
+----------------->
 <div id="stock_add" style="display: none;">
     <div class="add_top">
         <div class="condition">
@@ -230,6 +235,10 @@
         get_from()
 //      cancel()
         query_sys_in_list()
+        setTimeout(function(){
+        	console.log($("#in_stock").val()+'TTTT')
+        },1200)
+        
     });
     Vdata_list = new Vue({
         el:"#main",
@@ -237,6 +246,8 @@
             list:[],
             no_data: config_txt.no_data.zn, 
             obj_txt: splicing_obj(get_page_txt('stock_in')), // 对象拼接
+            stock_manage: [],
+            is_check:false
         },
         mounted: function(){
            
@@ -417,7 +428,8 @@
                          a.push(val)
                      }
                 })
-                add_stock.stock_manage=a
+                add_stock.stock_manage=a;
+                Vdata_list.stock_manage=a;
             } else {
                 showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
             }
@@ -470,10 +482,10 @@
         var url="/index.php?s=desktop/In_Stock_Search/SearchOutStockReport";
         var data={};
         data['usertoken']=user_token
-        data['From']="20180915";
+        data['From']="20180701";
         data['To']="20181010";
-        data['InStock']="7845";
-        data['selected']="true";
+        data['InStock']="878";
+        data['selected']="";
         data['P']="";
         data['M']="";
         data['OK']="";
