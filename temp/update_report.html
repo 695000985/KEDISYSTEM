@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title></title>
+    <title>更新报单</title>
     <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
     <link rel="stylesheet" href="../css/H-ui.min.css">
     <link rel="stylesheet" href="../css/common.css">
@@ -239,7 +239,7 @@
                 <br>
                 <button class="btn btn-primary-outline">returnProdu</button>
                 <br>
-                <button class="btn btn-primary-outline">GotoWarehou</button>
+                <button class="btn btn-primary-outline" @click="WentToWareHouse()">GotoWarehou</button>
                 <br>
                 <button class="btn btn-primary-outline">ReverFormStcok</button>
 
@@ -858,6 +858,10 @@
                     }
                     
                 },
+                WentToWareHouse() {
+                    var xx = com_data();
+                    GotoWarehouse(xx)
+                },
                 open_shop_acheivement() { //专卖店汇总
                     open_html('Shop_acheivement', '#shop_Acheivement')
                 },
@@ -932,6 +936,58 @@
             }
         })
 
+		function GotoWarehouse(opt) {
+            var url = "/index.php?s=desktop/Report_Manage/button13_Click";
+            var data = {};
+            data['usertoken'] = get_cache('usertoken');
+            var optin = $.extend({}, data, opt)
+            ajax(url, optin, function(e) {
+                if (e.stat == 1) {
+                    // manage_main.Report_Manage_data = e.data.list
+                } else {
+                    showErr(e.errmsg, e.errmsg_en, e.errcode)
+                }
+            })
+        }
+		function com_data() { //公用参数
+            var data = {};
+            data['SC_A'] = $('.sc_a').val();
+            data['SC_B'] = $('.sc_b').val();
+            data['SC_C'] = $('.sc_c').val();
+            data['SC_D'] = $('.sc_d').val();
+            data['SC_E'] = $('.sc_e').val();
+            data['SC_F'] = $('.sc_f').val();
+            data['SC_G'] = $('.sc_g').val();
+            data['SC_H'] = $('.sc_h').val();
+            data['From'] = $('.form_time').val();
+            data['To'] = $('.to_time').val();
+            data['Region'] = $('.region-top').val();
+            data['BigSCGroupID'] = $(".bigsc_groupid").val();
+            data['Total_BV'] = $(".total_bv").val();
+            data['Total_PV'] = $(".total_pv").val();
+            data['Total_NR'] = $(".total_nr").val();
+            data['S_Nylon'] = $(".s_nylon").val();
+            data['B_Nylon'] = $(".b_nylon").val();
+            data['Aera'] = $('.region-top').val();
+            data['Kits'] = $(".kits").val();
+            data['UnitPrice'] = $(".unit_price").val();
+            data['Oper'] = $('.oper_name').val();
+            data['Date'] = $('.date').val();
+            data['Debit'] = $(".debit").val();
+            data['D/Tsfer'] = $(".d_tsfer").val();
+            data['Cash(usd)'] = $(".cash_usd").val();
+            data['System_Total'] = $(".system_total").val();
+            data['Grand_Total'] = $(".grand_total").val();
+            data['Cash(NR)'] = $(".cash_nr").val();
+            data['Bank_Deposit'] = $(".bank_deposit").val();
+            data['Result'] = $(".result").val();
+            data['ReportStatus'] = $('.status').val();
+            data['Region_index'] = $('.region_index').val();
+//          data['Non_Month'] = manage_main.non_month ? "Non-Month" : '';
+//          data['PrintTwoday'] = manage_main.print_twoday ? "PrintTwoday" : '';
+            return data;
+        }
+		
         var acheivement = new Vue({
             el: "#shop_Acheivement",
             data: {

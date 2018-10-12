@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>出库</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/iconfont.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+    <script src="../script/jquery.pagination.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        
+        .marginbtm_15{margin-bottom: 15px;}
+    </style>
+</head>
+
+<body>
+    <div id="main" v-cloak class="market_shop">
+        <div class="search_txt">
+        	<div>
+                <p>RetailKEDICard</p>
+                <input type="text" id="search_CName" :placeholder="obj_txt.CName">
+            </div>
+            <div>
+                <p>汇总编号(NO):</p>
+                <input type="text" id="search_EName" v-model="huizong_num" disabled :placeholder="obj_txt.EName">
+            </div>
+
+
+            <input type="button" id="" name="" value="SearchSC" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 10px;"
+                @click="search_btn()">
+			
+			<div>
+				<p>Region:</p>
+				<input type="text" id="search_EName" placeholder="">
+                <input type="button"  value="..." class="btn btn-success btn-radius btn-serach" style="height: 30px;"
+                @click="">
+			</div>
+
+            <input type="button" value="SearchRegion" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
+                @click="open_oper_add()">
+            
+            <!--<div>
+                <p>仓库InStock</p>
+               <select name="" id="" style="width: 140px;">
+                   <option value=""></option>
+               </select>
+            </div>
+            <div>
+                <p>筛选</p>
+               <select name="" id="" style="width: 140px;">
+                   <option value=""></option>
+               </select> <input type="checkbox" name="" id=""> OK
+            </div>
+
+            <div>
+                <select name="" id="" style="width: 140px;">
+                    <option value=""></option>
+                </select>
+            </div>-->
+            
+            <input type="button" id="" name="" value="查询入库单In" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
+                @click="">
+            <input type="button" id="" name="" value="SearchProduct" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
+            @click="">
+            <input type="button"  value="add" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
+                @click="open_add_stock()">
+        </div>
+        
+        <div>
+        	<div class="left" style="min-height: 500px; width: 45%;padding: 1%;box-sizing: border-box;">
+        		<div class="marginbtm_15">
+        			<div>
+		                <select name="" id="" style="width: 140px;">
+		                    <option value="123"></option>
+		                </select>
+		            </div>
+        			<div class="left">
+		                <span>From</span>
+		                <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
+		            </div>
+		            <div class="left">
+		                <span>To</span>
+		                <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+		            </div>
+		            <div class="clear"></div>
+        		</div>
+        		
+        		<div class="marginbtm_15">
+        			<span style="display: inline-block;width: 90px;text-align: right;">SC/Distributor</span>
+		            <input type="text" id="" placeholder="">
+        		</div>
+        		<div class="marginbtm_15">
+        			<span style="display: inline-block;width: 90px;text-align: right;">汇总编号No:</span>
+		            <input type="text" id="" placeholder="">
+		            <input type="button" id="" name="" value="SearchAll" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
+                @click="">
+        		</div>
+        		<div class="marginbtm_15">
+        			<span style="display: inline-block;width: 90px;text-align: right;">Category:</span>
+		            <input type="text" id="" placeholder="">
+		            <input type="button" id="" name="" value="Search" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
+                @click="">
+        		</div>
+        		
+        		<div style="">
+        			<table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;background-color: rgba(200,200,200,.15);">
+		                <thead>
+			                <tr>
+			                    <th style="width: 100px;">GroupID</th>
+			                    <th style="width: 100px;">ShopNO</th>
+			                    <th style="width: 100px;">SaleType</th>
+			                    <th style="width: 150px;">SaleDate</th>
+			                    <th style="width: 200px;">Status</th>
+			                    <th style="width: 150px;">regiontogether</th>
+			                    <th style="width: 100px;"></th>
+			                </tr>
+		                </thead>
+		                <tbody>
+		                    <tr v-for="(s,index) in list" v-if='list.length'>
+		                        <td>
+		                        </td>
+		                        <td>
+		                        </td>
+		                        <td>
+		                        </td>
+		                        <td>
+		                        </td>
+		                        <td>
+		                            <a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
+		                            check
+		                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+		                            <a title="删除" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
+		                            delete
+		                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+		                        </td>
+		
+		                    </tr>
+		                    <tr @click="a()">
+                                <!--测试
+                                -->
+		                        <td>2018464656562</td>
+		                        <td>123</td>
+		                        <td>出库</td>
+		                        <td>09-25</td>
+		                        <td>
+		                            <a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
+		                            check
+		                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+		                            <a title="删除" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
+		                            delete
+		                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+		                        </td>
+								<td>地区</td>
+								<td></td>
+		                    </tr>
+		                    <!--<tr v-if="!list.length">
+		                        <td colspan="5">{{no_data}}</td>
+		                    </tr>-->
+		                </tbody>
+		            </table>
+		            <div class="my_page m-style">
+		
+		            </div>
+        			
+        		</div>
+        	</div>
+        	<!-- 订单详细列表  -->
+        	<div class="left" style="margin-left: 1%; width: 54%;">
+        		<table class="table table-border table-bordered table-bg" style="width: 95%;background-color: rgba(200,200,200,.25); min-height: ; margin: 0 auto; margin-bottom: 10px;">
+	                <thead>
+		                <tr>
+		                    <th style="width: 100px;">ProductNo</th>
+		                    <th style="width: 100px;">PName</th>
+		                    <th style="width: 100px;">Sale</th>
+		                    <th style="width: 200px;">StockOut</th>
+		                    <th style="width: 100px;">BackOrder</th>
+		                    <th></th>
+		                </tr>
+	                </thead>
+	                <tbody>
+	                    <tr v-for="(s,index) in list" v-if='list.length'>
+	                        <td>
+	                        </td>
+	                        <td>
+	                        </td>
+	                        <td>
+	                        </td>
+	                        <td>
+	                        </td>
+	                        <td>
+	                            <a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
+	                            check
+	                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+	                            <a title="删除" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
+	                            delete
+	                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+	                        </td>
+	
+	                    </tr>
+	                    <tr v-if="!list.length">
+	                        <td colspan="6">{{no_data}}</td>
+	                    </tr>
+	                </tbody>
+	            </table>
+	            <div class="my_page m-style">
+	
+	            </div>
+        		
+        		
+        		<div style="display: flex;">
+        			<div class="marginbtm_15">
+			            <input type="button" id="" name="" value="SearchAll" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
+	                @click="">
+	        		</div>
+        		</div>
+        	</div>
+        	<div class="clear"></div>
+        </div>
+        <div class="shop_list">
+            
+        </div>
+    </div>
+    <script>
+    	var 
+    	user_token = get_cache('usertoken'),
+	    Vdata_list, //列表VUE
+	    Vresult;
+	    $(function(){
+	        $('.Wdate').val(get_local_time())
+//	        get_product_list()
+//	        get_stock_type()
+//	        get_stock_manage()
+//	        get_from()
+//	        cancel()
+	    });
+    	
+    	Vdata_list = new Vue({
+	        el:"#main",
+	        data:{
+	            list:[],
+	            no_data: config_txt.no_data.zn, 
+	            obj_txt: splicing_obj(get_page_txt('stock_in')), // 对象拼接
+	            huizong_num:'2018555555'
+	        },
+	        mounted: function(){
+	           
+	        },
+	        methods:{
+	            open_add_stock(){ //打开入库窗口
+	                add()
+	               open_html("stockIn",'#stock_add','stock_add',function(){
+	                Refresh()
+	               })
+	            },
+	            a(){
+	            	console.log('更新汇总编号');
+	            }
+	        }
+	    });
+    </script>
+</body>
+
+</html>

@@ -24,6 +24,7 @@
         .tr_bg{
             background: #eee;
         }
+        select.is_check{background: rgba(140,140,140,0.35);}
     </style>
 </head>
 <body>
@@ -33,7 +34,7 @@
     <div id="main" v-cloak class="market_shop">
         <div class="search_txt">
             <div>
-                <p>From</p>
+                <p>{{obj_txt.date_from}}</p>
                 <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
             </div>
             <div>
@@ -42,15 +43,16 @@
             </div>
             <div>
                 <p>仓库InStock</p>
-               <select name="" id="" style="width: 140px;">
-                   <option value=""></option>
+               <select name="" id="in_stock"  style="width: 140px;">
+                   <option :value="item.StockName" v-for="(item, index) in stock_manage">{{item.StockName}}</option>
                </select>
             </div>
             <div>
                 <p>筛选</p>
-               <select name="" id="" style="width: 140px;">
+               <select class="" name="" id="" :class="{is_check:!is_check}" :disabled="!is_check" style="width: 140px;">
                    <option value=""></option>
-               </select> <input type="checkbox" name="" id=""> OK
+               </select> 
+               <input type="checkbox" v-model="is_check" name="" id=""> OK
             </div>
 
             <div>
@@ -61,8 +63,8 @@
             
             <input type="button" id="" name="" value="查询入库单In" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
                 @click="">
-            <input type="button" id="" name="" value="SearchProduct" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
-            @click="">
+            <!--<input type="button" id="" name="" value="SearchProduct" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
+            @click="">-->
             <input type="button"  value="add" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
                 @click="open_add_stock()">
         </div>
@@ -108,6 +110,9 @@
         </div>
     </div>
 </body>
+<!----------------
+	//
+----------------->
 <div id="stock_add" style="display: none;">
     <div class="add_top">
         <div class="condition">
@@ -230,14 +235,21 @@
         get_stock_type()
         get_stock_manage()
         get_from()
-        cancel()
+//      cancel()
+        query_sys_in_list()
+        setTimeout(function(){
+        	console.log($("#in_stock").val()+'TTTT')
+        },1200)
+        
     });
     Vdata_list = new Vue({
         el:"#main",
         data:{
             list:[],
             no_data: config_txt.no_data.zn, 
-            obj_txt: splicing_obj(get_page_txt('')), // 对象拼接
+            obj_txt: splicing_obj(get_page_txt('stock_in')), // 对象拼接
+            stock_manage: [],
+            is_check:false
         },
         mounted: function(){
            
@@ -418,7 +430,8 @@
                          a.push(val)
                      }
                 })
-                add_stock.stock_manage=a
+                add_stock.stock_manage=a;
+                Vdata_list.stock_manage=a;
             } else {
                 showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
             }
@@ -432,7 +445,9 @@
         var url = "/index.php?s=desktop/Stock_From_Detail/search";
         ajax(url, opt, function (retjson) {
             if (retjson.stat == 1) {
-                add_stock.stock_from=retjson.data.list
+                add_stock.stock_from=retjson.data.list;
+                console.log('来源列表');
+                console.log(retjson.data);
             } else {
                 showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
             }
@@ -465,14 +480,13 @@
        })
     }
    
-    
     function query_sys_in_list(){ //查询入库单
         var url="/index.php?s=desktop/In_Stock_Search/SearchOutStockReport";
         var data={};
         data['usertoken']=user_token
-        data['From']="";
-        data['To']="";
-        data['InStock']="";
+        data['From']="20180701";
+        data['To']="20181010";
+        data['InStock']="878";
         data['selected']="";
         data['P']="";
         data['M']="";
