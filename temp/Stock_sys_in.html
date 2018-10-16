@@ -49,8 +49,8 @@
             </div>
             <div>
                 <p>筛选</p>
-               <select class="" name="" id="" :class="{is_check:!is_check}" :disabled="!is_check" style="width: 140px;">
-                   <option value=""></option>
+               <select class="" name="" id="" v-model="sel_val" :change="select_stock(sel_val)" :class="{is_check:!is_check}" :disabled="!is_check" style="width: 140px;">
+                   <option value="">NONE</option>
                    <option v-for="item in select_item" :value="item">{{item}}</option>
                </select> 
                <input type="checkbox" v-model="is_check" name="" id=""> OK
@@ -58,12 +58,12 @@
 
             <div>
                 <select name="" id="" style="width: 140px;">
-                    <option value=""></option>
+                    <option v-for="item in connect_list" value="">{{item}}</option>
                 </select>
             </div>
             
             <input type="button" id="" name="" value="查询入库单In" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
-                @click="">
+                @click="query_in()">
             <!--<input type="button" id="" name="" value="SearchProduct" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
             @click="">-->
             <input type="button"  value="add" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
@@ -154,7 +154,7 @@
                         <div>
                             <P>来源From</P>
                             <select name="" id="from_name">
-                                <option :value="item.FromPlace" v-for="(item, index) in stock_from" >{{item.FromPlace}}</option>
+                                <option :value="item.FromPlace" v-for="(item, index) in stock_from" >{{item.FromPlace}}({{item.FromCountry}})</option>
                             </select>
                         </div>
                 </div>
@@ -250,7 +250,10 @@
             no_data: config_txt.no_data.zn, 
             obj_txt: splicing_obj(get_page_txt('stock_in')), // 对象拼接
             stock_manage: [],
-            is_check:false
+            is_check:false,
+            select_item:['货源地','产品','入库类型','入库员','来源国家','备注'],
+            sel_val:'',
+            connect_list:[]
         },
         mounted: function(){
            
@@ -261,7 +264,19 @@
                open_html("stockIn",'#stock_add','stock_add',function(){
                 Refresh()
                })
+            },
+            query_in(){
+            	query_sys_in_list()
+            },
+            select_stock(item){
+            	console.log(item);
+            	if( item == '货源地'){
+            		this.connect_list = ['美国','日本','Canada'];
+            	}else{
+            		this.connect_list = [];
+            	}
             }
+            
         }
     });
 

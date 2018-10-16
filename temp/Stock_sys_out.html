@@ -50,11 +50,11 @@
 				<p>Region:</p>
 				<input type="text" id="search_EName" placeholder="">
                 <input type="button"  value="..." class="btn btn-success btn-radius btn-serach" style="height: 30px;"
-                @click="">
+                @click="openRegion_select()">
 			</div>
 
             <input type="button" value="SearchRegion" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
-                @click="open_oper_add()">
+                @click="search_region()">
             
             <!--<div>
                 <p>仓库InStock</p>
@@ -85,55 +85,61 @@
         
         <div>
         	<div class="left" style="min-height: 500px; width: 45%;padding: 1%;box-sizing: border-box;">
-        		<div class="marginbtm_15">
-        			<div>
-		                <select name="" id="" style="width: 140px;">
-		                    <option value="123"></option>
-		                </select>
-		            </div>
-        			<div class="left">
-		                <span>From</span>
-		                <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
-		            </div>
-		            <div class="left">
-		                <span>To</span>
-		                <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
-		            </div>
-		            <div class="clear"></div>
-        		</div>
         		
-        		<div class="marginbtm_15">
-        			<span style="display: inline-block;width: 90px;text-align: right;">SC/Distributor</span>
-		            <input type="text" id="" placeholder="">
-        		</div>
-        		<div class="marginbtm_15">
-        			<span style="display: inline-block;width: 90px;text-align: right;">汇总编号No:</span>
-		            <input type="text" id="" placeholder="">
-		            <input type="button" id="" name="" value="SearchAll" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
-                @click="">
-        		</div>
-        		<div class="marginbtm_15">
-        			<span style="display: inline-block;width: 90px;text-align: right;">Category:</span>
-		            <input type="text" id="" placeholder="">
-		            <input type="button" id="" name="" value="Search" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
-                @click="">
-        		</div>
+        		<fieldset id="" style="width: 95%;">
+        			<legend style="width: auto;border-bottom: none;">Condition</legend>
+        			
+        			
         		
+	        		<div class="marginbtm_15">
+	        			<div class="left" style="margin-right: 5px;">
+			                <select name="" id="" style="width: 140px;">
+			                    <option value="123" v-for="(item , index) in region_list">{{item.result}}</option>
+			                </select>
+			            </div>
+	        			<div class="left">
+			                <span>From</span>
+			                <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
+			            </div>
+			            <div class="left">
+			                <span>To</span>
+			                <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+			            </div>
+			            <div class="clear"></div>
+	        		</div>
+	        		
+	        		<div class="marginbtm_15">
+	        			<span style="display: inline-block;width: 90px;text-align: right;">SC/Distributor</span>
+			            <input type="text" id="" placeholder="">
+	        		</div>
+	        		<div class="marginbtm_15">
+	        			<span style="display: inline-block;width: 90px;text-align: right;">汇总编号No:</span>
+			            <input type="text" id="" placeholder="">
+			            <input type="button" id="" name="" value="SearchAll" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
+	                @click="">
+	        		</div>
+	        		<div class="marginbtm_15">
+	        			<span style="display: inline-block;width: 90px;text-align: right;">Category:</span>
+			            <input type="text" id="" placeholder="">
+			            <input type="button" id="" name="" value="Search" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
+	                @click="">
+	        		</div>
+	        	</fieldset>	
         		<div style="">
-        			<table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;background-color: rgba(200,200,200,.15);">
+        			<table class="table table-border table-bordered table-bg" style="width: 95%; margin: 10px auto;background-color: rgba(200,200,200,.15);">
 		                <thead>
 			                <tr>
-			                    <th style="width: 100px;">GroupID</th>
-			                    <th style="width: 100px;">ShopNO</th>
+			                    <th style="width: 150px;">GroupID</th>
+			                    <th style="width: 80px;">ShopNO</th>
 			                    <th style="width: 100px;">SaleType</th>
-			                    <th style="width: 150px;">SaleDate</th>
+			                    <th style="width: 100px;">SaleDate</th>
 			                    <th style="width: 200px;">Status</th>
 			                    <th style="width: 150px;">regiontogether</th>
 			                    <th style="width: 100px;"></th>
 			                </tr>
 		                </thead>
 		                <tbody>
-		                    <tr v-for="(s,index) in list" v-if='list.length'>
+		                    <tr v-for="(s,index) in list_l" v-if='list_l.length'>
 		                        <td>
 		                        </td>
 		                        <td>
@@ -145,10 +151,12 @@
 		                        <td>
 		                            <a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
 		                            check
-		                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+		                            	<!--<i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i>-->
+		                            </a>
 		                            <a title="删除" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
 		                            delete
-		                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+		                            	<!--<i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i>-->
+		                            </a>
 		                        </td>
 		
 		                    </tr>
@@ -183,26 +191,26 @@
         	</div>
         	<!-- 订单详细列表  -->
         	<div class="left" style="margin-left: 1%; width: 54%;">
-        		<table class="table table-border table-bordered table-bg" style="width: 95%;background-color: rgba(200,200,200,.25); min-height: ; margin: 0 auto; margin-bottom: 10px;">
+        		<table class="table table-border table-bordered table-bg" style="width: 95%; background-color: rgba(200,200,200,0); min-height: ; margin: 0 auto; margin-bottom: 10px;">
 	                <thead>
 		                <tr>
-		                    <th style="width: 100px;">ProductNo</th>
+		                    <th style="width: 80px;">{{obj_txt.Product_no}}</th>
 		                    <th style="width: 100px;">PName</th>
-		                    <th style="width: 100px;">Sale</th>
-		                    <th style="width: 200px;">StockOut</th>
-		                    <th style="width: 100px;">BackOrder</th>
-		                    <th></th>
+		                    <th style="width: 70px;">Sale</th>
+		                    <th style="width: 70px;">StockOut</th>
+		                    <th style="width: 180px;">BackOrder</th>
+		                    <!--<th></th>-->
 		                </tr>
 	                </thead>
 	                <tbody>
-	                    <tr v-for="(s,index) in list" v-if='list.length'>
-	                        <td>
+	                    <tr v-for="(item,index) in list" v-if='list.length'>
+	                        <td>{{item.ProductNO}}
 	                        </td>
-	                        <td>
+	                        <td>{{item.PName}}
 	                        </td>
-	                        <td>
+	                        <td>{{item.Sale}}
 	                        </td>
-	                        <td>
+	                        <td>{{item.StockOut}}
 	                        </td>
 	                        <td>
 	                            <a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
@@ -224,12 +232,12 @@
 	            </div>
         		
         		
-        		<div style="display: flex;">
+        		<!--<div style="display: flex;">
         			<div class="marginbtm_15">
 			            <input type="button" id="" name="" value="SearchAll" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
 	                @click="">
 	        		</div>
-        		</div>
+        		</div>-->
         	</div>
         	<div class="clear"></div>
         </div>
@@ -249,15 +257,20 @@
 //	        get_stock_manage()
 //	        get_from()
 //	        cancel()
+			get_region();//获取区域
+			stock_out_search();//根据汇总编号查询
+			search_region_g();
 	    });
     	
     	Vdata_list = new Vue({
 	        el:"#main",
 	        data:{
+	        	list_l:[],
 	            list:[],
 	            no_data: config_txt.no_data.zn, 
-	            obj_txt: splicing_obj(get_page_txt('stock_in')), // 对象拼接
-	            huizong_num:'2018555555'
+	            obj_txt: splicing_obj(get_page_txt('stock_out')), // 对象拼接
+	            huizong_num:'2018555555',
+	            region_list:[]
 	        },
 	        mounted: function(){
 	           
@@ -271,10 +284,112 @@
 	            },
 	            a(){
 	            	console.log('更新汇总编号');
+	            },
+	            openRegion_select(){
+	            	console.log('选择区域');
+	            	open_html("选择区域",'#region_select','region_select',function(){
+//		                Refresh()
+		            })
+	            },
+	            search_region(){
+	            	search_region_g()
+	            	
 	            }
 	        }
 	    });
+	    
+	    function get_region(){
+	    	var url = '/index.php?s=desktop/common/GetRegion';
+	    	var user_token = get_cache('usertoken');
+	    	var data = {};
+	    	data["usertoken"]=user_token;
+	    	ajax(url,data,function (ret) {
+	    		console.log(ret)
+//	            if(e.stat == 1){
+//	            	
+////	                success('保存成功');
+//	            }else{
+////	                showErr(e.errmsg, e.errmsg_en, e.errcode)
+//	            }
+				
+				Vdata_list.region_list = ret;
+	        })
+	    }
+	    
+	    function stock_out_search(){
+	    	var url = '/index.php?s=desktop/Stock_Out_Management/SearchScStockOut';
+	    	var user_token = get_cache('usertoken');
+	    	var data = {};
+	    	data["usertoken"] = user_token;
+	    	data["NO"]        = '2018109';
+	    	data["Category"]  = 'MaterialSale';
+	    	ajax(url,data,function (e) {
+	    		console.log()
+	            if(e.stat == 1){
+	            	
+	            }else{
+	                showErr(e.errmsg, e.errmsg_en, e.errcode)
+	            }
+				
+	        })
+	    }
+	    
+	    function search_region_g(){
+	    	var url = '/index.php?s=desktop/Stock_Out_Management/SearchRegion';
+	    	var user_token = get_cache('usertoken');
+	    	var data = {};
+	    	data["usertoken"] = user_token;
+	    	data["NO"]        = '2018109';
+	    	data["Category"]  = 'MaterialSale';
+	    	data["Region"]    = 'ABA20170224024438';
+	    	data["Condition"] = '123';
+	    	ajax(url,data,function (e) {
+	            if(e.stat == 1){
+	            	Vdata_list.list = e.data.LoadRegionStockOutInfo;
+	            }else{
+	                showErr(e.errmsg, e.errmsg_en, e.errcode)
+	            }
+				
+	        })
+	    }
     </script>
 </body>
 
+<div id="region_select" style="display: none;">
+	<div>
+        <p>From</p>
+        <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
+    </div>
+    <div>
+        <p>To</p>
+        <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+    </div>
+	<input type="button" id="" name="" value="SearchStockOut" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
+    @click="search_stock_out()">
+    
+    <input type="button" id="" name="" value="SearchStockUnOut" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
+    @click="search_stock_unout()">
+    
+    
+    <div class="list">
+    	
+    	
+    </div>
+</div>
+<script type="text/javascript">
+	var s_list = new Vue({
+		el:'#region_select',
+		data:{
+			
+		},
+		methods:{
+			search_stock_out(){
+				
+			},
+			search_stock_unout(){
+				
+			}
+		}
+	})
+</script>
 </html>
