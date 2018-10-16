@@ -51,6 +51,7 @@
                 <p>筛选</p>
                <select class="" name="" id="" :class="{is_check:!is_check}" :disabled="!is_check" style="width: 140px;">
                    <option value=""></option>
+                   <option v-for="item in select_item" :value="item">{{item}}</option>
                </select> 
                <input type="checkbox" v-model="is_check" name="" id=""> OK
             </div>
