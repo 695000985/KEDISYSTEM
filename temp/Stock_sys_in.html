@@ -286,7 +286,19 @@
             		for (var i = 0; i < add_stock.product_list.length; i++) {
             			this.connect_list.push({'FromPlace':add_stock.product_list[i].ProductNO})
             		}
-            	}
+                }
+                else if(item == '入库类型'){
+                    this.connect_list = [];
+                    for (var i = 0; i < add_stock.stock_type.length; i++) {
+            			this.connect_list.push({'FromPlace':add_stock.stock_type[i].TypeName})
+            		}
+                }
+                else if(item == '入库员'){
+                    this.connect_list = [];
+                    // for (var i = 0; i < add_stock.stock_type.length; i++) {
+            		// 	this.connect_list.push({'FromPlace':add_stock.stock_type[i].TypeName})
+            		// }
+                }
 //				else{
 //          		this.connect_list = [{'FromPlace':''}];
 //          	}
