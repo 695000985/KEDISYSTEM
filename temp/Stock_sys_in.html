@@ -38,16 +38,16 @@
         <div class="search_txt">
             <div>
                 <p>{{obj_txt.date_from}}</p>
-                <input id="start_from" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" v-model="start_date" class="Wdate date_from">
+                <input id="start_date" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
             </div>
             <div>
                 <p>To</p>
-                <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                <input id="end_date" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
             </div>
             <div>
                 <p>仓库InStock</p>
                <select name="" id="in_stock" v-model="stock_no"  style="width: 140px;">
-                   <option :value="item.StockName" v-for="(item, index) in stock_manage">{{item.StockName}}</option>
+                   <option :value="item.StockShow" v-for="(item, index) in stock_manage">{{item.StockShow}}</option>
                </select>
             </div>
             <div>
@@ -72,46 +72,92 @@
             <input type="button"  value="add" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
                 @click="open_add_stock()">
         </div>
-        <div class="shop_list">
-            <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
-                <thead>
-                <tr>
-                    <th style="width: 100px;">ProductNo</th>
-                    <th style="width: 100px;">Name</th>
-                    <th style="width: 100px;">StockQTY</th>
-                    <th style="width: 200px;">Memo</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(s,index) in list" v-if='list.length'>
-                        <td>
-                        </td>
-                        <td>
-                        </td>
-                        <td>
-                        </td>
-                        <td>
-                        </td>
-                        <td>
-                            <a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
-                            check
-                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
-                            <a title="删除" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
-                            delete
-                            <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
-                        </td>
-
-                    </tr>
-                    <tr v-if="!list.length">
-                        <td colspan="5">{{no_data}}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="my_page m-style">
-
-            </div>
+        <div>
+                <div class="shop_list left" style="width:55%;">
+                        <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
+                            <thead>
+                            <tr>
+                                <th style="width: 100px;">GroupID</th>
+                                <th style="width: 60px;">国家</th>
+                                <th style="width: 100px;">来源地</th>
+                                <th style="width: 60px;">类型</th>
+                                <th style="width: 100px;">报溢所属</th>
+                                <th style="width: 100px;">入库日期</th>
+                                <th style="width: 100px;">入库员</th>
+                                <th>备注MeMo</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(s,index) in list" v-if='list.length' @click="get_groupid(s,index)"  :class="{ tr_bg:index == index_list}" >
+                                    <td>{{s['GroupID']}}
+                                    </td>
+                                    <td>{{s['国家']}}
+                                    </td>
+                                    <td>{{s['来源地']}}
+                                    </td>
+                                    <td>{{s['类型']}}
+                                    </td>
+                                    <td>{{s['报溢所属']}}
+                                    </td>
+                                    <td>{{s['入库日期']}}
+                                    </td>
+                                    <td>{{s['入库员']}}
+                                    </td>
+                                    <td>{{s['备注MeMo']}}
+                                    </td>
+                                </tr>
+                                <tr v-if="!list.length">
+                                    <td colspan="5">{{no_data}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="my_page m-style">
+            
+                        </div>
+                </div>
+                <div class="shop_list left" style="width:45%;">
+                    <table class="table table-border table-bordered table-bg" style="width: 95%; margin: 0 auto; margin-bottom: 10px;">
+                        <thead>
+                        <tr>
+                            <th style="width: 100px;">ProductNo</th>
+                            <th style="width: 100px;">Name</th>
+                            <th style="width: 100px;">StockIn</th>
+                            <th style="width: 200px;">Memo</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(s,index) in list_r" v-if='list_r.length'>
+                                <td>{{s.ProductNo}}
+                                </td>
+                                <td>{{s.Name}}
+                                </td>
+                                <td>{{s.StockIn}}
+                                </td>
+                                <td>{{s.Memo}}
+                                </td>
+                                <td>
+                                    <!-- <a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
+                                    check
+                                    <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+                                    <a title="删除" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
+                                    delete
+                                    <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a> -->
+                                </td>
+        
+                            </tr>
+                            <tr v-if="!list_r.length">
+                                <td colspan="5">{{no_data}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="my_page m-style">
+        
+                    </div>
+                </div>
+                <div class="clear"></div>
         </div>
+        
     </div>
 </body>
 <!----------------
@@ -251,12 +297,13 @@
         el:"#main",
         data:{
             list:[],
+            list_r:[],
+            index_list:-1,
             no_data: config_txt.no_data.zn, 
             obj_txt: splicing_obj(get_page_txt('stock_in')), // 对象拼接
             stock_manage: [],
             is_check:false,
             select_item:[{'id':1,'name':'货源地'},{'id':2,'name':'产品'},{'id':3,'name':'入库类型'},{'id':4,'name':'入库员'},{'id':5,'name':'来源国家'},{'id':6,'name':'备注'}],
-            start_date:'',
             stock_no:'',
             sel_val:'',
             connect_list:[],
@@ -275,11 +322,23 @@
             },
             query_in(){
 //          	query_sys_in_list();
-            	if(this.connect_item == ''){
-            		alert('请输入筛选条件')
-            	}else{
-                    console.log($('#start_from').val(),this.stock_no,this.sel_val,this.connect_item);
-            	}
+            	if(($('#start_date').val()!='')&&($('#end_date').val()!='')&&(this.stock_no != '')){
+                    var start = $('#start_date').val(),
+                        end = $('#end_date').val(),
+                        stock = this.stock_no,
+                        is_sel = this.is_check,
+                        sel_item = this.sel_val,
+                        sel_connect_item = this.connect_item;
+            		    query_sys_in_list(start,end,stock,is_sel,sel_item,sel_connect_item)
+            	}else if($('#start_date').val() == ''){
+                    showErr('请选择起始日期');
+
+                    console.log($('#start_date').val(),$('#end_date').val(),this.stock_no,this.sel_val,this.connect_item);
+            	}else if($('#end_date').val() == ''){
+                    showErr('请选择结束日期');
+                }else if(this.stock_no == ''){
+                    showErr('请选择仓库');
+                }
             	
             },
             select_stock(item){
@@ -302,28 +361,48 @@
                 else if(item == '入库员'){
                     this.connect_list = [];
                     for (var i = 0; i < this.three['入库员'].length; i++) {
-            			this.connect_list.push({'FromPlace':this.three['入库员'][i].insertperson})
+            			this.connect_list.push({'FromPlace':this.three['入库员'][i]['入库员']})
             		}
                 }
                 else if(item == '来源国家'){
                     this.connect_list = [];
                     for (var i = 0; i < this.three['来源国家'].length; i++) {
-            			this.connect_list.push({'FromPlace':this.three['来源国家'][i].fromcountry})
+            			this.connect_list.push({'FromPlace':this.three['来源国家'][i]['来源国家']})
             		}
                 }
                 else if(item == '备注'){
                     this.connect_list = [];
                     for (var i = 0; i < this.three['备注'].length; i++) {
-            			this.connect_list.push({'FromPlace':this.three['备注'][i].memo})
+            			this.connect_list.push({'FromPlace':this.three['备注'][i]['备注']})
             		}
                 }
 //				else{
 //          		this.connect_list = [{'FromPlace':''}];
 //          	}
+            },
+            get_groupid(s,index){
+                console.log(s['GroupID']);
+                get_list_more(s['GroupID']);
+                this.index_list = index;
             }
             
         }
     });
+
+    function get_list_more(groupid){
+        var url="/index.php?s=desktop/In_Stock_Search/GetProductDetail";
+        var data={};
+        data["usertoken"]=user_token;
+        data['groupid']=groupid;
+        ajax(url,data,function(e){
+            if( e.stat == 1){
+                // add_stock.product_list=e.data.list
+                Vdata_list.list_r = e.data;
+            }else{
+                showErr(e.errmsg, e.errmsg_en, e.errcode)
+            }
+        })
+    }
 
    var add_stock=new Vue({
         el:"#stock_add",
@@ -541,21 +620,21 @@
        })
     }
    
-    function query_sys_in_list(){ //查询入库单
+    function query_sys_in_list(start,end,stock,is_sel,sel_item,sel_connect_item){ //查询入库单
         var url="/index.php?s=desktop/In_Stock_Search/SearchOutStockReport";
         var data={};
         data['usertoken']=user_token;
-        data['From']="";
-        data['To']="";
-        data['InStock']="";
-        data['selected']="";
+        data['From']=start;
+        data['To']=end;
+        data['InStock']=stock;
+        data['selected']=sel_item;
         data['P']="";
         data['M']="";
-        data['OK']="";
-        data['M_Box']="";
+        data['OK']=is_sel;
+        data['M_Box']=sel_connect_item;
         ajax(url,data,function(retjson){
             if(retjson.stat == 1){
-                
+                Vdata_list.list = retjson.data.dataGridView2
             }else{
 
             }
