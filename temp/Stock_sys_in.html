@@ -21,6 +21,9 @@
     <script src="../script/layer.js"></script>
     <script src="../script/jquery.pagination.js"></script>
     <style>
+        [v-cloak] {
+            display: none;
+        }
         .tr_bg{
             background: #eee;
         }
@@ -35,7 +38,7 @@
         <div class="search_txt">
             <div>
                 <p>{{obj_txt.date_from}}</p>
-                <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
+                <input id="start_from" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" v-model="start_date" class="Wdate date_from">
             </div>
             <div>
                 <p>To</p>
@@ -43,15 +46,15 @@
             </div>
             <div>
                 <p>仓库InStock</p>
-               <select name="" id="in_stock"  style="width: 140px;">
+               <select name="" id="in_stock" v-model="stock_no"  style="width: 140px;">
                    <option :value="item.StockName" v-for="(item, index) in stock_manage">{{item.StockName}}</option>
                </select>
             </div>
             <div>
                 <p>筛选</p>
                <select class="" name="" id="" v-model="sel_val" :change="select_stock(sel_val)" :class="{is_check:!is_check}" :disabled="!is_check" style="width: 140px;">
-                   <option value="">NONE</option>
-                   <option v-for="item in select_item" :value="item.name">{{item.name}}</option>
+                    <option>NONE</option>
+                    <option v-for="item in select_item" :value="item.name">{{item.name}}</option>
                </select> 
                <input type="checkbox" v-model="is_check" name="" id=""> OK
             </div>
@@ -238,7 +241,7 @@
         get_from()
         get_result()
 //      cancel()
-        query_sys_in_list()
+        // query_sys_in_list()
         setTimeout(function(){
         	console.log($("#in_stock").val()+'TTTT')
         },1200)
@@ -253,9 +256,12 @@
             stock_manage: [],
             is_check:false,
             select_item:[{'id':1,'name':'货源地'},{'id':2,'name':'产品'},{'id':3,'name':'入库类型'},{'id':4,'name':'入库员'},{'id':5,'name':'来源国家'},{'id':6,'name':'备注'}],
+            start_date:'',
+            stock_no:'',
             sel_val:'',
             connect_list:[],
-            connect_item:''
+            connect_item:'',
+            three: null
         },
         mounted: function(){
            
@@ -264,15 +270,15 @@
             open_add_stock(){ //打开入库窗口
                 add()
                	open_html("stockIn",'#stock_add','stock_add',function(){
-                Refresh()
-               })
+                    Refresh()
+                })
             },
             query_in(){
 //          	query_sys_in_list();
             	if(this.connect_item == ''){
             		alert('请输入筛选条件')
             	}else{
-            		console.log(this.connect_item);	
+                    console.log($('#start_from').val(),this.stock_no,this.sel_val,this.connect_item);
             	}
             	
             },
@@ -295,9 +301,21 @@
                 }
                 else if(item == '入库员'){
                     this.connect_list = [];
-                    // for (var i = 0; i < add_stock.stock_type.length; i++) {
-            		// 	this.connect_list.push({'FromPlace':add_stock.stock_type[i].TypeName})
-            		// }
+                    for (var i = 0; i < this.three['入库员'].length; i++) {
+            			this.connect_list.push({'FromPlace':this.three['入库员'][i].insertperson})
+            		}
+                }
+                else if(item == '来源国家'){
+                    this.connect_list = [];
+                    for (var i = 0; i < this.three['来源国家'].length; i++) {
+            			this.connect_list.push({'FromPlace':this.three['来源国家'][i].fromcountry})
+            		}
+                }
+                else if(item == '备注'){
+                    this.connect_list = [];
+                    for (var i = 0; i < this.three['备注'].length; i++) {
+            			this.connect_list.push({'FromPlace':this.three['备注'][i].memo})
+            		}
                 }
 //				else{
 //          		this.connect_list = [{'FromPlace':''}];
@@ -527,9 +545,9 @@
         var url="/index.php?s=desktop/In_Stock_Search/SearchOutStockReport";
         var data={};
         data['usertoken']=user_token;
-        data['From']="20180501";
-        data['To']="20181010";
-        data['InStock']="878";
+        data['From']="";
+        data['To']="";
+        data['InStock']="";
         data['selected']="";
         data['P']="";
         data['M']="";
@@ -537,7 +555,7 @@
         data['M_Box']="";
         ajax(url,data,function(retjson){
             if(retjson.stat == 1){
-
+                
             }else{
 
             }
@@ -546,12 +564,13 @@
    	
    	function get_result()
    	{
-   		var url = "/index.php?s=desktop/In_Stock_Search/GetResult";
+   		var url = "/index.php?s=desktop/In_Stock_Search/SearchOutStockReport";
    		var data={};
         data['usertoken']=user_token;
 		ajax(url,data,function(retjson){
             if(retjson.stat == 1){
-
+                Vdata_list.three = retjson.data.res;
+                console.log(Vdata_list.three['入库员']);
             }else{
 
             }
