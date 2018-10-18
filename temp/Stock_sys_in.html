@@ -79,10 +79,10 @@
                             <tr>
                                 <th style="width: 100px;">GroupID</th>
                                 <th style="width: 60px;">国家</th>
-                                <th style="width: 100px;">来源地</th>
+                                <th style="width: 80px;">来源地</th>
                                 <th style="width: 60px;">类型</th>
-                                <th style="width: 100px;">报溢所属</th>
-                                <th style="width: 100px;">入库日期</th>
+                                <th style="width: 80px;">报溢所属</th>
+                                <th style="width: 120px;">入库日期</th>
                                 <th style="width: 100px;">入库员</th>
                                 <th>备注MeMo</th>
                             </tr>
@@ -107,7 +107,7 @@
                                     </td>
                                 </tr>
                                 <tr v-if="!list.length">
-                                    <td colspan="5">{{no_data}}</td>
+                                    <td colspan="8">{{no_data}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -632,6 +632,7 @@
         data['M']="";
         data['OK']=is_sel;
         data['M_Box']=sel_connect_item;
+        console.log(data);
         ajax(url,data,function(retjson){
             if(retjson.stat == 1){
                 Vdata_list.list = retjson.data.dataGridView2
