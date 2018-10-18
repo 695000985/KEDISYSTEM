@@ -199,13 +199,14 @@ function open_frame(title, url) {
     });
 }
 
-function open_html(title, ht_id, id,fn) {
+function open_html(title, ht_id, id,fn,w) {
+    var h_w = (w+'px')||'800px';
     layer.open({
         type: 1,
         title: title,
         maxmin: true,
         content: $(ht_id), //这里content
-        area: ['800px', '500px'],
+        area: [h_w, '500px'],
         end: function () { // 销毁弹出时 执行
             if(!!fn){
                 fn()
