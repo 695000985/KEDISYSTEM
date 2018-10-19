@@ -25,7 +25,9 @@
         [v-cloak] {
             display: none;
         }
-        
+        .tr_bg{
+            background: #eee;
+        }
         .marginbtm_15{margin-bottom: 15px;}
     </style>
 </head>
@@ -71,25 +73,25 @@
 							<tr>
 								<th style="width: 100px;">GroupID</th>
 								<th style="width: 100px;">出库日期</th>
-								<th style="width: 100px;">发货人</th>
-								<th style="width: 100px;">收货人</th>
+								<th style="width: 70px;">发货人</th>
+								<th style="width: 70px;">收货人</th>
 								<th style="width: 80px;">所出库</th>
 								<th style="width: 80px;">出库类型</th>
 							</tr>
 							</thead>
 							<tbody>
-								<tr v-for="(s,index) in list" v-if='list.length'>
-									<td>
+								<tr v-for="(s,index) in list" @click="get_groupId(s,index)" v-if='list.length' :class="{ tr_bg:index == index_list}">
+									<td>{{s.GroupID}}
 									</td>
-									<td>
+									<td>{{s['出库日期']}}
 									</td>
-									<td>
+									<td>{{s['发货人']}}
 									</td>
-									<td>
+									<td>{{s['收货人']}}
 									</td>
-									<td>
+									<td>{{s['所出库']}}
 									</td>
-									<td>
+									<td>{{s['出库类型']}}
 									</td>
 								</tr>
 								<tr v-if="!list.length">
@@ -113,7 +115,7 @@
 						</tr>
 						</thead>
 						<tbody>
-							<tr v-for="(s,index) in list" v-if='list.length'>
+							<tr v-for="(s,index) in list_r" v-if='list_r.length'>
 								<td>
 								</td>
 								<td>
@@ -132,7 +134,7 @@
 								</td>
 		
 							</tr>
-							<tr v-if="!list.length">
+							<tr v-if="!list_r.length">
 								<td colspan="5">{{no_data}}</td>
 							</tr>
 						</tbody>
@@ -151,13 +153,15 @@
 			$(function(){
 				get_stock_manage();
 				
-				aaaa();
+				// aaaa();
 			})
 
 			var out_main = new Vue({
 				el:"#out_main",
 				data:{
 					list:[],
+					list_r:[],
+					index_list:-1,
 					select_item:[{'id':1,'name':'货源地'},{'id':2,'name':'产品'},{'id':3,'name':'入库类型'},{'id':4,'name':'入库员'},{'id':5,'name':'来源国家'},{'id':6,'name':'备注'}],
 					stock_manage:[],
 					out_stock_no:'',
@@ -166,13 +170,17 @@
 				methods:{
 					query_out(){
 						console.log($("#out_query_start").val(),$("#out_query_end").val(),this.out_stock_no);
+						query_out_list($("#out_query_start").val(),$("#out_query_end").val(),this.out_stock_no);
 					},
 					open_stockout_manage(){
 						open_html("stockout_manage",'#main','main',function(){
 							Refresh()
 						},1100)
 					},
-
+					get_groupId(group_id,index){
+						console.log(group_id.GroupID);
+						this.index_list = index;
+					}
 				}
 			})
 			function get_stock_manage(opt){
@@ -193,6 +201,22 @@
 						}
 					})
 			}
+			function query_out_list(start,end,stock_num){
+				var url="/index.php?s=desktop/Out_Stock_Search/Out";
+				var data={};
+				data["usertoken"]=user_token;
+				data["From"] = start;
+				data["To"] = end;
+				data["OutStocke"] = stock_num;
+				ajax(url,data,function(retjson){
+					if (retjson.stat == 1) {
+						out_main.list = retjson.data.SearchOutStockReport.data;
+					} else {
+						showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+					}
+				})
+			}
+
 			function aaaa(opt){
 				opt = opt || {};
 				opt["usertoken"] = user_token;
