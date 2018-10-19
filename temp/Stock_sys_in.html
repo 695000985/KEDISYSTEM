@@ -630,9 +630,9 @@
         data['selected']=sel_item;
         data['P']="";
         data['M']="";
-        data['OK']=is_sel;
+        data['Ok']=is_sel;
         data['M_Box']=sel_connect_item;
-        console.log(data);
+        console.log(typeof(data['OK']),data['OK'],data['M_Box']);
         ajax(url,data,function(retjson){
             if(retjson.stat == 1){
                 Vdata_list.list = retjson.data.dataGridView2
@@ -644,13 +644,13 @@
    	
    	function get_result()
    	{
-   		var url = "/index.php?s=desktop/In_Stock_Search/SearchOutStockReport";
+   		var url = "/index.php?s=desktop/In_Stock_Search/GetResult";
    		var data={};
         data['usertoken']=user_token;
 		ajax(url,data,function(retjson){
             if(retjson.stat == 1){
-                Vdata_list.three = retjson.data.res;
-                console.log(Vdata_list.three['入库员']);
+                Vdata_list.three = retjson.data;
+                // console.log(Vdata_list.three['入库员']);
             }else{
 
             }
