@@ -54,7 +54,7 @@ nav div { font-size: 16px; color: #fff; }
 /*会员录入*/
 .reg_content { width: 1100px; margin: 20px auto; display: -webkit-box; display: -ms-flexbox; display: flex; display: -webkit-flex; -webkit-box-pack: center; -ms-flex-pack: center; justify-content: center; }
 
-.reg_content .fill_in_information { width: 575px; }
+.reg_content .fill_in_information { width: 525px; }
 
 .reg_content .fill_in_information .list_information { display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between; padding: 0 10px; margin: 5px 0; }
 
@@ -72,7 +72,7 @@ nav div { font-size: 16px; color: #fff; }
 
 .reg_content .fill_in_information .btn_con button { color: #000; width: 100px; font-size: 25px; }
 
-.reg_content .infomation_show { background: #ccc; border: 1px solid #000; width: 580px; }
+.reg_content .infomation_show { background: #ccc; border: 1px solid #000; width: 670px; }
 
 .text-c input { vertical-align: top; height: 27px; }
 

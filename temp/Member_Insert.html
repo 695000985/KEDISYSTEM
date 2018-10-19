@@ -22,6 +22,14 @@
     [v-cloak] {
         display: none;
     }
+    .reg_content .fill_in_information .list_information div:nth-child(1) input[type='text']{width: 80px;}
+    .reg_content .fill_in_information{}
+    input[name="index_7"]:focus{animation: aaa 1s infinite;background: #fff;}
+    @keyframes aa{
+        25% {background: #eeeeee;}
+
+        85%{background: #cccccc;}
+    }
 </style>
 
 <body>
@@ -85,7 +93,7 @@
             <div class="list_information">
                 <div>
                     <span id="BankName">{{obj_txt.BankName}} </span>
-                    <select name="" id="" style="width: 187px;" class="bank-name">
+                    <select name="" id="" style="width: 140px;" class="bank-name">
                         <option value="0">{{obj_txt.Union_Bank}}</option>
                         <option value="1">{{obj_txt.Interconinental_Bank}}</option>
                         <option value="2">{{obj_txt.Zenith_Bank}}</option>
@@ -101,7 +109,7 @@
             <div class="list_information">
                 <div>
                     <span id="Handset">{{obj_txt.Handset}}</span>
-                    <input type="text" style="width: 180px" class="mobile" name="index_6">
+                    <input type="text" style="width: 140px" class="mobile" name="index_6">
                 </div>
                 <div style="width: 190px;">
                     <span id="Gender">{{obj_txt.Gender}}</span>
@@ -112,11 +120,11 @@
             <div class="list_information">
                 <div>
                     <span id="ReporterName">{{obj_txt.ReporterName}}</span>
-                    <input type="" style="width: 180px;" value="" class="adress_admin" disabled>
+                    <input type="" style="width: 140px;" value="" class="adress_admin" disabled>
                 </div>
                 <div>
                     <span id="State">{{obj_txt.State}}</span>
-                    <select style="width: 160px;" class="state">
+                    <select style="width: 140px;" class="state">
                         <!-- <option value="Lagos">{{obj_txt.Lagos}}</option>
                         <option value="Abuja">{{obj_txt.Abuja}}</option>
                         <option value="Ogun">{{obj_txt.Ogun}}</option>
@@ -142,7 +150,7 @@
 
             <div class="btn_con">
                 <input type="button" :value="obj_txt.BtnClean" class="ty_btn clear" id="BtnClean" onclick="clear()">
-                <input type="button" :value="obj_txt.BtnAdd" class="ty_btn" onclick="member_add()" id="BtnAdd">
+                <input type="button" :value="obj_txt.BtnAdd" class="ty_btn" onclick="member_add()"  name="index_7" id="BtnAdd">
             </div>
         </div>
         <div class="infomation_show" id="entry_list"  style="overflow-x: auto; height: 320px;">
@@ -247,6 +255,7 @@
                     input_index= $(this).attr('name').split('_')[1]*1;
                 }
                 var nextindex=input_index+1;
+                console.log(nextindex);
                 $(`input[name="index_${nextindex}"]`).focus()
             }
         })
