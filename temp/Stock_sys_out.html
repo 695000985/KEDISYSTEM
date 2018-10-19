@@ -29,6 +29,7 @@
             background: #eee;
         }
         .marginbtm_15{margin-bottom: 15px;}
+		.m-style{width: auto;}
     </style>
 </head>
 
@@ -116,21 +117,21 @@
 						</thead>
 						<tbody>
 							<tr v-for="(s,index) in list_r" v-if='list_r.length'>
-								<td>
+								<td>{{s.ProductNO}}
 								</td>
-								<td>
+								<td>{{s.Name}}
 								</td>
-								<td>
+								<td>{{s.Amount}}
 								</td>
-								<td>
+								<td>{{s.StockOut}}
 								</td>
-								<td>
-									<a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
+								<td>{{s.BackOrder}}
+									<!-- <a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
 									check
 									<i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
 									<a title="删除" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
 									delete
-									<i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+									<i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a> -->
 								</td>
 		
 							</tr>
@@ -149,8 +150,9 @@
 
 		<script>
 			var stock_out_num = '';
-			
+			var pagecounts,page=1,pagesize=30,pagestat=0,obj; // 分页相关的参数
 			$(function(){
+				$('.Wdate').val(get_local_time());
 				get_stock_manage();
 				
 				// aaaa();
@@ -179,6 +181,7 @@
 					},
 					get_groupId(group_id,index){
 						console.log(group_id.GroupID);
+						query_out_match_product(group_id.GroupID);
 						this.index_list = index;
 					}
 				}
@@ -211,6 +214,48 @@
 				ajax(url,data,function(retjson){
 					if (retjson.stat == 1) {
 						out_main.list = retjson.data.SearchOutStockReport.data;
+					} else {
+						showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+					}
+				})
+			}
+			function query_out_match_product(pro){
+				var url="/index.php?s=desktop/Out_Stock_Search/GetProductInfo";
+				var data={};
+				data["usertoken"]=user_token;
+				data["Groupid"] = pro;
+				ajax(url,data,function(retjson){
+					if (retjson.stat == 1) {
+						out_main.list_r = retjson.data;
+						pagecounts = retjson.data.length;
+						// $('.m-style').pagination({
+						// 	totalData: parseInt(pagecounts),
+						// 	pageCount: Math.ceil(pagecounts / pagesize),
+						// 	jump: true,
+						// 	coping: true,
+						// 	// homePage: '首页',
+						// 	// endPage: '末页',
+						// 	prevContent: '上页',
+						// 	current: page,
+						// 	nextContent: '下页',
+						// 	callback: function (api) {
+						// 		console.log(api.getCurrent())
+						// 		page = api.getCurrent();
+						// 		pagestat = pagesize * (api.getCurrent() - 1)
+						// 		var x = {
+						// 			'limit': [pagestat, 30].join(',')
+						// 		};
+						// 		var d = $.extend({}, obj, x);
+						// 		// getDatalist(d)
+						// 	}
+						// });
+						// // 数据的总条数
+						// setTimeout(function () {
+						// 	$('.m-style').append(
+						// 		`<div href="javascript:;" class="cunt" style='padding: 0 4px;' >总记录数： ${retjson.data.length}</div>`
+						// 	)
+						// }, 1000)
+						// window.location.href="#";
 					} else {
 						showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
 					}
