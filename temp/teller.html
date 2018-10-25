@@ -145,7 +145,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(s,index) in teller_query" v-if='teller_query.length'>
+                                <tr @click="get_teller_query_item(s.TellerID, s.Deposit, s['专卖店'] ,s.BANK_NAME,index)" v-for="(s,index) in teller_query" v-if='teller_query.length'>
                                     <td>{{s.TellerID}}
                                     </td>
                                     <td> <input type="checkbox" :value="s['确认']" v-model="s['确认']">
@@ -206,30 +206,51 @@
                     <div class="clear"></div>
                 </div>
 
+                <div>
+                    <div class="left">
+                        <div>
+                            <div class="left"><span style="display: inline-block;text-align: right;width:100px;">期初余额</span><input type="text" disabled v-model="charge.ex_yue" ></div>
+                            <div class="left"><span style="display: inline-block;text-align: right;width:100px;">本期支出</span><input type="text" disabled v-model="charge.cur_expenditure" name="" id=""></div>    
+                            <div class="clear"></div>    
+                        </div>
+                        <div>
+                            <div class="left"><span style="display: inline-block;text-align: right;width:100px;">本期收入</span><input type="text" disabled v-model="charge.income" ></div>
+                            <div class="left"><span style="display: inline-block;text-align: right;width:100px;">期末余额</span><input type="text" disabled v-model="charge.ex_end_yue" name="" id=""></div>    
+                            <div class="clear"></div>    
+                        </div>
+                    </div>
+                    <div class="left">
+                        <input @click="cal_ex_end()" class="btn btn-primary" type="button" value="计算期末" >
+                    </div>
+                    <div class="clear"></div>
+                </div>
+
+
                 <fieldset>
                     <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">信息</legend>
                     <div>
-                        <div class="left"><span style="display: inline-block;width:80px;text-align: right;">TellerID</span><input type="text" disabled name="" id=""></div>
-                        <div class="left">确认日期<input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from"></div>
+                        <div class="left"><span style="display: inline-block;width:80px;text-align: right;">TellerID</span><input type="text" v-model="info.id" disabled name="" id=""></div>
+                        <div class="left">确认日期<input id="confirm_date" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from"></div>
                         <div class="clear"></div>
                     </div>
                     <div>
-                        <div class="left"><span style="display: inline-block;width:80px;text-align: right;">银行</span> <input type="text" disabled name="" id=""></div>
+                        <div class="left"><span style="display: inline-block;width:80px;text-align: right;">银行</span> <input type="text" v-model='info.bank_name' disabled name="" id=""></div>
                         <div class="left">
-                            <select name="" id="">
-                                <option value="">专卖店</option>
+                            <select name="" v-model="shop_type" id="">
+                                <option value="0">专卖店</option>
+                                <option value="1">经销商</option>
                             </select>
-                            <input type="text">XXX
+                            <input type="text"  v-model="info.shop_no">XXX
                         </div>
                         <div class="clear"></div>
                     </div>
                     <div>
                         <div class="left"><span style="display: inline-block;width:80px;text-align: right;">REGION</span>
-                            <select name="" id="">
-                                <option value=""></option>
+                            <select name="" v-model="region_item" id="ac_region">
+                                <option :value="s.result" v-for="(s,index) in teller_region_list">{{s.result}}</option>
                             </select>
                         </div>
-                        <div class="left" style="margin: 0 20px;"><input type="checkbox">冻结</div>
+                        <div class="left" style="margin: 0 20px;"><input v-model="freeze" @click="is_freeze(freeze, $event)" type="checkbox">冻结</div>
                         <div class="left">数额<input type="text" value="123" disabled></div>
                         <div class="clear"></div>
                     </div>
@@ -240,7 +261,7 @@
                 <fieldset>
                     <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">操作</legend>
                     <div>
-                        <div class="left"><input class="btn btn-success" type="button" value="确认" ></div>
+                        <div class="left"><input @click="confirm_btn()" class="btn btn-success" type="button" value="确认" ></div>
                         <div class="left"><input class="btn btn-error" type="button" value="反确认" ></div>
                         <div class="left"><input class="btn btn-disabled" type="button" value="锁定未确认" ></div>
                     </div>
@@ -305,6 +326,8 @@
     			// get_region();//获取区域
     			// stock_out_search();//根据汇总编号查询
     			// search_region_g();
+
+                get_teller_region();
     	    });
             
             Vdata_list = new Vue({
@@ -322,7 +345,14 @@
                     sel_val:'',
                     sel_condition:'',
                     confirm:false,
-                    un_confirm:true
+                    un_confirm:false,
+                    deposit:'',
+                    region_item: '',
+                    shop_type:0,
+                    freeze:false,
+                    teller_region_list:[],
+                    charge:{ex_yue:0, cur_expenditure:'', income:'', ex_end_yue:''},
+                    info:{id:'',shop_no:'',bank_name:''}
                 },
                 mounted: function(){
                    
@@ -361,15 +391,70 @@
 
                     all_sel(a){
                         console.log(this.teller_query);
-                        if(!a){
+                        if(!a){ 
                             for(var i = 0; i< this.teller_query.length;i++){
                                 this.teller_query[i]["确认"] = true;
                             }
                         }
+                    },
+
+                    get_teller_query_item(TellerID,amount,shop_no,bank_name,index){
+                        console.log(TellerID,index);
+                        this.info.id         = TellerID;
+                        this.deposit         = amount;
+                        this.info.shop_no    = shop_no;
+                        this.info.bank_name  = bank_name;
+                    },
+
+                    cal_ex_end(){
+                        this.charge.ex_end_yue = this.charge.ex_yue + this.charge.income - this.charge.cur_expenditure;
+                    },
+
+                    confirm_btn(){
+                        fn_confirm_btn(
+                            this.info.id ,
+                            $('#confirm_date').val(),
+                            this.info.bank_name, 
+                            this.region_item, 
+                            this.shop_type,
+                            this.info.shop_no,
+                            this.deposit,
+                            this.freeze
+                            )
+                    },
+
+                    is_freeze(a){
+                        if(!a){
+                            this.freeze = true
+                        }else{
+                            this.freeze = false
+                        }
+                        console.log(this.freeze);
+
                     }
                 }
             });
             
+            function fn_confirm_btn (a,b,c,d,e,f,g,h) {
+                var url = '/index.php?s=desktop/Teller_Recharge/Sconfirm_button9_Click';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"]         = user_token;
+                data["TellerID"]          = a;
+                data["confirmation_date"] = b;
+                data["bank"]              = c;
+                data["Region"]            = d;
+                data["shop_type"]         = e;
+                data["shopno"]            = f;
+                data["amount"]            = g;
+                data["freeze"]            = h;
+                console.log(data)
+                ajax(url,data,function (ret) {
+                    console.log(ret);
+                })
+            }
+
+
             function ac_query_be(start,end,c,d){
                 var url = '/index.php?s=desktop/Teller_Recharge/button2_Click';
                 var user_token = get_cache('usertoken');
@@ -382,8 +467,24 @@
                 ajax(url,data,function (ret) {
                     console.log(ret);
                     Vdata_list.teller_query = ret.data.Get_Teller_Info;
+                    Vdata_list.charge.income = ret.data.input.current_income;
+                    Vdata_list.charge.cur_expenditure = ret.data.input.current_expenditures;
                 })
             }
+
+            function get_teller_region() {
+                var url = '/index.php?s=desktop/Teller_Recharge/getRegion';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"]=user_token;
+                ajax(url,data,function (ret) {
+                    console.log(ret)
+                    Vdata_list.teller_region_list = ret;
+                    Vdata_list.region_item = 'NONE';
+                    // Vdata_list.region_list = ret;
+                })
+            }
+
 
             function get_region(){
                 var url = '/index.php?s=desktop/common/GetRegion';
