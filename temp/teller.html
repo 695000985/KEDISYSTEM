@@ -26,6 +26,7 @@
         }
 
         .teller_top>div div{margin-right: 15px;}
+        .mar_btm10{margin-bottom: 10px;}
     </style>
 </head>
 
@@ -119,82 +120,68 @@
                         </div>
                         <div class="clear"></div>
                     </div>
-                <fieldset id="" style="width: 100%;">
+                <fieldset id="" style="">
                     <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">银行上传Teller数据</legend>
                 
-                    <div style="width: 100%;overflow-x: auto;">
-                        <table class="table table-border table-bordered table-bg" style="width: 150%; margin:auto;background-color: rgba(200,200,200,.15);">
-                            <thead>
-                                <tr>
-                                    <th style="width: 100px;">TellerID</th>
-                                    <th style="width: 50px;">确认</th>
-                                    <th style="width: 90px;">BANK_NAME</th>
-                                    <th style="width: 120px;">EFFECTIVE_DATE</th>
-                                    <th style="width: 200px;">MEMO</th>
-                                    <th style="width: 70px;">Deposit</th>
-                                    <th style="width: 100px;">确认日期</th>
+                    <div style="overflow-x: scroll;">
+                        <div class="left">
+                            <table class="table table-border table-bordered table-bg" style="width: 160%;margin:auto;background-color: rgba(200,200,200,.15);">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 100px;">TellerID</th>
+                                        <th style="width: 50px;">确认</th>
+                                        <th style="width: 90px;">BANK_NAME</th>
+                                        <th style="width: 120px;">EFFECTIVE_DATE</th>
+                                        <th style="width: 150px;">MEMO</th>
+                                        <th style="width: 70px;">Deposit</th>
+                                        <th style="width: 100px;">确认日期</th>
 
-                                    <th style="width: 70px;">专卖店</th>
-                                    <th style="width: 80px;">Region</th>
-                                    <th style="width: 100px;">用途</th>
-                                    <th style="width: 150px;">唯一</th>
-                                    <th style="width: 80px;">使用</th>
-                                    <th style="width: 100px;">UploadDate</th>
-                                    <th style="width: 100px;">LockBeforeConfirm</th>
-                                    <th style="width: 80px;">LockReason</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr @click="get_teller_query_item(s.TellerID, s.Deposit, s['专卖店'] ,s.BANK_NAME,index)" v-for="(s,index) in teller_query" v-if='teller_query.length'>
-                                    <td>{{s.TellerID}}
-                                    </td>
-                                    <td> <input type="checkbox" :value="s['确认']" v-model="s['确认']">
-                                    </td>
-                                    <td>{{s.BANK_NAME}}
-                                    </td>
-                                    <td>{{s.EFFECTIVE_DATE}}
-                                    </td>
-                                    <td>{{s.MEMO}}</td>
-                                    <td>{{s.Deposit}}</td>
-                                    <td>{{s["确认日期"]}}</td>
-                                    <td>{{s["专卖店"]}}</td>
-                                    <td>{{s.Region}}</td>
-                                    <td>{{s["用途"]}}</td>
-                                    <td>{{s["唯一"]}}</td>
-                                    <td>{{s["使用"]}}</td>
-                                    <td>{{s.UploadDate}}</td>
-                                    <td>{{s.LockBeforeConfirm}}</td>
-                                    <td>{{s.LockReason}}</td>
-                                    <td>
-                                        <a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
-                                        check
-                                            <!--<i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i>-->
-                                        </a>
-                                        <a title="删除" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
-                                        delete
-                                            <!--<i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i>-->
-                                        </a>
-                                    </td>
-            
-                                </tr>
-                                <!-- <tr @click="a()">
-                                    <td>2018464656562</td>
-                                    <td>123</td>
-                                    <td>出库</td>
-                                    <td>09-25</td>
-                                    <td></td>
-                                    <td>地区</td>
-                                    <td></td>
-                                </tr> -->
-                                <!--<tr v-if="!list.length">
-                                    <td colspan="5">{{no_data}}</td>
-                                </tr>-->
-                            </tbody>
-                        </table>
-                        <div class="my_page m-style">
-            
+                                        <th style="width: 70px;">专卖店</th>
+                                        <th style="width: 80px;">Region</th>
+                                        <th style="width: 100px;">用途</th>
+                                        <th style="width: 150px;">唯一</th>
+                                        <th style="width: 80px;">使用</th>
+                                        <th style="width: 100px;">UploadDate</th>
+                                        <th style="width: 100px;">LockBeforeConfirm</th>
+                                        <th style="width: 80px;">LockReason</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr @click="get_teller_query_item(s.TellerID, s.Deposit, s['专卖店'] ,s.BANK_NAME,index)" v-for="(s,index) in teller_query" v-if='teller_query.length'>
+                                        <td>{{s.TellerID}}
+                                        </td>
+                                        <td> <input type="checkbox" :value="s['确认']" v-model="s['确认']">
+                                        </td>
+                                        <td>{{s.BANK_NAME}}
+                                        </td>
+                                        <td>{{s.EFFECTIVE_DATE}}
+                                        </td>
+                                        <td>{{s.MEMO}}</td>
+                                        <td>{{s.Deposit}}</td>
+                                        <td>{{s["确认日期"]}}</td>
+                                        <td>{{s["专卖店"]}}</td>
+                                        <td>{{s.Region}}</td>
+                                        <td>{{s["用途"]}}</td>
+                                        <td>{{s["唯一"]}}</td>
+                                        <td>{{s["使用"]}}</td>
+                                        <td>{{s.UploadDate}}</td>
+                                        <td>{{s.LockBeforeConfirm}}</td>
+                                        <td>{{s.LockReason}}</td>
+                                        <td>
+                                        </td>
+                
+                                    </tr>
+                                    <tr v-if="!list.length">
+                                        <td colspan="15">{{no_data}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="my_page m-style" style="width: auto;">
+        
+                            </div>
                         </div>
-                    
+                        <div class="clear"></div>
+                        
                     </div>
                 </fieldset>	
 
@@ -208,7 +195,7 @@
 
                 <div>
                     <div class="left">
-                        <div>
+                        <div class="mar_btm10">
                             <div class="left"><span style="display: inline-block;text-align: right;width:100px;">期初余额</span><input type="text" disabled v-model="charge.ex_yue" ></div>
                             <div class="left"><span style="display: inline-block;text-align: right;width:100px;">本期支出</span><input type="text" disabled v-model="charge.cur_expenditure" name="" id=""></div>    
                             <div class="clear"></div>    
@@ -240,18 +227,18 @@
                                 <option value="0">专卖店</option>
                                 <option value="1">经销商</option>
                             </select>
-                            <input type="text"  v-model="info.shop_no">XXX
+                            <input type="text"  v-model="info.shop_no">{{shop_type == 0?'XXX':(shop_type == 1?'KNXXX':'') }}
                         </div>
                         <div class="clear"></div>
                     </div>
                     <div>
                         <div class="left"><span style="display: inline-block;width:80px;text-align: right;">REGION</span>
                             <select name="" v-model="region_item" id="ac_region">
-                                <option :value="s.result" v-for="(s,index) in teller_region_list">{{s.result}}</option>
+                                <option :value="s.result" v-for="(s,index) in teller_region_list">{{s.Region}}</option>
                             </select>
                         </div>
                         <div class="left" style="margin: 0 20px;"><input v-model="freeze" @click="is_freeze(freeze, $event)" type="checkbox">冻结</div>
-                        <div class="left">数额<input type="text" value="123" disabled></div>
+                        <div class="left">数额<input type="text" v-model="deposit" disabled></div>
                         <div class="clear"></div>
                     </div>
                     <div>
@@ -262,7 +249,7 @@
                     <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">操作</legend>
                     <div>
                         <div class="left"><input @click="confirm_btn()" class="btn btn-success" type="button" value="确认" ></div>
-                        <div class="left"><input class="btn btn-error" type="button" value="反确认" ></div>
+                        <div class="left"><input @click="reverse_confirm_btn()" class="btn btn-error" type="button" value="反确认" ></div>
                         <div class="left"><input class="btn btn-disabled" type="button" value="锁定未确认" ></div>
                     </div>
                 </fieldset>
@@ -310,6 +297,158 @@
                 </div>
                 
             </div> -->
+
+
+            <div class="left" style="width: 5%;">
+                <div style="margin-top: 20px;padding: 10px 20px;">
+                    <!-- <button class="btn" style="width: 20px;height: 100px;word-wrap: break-word;">关联</button> -->
+                    <div>关<br/>联</div>
+                </div>
+                <div class="" style="margin-top: 20px;padding: 10px 20px;">
+                    <div>P<br/>O<br/>S</div>
+                    <!-- <input class="btn" value="POS" type="button" > -->
+                </div>
+                <div class="" style="margin-top: 20px;padding: 10px 20px;">
+                    <div>核<br/>销<br/>及<br/>调<br/>整</div>
+                    <!-- <input class="btn" value="核销及调整" type="button" > -->
+                </div>
+                <div class="clear"></div>
+            </div>
+
+            <!------ RIGHT ------->
+            <div class="left" style="width:45%;">
+                    <div class="marginbtm_15">
+                        
+                        <div class="left">
+                            <div>
+                                <div class="left">
+                                    <span>从</span>
+                                    <input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
+                                </div>
+                                <div class="left" style="margin-right: 5px;">
+                                    <select name="" id="" v-model="r_top_sel" style="width: 140px;">
+                                        <option  :value="index" v-for="(item,index) in r_ac_query_list">{{item.sel}}</option>
+                                    </select>
+                                </div>
+                                <div class="left">
+                                    <input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div>
+                                <div class="left">
+                                    <span>到</span>
+                                    <input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                                </div>
+                                <div class="left" style="margin-right: 5px;">
+                                    <input type="text" style="width: 140px;padding-left: 0;">
+                                </div>
+                                <div class="left">
+                                    <input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                        </div>
+                        <div class="left">
+                            <input type="checkbox">POS <input @click="r_top_query()" type="button" value="查询">
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    
+                    <fieldset id="" style="">
+                        <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">手工确认的Teller数据</legend>
+
+
+                        <div>
+                            <table>
+
+                            </table>
+                        </div>
+                    </fieldset>
+
+                    <div>
+                        <div class="left" style="margin-right: 20px;"><span style="display:inline-block;vertical-align: sub;width: 15px;height: 15px;background: #cccccc;"></span>->确认</div>
+                        <div class="left" style="margin-right: 20px;"><span style="display:inline-block;vertical-align: sub;width: 15px;height: 15px;background: #B0E0E6;"></span>->使用</div>
+                        <div class="left"><input type="checkbox">冻结</div>
+                        <div class="left"><input type="checkbox">POS</div>
+                        <div class="left"><input type="text"></div>
+                        <div class="left"><input @click="all_sel(is_all, $event)" v-model="is_all" type="checkbox"> 全选</div>
+                        <div class="clear"></div>
+                    </div>
+
+
+                    <div>
+                        <div class="left">
+                            <div class="mar_btm10">
+                                <div class="left"><span style="display: inline-block;text-align: right;width:100px;">期初余额</span><input type="text" disabled ></div>
+                                <div class="left"><span style="display: inline-block;text-align: right;width:100px;">本期支出</span><input type="text" disabled name="" id=""></div>    
+                                <div class="clear"></div>    
+                            </div>
+                            <div>
+                                <div class="left"><span style="display: inline-block;text-align: right;width:100px;">本期收入</span><input type="text" disabled  ></div>
+                                <div class="left"><span style="display: inline-block;text-align: right;width:100px;">期末余额</span><input type="text" disabled name="" id=""></div>    
+                                <div class="clear"></div>    
+                            </div>
+                        </div>
+                        <div class="left">
+                            <input class="btn btn-primary" type="button" value="计算期末" >
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    
+                    <fieldset>
+                        <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">操作</legend>
+                        <div>
+                            <div class="left" style="margin: 0 15px;">
+                                <div class="mar_btm10">
+                                    <span style="display: inline-block;text-align: right;width:100px;">TellerID</span> <input type="text">
+                                </div>
+                                <div class="mar_btm10">
+                                    <span style="display: inline-block;text-align: right;width:100px;">关联数额：</span><input type="text">
+                                </div>
+                                <div class="mar_btm10">
+                                    <span style="display: inline-block;text-align: right;width:100px;">银行</span> <select name="" id="">
+                                            <option value="" v-for="item in r_top_items" :key="item.id" >{{item.BANK_NAME}}</option>    
+                                        </select>
+                                </div>
+                                <div class="mar_btm10">
+                                    <span style="display: inline-block;text-align: right;width:100px;">Deposit数额：</span><input type="text">
+                                </div>
+                                <div>
+                                    <span style="display: inline-block;text-align: right;width:100px;"> REGION</span> 
+                                    <select name="" id="">
+                                        <option value="" v-for="item in r_teller_region_list">{{item.Region}}</option>        
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="left">
+                                <div class="mar_btm10">备注: <input style="height:35px;" type="text"></div>
+                                <div class="mar_btm10">确认日期:<input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from"></div>
+                                <div class="mar_btm10">
+                                    <select name="" v-model="r_shop_type" id="">
+                                        <option value="0">专卖店</option>
+                                        <option value="1">经销商</option>
+                                    </select>
+                                    <input type="text">{{r_shop_type == 0? 'XXX' :r_shop_type == 1?'KNXXX':''}}
+                                </div>
+                                <div>用途：<input type="text" disabled value="临时"></div>
+                            </div>
+                        </div>        
+                    </fieldset>
+                    <fieldset>
+                        <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">操作</legend>
+                        <div>
+                            <div class="left"><input class="btn btn-success" type="button" value="删除" ></div>
+                            <div class="left"><input class="btn btn-error" style="background: #ff0000;" type="button" value="批量删除" ></div>
+                            <div class="left"><input class="btn btn-disabled" type="button" value="确认" ></div>
+                            <div class="left"><input type="checkbox">扣除现金手续</div>
+                            <div class="clear"></div>
+                        </div>
+                    </fieldset>
+            </div>
+
+
+
             <div class="clear"></div>
         </div>
         <div class="shop_list">
@@ -328,6 +467,9 @@
     			// search_region_g();
 
                 get_teller_region();
+
+
+                get_r_top_items();
     	    });
             
             Vdata_list = new Vue({
@@ -349,10 +491,16 @@
                     deposit:'',
                     region_item: '',
                     shop_type:0,
+                    r_shop_type:0,
                     freeze:false,
                     teller_region_list:[],
                     charge:{ex_yue:0, cur_expenditure:'', income:'', ex_end_yue:''},
-                    info:{id:'',shop_no:'',bank_name:''}
+                    info:{id:'',shop_no:'',bank_name:''},
+
+                    r_top_items:[],
+                    r_top_sel:0,
+                    r_ac_query_list:[{'sel':'Deposit'},{'sel':'银行'},{'sel':'专卖店'},{'sel':'备注'},{'sel':'POS'},{'sel':'非POS'}],
+                    r_teller_region_list:[]
                 },
                 mounted: function(){
                    
@@ -422,6 +570,9 @@
                             this.freeze
                             )
                     },
+                    reverse_confirm_btn(){
+                        
+                    },
 
                     is_freeze(a){
                         if(!a){
@@ -431,6 +582,11 @@
                         }
                         console.log(this.freeze);
 
+                    },
+
+
+                    r_top_query(){
+                        console.log(this.r_top_sel)
                     }
                 }
             });
@@ -479,7 +635,8 @@
                 data["usertoken"]=user_token;
                 ajax(url,data,function (ret) {
                     console.log(ret)
-                    Vdata_list.teller_region_list = ret;
+                    Vdata_list.teller_region_list   = ret.data;
+                    Vdata_list.r_teller_region_list = ret.data;
                     Vdata_list.region_item = 'NONE';
                     // Vdata_list.region_list = ret;
                 })
@@ -527,6 +684,22 @@
                 ajax(url,data,function (e) {
                     if(e.stat == 1){
                         Vdata_list.list = e.data.LoadRegionStockOutInfo;
+                    }else{
+                        showErr(e.errmsg, e.errmsg_en, e.errcode)
+                    }
+                    
+                })
+            }
+
+            function get_r_top_items() {
+                var url = '/index.php?s=desktop/Teller_Recharge/getBank';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"] = user_token;
+                ajax(url,data,function (e) {
+
+                    if(e.stat == 1){
+                        Vdata_list.r_top_items = e.data;
                     }else{
                         showErr(e.errmsg, e.errmsg_en, e.errcode)
                     }
