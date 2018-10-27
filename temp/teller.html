@@ -123,8 +123,8 @@
                 <fieldset id="" style="">
                     <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">银行上传Teller数据</legend>
                 
-                    <div style="overflow-x: scroll;">
-                        <div class="left">
+                    <div style="overflow-x: ;">
+                        <div class="left" style="max-height: 500px;overflow-y: scroll;">
                             <table class="table table-border table-bordered table-bg" style="width: 160%;margin:auto;background-color: rgba(200,200,200,.15);">
                                 <thead>
                                     <tr>
@@ -147,10 +147,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr @click="get_teller_query_item(s.TellerID, s.Deposit, s['专卖店'] ,s.BANK_NAME,index)" v-for="(s,index) in teller_query" v-if='teller_query.length'>
+                                    <tr @click="get_teller_query_item(s.TellerID, s.Deposit, s['专卖店'] ,s.BANK_NAME,s.EFFECTIVE_DATE,s['用途'],s['确认'],index)" v-for="(s,index) in teller_query" v-if='teller_query.length'>
                                         <td>{{s.TellerID}}
                                         </td>
-                                        <td> <input type="checkbox" :value="s['确认']" v-model="s['确认']">
+                                        <td> <input type="checkbox" :checked="s['确认'] == 1" >
                                         </td>
                                         <td>{{s.BANK_NAME}}
                                         </td>
@@ -171,7 +171,7 @@
                                         </td>
                 
                                     </tr>
-                                    <tr v-if="!list.length">
+                                    <tr v-if="!teller_query.length">
                                         <td colspan="15">{{no_data}}</td>
                                     </tr>
                                 </tbody>
@@ -242,7 +242,7 @@
                         <div class="clear"></div>
                     </div>
                     <div>
-                            <span style="display: inline-block;width:80px;text-align: right;">备注：</span><input type="text">
+                            <span style="display: inline-block;width:80px;text-align: right;">备注：</span><input id="beizhu" type="text">
                     </div>
                 </fieldset>
                 <fieldset>
@@ -250,7 +250,7 @@
                     <div>
                         <div class="left"><input @click="confirm_btn()" class="btn btn-success" type="button" value="确认" ></div>
                         <div class="left"><input @click="reverse_confirm_btn()" class="btn btn-error" type="button" value="反确认" ></div>
-                        <div class="left"><input class="btn btn-disabled" type="button" value="锁定未确认" ></div>
+                        <div class="left"><input @click="lock_no_confirm_btn()" class="btn btn-disabled" type="button" value="锁定未确认" ></div>
                     </div>
                 </fieldset>
 
@@ -489,13 +489,13 @@
                     confirm:false,
                     un_confirm:false,
                     deposit:'',
-                    region_item: '',
+                    region_item: 'NONE',
                     shop_type:0,
                     r_shop_type:0,
                     freeze:false,
                     teller_region_list:[],
                     charge:{ex_yue:0, cur_expenditure:'', income:'', ex_end_yue:''},
-                    info:{id:'',shop_no:'',bank_name:''},
+                    info:{id:'',shop_no:'',bank_name:'',textBox4:'',textBox29_S:'',dt1:''},
 
                     r_top_items:[],
                     r_top_sel:0,
@@ -546,12 +546,16 @@
                         }
                     },
 
-                    get_teller_query_item(TellerID,amount,shop_no,bank_name,index){
+                    get_teller_query_item(TellerID,amount,shop_no,bank_name,EFFECTIVE_DATE,yongtu,queren,index){
                         console.log(TellerID,index);
                         this.info.id         = TellerID;
                         this.deposit         = amount;
                         this.info.shop_no    = shop_no;
                         this.info.bank_name  = bank_name;
+                        this.info.textBox4   = queren;
+                        this.info.textBox29_S= yongtu;
+                        this.info.dt1        = EFFECTIVE_DATE;
+                        
                     },
 
                     cal_ex_end(){
@@ -571,7 +575,25 @@
                             )
                     },
                     reverse_confirm_btn(){
-                        
+                        fn_reverse_confirm_btn(
+                            this.info.id ,              //a
+                            $('#confirm_date').val(),   //b
+                            this.info.bank_name,        //c
+                            this.region_item,           //d
+                            this.shop_type,             //e
+                            this.info.shop_no,          //f
+                            this.deposit,               //g
+                            this.info.textBox29_S,//h
+                            this.info.textBox4,//确认       //i
+                            this.info.dt1                   //j
+                        )
+
+                        console.log(this.region_item);
+                    },
+
+                    lock_no_confirm_btn(){
+                        fn_lock_no_confirm_btn(this.info.id)
+
                     },
 
                     is_freeze(a){
@@ -607,9 +629,50 @@
                 console.log(data)
                 ajax(url,data,function (ret) {
                     console.log(ret);
+                    showErr(ret.errmsg)
                 })
             }
 
+            function fn_reverse_confirm_btn(a,b,c,d,e,f,g,h,i,j) {
+                var url = '/index.php?s=desktop/Teller_Recharge/button13_Click';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"]         = user_token;
+                data["TellerID"]          = a;
+                data["confirmation_date"] = b;
+                data["bank"]              = c;
+                data["Region"]            = d;
+                data["shop_type"]         = e;
+                data["shopno"]            = f;
+                data["amount"]            = g;
+                data["textBox29_S"]       = h;
+                data["textBox4"]          = i;
+                data["dt1"]               = j;
+                console.log(data)
+                ajax(url,data,function (ret) {
+                    console.log(ret);
+                    showErr(ret.errmsg)
+                })
+            }
+
+            function fn_lock_no_confirm_btn(a) {
+                var url = '/index.php?s=desktop/Teller_Recharge/button26_Click';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"]= user_token;
+                data["TellerID"] = a;
+                data["Memo"]     = $("#beizhu").val();
+                ajax(url,data,function (ret) {
+                    console.log(ret);
+                    if(ret.stat == 1){
+                        showErr(ret.data)
+
+                    }else{
+                        showErr(ret.errmsg)
+                    }
+                    
+                })
+            }
 
             function ac_query_be(start,end,c,d){
                 var url = '/index.php?s=desktop/Teller_Recharge/button2_Click';
@@ -637,7 +700,6 @@
                     console.log(ret)
                     Vdata_list.teller_region_list   = ret.data;
                     Vdata_list.r_teller_region_list = ret.data;
-                    Vdata_list.region_item = 'NONE';
                     // Vdata_list.region_list = ret;
                 })
             }
