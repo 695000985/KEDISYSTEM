@@ -25,6 +25,9 @@
             display: none;
         }
 
+
+        .tr_bg{background-color: #cccccc;}
+        .tr_blue{background-color:	#B0E0E6;}
         .teller_top>div div{margin-right: 15px;}
         .mar_btm10{margin-bottom: 10px;}
     </style>
@@ -60,7 +63,7 @@
         <div class="teller_top">
             <div class="left">
                 <div class="left">
-                    <input type="button" class="btn" value="财务管理" >
+                    <input @click="open_acco_man()" type="button" class="btn" value="财务管理" >
                 </div>
                 <div class="left">
                     <input type="button" class="btn" value="导入Teller">
@@ -147,7 +150,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr @click="get_teller_query_item(s.TellerID, s.Deposit, s['专卖店'] ,s.BANK_NAME,s.EFFECTIVE_DATE,s['用途'],s['确认'],index)" v-for="(s,index) in teller_query" v-if='teller_query.length'>
+                                    <tr :class="[s['确认'] == 1?(s['使用']==1?'tr_blue':'tr_bg'):'','']" @click="get_teller_query_item(s.TellerID, s.Deposit, s['专卖店'] ,s.BANK_NAME,s.EFFECTIVE_DATE,s['用途'],s['确认'],s['使用'],index)" v-for="(s,index) in teller_query" v-if='teller_query.length'>
                                         <td>{{s.TellerID}}
                                         </td>
                                         <td> <input type="checkbox" :checked="s['确认'] == 1" >
@@ -185,6 +188,7 @@
                     </div>
                 </fieldset>	
 
+                
                 <div>
                     <div class="left" style="margin-right: 20px;"><span style="display:inline-block;vertical-align: sub;width: 15px;height: 15px;background: #ffff00;"></span>->关联</div>
                     <div class="left" style="margin-right: 20px;"><span style="display:inline-block;vertical-align: sub;width: 15px;height: 15px;background: #cccccc;"></span>->确认</div>
@@ -192,6 +196,7 @@
                     <div class="left"><input @click="all_sel(is_all, $event)" v-model="is_all" type="checkbox"> 全选</div>
                     <div class="clear"></div>
                 </div>
+
 
                 <div>
                     <div class="left">
@@ -376,26 +381,27 @@
                         <div class="clear"></div>
                     </div>
 
+                    <fieldset style="margin-top:15px;">
+                        <div>
+                            <div class="left">
+                                <div class="mar_btm10">
+                                    <div class="left"><span style="display: inline-block;text-align: right;width:100px;">期初余额</span><input type="text" disabled ></div>
+                                    <div class="left"><span style="display: inline-block;text-align: right;width:100px;">本期支出</span><input type="text" disabled name="" id=""></div>    
+                                    <div class="clear"></div>    
+                                </div>
+                                <div>
+                                    <div class="left"><span style="display: inline-block;text-align: right;width:100px;">本期收入</span><input type="text" disabled  ></div>
+                                    <div class="left"><span style="display: inline-block;text-align: right;width:100px;">期末余额</span><input type="text" disabled name="" id=""></div>    
+                                    <div class="clear"></div>    
+                                </div>
+                            </div>
+                            <div class="left">
+                                <input class="btn btn-primary" type="button" value="计算期末" >
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </fieldset>
 
-                    <div>
-                        <div class="left">
-                            <div class="mar_btm10">
-                                <div class="left"><span style="display: inline-block;text-align: right;width:100px;">期初余额</span><input type="text" disabled ></div>
-                                <div class="left"><span style="display: inline-block;text-align: right;width:100px;">本期支出</span><input type="text" disabled name="" id=""></div>    
-                                <div class="clear"></div>    
-                            </div>
-                            <div>
-                                <div class="left"><span style="display: inline-block;text-align: right;width:100px;">本期收入</span><input type="text" disabled  ></div>
-                                <div class="left"><span style="display: inline-block;text-align: right;width:100px;">期末余额</span><input type="text" disabled name="" id=""></div>    
-                                <div class="clear"></div>    
-                            </div>
-                        </div>
-                        <div class="left">
-                            <input class="btn btn-primary" type="button" value="计算期末" >
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-                    
                     <fieldset>
                         <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">操作</legend>
                         <div>
@@ -496,6 +502,9 @@
                     teller_region_list:[],
                     charge:{ex_yue:0, cur_expenditure:'', income:'', ex_end_yue:''},
                     info:{id:'',shop_no:'',bank_name:'',textBox4:'',textBox29_S:'',dt1:''},
+                    
+                    index_list:-1,
+                    index_bg_color:'',
 
                     r_top_items:[],
                     r_top_sel:0,
@@ -546,8 +555,9 @@
                         }
                     },
 
-                    get_teller_query_item(TellerID,amount,shop_no,bank_name,EFFECTIVE_DATE,yongtu,queren,index){
+                    get_teller_query_item(TellerID,amount,shop_no,bank_name,EFFECTIVE_DATE,yongtu,queren,is_use,index){
                         console.log(TellerID,index);
+                        this.index_list = index;
                         this.info.id         = TellerID;
                         this.deposit         = amount;
                         this.info.shop_no    = shop_no;
@@ -555,7 +565,13 @@
                         this.info.textBox4   = queren;
                         this.info.textBox29_S= yongtu;
                         this.info.dt1        = EFFECTIVE_DATE;
+                        if(is_use){
+                            this.index_bg_color  = 'LIGHTBLUE';
+                        }else if(!is_use&&queren){
+                            this.index_bg_color  = 'LIGHTGRAY';
+                        }
                         
+
                     },
 
                     cal_ex_end(){
@@ -609,6 +625,16 @@
 
                     r_top_query(){
                         console.log(this.r_top_sel)
+                    },
+
+
+
+                    open_acco_man(){
+                        open_html("AccountManage","#account_manage","account_manage",function(){
+                            
+                        },500)
+
+
                     }
                 }
             });
@@ -768,7 +794,30 @@
                     
                 })
             }
+
+            ['asdas']
+            //-------  top_nav  -------
         </script>
 
 </body>
+
+
+    <div id="account_manage" style="display: none; height: 100px!important;">
+        <div class="mar_btm10">
+            <div class="left" style="magin-right:10px;"><span style="display: inline-block;width:80px;">账户登录名：</span><input type="text" value="" name="" id=""></div>
+            <div class="left"><span style="display: inline-block;width:80px;">账户人姓名：</span><input type="text" name="" id=""></div>
+            <div class="clear"></div>
+        </div>
+        <div class="mar_btm10">
+            <div class="left" style="magin-right:10px;"><span style="display: inline-block;width:80px;">所属角色：</span><input type="text" value="" name="" id=""></div>
+            <div class="left"><span style="display: inline-block;width:80px;">原始密码：</span><input type="text" name="" id=""></div>
+            <div class="clear"></div>
+        </div>
+        <div class="" style="width: 300px;margin: 0 auto;">
+            <div><span style="display: inline-block;width:80px;text-align: right;">原密码：</span><input type="password"></div>
+            <div><span style="display: inline-block;width:80px;text-align: right;">新密码：</span><input type="password"></div>
+            <div><span style="display: inline-block;width:80px;text-align: right;">确认新密码：</span><input type="password"></div>
+        </div>
+        <div style="margin-top:10px;text-align: center;"><button class="btn btn-primary">修改密码</button><button class="btn">重写</button></div>
+    </div>
 </html>
