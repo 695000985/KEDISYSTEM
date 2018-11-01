@@ -720,12 +720,13 @@
                 }
             });
             function upload_excel(){
+                var ser = window.location.href;
                 var formData = new FormData();
                 var name = $("#upfile").val();
                 formData.append("file",$("#upfile")[0].files[0]);
                 formData.append("name",name);
                 $.ajax({
-                    url : '/index.php?s=desktop/Teller_Recharge/ButtonUploadPos_Click',
+                    url : ser + '/index.php?s=desktop/Teller_Recharge/ButtonUploadPos_Click',
                     type : 'POST',
                     async : false,
                     data : formData,
