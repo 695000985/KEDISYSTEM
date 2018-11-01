@@ -239,7 +239,7 @@
                     <div>
                         <div class="left"><span style="display: inline-block;width:80px;text-align: right;">REGION</span>
                             <select name="" v-model="region_item" id="ac_region">
-                                <option :value="s.result" v-for="(s,index) in teller_region_list">{{s.Region}}</option>
+                                <option :value="s.result" v-for="(s,index) in teller_region_list">{{s.region}}</option>
                             </select>
                         </div>
                         <div class="left" style="margin: 0 20px;"><input v-model="freeze" @click="is_freeze(freeze, $event)" type="checkbox">冻结</div>
@@ -478,7 +478,7 @@
                                 <div>
                                     <span style="display: inline-block;text-align: right;width:100px;"> REGION</span> 
                                     <select name="" id="">
-                                        <option value="" v-for="item in r_teller_region_list">{{item.Region}}</option>        
+                                        <option value="" v-for="item in r_teller_region_list">{{item.region}}</option>        
                                     </select>
                                 </div>
                             </div>
@@ -506,13 +506,14 @@
                             <div class="clear"></div>
                         </div>
                     </fieldset>
-
                     <div style="display:flex;justify-content:flex-end;">
                         <div>
-                            <form action="/index.php?s=desktop/Teller_Recharge/ButtonUploadPos_Click" method="POST" enctype="multipart/form-data" >
-                                <input type="file" name="file">
+                                <input id="upfile" type="file" name="file">
+                                <button @click=upload_file()>上传文件</button>
+                            <!-- <form action="/index.php?s=desktop/Teller_Recharge/ButtonUploadPos_Click" method="POST" enctype="multipart/form-data" >
+                                
                                 <input type="submit" value="提交">
-                            </form>
+                            </form> -->
                             
                         </div><div>批量确认</div><div></div>
                     </div>
@@ -710,10 +711,41 @@
                         },500)
 
 
+                    },
+
+                    upload_file(){
+                        upload_excel()
                     }
+                    
                 }
             });
-            
+            function upload_excel(){
+                var formData = new FormData();
+                var name = $("#upfile").val();
+                formData.append("file",$("#upfile")[0].files[0]);
+                formData.append("name",name);
+                $.ajax({
+                    url : '/index.php?s=desktop/Teller_Recharge/ButtonUploadPos_Click',
+                    type : 'POST',
+                    async : false,
+                    data : formData,
+                    // 告诉jQuery不要去处理发送的数据
+                    processData : false,
+                    // 告诉jQuery不要去设置Content-Type请求头
+                    contentType : false,
+                    beforeSend:function(){
+                        console.log("正在进行，请稍候");
+                    },
+                    success : function(responseStr) {
+                        if(responseStr=="01"){
+                            alert("导入成功");
+                        }else{
+                            alert("导入失败");
+                        }
+                    }
+                });
+            }
+
             function fn_confirm_btn (a,b,c,d,e,f,g,h) {
                 var url = '/index.php?s=desktop/Teller_Recharge/Sconfirm_button9_Click';
                 var user_token = get_cache('usertoken');
