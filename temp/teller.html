@@ -721,12 +721,15 @@
             });
             function upload_excel(){
                 var ser = window.location.href;
+                var user_token = get_cache('usertoken');
                 var formData = new FormData();
                 var name = $("#upfile").val();
                 formData.append("file",$("#upfile")[0].files[0]);
                 formData.append("name",name);
+                formData.append("usertoken",user_token);
+                console.log(formData)
                 $.ajax({
-                    url : ser + '/index.php?s=desktop/Teller_Recharge/ButtonUploadPos_Click',
+                    url : 'http://211.149.198.76/index.php?s=desktop/Teller_Recharge/ButtonUploadPos_Click',
                     type : 'POST',
                     async : false,
                     data : formData,
@@ -738,7 +741,7 @@
                         console.log("正在进行，请稍候");
                     },
                     success : function(responseStr) {
-                        if(responseStr=="01"){
+                        if(responseStr=="1"){
                             alert("导入成功");
                         }else{
                             alert("导入失败");
