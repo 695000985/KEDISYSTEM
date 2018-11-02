@@ -30,6 +30,8 @@
         .tr_blue{background-color:	#B0E0E6;}
         .teller_top>div div{margin-right: 15px;}
         .mar_btm10{margin-bottom: 10px;}
+
+        .input_dis{}
     </style>
 </head>
 
@@ -336,26 +338,26 @@
                                     </select>
                                 </div>
                                 <div class="left">
-                                    <input id="r_query_end" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
+                                    <input id="pos_true_query_start" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
                                 </div>
                                 <div class="clear"></div>
                             </div>
                             <div>
                                 <div class="left">
                                     <span>到</span>
-                                    <input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                                    <input id="r_query_end" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
                                 </div>
                                 <div class="left" style="margin-right: 5px;">
-                                    <input type="text" style="width: 140px;padding-left: 0;">
+                                    <input id="right_textBox5" type="text" style="width: 140px;padding-left: 0;">
                                 </div>
                                 <div class="left">
-                                    <input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
+                                    <input id="pos_true_query_end" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
                                 </div>
                                 <div class="clear"></div>
                             </div>
                         </div>
                         <div class="left">
-                            <input type="checkbox">POS <input @click="r_top_query()" type="button" value="查询">
+                            <input v-model="r_is_select_pos" @click="r_is_select_pos_top(r_is_select_pos, $event)" type="checkbox">POS <input @click="r_top_query()" type="button" value="查询">
                         </div>
                         <div class="clear"></div>
                     </div>
@@ -388,7 +390,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr :class="[s['确认'] == 1?(s['使用']==1?'tr_blue':'tr_bg'):'','']" v-for="(s,index) in r_manual_teller_query" v-if='r_manual_teller_query.length'>
+                                        <tr :class="[s['确认'] == 1?(s['使用']==1?'tr_blue':'tr_bg'):'','']" @click="bind_r_operation(s)"  v-for="(s,index) in r_manual_teller_query" v-if='r_manual_teller_query.length'>
                                             <td><input type="checkbox" :checked="s['关联'] == 1">
                                             </td>
                                             <td>{{s.ID}}
@@ -429,9 +431,9 @@
                     <div>
                         <div class="left" style="margin-right: 20px;"><span style="display:inline-block;vertical-align: sub;width: 15px;height: 15px;background: #cccccc;"></span>->确认</div>
                         <div class="left" style="margin-right: 20px;"><span style="display:inline-block;vertical-align: sub;width: 15px;height: 15px;background: #B0E0E6;"></span>->使用</div>
-                        <div class="left"><input type="checkbox">冻结</div>
-                        <div class="left"><input type="checkbox">POS</div>
-                        <div class="left"><input type="text"></div>
+                        <div class="left"><input v-model="r_freeze" @click="r_is_freeze(r_freeze, $event)" type="checkbox">冻结</div>
+                        <div class="left"><input v-model="r_pos" @click="r_is_pos(r_pos, $event)" type="checkbox">POS</div>
+                        <div class="left"><input :disabled="r_pos" id="pos" :value="r_pos==true?'POS':''" type="text"></div>
                         <div class="left"><input @click="r_all_sel(r_is_all, $event)" v-model="r_is_all" type="checkbox"> 全选</div>
                         <div class="clear"></div>
                     </div>
@@ -446,12 +448,12 @@
                                 </div>
                                 <div>
                                     <div class="left"><span style="display: inline-block;text-align: right;width:100px;">本期收入</span><input type="text" disabled v-model="r_charge.income"  ></div>
-                                    <div class="left"><span style="display: inline-block;text-align: right;width:100px;">期末余额</span><input type="text" disabled name="" id=""></div>    
+                                    <div class="left"><span style="display: inline-block;text-align: right;width:100px;">期末余额</span><input type="text" disabled v-model="r_charge.ex_end_yue" name="" id=""></div>    
                                     <div class="clear"></div>    
                                 </div>
                             </div>
                             <div class="left">
-                                <input class="btn btn-primary" type="button" value="计算期末" >
+                                <input class="btn btn-primary" @click="r_cal_ex_end()" type="button" value="计算期末" >
                             </div>
                             <div class="clear"></div>
                         </div>
@@ -468,8 +470,9 @@
                                     <span style="display: inline-block;text-align: right;width:100px;">关联数额：</span><input type="text">
                                 </div>
                                 <div class="mar_btm10">
-                                    <span style="display: inline-block;text-align: right;width:100px;">银行</span> <select name="" id="">
-                                            <option value="" v-for="item in r_top_items" :key="item.id" >{{item.BANK_NAME}}</option>    
+                                    <span style="display: inline-block;text-align: right;width:100px;">银行</span> 
+                                        <select name="" v-model="r_bank" id="">
+                                            <option :value="item.BANK_NAME" v-for="item in r_top_items" :key="item.id" >{{item.BANK_NAME}}</option>    
                                         </select>
                                 </div>
                                 <div class="mar_btm10">
@@ -477,22 +480,22 @@
                                 </div>
                                 <div>
                                     <span style="display: inline-block;text-align: right;width:100px;"> REGION</span> 
-                                    <select name="" id="">
-                                        <option value="" v-for="item in r_teller_region_list">{{item.region}}</option>        
+                                    <select name="" v-model="r_region" id="">
+                                        <option :value="item.region" v-for="item in r_teller_region_list">{{item.region}}</option>        
                                     </select>
                                 </div>
                             </div>
                             <div class="left">
-                                <div class="mar_btm10">备注: <input style="height:35px;" type="text"></div>
-                                <div class="mar_btm10">确认日期:<input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from"></div>
+                                <div class="mar_btm10">备注: <input id="r_hand_beizhu" style="height:35px;" type="text"></div>
+                                <div class="mar_btm10">确认日期:<input id="r_confirm_date" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from"></div>
                                 <div class="mar_btm10">
                                     <select name="" v-model="r_shop_type" id="">
                                         <option value="0">专卖店</option>
                                         <option value="1">经销商</option>
                                     </select>
-                                    <input type="text">{{r_shop_type == 0? 'XXX' :r_shop_type == 1?'KNXXX':''}}
+                                    <input type="text" v-model="r_confirm_data.right_shopno">{{r_shop_type == 0? 'XXX' :r_shop_type == 1?'KNXXX':''}}
                                 </div>
-                                <div>用途：<input type="text" disabled value="临时"></div>
+                                <div>用途：<input id="r_yongtu" type="text" disabled value="临时"></div>
                             </div>
                         </div>        
                     </fieldset>
@@ -501,19 +504,20 @@
                         <div>
                             <div class="left"><input class="btn btn-success" type="button" value="删除" ></div>
                             <div class="left"><input class="btn btn-error" style="background: #ff0000;" type="button" value="批量删除" ></div>
-                            <div class="left"><input class="btn btn-disabled" type="button" value="确认" ></div>
+                            <div class="left"><input @click="r_confirm()" class="btn btn-disabled" type="button" value="确认" ></div>
                             <div class="left"><input type="checkbox">扣除现金手续</div>
                             <div class="clear"></div>
                         </div>
                     </fieldset>
                     <div style="display:flex;justify-content:flex-end;">
                         <div>
-                                <input id="upfile" type="file" name="file">
-                                <button @click=upload_file()>上传文件</button>
-                            <!-- <form action="/index.php?s=desktop/Teller_Recharge/ButtonUploadPos_Click" method="POST" enctype="multipart/form-data" >
-                                
+                                <!-- <input id="upfile" type="file" name="upfile">
+                                <button @click=upload_file()>上传文件</button> -->
+                            <form action="/index.php?s=desktop/Teller_Recharge/ButtonUploadPos_Click" method="POST" enctype="multipart/form-data" >
+                                <input type="hidden" :value="t">
+                                <input id="upfile" type="file" name="upfile">
                                 <input type="submit" value="提交">
-                            </form> -->
+                            </form>
                             
                         </div><div>批量确认</div><div></div>
                     </div>
@@ -540,7 +544,7 @@
 
                 get_teller_region();
 
-
+                get_tok();
                 get_r_top_items();
     	    });
             
@@ -557,8 +561,10 @@
                     main_stock_out_num:'',
                     is_all:false,
                     r_is_all:false,
+                    r_is_select_pos :false,
 
-                    sel_val:'',
+
+                    sel_val:-1,
                     sel_condition:'',
                     confirm:false,
                     un_confirm:false,
@@ -574,13 +580,20 @@
                     
                     index_list:-1,
                     index_bg_color:'',
-
+                    
                     r_top_items:[],
-                    r_top_sel:0,
+                    r_top_sel:-1,
                     r_ac_query_list:[{'sel':'Deposit'},{'sel':'银行'},{'sel':'专卖店'},{'sel':'备注'},{'sel':'POS'},{'sel':'非POS'}],
                     r_teller_region_list:[],
+                    // 右侧中间两个勾选
+                    r_freeze:false,
+                    r_pos:false,
 
-                    r_manual_teller_query:''
+                    r_bank:'',
+                    r_region:'',
+                    r_manual_teller_query:'',
+                    r_confirm_data:{right_shopno:'',checkBox10:'',right_bank:'',right_Region:'',right_confirmation_date:'',right_amount:'',textBox3:'',right_remark:'',right_freeze:''},
+                    t:''
                 },
                 mounted: function(){
                    
@@ -607,7 +620,7 @@
                     },
                     ac_query(){
                         console.log($('#ac_start').val(),$('#ac_end').val(),this.sel_val);
-                        ac_query_be($('#ac_start').val(),$('#ac_end').val(),this.sel_val,this.sel_condition);
+                        ac_query_be($('#ac_start').val(),$('#ac_end').val(),this.sel_val,this.sel_condition,);
                     },
 
                     confirm_is(arg){
@@ -650,6 +663,63 @@
 
                     cal_ex_end(){
                         this.charge.ex_end_yue = this.charge.ex_yue + this.charge.income - this.charge.cur_expenditure;
+                    },
+                    r_cal_ex_end(){
+                        this.r_charge.ex_end_yue = this.r_charge.ex_yue + this.r_charge.income - this.r_charge.cur_expenditure;
+                    },
+                    
+                    bind_r_operation(s){
+                        console.log(s);        
+                        this.r_confirm_data.right_shopno = s["专卖店"];
+                        // this.r_confirm_data.right_amount = s[""]
+                        // this.r_confirm_data.
+                        // this.r_confirm_data.
+                        // this.r_confirm_data.
+                    },
+                    //右侧确认
+                    r_confirm(){
+                        fn_r_confirm(this.r_confirm_data.right_shopno,
+                                    this.r_shop_type,
+                                    this.r_bank,
+                                    this.r_region,
+                                    $("#r_confirm_date").val(),
+                                    123,
+                                    $("#r_yongtu").val(),
+                                    $("#r_hand_beizhu").val(),
+                                    this.r_freeze,
+                                    this.r_pos,
+                                    $("#pos_true_query_start").val(),
+                                    $("#pos").val()
+                                    )
+
+                    },
+
+                    r_is_select_pos_top(a){
+                        
+                        if(!a){
+                            this.r_is_select_pos = true;
+                        }else{
+                            this.r_is_select_pos = false;
+                        }
+                        console.log(this.r_is_select_pos);
+                    },
+                    //中间两个勾选判断
+                    r_is_freeze(a){
+                        
+                        if(!a){
+                            this.r_freeze = true;
+                        }else{
+                            this.r_freeze = false;
+                        }
+                        console.log(this.r_freeze)
+                    },
+                    r_is_pos(a){
+                        if(!a){
+                            this.r_pos = true;
+                        }else{
+                            this.r_pos = false;
+                        }
+                        console.log(this.r_pos)
                     },
 
                     confirm_btn(){
@@ -698,8 +768,8 @@
 
 
                     r_top_query(){
-                        console.log(this.r_top_sel,$("#r_query_start").val(),$("#r_query_end").val(),);
-                        fn_r_top_query($("#r_query_start").val(),$("#r_query_end").val());
+                        // console.log(this.r_top_sel,$("#r_query_start").val(),$("#r_query_end").val(),);
+                        fn_r_top_query($("#r_query_start").val(),$("#r_query_end").val(),this.r_top_sel,$("#right_textBox5").val(),this.r_is_select_pos,$('#pos_true_query_start').val(),$("#pos_true_query_end").val());
                         console.log(this.$refs.r_manual_list.getElementsByTagName('tr').length);
                     },
 
@@ -719,6 +789,11 @@
                     
                 }
             });
+
+            function get_tok(){
+                Vdata_list.t = get_cache('usertoken');
+
+            }
             function upload_excel(){
                 var ser = window.location.href;
                 var user_token = get_cache('usertoken');
@@ -829,13 +904,18 @@
                 })
             }
 
-            function fn_r_top_query(start,end){
+            function fn_r_top_query(start,end,c,d,e,f,g){
                 var url = '/index.php?s=desktop/Teller_Recharge/button3_Click';
                 var user_token = get_cache('usertoken');
                 var data = {};
                 data["usertoken"]=user_token;
                 data["From"] = start;
                 data["To"]   = end;
+                data["right_comboBox8"] = c;
+                data["right_textBox5"] = d;
+                data["right_pos"] = e;
+                data["right_from1"] = f;
+                data["right_to1"] = g;
                 ajax(url,data,function (ret) {
                     console.log(ret.data);
                     Vdata_list.r_manual_teller_query = ret.data.Get_Teller_Info;
@@ -844,6 +924,32 @@
                 })
 
             }
+            
+            //右侧确认
+            function fn_r_confirm(a,b,c,d,e,f,g,h,i,j,k,l){
+                var url = '/index.php?s=desktop/Teller_Recharge/button12_Click';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"]=user_token;
+                data["right_shopno"] = a;
+                data["checkBox10"] = b;
+                data["right_bank"] = c;
+                data["right_Region"] = d;
+                data["right_confirmation_date"] = e;
+                data["right_amount"] = f;
+                data["textBox3"] = g;
+                data["right_remark"] = h;
+                data["right_freeze"] = i;
+                data["right_pos"] = j;
+                data["right_from1"] = k;
+                data["textBox27"] = l;
+                console.log(data);
+                ajax(url,data,function (ret) {
+                    console.log(ret);
+                })
+
+            }
+
 
             function get_teller_region() {
                 var url = '/index.php?s=desktop/Teller_Recharge/getRegion';
