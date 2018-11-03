@@ -71,7 +71,7 @@
                     <input type="button" class="btn" value="导入Teller">
                 </div>
                 <div class="left">
-                    <input type="button" class="btn" value="Teller使用查询">
+                    <input @click="open_teller_use_query()" type="button" class="btn" value="Teller使用查询">
                 </div>
                 <div class="left">
                     <input type="button" class="btn" value="Teller提款">
@@ -79,6 +79,19 @@
                 <div class="left">
                     <input type="button" class="btn" value="导出未确认Teller">
                 </div>
+                <div class="left">
+                    <input @click="open_freeze_manage()" type="button" class="btn" value="冻结管理">
+                </div>
+                <div class="left">
+                    <input @click="open_relation_query()" type="button" class="btn" value="关联查询">
+                </div>
+                <div class="left">
+                    <input @click="open_pos_taizhang()" type="button" class="btn" value="POS台账">
+                </div>
+                <div class="left">
+                    <input type="button" class="btn" value="核销及调整台账">
+                </div>
+
                 <div class="clear"></div>
             </div>
             <div class="left">
@@ -391,7 +404,7 @@
                                     </thead>
                                     <tbody>
                                         <tr :class="[s['确认'] == 1?(s['使用']==1?'tr_blue':'tr_bg'):'','']" @click="bind_r_operation(s)"  v-for="(s,index) in r_manual_teller_query" v-if='r_manual_teller_query.length'>
-                                            <td><input type="checkbox" :checked="s['关联'] == 1">
+                                            <td><input class="user_check" type="checkbox">
                                             </td>
                                             <td>{{s.ID}}
                                             </td>
@@ -476,7 +489,7 @@
                                         </select>
                                 </div>
                                 <div class="mar_btm10">
-                                    <span style="display: inline-block;text-align: right;width:100px;">Deposit数额：</span><input type="text">
+                                    <span style="display: inline-block;text-align: right;width:100px;">Deposit数额：</span><input v-model="r_deposit" type="text">
                                 </div>
                                 <div>
                                     <span style="display: inline-block;text-align: right;width:100px;"> REGION</span> 
@@ -503,7 +516,7 @@
                         <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">操作</legend>
                         <div>
                             <div class="left"><input class="btn btn-success" type="button" value="删除" ></div>
-                            <div class="left"><input class="btn btn-error" style="background: #ff0000;" type="button" value="批量删除" ></div>
+                            <div class="left"><input @click="r_piliang_delete()" class="btn btn-error" style="background: #ff0000;" type="button" value="批量删除" ></div>
                             <div class="left"><input @click="r_confirm()" class="btn btn-disabled" type="button" value="确认" ></div>
                             <div class="left"><input type="checkbox">扣除现金手续</div>
                             <div class="clear"></div>
@@ -591,6 +604,7 @@
 
                     r_bank:'',
                     r_region:'',
+                    r_deposit:'',
                     r_manual_teller_query:'',
                     r_confirm_data:{right_shopno:'',checkBox10:'',right_bank:'',right_Region:'',right_confirmation_date:'',right_amount:'',textBox3:'',right_remark:'',right_freeze:''},
                     t:''
@@ -599,6 +613,9 @@
                    
                 },
                 methods:{
+                    check_onchange(){
+                        console.log(this)
+                    },
                     open_add_stock(){ //打开入库窗口
                         add()
                        open_html("stockIn",'#stock_add','stock_add',function(){
@@ -615,8 +632,6 @@
                         },500)
                     },
                     search_region(){
-                        search_region_g()
-                        
                     },
                     ac_query(){
                         console.log($('#ac_start').val(),$('#ac_end').val(),this.sel_val);
@@ -671,6 +686,9 @@
                     bind_r_operation(s){
                         console.log(s);        
                         this.r_confirm_data.right_shopno = s["专卖店"];
+                        this.r_bank = s["银行"];
+                        this.r_region = s["Region"];
+                        this.r_deposit = s["存款"];
                         // this.r_confirm_data.right_amount = s[""]
                         // this.r_confirm_data.
                         // this.r_confirm_data.
@@ -770,7 +788,20 @@
                     r_top_query(){
                         // console.log(this.r_top_sel,$("#r_query_start").val(),$("#r_query_end").val(),);
                         fn_r_top_query($("#r_query_start").val(),$("#r_query_end").val(),this.r_top_sel,$("#right_textBox5").val(),this.r_is_select_pos,$('#pos_true_query_start').val(),$("#pos_true_query_end").val());
-                        console.log(this.$refs.r_manual_list.getElementsByTagName('tr').length);
+                        // console.log(this.$refs.r_manual_list.getElementsByTagName('tr').length);
+
+                    },
+
+                    r_piliang_delete(){
+                        var a = this.$refs.r_manual_list.getElementsByTagName('tr');
+                        for(var i = 0; i<a.length; i++){
+                            // if(a[i].getElementsByTagName("input")[0].checked){
+                                console.log(a[i].getElementsByTagName("input")[0].checked)
+                            // }
+                            
+                        }
+                        //  console.log(this.$refs.r_manual_list.getElementsByTagName('tr').length);
+
                     },
 
 
@@ -782,7 +813,28 @@
 
 
                     },
+                    open_teller_use_query(){
+                        open_html("TellerSearch","#teller_use_query","teller_use_query",function(){
+                            
+                        },800)
+                    },
+                    open_freeze_manage(){
+                        open_html("FreezeManage","#freeze_manage","freeze_manage",function(){
+                            
+                        },600)
+                    },
 
+                    open_relation_query(){
+                        open_html("关联查询RelationSearch","#relation_query","relation_query",function(){
+                            
+                        },800)
+                    },
+                    open_pos_taizhang(){
+                        open_html("FDPOSInfo","#pos_taizhang","pos_taizhang",function(){
+                            
+                        },800)
+
+                    },
                     upload_file(){
                         upload_excel()
                     }
@@ -960,6 +1012,7 @@
                     console.log(ret)
                     Vdata_list.teller_region_list   = ret.data;
                     Vdata_list.r_teller_region_list = ret.data;
+                    freeze_manage.region_list = ret.data;
                     // Vdata_list.region_list = ret;
                 })
             }
@@ -994,24 +1047,6 @@
                 })
             }
             
-            function search_region_g(){
-                var url = '/index.php?s=desktop/Stock_Out_Management/SearchRegion';
-                var user_token = get_cache('usertoken');
-                var data = {};
-                data["usertoken"] = user_token;
-                data["NO"]        = '2018109';
-                data["Category"]  = 'MaterialSale';
-                data["Region"]    = 'ABA20170224024438';
-                data["Condition"] = '123';
-                ajax(url,data,function (e) {
-                    if(e.stat == 1){
-                        Vdata_list.list = e.data.LoadRegionStockOutInfo;
-                    }else{
-                        showErr(e.errmsg, e.errmsg_en, e.errcode)
-                    }
-                    
-                })
-            }
 
             function get_r_top_items() {
                 var url = '/index.php?s=desktop/Teller_Recharge/getBank';
@@ -1066,5 +1101,297 @@
             <div><span style="display: inline-block;width:80px;text-align: right;">确认新密码：</span><input type="password"></div>
         </div>
         <div style="margin-top:10px;text-align: center;"><button class="btn btn-primary">修改密码</button><button class="btn">重写</button></div>
+    </div>
+
+    <div id="teller_use_query" style="display:none;">
+        <div>
+            <span>从</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+            <span>至</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+            专卖店（个人账户）<input type="text" placeholder="kn000000" style="width:80px;" >
+            数额<input type="text" style="width:70px;">
+            <button class="">搜索已确认Teller</button>
+        </div>
+        <div>
+            <table class="table table-border table-bordered table-bg" style="max-height:400px;width: 160%;margin:auto;background-color: rgba(200,200,200,.15);">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">关联</th>
+                        <th style="width: 60px;">ID</th>
+                        <th style="width: 50px;">银行</th>
+                        <th style="width: 90px;">取款</th>
+                        <th style="width: 100px;">存款</th>
+                        <th style="width: 150px;">确认日期</th>
+                        <th style="width: 70px;">POS日期</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="checkbox">
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                       
+
+                    </tr>
+                    <!-- <tr v-if="">
+                        <td colspan="15">no data</td>
+                    </tr> -->
+                </tbody>
+            </table>
+        </div>
+        <div class="oH">
+            <div class="left"><span>专卖店（个人）</span><input type="text"></div>
+            <div class="left"><span>当前余额</span><input type="text"></div>
+            <div class="right"><button>导出Excel</button></div>
+        </div>
+    </div>
+
+    <div id="freeze_manage" style="display:none;">
+        <div>
+            <div  class="mar_btm10">
+                <div class="left">
+                    <span>从</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                </div>
+                <div class="left"><span>专卖店</span><input type="text" style="width:80px;"></div>
+                <div class="left"><span>Region</span>
+                    <select name="" id="">
+                        <option value="" v-for="item in region_list">{{item.region}}</option>
+                    </select>
+                </div>
+                <div class="left"><button class="btn">查询冻结资金</button></div>
+                <div class="clear"></div>
+            </div>
+            <div class="mar_btm10">
+                <div class="left">
+                    <span>到</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                </div>
+                <div class="left"><span>数额</span><input type="text" style="width:80px;"></div>
+                <div class="left"><span>备注</span><input type="text" style="width:80px;"></div>
+                <div class="left"><button class="btn btn-primary">查询未冻结资金</button></div>
+                <div class="clear"></div>
+            </div>
+            <div>
+                <table class="table table-border table-bordered table-bg" style="max-height:400px;width: 130%;margin:auto;background-color: rgba(200,200,200,.15);">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">关联</th>
+                            <th style="width: 60px;">ID</th>
+                            <th style="width: 50px;">银行</th>
+                            <th style="width: 90px;">取款</th>
+                            <th style="width: 100px;">存款</th>
+                            <th style="width: 150px;">确认日期</th>
+                            <th style="width: 70px;">POS日期</th>
+    
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox">
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            
+    
+                        </tr>
+                        <!-- <tr v-if="">
+                            <td colspan="15">no data</td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <div class="left"><input type="checkbox"> <span>全选</span></div>
+                <div class="left"><button class="btn">解冻被选资金</button></div>
+                <div class="left"><button class="btn">冻结被选资金</button></div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var freeze_manage = new Vue({
+            el:'#freeze_manage',
+            data:{
+                region_list:[],
+            },
+            methods:{
+
+            }
+        })
+    </script>
+    <!--   关联查询  -->
+    <div id="relation_query" style="display: none;">
+        <div>
+            <div class="left" style="width:85%;">
+                <fieldset>
+                    <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">条件</legend>
+                    <div>
+                        <div class="mar_btm10">
+                            <div class="left">
+                                <select name="" id="">
+                                    <option value="">条件</option>
+                                </select>
+                            </div>
+                            <div class="left">
+                                <span>从</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                                <span>到</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                                <span>专卖店<input type="text"></span>
+                                <input type="checkbox"><span>POS</span>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                        <div>
+                            <div class="left">
+                                <select name="" id="">
+                                    <option value="">系统TellerID</option>
+                                    <option value="">手动TellerID</option>
+                                </select>
+                            </div>
+                            <div class="left">
+                                <span> </span><input type="text">
+                                <span> </span><select name="" id="">
+                                    <option value="" v-for="item in x_list">{{item.name}}</option>
+                                </select>
+                                <select name="" id="">
+                                    <option value="">系统</option>
+                                    <option value="">手动</option>
+                                </select>
+                                <span>数额<input type="text"></span>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="left" style="width:15%;">
+                <fieldset>
+                    <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">查询</legend>
+                </fieldset>
+
+            </div>
+        </div>
+
+    </div>
+    <script>
+        var relation_query = new Vue({
+            el:'#relation_query',
+            data:{
+                x_list:[{'name':'ALL'},{'name':'ACCESS'},{'name':'UNION'},{'name':'ZENITH'},{'name':'SKY'},{'name':'KBANK'}]
+            }
+            
+        })
+    </script>
+
+    <!-- POS台账 -->
+
+    <div id="pos_taizhang" style="display:none;">
+        <div>
+            <div>
+                <div class="left">
+                    <select name="" id="">
+                        <option value="">无日期</option>
+                        <option value="">POS日期</option>
+                    </select>
+                </div>
+                <div class="left">
+                    <span>从</span>
+                    <input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                    <select name="" id="">
+                        <option value="">借方</option>
+                        <option value="">贷方</option>
+                    </select>
+                    <input type="text">
+                    <input type="checkbox" checked><span>系统</span>
+                    <input type="checkbox" checked><span>手动</span>
+                    <input type="checkbox" checked><span>标记</span>
+                    <button class="btn">搜索</button>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div>
+                <div class="left">
+                    <span>从</span>
+                    <input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                    <span>TellerID</span><input type="text">
+                    <button class="btn">上一日期</button>
+                    <button class="btn">下一日期</button>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div>
+                <table class="table table-border table-bordered table-bg" style="max-height:400px;width: 130%;margin:auto;background-color: rgba(200,200,200,.15);">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">关联</th>
+                            <th style="width: 60px;">ID</th>
+                            <th style="width: 50px;">银行</th>
+                            <th style="width: 90px;">取款</th>
+                            <th style="width: 100px;">存款</th>
+                            <th style="width: 150px;">确认日期</th>
+                            <th style="width: 70px;">POS日期</th>
+    
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox">
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            
+    
+                        </tr>
+                        <!-- <tr v-if="">
+                            <td colspan="15">no data</td>
+                        </tr> -->
+                    </tbody>
+                </table>
+
+            </div>
+            <div>
+                <div>
+                    <div class="">
+                        借方总额<input type="text">
+                        <span>ID</span><input type="text">
+                        <button class="btn">标记</button>
+                        <input type="checkbox"><span>全选POS</span>
+                        <button class="btn">贷方</button>=<span style="display: inline-block;transform:scale(1.5);">></span>未标记
+                        <button class="btn">POS</button>=<span style="display: inline-block;transform:scale(1.5);">></span>未匹配
+                    </div>
+                    <div class="">
+                        贷方总额<input type="text">
+                        <span>方向</span><input type="text">
+                        <button class="btn">去标记</button>
+                        <button>核对选中</button>
+                        <button class="btn btn-primary">双方</button>=<span style="display: inline-block;transform:scale(1.5);">></span>已核对
+                        <button class="btn btn-primary">POS</button>=<span style="display: inline-block;transform:scale(1.5);">></span>已标记
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
     </div>
 </html>
