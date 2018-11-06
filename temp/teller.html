@@ -32,6 +32,8 @@
         .mar_btm10{margin-bottom: 10px;}
 
         .input_dis{}
+
+        .middle_btn>div:hover{cursor: pointer;}
     </style>
 </head>
 
@@ -102,6 +104,7 @@
         </div>
 
         <div>
+            <!-- 左侧 -->
             <div class="left" style="min-height: 500px; width: 50%;padding: 1%;box-sizing: border-box;">
                 
                     
@@ -276,56 +279,15 @@
 
             </div>
             <!-- 订单详细列表  -->
-            <!-- <div class="left" style="margin-left: 1%; width: 44%;">
-                <table class="table table-border table-bordered table-bg" style="width: 95%; background-color: rgba(200,200,200,0); margin: 0 auto; margin-bottom: 10px;">
-                    <thead>
-                        <tr>
-                            <th style="width: 80px;">{{obj_txt.Product_no}}</th>
-                            <th style="width: 100px;">PName</th>
-                            <th style="width: 70px;">Sale</th>
-                            <th style="width: 70px;">StockOut</th>
-                            <th style="width: 180px;">BackOrder</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item,index) in list" v-if='list.length'>
-                            <td>{{item.ProductNO}}
-                            </td>
-                            <td>{{item.PName}}
-                            </td>
-                            <td>{{item.Sale}}
-                            </td>
-                            <td>{{item.StockOut}}
-                            </td>
-                            <td>
-                                <a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
-                                check
-                                <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
-                                <a title="删除" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
-                                delete
-                                <i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
-                            </td>
-    
-                        </tr>
-                        <tr v-if="!list.length">
-                            <td colspan="6">{{no_data}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="my_page m-style">
-    
-                </div>
-                
-            </div> -->
+            
 
-
-            <div class="left" style="width: 3%;padding-top: 7%;margin-right: 1%;">
+            <div class="middle_btn left" style="width: 3%;padding-top: 7%;margin-right: 1%;">
                 <div class="" style="margin-top: 20px;font-size: 18px;border: 1px solid #cccccc;padding: 20px 15px;">
                     <!-- <button class="btn" style="width: 20px;height: 100px;word-wrap: break-word;">关联</button> -->
-                    <div>关&nbsp;<br/>&nbsp;联</div>
+                    <div @click="guanlian($event)">关&nbsp;<br/>&nbsp;联</div>
                 </div>
                 <div class="" style="margin-top: 20px;font-size: 18px;border: 1px solid #cccccc;padding: 20px 15px;">
-                    <div>POS</div>
+                    <div @click="mid_pos($event)">POS</div>
                     <!-- <input class="btn" value="POS" type="button" > -->
                 </div>
                 <div class="" style="margin-top: 20px;font-size: 18px;border: 1px solid #cccccc;padding: 20px 15px;">
@@ -656,7 +618,18 @@
                             }
                         }
                     },
-                    
+                    // 中间关联
+                    guanlian(){
+                        connect()
+                        
+                    },
+                    //中间POS
+                    mid_pos(){
+                        pos_exe({'left':this.teller_query,'right':this.r_manual_teller_query})
+
+                    },
+
+
                     r_all_sel(c){
                         console.log(c);
                         var a = this.$refs.r_manual_list.getElementsByClassName('user_check');
@@ -879,6 +852,26 @@
                 }
             });
 
+
+            //关联
+            function connect(){
+                var url = '/index.php?s=desktop/Teller_Recharge/button2_Click';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"]=user_token;
+
+            }
+            //中间POS
+            function pos_exe(para){
+                var url = '/index.php?s=desktop/Teller_Recharge/button4_Click';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"]=user_token;
+                data["data"] = para;
+                ajax(url,data,function (ret) {
+                    console.log(ret);
+                })
+            }
             function get_tok(){
                 Vdata_list.t = get_cache('usertoken');
             }
@@ -1240,7 +1233,7 @@
             <div class="right"><button>导出Excel</button></div>
         </div>
     </div>
-
+    <!-- freeze_manage -->
     <div id="freeze_manage" style="display:none;">
         <div>
             <div  class="mar_btm10">
@@ -1261,12 +1254,12 @@
                     <span>到</span><input id="freeze_query_end" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
                 </div>
                 <div class="left"><span>数额</span><input id="freeze_amount" type="text" style="width:80px;"></div>
-                <div class="left"><span>备注</span><input type="text" style="width:80px;"></div>
+                <div class="left"><span>备注</span><input id="freeze_remark" type="text" style="width:80px;"></div>
                 <div class="left"><button @click="no_freeze_query()" class="btn btn-primary">查询未冻结资金</button></div>
                 <div class="clear"></div>
             </div>
             <div>
-                <table class="table table-border table-bordered table-bg" style="max-height:400px;width: 130%;margin:auto;background-color: rgba(200,200,200,.15);">
+                <table ref="reference_freeze" class="table table-border table-bordered table-bg" style="max-height:400px;width: 130%;margin:auto;background-color: rgba(200,200,200,.15);">
                     <thead>
                         <tr>
                             <th style="width: 60px;">筛选</th>
@@ -1284,7 +1277,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="item in table_list">
-                            <td><input type="checkbox">
+                            <td><input :teller="item['Teller编号']" :sc="item['账户']" :funds="item['使用']" @click="is_single_check($event)" class="freeze_check" type="checkbox">
                             </td>
                             <td>{{item["Teller编号"]}}
                             </td>
@@ -1314,22 +1307,48 @@
                 </table>
             </div>
             <div>
-                <div class="left"><input type="checkbox"> <span>全选</span></div>
-                <div class="left"><button class="btn">解冻被选资金</button></div>
-                <div class="left"><button class="btn">冻结被选资金</button></div>
+                <div class="left"><input v-model="all_select" @click="freeze_all_select(all_select)" type="checkbox"> <span>全选</span></div>
+                <div class="left"><button @click="no_freeze_funds()" class="btn btn-primary">解冻被选资金</button></div>
+                <div class="left"><button @click="freeze_funds()" class="btn">冻结被选资金</button></div>
                 <div class="clear"></div>
             </div>
         </div>
     </div>
+    <!-- freeze_manage -->
     <script>
         var freeze_manage = new Vue({
             el:'#freeze_manage',
             data:{
                 sel_region:'',
                 region_list:[],
-                table_list:[]
+                table_list:[],
+
+                all_select:false,
+                mul_select:[]
             },
             methods:{
+                //一个未选中  设置全选按钮
+                is_single_check(event){
+                    console.log(event.target.checked);
+                    if(!event.target.checked){
+                        this.all_select = false;
+                    }
+                },
+                //全选按钮
+                freeze_all_select(is){
+                    var a = this.$refs.reference_freeze.getElementsByClassName('freeze_check');
+                    if(!is){
+                        for(var i = 0; i<a.length; i++){
+                                a[i].checked = true;  
+                        }
+                    }else{
+                        for(var i = 0; i<a.length; i++){
+                                a[i].checked = false;
+                            
+                        }
+                    }
+                },
+
                 freeze_query(){
                     button1_Click(
                         $("#freeze_query_start").val(),
@@ -1349,6 +1368,39 @@
                         $("#zhuanmai_no").val(),
                         this.sel_region
                     )
+                },
+                //冻结被选资金
+                freeze_funds(){
+                    var a = this.$refs.reference_freeze.getElementsByClassName('freeze_check');
+                        this.mul_select = [];
+                        for(var i = 0; i<a.length; i++){
+                            if(a[i].checked){
+                                // console.log(a[i].getAttribute("check_id"));
+                                this.mul_select.push({'ID':a[i].getAttribute("teller"),'SC':a[i].getAttribute("sc"),'funds':a[i].getAttribute("funds")});                                    
+                            }
+                                
+                        }
+                        console.log(this.mul_select)
+                    button3_Click(
+                        this.mul_select
+                    )
+
+                },
+                //解冻被选
+                no_freeze_funds(){
+                    var a = this.$refs.reference_freeze.getElementsByClassName('freeze_check');
+                        this.mul_select = [];
+                        for(var i = 0; i<a.length; i++){
+                            if(a[i].checked){
+                                // console.log(a[i].getAttribute("check_id"));
+                                this.mul_select.push({'ID':a[i].getAttribute("teller"),'SC':a[i].getAttribute("sc")});                                    
+                            }
+                                
+                        }
+                        console.log(this.mul_select)
+                    button2_Click(
+                        this.mul_select
+                    )
                 }
                 
             }
@@ -1367,6 +1419,7 @@
 
             ajax(url,data,function (ret) {
                 if(ret.stat){
+                    freeze_manage.table_list = [];
                     freeze_manage.table_list = ret.data;
                 }
 
@@ -1374,6 +1427,34 @@
 
         }
 
+        function button2_Click(para){
+            var url = '/index.php?s=desktop/Freeze_Manage/button2_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["data"] = para;
+            data["remark"] = $("#freeze_remark").val();
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    showErr(ret.data);
+                }
+
+            })
+        }
+        function button3_Click(para) {
+            var url = '/index.php?s=desktop/Freeze_Manage/button3_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["data"] = para;
+            data["remark"] = $("#freeze_remark").val();
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    showErr(ret.data);
+                }
+
+            })
+        }
         function button4_Click(start,end,amount,no,region) {
             var url = '/index.php?s=desktop/Freeze_Manage/button4_Click';
             var user_token = get_cache('usertoken');
@@ -1385,8 +1466,14 @@
             data["shopno"] = no;
             data["region"] = region;
 
-            ajax(url,data,function (e) {
-                console.log(e)
+            ajax(url,data,function (ret) {
+                console.log()
+                if(ret.stat){
+                    freeze_manage.table_list = [];
+                    freeze_manage.table_list = ret.data;
+                }else if(ret.stat == 0){
+                    showErr(ret.data);
+                }
             })
         }
     </script>
@@ -1400,7 +1487,7 @@
                         <div class="mar_btm10">
                             <div class="left">
                                 <select name="" id="">
-                                    <option value="">条件</option>
+                                    <option :value="index" v-for="(item,index) in comboBox1" >{{item.name}}</option>
                                 </select>
                             </div>
                             <div class="left">
@@ -1437,6 +1524,9 @@
             <div class="left" style="width:15%;">
                 <fieldset>
                     <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">查询</legend>
+                    <div>
+                        <button class="btn btn-primary">关联项搜索</button>
+                    </div>
                 </fieldset>
 
             </div>
@@ -1447,7 +1537,11 @@
         var relation_query = new Vue({
             el:'#relation_query',
             data:{
+                comboBox1:[{'name':'有效日期'},{'name':'确认日期'}],
                 x_list:[{'name':'ALL'},{'name':'ACCESS'},{'name':'UNION'},{'name':'ZENITH'},{'name':'SKY'},{'name':'KBANK'}]
+            },
+            methods:{
+
             }
             
         })
@@ -1579,7 +1673,7 @@
 
 
     </div>
-
+  <!-- POS台账 -->
     <script>
         var pos_taizhang = new Vue({
             el:"#pos_taizhang",
