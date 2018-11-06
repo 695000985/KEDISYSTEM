@@ -380,7 +380,7 @@
 
                         <div style="">
                             <div class="left" style="min-height:350px;max-height: 500px;overflow-y: scroll;">
-                                <table ref="r_manual_list" class="table table-border table-bordered table-bg" style="width: 160%;margin:auto;background-color: rgba(200,200,200,.15);">
+                                <table id="r_table" ref="r_manual_list" class="table table-border table-bordered table-bg" style="width: 160%;margin:auto;background-color: rgba(200,200,200,.15);">
                                     <thead>
                                         <tr>
                                             <th style="width: 60px;">关联</th>
@@ -403,8 +403,8 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr :class="[s['确认'] == 1?(s['使用']==1?'tr_blue':'tr_bg'):'','']" @click="bind_r_operation(s)"  v-for="(s,index) in r_manual_teller_query" v-if='r_manual_teller_query.length'>
-                                            <td><input class="user_check" type="checkbox">
+                                        <tr :class="[s['确认'] == 1?(s['使用']==1?'tr_blue':'tr_bg'):'','']" @click="bind_r_operation(s)" data-indx=""  v-for="(s,index) in r_manual_teller_query" v-if='r_manual_teller_query.length'>
+                                            <td><input @click="is_single_check($event)" :check_index="index" :check_id="s.ID" :check_deposit="s['存款']" :check_zhuanmai="s['专卖店']"  class="user_check" type="checkbox">
                                             </td>
                                             <td>{{s.ID}}
                                             </td>
@@ -440,7 +440,6 @@
                             
                         </div>
                     </fieldset>
-
                     <div>
                         <div class="left" style="margin-right: 20px;"><span style="display:inline-block;vertical-align: sub;width: 15px;height: 15px;background: #cccccc;"></span>->确认</div>
                         <div class="left" style="margin-right: 20px;"><span style="display:inline-block;vertical-align: sub;width: 15px;height: 15px;background: #B0E0E6;"></span>->使用</div>
@@ -473,11 +472,11 @@
                     </fieldset>
 
                     <fieldset>
-                        <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">操作</legend>
+                        <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">信息Info</legend>
                         <div>
                             <div class="left" style="margin: 0 15px;">
                                 <div class="mar_btm10">
-                                    <span style="display: inline-block;text-align: right;width:100px;">TellerID</span> <input type="text">
+                                    <span style="display: inline-block;text-align: right;width:100px;">TellerID</span> <input v-model="r_TellerID" type="text">
                                 </div>
                                 <div class="mar_btm10">
                                     <span style="display: inline-block;text-align: right;width:100px;">关联数额：</span><input type="text">
@@ -513,12 +512,12 @@
                         </div>        
                     </fieldset>
                     <fieldset>
-                        <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">操作</legend>
+                        <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">操作Operate</legend>
                         <div>
-                            <div class="left"><input class="btn btn-success" type="button" value="删除" ></div>
+                            <div class="left"><input @click="r_del()" class="btn btn-success" type="button" value="删除" ></div>
                             <div class="left"><input @click="r_piliang_delete()" class="btn btn-error" style="background: #ff0000;" type="button" value="批量删除" ></div>
                             <div class="left"><input @click="r_confirm()" class="btn btn-disabled" type="button" value="确认" ></div>
-                            <div class="left"><input type="checkbox">扣除现金手续</div>
+                            <div class="left"><input v-model="r_Cash_Last" type="checkbox">扣除现金手续</div>
                             <div class="clear"></div>
                         </div>
                     </fieldset>
@@ -576,7 +575,6 @@
                     r_is_all:false,
                     r_is_select_pos :false,
 
-
                     sel_val:-1,
                     sel_condition:'',
                     confirm:false,
@@ -601,13 +599,18 @@
                     // 右侧中间两个勾选
                     r_freeze:false,
                     r_pos:false,
-
+                    
+                    r_TellerID:'',
+                    r_Cash_Last:false,
                     r_bank:'',
                     r_region:'',
                     r_deposit:'',
                     r_manual_teller_query:'',
                     r_confirm_data:{right_shopno:'',checkBox10:'',right_bank:'',right_Region:'',right_confirmation_date:'',right_amount:'',textBox3:'',right_remark:'',right_freeze:''},
-                    t:''
+                    t:'',
+
+                    mul_tr:[],
+                    mul_check:[]
                 },
                 mounted: function(){
                    
@@ -653,8 +656,28 @@
                             }
                         }
                     },
-                    r_all_sel(a){
-                        console.log(a);
+                    
+                    r_all_sel(c){
+                        console.log(c);
+                        var a = this.$refs.r_manual_list.getElementsByClassName('user_check');
+                            this.mul_check = [];
+                        if(!c){
+                            for(var i = 0; i<a.length; i++){
+                                    a[i].checked = true;  
+                            }
+                        }else{
+                            for(var i = 0; i<a.length; i++){
+                                    a[i].checked = false;
+                                
+                            }
+                        }
+                    },
+
+                    is_single_check(event){
+                        console.log(event.target.checked);
+                        if(!event.target.checked){
+                            this.r_is_all = false;
+                        }
                     },
 
                     get_teller_query_item(TellerID,amount,shop_no,bank_name,EFFECTIVE_DATE,yongtu,queren,is_use,index){
@@ -684,15 +707,12 @@
                     },
                     
                     bind_r_operation(s){
-                        console.log(s);        
+                        console.log(this);       
                         this.r_confirm_data.right_shopno = s["专卖店"];
                         this.r_bank = s["银行"];
                         this.r_region = s["Region"];
                         this.r_deposit = s["存款"];
-                        // this.r_confirm_data.right_amount = s[""]
-                        // this.r_confirm_data.
-                        // this.r_confirm_data.
-                        // this.r_confirm_data.
+                        this.r_TellerID = s["ID"]
                     },
                     //右侧确认
                     r_confirm(){
@@ -707,7 +727,9 @@
                                     this.r_freeze,
                                     this.r_pos,
                                     $("#pos_true_query_start").val(),
-                                    $("#pos").val()
+                                    $("#pos").val(),
+                                    this.r_TellerID,
+                                    this.r_Cash_Last
                                     )
 
                     },
@@ -792,16 +814,31 @@
 
                     },
 
+                    r_del(){
+                        r_delete(
+                            this.r_TellerID,
+                            $("#r_confirm_date").val(),
+                            this.r_bank,
+                            this.r_region,
+                            this.r_confirm_data.right_shopno,
+                            $("#r_yongtu").val(),
+                            this.r_deposit
+                        )
+                    },
+
                     r_piliang_delete(){
-                        var a = this.$refs.r_manual_list.getElementsByTagName('tr');
+                        var a = this.$refs.r_manual_list.getElementsByClassName('user_check');
+                        this.mul_check = [];
                         for(var i = 0; i<a.length; i++){
-                            // if(a[i].getElementsByTagName("input")[0].checked){
-                                console.log(a[i].getElementsByTagName("input")[0].checked)
+                                if(a[i].checked){
+                                    // console.log(a[i].getAttribute("check_id"));
+                                    this.mul_check.push({'ID':a[i].getAttribute("check_id"),'存款':a[i].getAttribute("check_deposit"),'专卖店':a[i].getAttribute("check_zhuanmai")});                                    
+                                }
+                                
                             // }
                             
                         }
-                        //  console.log(this.$refs.r_manual_list.getElementsByTagName('tr').length);
-
+                        piliang_delete(this.mul_check);
                     },
 
 
@@ -844,7 +881,6 @@
 
             function get_tok(){
                 Vdata_list.t = get_cache('usertoken');
-
             }
             function upload_excel(){
                 var ser = window.location.href;
@@ -978,7 +1014,7 @@
             }
             
             //右侧确认
-            function fn_r_confirm(a,b,c,d,e,f,g,h,i,j,k,l){
+            function fn_r_confirm(a,b,c,d,e,f,g,h,i,j,k,l,m,n){
                 var url = '/index.php?s=desktop/Teller_Recharge/button12_Click';
                 var user_token = get_cache('usertoken');
                 var data = {};
@@ -995,13 +1031,64 @@
                 data["right_pos"] = j;
                 data["right_from1"] = k;
                 data["textBox27"] = l;
+                data["right_TellerID"] = m;
+                data["right_Cash_Last"] = n;
                 console.log(data);
                 ajax(url,data,function (ret) {
                     console.log(ret);
+                    if(ret.stat){
+                        showErr(ret.data.msg);
+                    }
                 })
 
             }
+            //右侧删除
+            function r_delete(a,b,c,d,e,f,g) {
+                var url = '/index.php?s=desktop/Teller_Recharge/button11_Click';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"]=user_token;
+                data["TempTellID"] = a;
+                data["right_confirmation_date"] = b;
+                data["right_bank"] = c;
+                data["right_Region"] = d;
+                data["right_shopno"] = e;
+                data["right_remark"] = f;
+                data["right_amount"] = g;
+                ajax(url,data,function (ret) {
+                    if(ret.stat){
+                        showErr(ret.data.msg);
+                    }
+                })
+            }
 
+
+            //----- 右侧批量删除 ------
+            function piliang_delete(arr){
+                var url = '/index.php?s=desktop/Teller_Recharge/button30_Click';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"]=user_token;
+                data["data"] = arr;
+                console.log(data)
+                ajax(url,data,function (ret) {
+                    if(ret.stat){
+                        
+                        for(var a = 0; a < Vdata_list.r_manual_teller_query.length;a++){
+                            for(var b = 0;b< Vdata_list.mul_check.length;b++){
+                                // if(Vdata_list.r_manual_teller_query[a]['ID'] == Vdata_list.mul_check[b]['ID']){
+                                    // Vdata_list.r_manual_teller_query.slice(a,1);
+                                    console.log(Vdata_list.mul_check[b]['ID'])
+                                // }
+                                
+                            }
+                        }
+                        showErr(ret.data);
+                    }else if(ret.stat == 0){
+                        showErr(ret.errmsg);
+                    }
+                })
+            }
 
             function get_teller_region() {
                 var url = '/index.php?s=desktop/Teller_Recharge/getRegion';
@@ -1158,55 +1245,67 @@
         <div>
             <div  class="mar_btm10">
                 <div class="left">
-                    <span>从</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                    <span>从</span><input id="freeze_query_start" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
                 </div>
-                <div class="left"><span>专卖店</span><input type="text" style="width:80px;"></div>
+                <div class="left"><span>专卖店</span><input id="zhuanmai_no" type="text" style="width:80px;"></div>
                 <div class="left"><span>Region</span>
-                    <select name="" id="">
-                        <option value="" v-for="item in region_list">{{item.region}}</option>
+                    <select name="" v-model="sel_region" id="">
+                        <option :value="item.region" v-for="item in region_list">{{item.region}}</option>
                     </select>
                 </div>
-                <div class="left"><button class="btn">查询冻结资金</button></div>
+                <div class="left"><button @click="freeze_query()" class="btn">查询冻结资金</button></div>
                 <div class="clear"></div>
             </div>
             <div class="mar_btm10">
                 <div class="left">
-                    <span>到</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                    <span>到</span><input id="freeze_query_end" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
                 </div>
-                <div class="left"><span>数额</span><input type="text" style="width:80px;"></div>
+                <div class="left"><span>数额</span><input id="freeze_amount" type="text" style="width:80px;"></div>
                 <div class="left"><span>备注</span><input type="text" style="width:80px;"></div>
-                <div class="left"><button class="btn btn-primary">查询未冻结资金</button></div>
+                <div class="left"><button @click="no_freeze_query()" class="btn btn-primary">查询未冻结资金</button></div>
                 <div class="clear"></div>
             </div>
             <div>
                 <table class="table table-border table-bordered table-bg" style="max-height:400px;width: 130%;margin:auto;background-color: rgba(200,200,200,.15);">
                     <thead>
                         <tr>
-                            <th style="width: 60px;">关联</th>
-                            <th style="width: 60px;">ID</th>
-                            <th style="width: 50px;">银行</th>
-                            <th style="width: 90px;">取款</th>
-                            <th style="width: 100px;">存款</th>
-                            <th style="width: 150px;">确认日期</th>
-                            <th style="width: 70px;">POS日期</th>
-    
+                            <th style="width: 60px;">筛选</th>
+                            <th style="width: 60px;">Teller编号</th>
+                            <th style="width: 50px;">账户</th>
+                            <th style="width: 90px;">使用</th>
+                            <th style="width: 100px;">日期(Date)</th>
+                            <th style="width: 60px;">用途</th>
+                            <th style="width: 70px;">备注</th>
+                            <th style="width: 60px;">所属区域</th>
+                            <th style="width: 60px;">来源</th>
+                            <th style="width: 60px;">源ID</th>
+                            <th style="width: 60px;">操作人</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr v-for="item in table_list">
                             <td><input type="checkbox">
                             </td>
-                            <td>
+                            <td>{{item["Teller编号"]}}
                             </td>
-                            <td>
+                            <td>{{item["账户"]}}
                             </td>
-                            <td>
+                            <td>{{item["使用"]}}
                             </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            
-    
+                            <td>{{item["日期(Date)"]}}
+                            </td>
+                            <td>{{item["用途"]}}
+                            </td>
+                            <td>{{item["备注"]}}
+                            </td>
+                            <td>{{item["所属区域"]}}
+                            </td>
+                            <td>{{item["来源"]}}
+                            </td>
+                            <td>{{item["源ID"]}}
+                            </td>
+                            <td>{{item["操作人"]}}
+                            </td>
                         </tr>
                         <!-- <tr v-if="">
                             <td colspan="15">no data</td>
@@ -1226,12 +1325,70 @@
         var freeze_manage = new Vue({
             el:'#freeze_manage',
             data:{
+                sel_region:'',
                 region_list:[],
+                table_list:[]
             },
             methods:{
+                freeze_query(){
+                    button1_Click(
+                        $("#freeze_query_start").val(),
+                        $("#freeze_query_end").val(),
+                        $("#freeze_amount").val(),
+                        $("#zhuanmai_no").val(),
+                        this.sel_region
 
+                    );
+                    
+                },
+                no_freeze_query(){
+                    button4_Click(
+                        $("#freeze_query_start").val(),
+                        $("#freeze_query_end").val(),
+                        $("#freeze_amount").val(),
+                        $("#zhuanmai_no").val(),
+                        this.sel_region
+                    )
+                }
+                
             }
         })
+
+        function button1_Click(start,end,amount,no,region){
+            var url = '/index.php?s=desktop/Freeze_Manage/button1_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["from"] = start;
+            data["to"] = end;
+            data["amount"] = amount;
+            data["shopno"] = no;
+            data["region"] = region;
+
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    freeze_manage.table_list = ret.data;
+                }
+
+            })
+
+        }
+
+        function button4_Click(start,end,amount,no,region) {
+            var url = '/index.php?s=desktop/Freeze_Manage/button4_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["from"] = start;
+            data["to"] = end;
+            data["amount"] = amount;
+            data["shopno"] = no;
+            data["region"] = region;
+
+            ajax(url,data,function (e) {
+                console.log(e)
+            })
+        }
     </script>
     <!--   关联查询  -->
     <div id="relation_query" style="display: none;">
@@ -1302,30 +1459,28 @@
         <div>
             <div>
                 <div class="left">
-                    <select name="" id="">
-                        <option value="">无日期</option>
-                        <option value="">POS日期</option>
+                    <select v-model="comboBox2.default" name="" id="">
+                        <option v-for="item in comboBox2.list" :value="item.value">{{item.name}}</option>
                     </select>
                 </div>
                 <div class="left">
                     <span>从</span>
-                    <input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
-                    <select name="" id="">
-                        <option value="">借方</option>
-                        <option value="">贷方</option>
+                    <input id="taizhang_from" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                    <select v-model="comboBox1.default" name="" id="">
+                        <option v-for="item in comboBox1.list" :value="item.value" value="">{{item.name}}</option>
                     </select>
-                    <input type="text">
-                    <input type="checkbox" checked><span>系统</span>
-                    <input type="checkbox" checked><span>手动</span>
-                    <input type="checkbox" checked><span>标记</span>
-                    <button class="btn">搜索</button>
+                    <input id="textBox1" type="text">
+                    <input type="checkbox" :checked='check.system'><span>系统</span>
+                    <input type="checkbox" :checked='check.hand'><span>手动</span>
+                    <input type="checkbox" :checked='check.mark'><span>标记</span>
+                    <button @click="button1_Click_req()" class="btn">搜索</button>
                 </div>
                 <div class="clear"></div>
             </div>
             <div>
                 <div class="left">
-                    <span>从</span>
-                    <input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                    <span>到</span>
+                    <input id="taizhang_to" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
                     <span>TellerID</span><input type="text">
                     <button class="btn">上一日期</button>
                     <button class="btn">下一日期</button>
@@ -1333,33 +1488,63 @@
                 <div class="clear"></div>
             </div>
             <div>
-                <table class="table table-border table-bordered table-bg" style="max-height:400px;width: 130%;margin:auto;background-color: rgba(200,200,200,.15);">
+                <table class="table table-border table-bordered table-bg" style="max-height:400px;width: 170%;margin:auto;background-color: rgba(200,200,200,.15);">
                     <thead>
                         <tr>
-                            <th style="width: 60px;">关联</th>
-                            <th style="width: 60px;">ID</th>
-                            <th style="width: 50px;">银行</th>
-                            <th style="width: 90px;">取款</th>
-                            <th style="width: 100px;">存款</th>
+                            <th style="width: 60px;">选择</th>
+                            <th style="width: 60px;">TellerID</th>
+                            <th style="width: 50px;">Bank</th>
+                            <th style="width: 60px;">shopNo</th>
+                            <th style="width: 100px;">EffectDate</th>
                             <th style="width: 150px;">确认日期</th>
                             <th style="width: 70px;">POS日期</th>
-    
+                            <th style="width: 60px;">摘要</th>
+                            <th style="width: 60px;">借方</th>
+                            <th style="width: 60px;">贷方</th>
+                            <th style="width: 70px;">GrossAmount</th>
+                            <th style="width: 60px;">Surcharge</th>
+                            <th style="width: 60px;">NetAmount</th>
+                            <th style="width: 60px;">TerminalID</th>
+                            <th style="width: 60px;">确认人</th>
+                            <th style="width: 60px;">Oper</th>
+                            <th style="width: 60px;">CreateDate</th>
+                            <th style="width: 60px;">LastEditDate</th>
+                            <th style="width: 60px;">Mark</th>
+                            <th style="width: 60px;">From</th>
+                            <th style="width: 60px;">方向</th>
+                            <th style="width: 60px;">PosID</th>
+
+
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr v-for="item in button1_Click">
                             <td><input type="checkbox">
                             </td>
-                            <td>
+                            <td>{{item.TellerID}}
                             </td>
-                            <td>
+                            <td>{{item.Bank}}
                             </td>
-                            <td>
+                            <td>{{item.shopNo}}
                             </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            
+                            <td>{{item.EffectDate}}</td>
+                            <td>{{item.确认日期}}</td>
+                            <td>{{item.POS日期}}</td>
+                            <td>{{item.摘要}}</td>
+                            <td>{{item.借方}}</td>
+                            <td>{{item.贷方}}</td>
+                            <td>{{item.GrossAmount}}</td>
+                            <td>{{item.Surcharge}}</td>
+                            <td>{{item.NetAmount}}</td>
+                            <td>{{item.TerminalID}}</td>
+                            <td>{{item.确认人}}</td>
+                            <td>{{item.Oper}}</td>
+                            <td>{{item.CreateDate}}</td>
+                            <td>{{item.LastEditDate}}</td>
+                            <td>{{item.Mark}}</td>
+                            <td>{{item.From}}</td>
+                            <td>{{item.方向}}</td>
+                            <td>{{item.PosID}}</td>
     
                         </tr>
                         <!-- <tr v-if="">
@@ -1394,4 +1579,74 @@
 
 
     </div>
+
+    <script>
+        var pos_taizhang = new Vue({
+            el:"#pos_taizhang",
+            data:{
+                check:{
+                    mark:true,
+                    system:true,
+                    hand:true
+                },
+                comboBox1:{
+                    default:0,
+                    list:[{'value':0,'name':'借方'},{'value':1,'name':'贷方'},{'value':2,'name':'Bank'},{'value':3,'name':'确认人'},{'value':4,'name':'摘要'}]
+                },
+                comboBox2:{
+                    default:3,
+                    list:[{'value':0,'name':'无日期'},{'value':1,'name':'EffectDate'},{'value':2,'name':'确认日期'},{'value':3,'name':'POS日期'}]
+                },
+                button1_Click:[]
+                
+            },
+            methods:{
+                button1_Click_req(){
+                    taizhang_search(
+                        this.check.mark,
+                        this.check.system,
+                        this.check.hand,
+                        $("#taizhang_from").val(),
+                        $("#taizhang_to").val(),
+                        this.comboBox2.default,
+                        this.comboBox1.default,
+                        $("#textBox1").val()
+
+
+                    )
+
+                },
+
+            }
+
+        })
+
+        function  taizhang_search(mark,system,hand,from,to,comboBox2,comboBox1,textBox1) {
+            console.log('tamia');
+            var url = '/index.php?s=desktop/Fd_Pos_Info/button1_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["mark"]      = mark;
+            data["system"]    = system;
+            data["hand"]      = hand;
+            data["from"]      = from;
+            data["to"]        = to;
+            data["comboBox2"] = comboBox2;
+            data["comboBox1"] = comboBox1;
+            data["textBox1"]  = textBox1;
+            console.log(data);
+            ajax(url,data,function (e) {
+                console.log(e);
+                if(e.stat){
+                    pos_taizhang.button1_Click = e.data.Search;
+                }else if(e.stat == 0){
+                    showErr(e.errmsg);
+                }
+                // console.log()
+            })
+
+        }
+    </script>
+
 </html>
