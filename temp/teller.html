@@ -291,7 +291,7 @@
                     <!-- <input class="btn" value="POS" type="button" > -->
                 </div>
                 <div class="" style="margin-top: 20px;font-size: 18px;border: 1px solid #cccccc;padding: 20px 15px;">
-                    <div>核<br/>销<br/>及<br/>调<br/>整</div>
+                    <div @click="mid_check_pos($event)">核<br/>销<br/>及<br/>调<br/>整</div>
                     <!-- <input class="btn" value="核销及调整" type="button" > -->
                 </div>
                 <div class="clear"></div>
@@ -628,8 +628,22 @@
                         pos_exe({'left':this.teller_query,'right':this.r_manual_teller_query})
 
                     },
-
-
+                    //中间核销
+                    mid_check_pos(){
+                        
+                        var a = this.$refs.r_manual_list.getElementsByClassName('user_check');
+                        this.mul_check = [];
+                        for(var i = 0; i<a.length; i++){
+                                if(a[i].checked){
+                                    // console.log(a[i].getAttribute("check_id"));
+                                    this.mul_check.push(this.r_manual_teller_query[a[i].getAttribute("check_index")]);                                    
+                                }
+                                
+                            // }
+                            
+                        }
+                        check_sale(this.mul_check);
+                    },
                     r_all_sel(c){
                         console.log(c);
                         var a = this.$refs.r_manual_list.getElementsByClassName('user_check');
@@ -867,11 +881,29 @@
                 var user_token = get_cache('usertoken');
                 var data = {};
                 data["usertoken"]=user_token;
-                data["data"] = para;
+                data["data"] = JSON.stringify(para);
                 ajax(url,data,function (ret) {
-                    console.log(ret);
+                    if(ret.stat){
+                        showErr(ret.data);
+                    }
                 })
             }
+            //中间核销
+            function check_sale(para){
+                var url = '/index.php?s=desktop/Teller_Recharge/button27_Click';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"]=user_token;
+                console.log(data)
+                data["data"] = JSON.stringify(para);
+                ajax(url,data,function (ret) {
+                    if(ret.stat){
+                        showErr(ret.data);
+                    }
+                })
+
+            }
+
             function get_tok(){
                 Vdata_list.t = get_cache('usertoken');
             }
@@ -1486,35 +1518,34 @@
                     <div>
                         <div class="mar_btm10">
                             <div class="left">
-                                <select name="" id="">
-                                    <option :value="index" v-for="(item,index) in comboBox1" >{{item.name}}</option>
+                                <select v-model="comboBox1.default" name="" id="">
+                                    <option :value="item.name" v-for="(item,index) in comboBox1.list" >{{item.name}}</option>
                                 </select>
                             </div>
                             <div class="left">
-                                <span>从</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
-                                <span>到</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
-                                <span>专卖店<input type="text"></span>
-                                <input type="checkbox"><span>POS</span>
+                                <span>从</span><input id="relation_q_start" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                                <span>到</span><input id="relation_q_end" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                                <span>专卖店<input id="relation_q_shopno" type="text"></span>
+                                <input v-model="is_pos" type="checkbox"><span>POS</span>
                             </div>
                             <div class="clear"></div>
                         </div>
                         <div>
                             <div class="left">
-                                <select name="" id="">
-                                    <option value="">系统TellerID</option>
-                                    <option value="">手动TellerID</option>
+                                <select v-model="manual_teller.default_" name="" id="">
+                                    <option :value="item.name" v-for="item in manual_teller.list">{{item.name}}</option>
                                 </select>
                             </div>
                             <div class="left">
-                                <span> </span><input type="text">
-                                <span> </span><select name="" id="">
-                                    <option value="" v-for="item in x_list">{{item.name}}</option>
+                                <span> </span><input id="relation_q_no" type="text">
+                                <span> </span>
+                                <select v-model="x_list.default" name="" id="">
+                                    <option value="" v-for="item in x_list.list">{{item.BANK_NAME}}</option>
                                 </select>
-                                <select name="" id="">
-                                    <option value="">系统</option>
-                                    <option value="">手动</option>
+                                <select v-model="manual.default_" name="" id="">
+                                    <option :value="item.name" v-for="(item,index) in manual.list">{{item.name}}</option>
                                 </select>
-                                <span>数额<input type="text"></span>
+                                <span>数额<input id="relation_q_amount" type="text"></span>
                             </div>
                             <div class="clear"></div>
                         </div>
@@ -1525,7 +1556,7 @@
                 <fieldset>
                     <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">查询</legend>
                     <div>
-                        <button class="btn btn-primary">关联项搜索</button>
+                        <button @click="connect_search()" class="btn btn-primary">关联项搜索</button>
                     </div>
                 </fieldset>
 
@@ -1534,17 +1565,80 @@
 
     </div>
     <script>
+        relation_rearch_get_bank()
         var relation_query = new Vue({
             el:'#relation_query',
             data:{
-                comboBox1:[{'name':'有效日期'},{'name':'确认日期'}],
-                x_list:[{'name':'ALL'},{'name':'ACCESS'},{'name':'UNION'},{'name':'ZENITH'},{'name':'SKY'},{'name':'KBANK'}]
+                is_pos:false,
+                comboBox1:{default:'有效日期',list:[{'name':'有效日期'},{'name':'确认日期'}]},
+                x_list:{default:'',list:[]},
+                manual:{default_:'系统',list:[{'name':'系统'},{'name':'手动'}]},
+                manual_teller:{default_:'系统TellerID',list:[{'name':'系统TellerID'},{'name':'手动TellerID'}]}
             },
             methods:{
+                Relation_Search_bank(){
+                    relation_rearch_get_bank()   
+                },
 
+                connect_search(){
+                    connect_search_exe(
+                        this.comboBox1.default,
+                        this.manual_teller.default_,
+                        this.x_list.default,
+                        this.manual.default_,
+                        $("#relation_q_start").val(),
+                        $("#relation_q_end").val(),
+                        $("#relation_q_amount").val(),
+                        $("#relation_q_no").val(),
+                        $("#relation_q_shopno").val(),
+                        this.is_pos
+                    )
+                }
             }
             
         })
+        function connect_search_exe(c1,c2,c3,c4,from,to,amount,t1,shopno,is_pos) {
+            var url = '/index.php?s=desktop/Relation_Search/button1_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["comboBox1"] = c1;
+            data["comboBox2"] = c2;
+            data["comboBox3"] = c3;
+            data["comboBox4"] = c4;
+            data["from"] = from;
+            data["to"] = to;
+            data["amount"] = amount;
+            data["textBox1"] = t1;
+            data["shopno"] = shopno;
+            data["pos"] = is_pos;
+            ajax(url,data,function (ret) {
+                console.log()
+                if(ret.stat){
+                    
+                }else if(ret.stat == 0){
+                    showErr(ret.data);
+                }
+            })
+        }
+
+        function relation_rearch_get_bank(){
+            var url = '/index.php?s=desktop/Relation_Search/getBank';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+
+            ajax(url,data,function (ret) {
+                console.log()
+                if(ret.stat){
+                    
+                    relation_query.x_list.list = ret.data;
+                    relation_query.x_list.list.unshift({'BANK_NAME':'ALL'});
+                }else if(ret.stat == 0){
+                    showErr(ret.data);
+                }
+            })
+        }
     </script>
 
     <!-- POS台账 -->
@@ -1665,6 +1759,7 @@
                         <button>核对选中</button>
                         <button class="btn btn-primary">双方</button>=<span style="display: inline-block;transform:scale(1.5);">></span>已核对
                         <button class="btn btn-primary">POS</button>=<span style="display: inline-block;transform:scale(1.5);">></span>已标记
+                        <button class="btn btn-disabled">反确认</button>
                     </div>
                 </div>
 
@@ -1742,5 +1837,8 @@
 
         }
     </script>
+<!-- 核销及 -->
+    <div id="">
 
+    </div>
 </html>
