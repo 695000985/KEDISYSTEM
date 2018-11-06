@@ -91,7 +91,7 @@
                     <input @click="open_pos_taizhang()" type="button" class="btn" value="POS台账">
                 </div>
                 <div class="left">
-                    <input type="button" class="btn" value="核销及调整台账">
+                    <input @click="open_check_sale()" type="button" class="btn" value="核销及调整台账">
                 </div>
 
                 <div class="clear"></div>
@@ -828,7 +828,11 @@
                         piliang_delete(this.mul_check);
                     },
 
-
+                    open_check_sale(){
+                        open_html("FD_UncheckPos","#check_sale","check_sale",function(){
+                            
+                        },700)
+                    },
 
                     open_acco_man(){
                         open_html("AccountManage","#account_manage","account_manage",function(){
@@ -1217,40 +1221,40 @@
 
     <div id="teller_use_query" style="display:none;">
         <div>
-            <span>从</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
-            <span>至</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
-            专卖店（个人账户）<input type="text" placeholder="kn000000" style="width:80px;" >
-            数额<input type="text" style="width:70px;">
-            <button class="">搜索已确认Teller</button>
+            <span>从</span><input id="teller_use_query_start" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+            <span>至</span><input id="teller_use_query_end" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+            专卖店（个人账户）<input id="teller_q_shopno" type="text" placeholder="kn000000" style="width:80px;" >
+            数额<input id="teller_q_amount" type="text" style="width:70px;">
+            <button @click="teller_q_search($event)" class="">搜索已确认Teller</button>
         </div>
         <div>
             <table class="table table-border table-bordered table-bg" style="max-height:400px;width: 160%;margin:auto;background-color: rgba(200,200,200,.15);">
                 <thead>
                     <tr>
-                        <th style="width: 60px;">关联</th>
-                        <th style="width: 60px;">ID</th>
-                        <th style="width: 50px;">银行</th>
-                        <th style="width: 90px;">取款</th>
-                        <th style="width: 100px;">存款</th>
-                        <th style="width: 150px;">确认日期</th>
-                        <th style="width: 70px;">POS日期</th>
-
+                        <th style="width: 60px;">Teller编号</th>
+                        <th style="width: 60px;">专卖店</th>
+                        <th style="width: 50px;">数额</th>
+                        <th style="width: 90px;">银行</th>
+                        <th style="width: 100px;">日期(Date)</th>
+                        <th style="width: 150px;">操作人</th>
+                        <th style="width: 70px;">备注</th>
+                        <th style="width: 70px;">收款方式</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><input type="checkbox">
+                    <tr v-for="item in teller_q_list">
+                        <td>{{item['Teller编号']}}
                         </td>
-                        <td>
+                        <td>{{item['专卖店']}}
                         </td>
-                        <td>
+                        <td>{{item['数额']}}
                         </td>
-                        <td>
+                        <td>{{item['银行']}}
                         </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                       
+                        <td>{{item['日期(Date)']}}</td>
+                        <td>{{item['操作人']}}</td>
+                        <td>{{item['备注']}}</td>
+                        <td>{{item['收款方式']}}</td>
 
                     </tr>
                     <!-- <tr v-if="">
@@ -1262,9 +1266,46 @@
         <div class="oH">
             <div class="left"><span>专卖店（个人）</span><input type="text"></div>
             <div class="left"><span>当前余额</span><input type="text"></div>
-            <div class="right"><button>导出Excel</button></div>
+            <div class="right"><button class="btn">导出Excel</button></div>
         </div>
     </div>
+
+    <script>
+        var teller_query_wrap = new Vue({
+            el:'#teller_use_query',
+            data:{
+                teller_q_list:[]
+            },
+            methods:{
+                teller_q_search(){
+                    teller_q_search_exe(
+                        $("#teller_use_query_start").val(),
+                        $("#teller_use_query_end").val(),
+                        $("#teller_q_shopno").val(),
+                        $("#teller_q_amount").val()
+                    )
+                },
+            }
+        })
+
+        function teller_q_search_exe(start,end,textBox1,textBox2){
+            var url = '/index.php?s=desktop/Teller_Use_Search/button1_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["from"] = start;
+            data["to"] = end;
+            data["textBox1"] = textBox1;
+            data["textBox2"] = textBox2;
+
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    teller_query_wrap.teller_q_list = ret.data;
+                }
+
+            })
+        }
+    </script>
     <!-- freeze_manage -->
     <div id="freeze_manage" style="display:none;">
         <div>
@@ -1837,8 +1878,31 @@
 
         }
     </script>
-<!-- 核销及 -->
-    <div id="">
-
+<!-- 核销及调整 -->
+    <div id="check_sale" style="display:none;">
+        <div>
+            <div>
+                <select name="" id="">
+                    <option value="">无日期</option>
+                </select>
+                <span>日期</span>
+                <input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                <span>日期</span>
+                <input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                <select name="" id="">
+                    <option value="">借方</option>
+                </select>
+                <input type="text">
+                <span>TellerID</span>
+                <input type="text">
+                <button class="btn">搜索</button>
+                <input type="checkbox">
+                <span>系统</span>
+                <input type="checkbox">
+                <span>手动</span>
+                <input type="checkbox">
+                <span>标记</span>
+            </div>
+        </div>
     </div>
 </html>
