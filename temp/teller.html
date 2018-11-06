@@ -257,7 +257,7 @@
                     <div>
                         <div class="left"><span style="display: inline-block;width:80px;text-align: right;">REGION</span>
                             <select name="" v-model="region_item" id="ac_region">
-                                <option :value="s.result" v-for="(s,index) in teller_region_list">{{s.region}}</option>
+                                <option :value="s.region" v-for="(s,index) in teller_region_list">{{s.region}}</option>
                             </select>
                         </div>
                         <div class="left" style="margin: 0 20px;"><input v-model="freeze" @click="is_freeze(freeze, $event)" type="checkbox">冻结</div>
@@ -542,7 +542,7 @@
                     confirm:false,
                     un_confirm:false,
                     deposit:'',
-                    region_item: 'NONE',
+                    region_item: '',
                     shop_type:0,
                     r_shop_type:0,
                     freeze:false,
