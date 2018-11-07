@@ -28,6 +28,8 @@
 
         .tr_bg{background-color: #cccccc;}
         .tr_blue{background-color:	#B0E0E6;}
+
+        .check-tr-bg{background-color: #cccccc;}
         .teller_top>div div{margin-right: 15px;}
         .mar_btm10{margin-bottom: 10px;}
 
@@ -1300,7 +1302,7 @@
 
             ajax(url,data,function (ret) {
                 if(ret.stat){
-                    teller_query_wrap.teller_q_list = ret.data;
+                    teller_query_wrap.teller_q_list = ret.data.select;
                 }
 
             })
@@ -1700,9 +1702,9 @@
                         <option v-for="item in comboBox1.list" :value="item.value" value="">{{item.name}}</option>
                     </select>
                     <input id="textBox1" type="text">
-                    <input type="checkbox" :checked='check.system'><span>系统</span>
-                    <input type="checkbox" :checked='check.hand'><span>手动</span>
-                    <input type="checkbox" :checked='check.mark'><span>标记</span>
+                    <input type="checkbox" v-model="check.system"><span>系统</span>
+                    <input type="checkbox" v-model="check.hand"><span>手动</span>
+                    <input type="checkbox" v-model="check.mark"><span>标记</span>
                     <button @click="button1_Click_req()" class="btn">搜索</button>
                 </div>
                 <div class="clear"></div>
@@ -1718,7 +1720,7 @@
                 <div class="clear"></div>
             </div>
             <div>
-                <table class="table table-border table-bordered table-bg" style="max-height:400px;width: 170%;margin:auto;background-color: rgba(200,200,200,.15);">
+                <table ref="reference_taizhang" class="table table-border table-bordered table-bg" style="max-height:400px;width: 170%;margin:auto;background-color: rgba(200,200,200,.15);">
                     <thead>
                         <tr>
                             <th style="width: 60px;">选择</th>
@@ -1749,7 +1751,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="item in button1_Click">
-                            <td><input type="checkbox">
+                            <td><input :check_index="item.TellerID" :mark="item.Mark" :direction="item['方向']" class="taizhang_input" type="checkbox">
                             </td>
                             <td>{{item.TellerID}}
                             </td>
@@ -1789,7 +1791,7 @@
                     <div class="">
                         借方总额<input type="text">
                         <span>ID</span><input type="text">
-                        <button class="btn">标记</button>
+                        <button @click="mark($event)" class="btn">标记</button>
                         <input type="checkbox"><span>全选POS</span>
                         <button class="btn">贷方</button>=<span style="display: inline-block;transform:scale(1.5);">></span>未标记
                         <button class="btn">POS</button>=<span style="display: inline-block;transform:scale(1.5);">></span>未匹配
@@ -1828,8 +1830,8 @@
                     default:3,
                     list:[{'value':0,'name':'无日期'},{'value':1,'name':'EffectDate'},{'value':2,'name':'确认日期'},{'value':3,'name':'POS日期'}]
                 },
-                button1_Click:[]
-                
+                button1_Click:[],
+                mul_select:[]
             },
             methods:{
                 button1_Click_req(){
@@ -1847,10 +1849,42 @@
                     )
 
                 },
+                mark(){
+                    var a = this.$refs.reference_taizhang.getElementsByClassName('taizhang_input');
+                        this.mul_select = [];
+                        for(var i = 0; i<a.length; i++){
+                            if(a[i].checked){
+                                // console.log(a[i].getAttribute("check_id"));
+                                this.mul_select.push({'TellerID':a[i].getAttribute("check_index"),'Mark':a[i].getAttribute("mark"),'方向':a[i].getAttribute("direction")});                                    
+                            }
+                                
+                        }
+                        taizhang_mark_exe(this.mul_select,0)
+                },
+                del_mark(){
+
+                }
 
             }
 
         })
+        function taizhang_mark_exe(param,mark) {
+            var url = '/index.php?s=desktop/Fd_Pos_Info/button2_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["mark_status"] = mark;
+            data["data"]    = param;
+            ajax(url,data,function (e) {
+                console.log(e);
+                if(e.stat){
+                    showErr(e.msg)
+                }else if(e.stat == 0){
+                    showErr(e.errmsg);
+                }
+                // console.log()
+            })
+        }
 
         function  taizhang_search(mark,system,hand,from,to,comboBox2,comboBox1,textBox1) {
             console.log('tamia');
@@ -1887,7 +1921,7 @@
                     <option :value="index" v-for="(item,index) in comboBox2.list">{{item.name}}</option>
                 </select>
                 <span>日期</span>
-                <input id="nav_check_sale_start" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                <input id="nav_check_sale_start" style="width:90px;" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
                 <span>日期</span>
                 <input id="nav_check_sale_end" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
                 <select v-model="comboBox1.default" name="" id="">
@@ -1904,21 +1938,132 @@
                 <input v-model="check.isMark" type="checkbox">
                 <span>标记</span>
             </div>
+
+            <div style="">
+                <table ref="reference_check_sale" class="table table-border table-bordered table-bg" style="height:450px;width: 150%;margin:auto;background-color: rgba(200,200,200,.15);">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">选择</th>
+                            <th style="width: 60px;">TellerID</th>
+                            <th style="width: 50px;">Bank</th>
+                            <th style="width: 60px;">ShopNo</th>
+                            <th style="width: 100px;">EffectDate</th>
+                            <th style="width: 150px;">确认日期</th>
+                            <th style="width: 70px;">POS日期</th>
+                            <th style="width: 70px;">摘要</th>
+                            <th style="width: 50px;">借方</th>
+                            <th style="width: 50px;">贷方</th>
+                            <th style="width: 50px;">确认人</th>
+                            <th style="width: 50px;">Oper</th>
+                            <th style="width: 50px;">CreateDate</th>
+                            <th style="width: 50px;">LastEditDate</th>
+                            <th style="width: 50px;">Mark</th>
+                            <th style="width: 50px;">From</th>
+                            <th style="width: 50px;">方向</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr @click="tr_click(index,item['TellerID'],item['方向'],$event)" :class="(tr_index == index)?'check-tr-bg':''" v-for="(item,index) in nav_check_sale_list">
+                            <td><input :check_index="item['TellerID']" :direction="item['方向']" class="check_sale_input" type="checkbox">
+                            </td>
+                            <td>{{item['TellerID']}}
+                            </td>
+                            <td>{{item['Bank']}}
+                            </td>
+                            <td>{{item['ShopNo']}}
+                            </td>
+                            <td>{{item['EffectDate']}}</td>
+                            <td>{{item['确认日期']}}</td>
+                            <td>{{item['POS日期']}}</td>
+                            <td>{{item['摘要']}}</td>
+                            <td>{{item['借方']}}</td>
+                            <td>{{item['贷方']}}</td>
+                            <td>{{item['确认人']}}</td>
+                            <td>{{item['Oper']}}</td>
+                            <td>{{item['CreateDate']}}</td>
+                            <td>{{item['LastEditDate']}}</td>
+                            <td>{{item['Mark']}}</td>
+                            <td>{{item['From']}}</td>
+                            <td>{{item['方向']}}</td>
+                        </tr>
+                        <!-- <tr v-if="">
+                            <td colspan="15">no data</td>
+                        </tr> -->
+                    </tbody>
+                </table> 
+            </div>
+            <div>
+                <span>借方总额</span><input style="width: 50px;" type="text">
+                <span>贷方总额</span><input style="width: 50px;" type="text">
+                <span>ID</span><input style="width: 50px;" type="text">
+                <span>方向</span><input type="text">
+                <button @click="del_mark($event)" class="btn">标记</button>
+                <button @click="mark($event)" class="btn">去标记</button>
+                <button @click="dis_confirm($event)" class="btn">反确认</button>
+            </div>
+            <div style="background-color:rgba(192,192,192,0.75);">
+                <div class="left">
+                    status <span>管理员</span>
+                </div>
+                <div class="right"><button class="btn">导出</button></div>
+                <div class="clear"></div>
+            </div>
         </div>
     </div>
     <script>
         var nav_check_sale = new Vue({
             el:'#nav_check_sale',
             data:{
+                tr_index:-1,
+                tb_btm:{
+                    'TellerID':'',
+                    'direction':''
+                },
                 check:{
                     isSystem:true,
                     isManual:true,
                     isMark:true
                 },
                 comboBox2:{default:0,list:[{'name':'无日期'},{'name':'EffectDate'},{'name':'确认日期'},{'name':'POS日期'}]},
-                comboBox1:{default:0,list:[{'name':'借方'},{'name':'贷方'},{'name':'Bank'},{'name':'确认人'},{'name':'摘要'}]}
+                comboBox1:{default:0,list:[{'name':'借方'},{'name':'贷方'},{'name':'Bank'},{'name':'确认人'},{'name':'摘要'}]},
+                nav_check_sale_list:[],
+                mul_select:[]
             },
             methods:{
+                mark(){
+                    var a = this.$refs.reference_check_sale.getElementsByClassName('check_sale_input');
+                        this.mul_select = [];
+                        for(var i = 0; i<a.length; i++){
+                            if(a[i].checked){
+                                // console.log(a[i].getAttribute("check_id"));
+                                this.mul_select.push({'TellerID':a[i].getAttribute("check_index"),'方向':a[i].getAttribute("direction")});                                    
+                            }
+                                
+                        }
+                        mark_exe(this.mul_select,0)
+                        // console.log()
+                    
+                },
+                del_mark(){
+                    var a = this.$refs.reference_check_sale.getElementsByClassName('check_sale_input');
+                        this.mul_select = [];
+                        for(var i = 0; i<a.length; i++){
+                            if(a[i].checked){
+                                // console.log(a[i].getAttribute("check_id"));
+                                this.mul_select.push({'TellerID':a[i].getAttribute("check_index"),'方向':a[i].getAttribute("direction")});                                    
+                            }
+                                
+                        }
+                        //和标记公用一个，只改了第二个参数
+                        mark_exe(this.mul_select,1)
+
+                },
+                dis_confirm(){
+                    check_sale_dis_confirm(
+                        this.tb_btm.TellerID,
+                        this.tb_btm.direction
+                    )
+                },
                 nav_check_sale_search(){
                     nav_check_sale_search_exe(
                         this.check.isMark,
@@ -1931,8 +2076,48 @@
                         $("#nav_check_sale_textBox").val()
                     )
                 },
+                tr_click(a,ti,d){
+                    this.tr_index = a;
+                    this.tb_btm.TellerID = ti;
+                    this.tb_btm.direction =d;
+                    console.log(a);
+                }
             }
         })
+
+        function check_sale_dis_confirm(ti,d){
+            var url = '/index.php?s=desktop/Fd_Uncheck_Pos/button4_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["TellerID"] = ti;
+            data["direction"] = d;
+            ajax(url,data,function (ret) {
+                console.log(ret);
+                if(ret.stat){
+                    showErr(ret.data);
+                }else if(ret.stat == 0){
+                    // showErr('无数据');
+                }
+            })
+        }
+        function mark_exe(para,mark){
+            var url = '/index.php?s=desktop/Fd_Uncheck_Pos/button2_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["mark_status"] = mark;
+            data["data"] = JSON.stringify(para);
+            ajax(url,data,function (ret) {
+                console.log(ret);
+                if(ret.stat){
+                    showErr(ret.data.msg);
+                }else if(ret.stat == 0){
+                    // showErr('无数据');
+                }
+            })
+
+        }
 
         function  nav_check_sale_search_exe(mark,sys,man,start,end,c2,c1,text) {
             var url = '/index.php?s=desktop/Fd_Uncheck_Pos/button1_Click';
@@ -1948,11 +2133,13 @@
             data["comboBox1"] = c1;
             data["textBox1"]  = text;
             console.log(data);
-            ajax(url,data,function (e) {
-                console.log(e);
-                if(e.stat){
-                }else if(e.stat == 0){
-                    showErr(e.errmsg);
+            ajax(url,data,function (ret) {
+                console.log(ret);
+                if(ret.stat){
+                    nav_check_sale.nav_check_sale_list = ret.data.Search;
+                }else if(ret.stat == 0){
+                    nav_check_sale.nav_check_sale_list = [];
+                    // showErr('无数据');
                 }
                 // console.log()
             })
