@@ -20,6 +20,7 @@
     <script src="../DatePicker/WdatePicker.js"></script>
     <script src="../script/layer.js"></script>
     <script src="../script/jquery.pagination.js"></script>
+    <script src="../script/excellentexport.js"></script>
     <style>
         [v-cloak] {
             display: none;
@@ -1229,8 +1230,24 @@
             数额<input id="teller_q_amount" type="text" style="width:70px;">
             <button @click="teller_q_search($event)" class="">搜索已确认Teller</button>
         </div>
-        <div>
+        <div id="teller_use_query_list">
             <table class="table table-border table-bordered table-bg" style="max-height:400px;width: 160%;margin:auto;background-color: rgba(200,200,200,.15);">
+                <!-- <caption hidden><p style="font-size:20px;font-weight:bold;">表格标题</p></caption> -->
+                <tfoot hidden>
+					        <tr hidden style="border:none"><p style="font-size:20px;font-weight:bold;">表格标题</p></tr>
+						    <tr style="border:none">
+						      <td colspan="3" style="border:none">单位领导： </td>
+						      <td style="border:none"> </td>
+						      <td style="border:none"> </td>
+						      <td style="border:none">审核： </td>
+						      <td style="border:none"> </td>
+						      <td style="border:none"> </td>
+						      <td style="border:none">制单： </td>
+						      <td style="border:none"> </td>
+						      <td style="border:none"> </td>
+						      <td style="border:none"> </td>
+						    </tr>
+					</tfoot>
                 <thead>
                     <tr>
                         <th style="width: 60px;">Teller编号</th>
@@ -1259,6 +1276,7 @@
                         <td>{{item['收款方式']}}</td>
 
                     </tr>
+                    
                     <!-- <tr v-if="">
                         <td colspan="15">no data</td>
                     </tr> -->
@@ -1268,7 +1286,12 @@
         <div class="oH">
             <div class="left"><span>专卖店（个人）</span><input type="text"></div>
             <div class="left"><span>当前余额</span><input type="text"></div>
-            <div class="right"><button class="btn">导出Excel</button></div>
+            <div class="right">
+                    <a download="data.xls" id="anchorNewApi-xls" href="#" class="btn btn-success ExportReport" onclick="return newApi('xls');exert_report_no()"
+                    style="display: ;">导出</a>
+                <!-- <input type="button" class="btn btn-success ExportReport" id="exprot" :value="daochu" onclick=""> -->
+                <!-- <button class="btn">导出Excel</button> -->
+            </div>
         </div>
     </div>
 
@@ -1276,7 +1299,8 @@
         var teller_query_wrap = new Vue({
             el:'#teller_use_query',
             data:{
-                teller_q_list:[]
+                teller_q_list:[],
+                daochu:'导出'
             },
             methods:{
                 teller_q_search(){
@@ -1289,6 +1313,20 @@
                 },
             }
         })
+
+        function newApi(format) { //导出数据
+            return ExcellentExport.convert({
+                anchor: 'anchorNewApi-' + format,
+                filename: 'TellerSearch',
+                format: format
+            }, [{
+                name: 'Sheet Name Here 1',
+                from: {
+                    table: 'teller_use_query_list'
+                }
+            }]);
+
+        }
 
         function teller_q_search_exe(start,end,textBox1,textBox2){
             var url = '/index.php?s=desktop/Teller_Use_Search/button1_Click';

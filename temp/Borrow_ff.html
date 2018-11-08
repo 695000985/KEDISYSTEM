@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>科迪会员录入系统</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/iconfont.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+    <script src="../script/jquery.pagination.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main">
+        <div>
+            <div>
+                <span>录入员</span><input type="text">
+                <span>DATE</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                <span>SC/Distributor</span><input type="text">
+                <button class="btn">SerachHistory</button>
+                <span>Products:</span><input type="text">
+                <button class="btn">Reset</button>
+
+            </div>
+            <div>
+
+            </div>
+            <div>
+                <div class="left">
+                    <div class="left">
+                        <span>BorrowedNaira</span> <span>0.0</span>
+                    </div>
+                    <div class="left">
+                        <span>BorrowedBV</span> <span>0.0</span>
+                    </div>
+                    <div class="left">
+                        <span>BorrowedPV</span> <span>0.0</span>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="left">
+                    <div class="left">
+                        <span>ToBorrowNaira</span> <span>0.0</span>
+                    </div>
+                    <div class="left">
+                        <span>ToBorrowBV</span> <span>0.0</span>
+                    </div>
+                    <div class="left">
+                        <span>ToBorrowPV</span> <span>0.0</span>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="left">
+                    <button class="btn">CretaeReport</button>
+                </div>
+                <div class=""></div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+    </script>
+</body>
+
+</html>
