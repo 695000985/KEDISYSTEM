@@ -72,18 +72,18 @@
                 <div class="left">
                     <input @click="open_acco_man()" type="button" class="btn" value="财务管理" >
                 </div>
-                <div class="left">
+                <!-- <div class="left">
                     <input type="button" class="btn" value="导入Teller">
-                </div>
+                </div> -->
                 <div class="left">
                     <input @click="open_teller_use_query()" type="button" class="btn" value="Teller使用查询">
                 </div>
                 <div class="left">
-                    <input type="button" class="btn" value="Teller提款">
+                    <input @click="open_teller_tikuan()" type="button" class="btn" value="Teller提款">
                 </div>
-                <div class="left">
+                <!-- <div class="left">
                     <input type="button" class="btn" value="导出未确认Teller">
-                </div>
+                </div> -->
                 <div class="left">
                     <input @click="open_freeze_manage()" type="button" class="btn" value="冻结管理">
                 </div>
@@ -846,6 +846,11 @@
                     },
                     open_teller_use_query(){
                         open_html("TellerSearch","#teller_use_query","teller_use_query",function(){
+                            
+                        },800)
+                    },
+                    open_teller_tikuan(){
+                        open_html("提款界面","#teller_tikuan","teller_tikuan",function(){
                             
                         },800)
                     },
@@ -1723,6 +1728,181 @@
         }
     </script>
 
+<!-- 提款 -->
+    <div id="teller_tikuan" style="display:none;">
+        <div>
+            专卖店（经销商）<input v-model="tikuan_zmd" id="teller_tikuan_zmd" type="text">
+            <button @click="zongzhang(arg, $event)" class="btn">总账查询</button>
+            提款ID<input id="teller_tikuan_zmd" style="width:50px;" type="text">
+            <button @click="tikuan()" class="btn btn-primary">提款查询</button>
+            <input v-model="p_check" type="checkbox">P
+            提款操作人：<input id="" value="管理员" disabled type="text">
+        </div>
+        <div style="height:400px;position: relative;">
+                <table id="tikuan1" class="table table-border table-bordered table-bg" style="display:none;max-height:400px;width: 130%;margin:auto;background-color: rgba(200,200,200,.15);">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">TellerID</th>
+                            <th style="width: 60px;">专卖店(经销商)</th>
+                            <th style="width: 50px;">总存款</th>
+                            <th style="width: 60px;">已用金额</th>
+                            <th style="width: 100px;">余额</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in table_list1">
+                            <td>{{item["TellerID"]}}
+                            </td>
+                            <td>{{item["专卖店(经销商)"]}}
+                            </td>
+                            <td>{{item["总存款"]}}
+                            </td>
+                            <td>{{item["已用金额"]}}
+                            </td>
+                            <td>{{item["余额"]}}
+                            </td>
+                        </tr>
+                        <!-- <tr v-if="">
+                            <td colspan="15">no data</td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            <table id="tikuan2" class="table table-border table-bordered table-bg" style="display: none;overflow-y:scroll;height:400px;width: 100%;margin:auto;background-color: rgba(200,200,200,.15);">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">项目ID</th>
+                        <th style="width: 60px;">账户</th>
+                        <th style="width: 50px;">使用(Amount)</th>
+                        <th style="width: 60px;">用途</th>
+                        <th style="width: 100px;">日期(Date)</th>
+                        <th style="width: 60px;">账户余额(Balance)</th>
+                        <th style="width: 70px;">备注</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in table_list2">
+                        <td>{{item["项目ID"]}}
+                        </td>
+                        <td>{{item["账户"]}}
+                        </td>
+                        <td>{{item["使用(Amount)"]}}
+                        </td>
+                        <td>{{item["用途"]}}
+                        </td>
+                        <td>{{item["日期(Date)"]}}
+                        </td>
+                        <td>{{item["账户余额(Balance)"]}}
+                        </td>
+                        <td>{{item["备注"]}}
+                        </td>
+                    </tr>
+                    <!-- <tr v-if="">
+                        <td colspan="15">no data</td>
+                    </tr> -->
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top:20px;">
+            提款ID<input style="width:50px;" type="text">
+            银行<input style="width:50px;" type="text">
+            提款日期<input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+            用途<input style="width:50px;" type="text">
+            备注<input style="width:50px;" type="text">
+            <button class="btn">提款</button>
+        </div>
+        <div>   
+            业绩所属Year <select name="" style="width:60px;" v-model="btm_year.default" id="">
+                <option value="" v-for="item in btm_year.list">{{item.no}}</option>
+            </select>
+            Month 
+            <select name="" style="width:50px;" v-model="btm_month.default" id="">
+                <option value="" v-for="item in btm_month.list">{{item.no}}</option>
+            </select>
+            数额：<input style="width:50px;" type="text">
+            提款：<select name="" id="">
+                <option value=""></option>
+            </select>
+            <input style="width:50px;" type="text">XXX
+            REGION
+            <select name="" id="">
+                <option value=""></option>
+            </select>
+            <input type="text">
+        </div>
+    </div>
+
+<!-- 提款 -->
+    <script>
+        var teller_tikuan = new Vue({
+            el:'#teller_tikuan',
+            data:{
+                tikuan_zmd:'',
+                p_check:false,
+                btm_year:{default:'',list:[{'no':2014},{'no':2015},{'no':2016},{'no':2017},{'no':2018},{'no':2019},{'no':2020}]},
+                btm_month:{default:'',list:[{'no':'JAN'},{'no':'FEB'},{'no':'MAR'},{'no':'APR'},{'no':'MAY'},{'no':'JUN'},{'no':'JUL'},{'no':'AUG'},{'no':'SEP'},{'no':'OCT'},{'no':'DEC'}]},
+                table_list1:[],
+                table_list2:[]
+            
+            },
+            methods:{
+                zongzhang(){
+                    zongzhang_exe(this.tikuan_zmd,this.p_check)
+                },
+                tikuan(){
+                    tikuan_exe($("#teller_tikuan_zmd").val())
+                },
+            }
+
+        })
+
+        function zongzhang_exe(zmd,p){
+            var url = '/index.php?s=desktop/Distrbutor_Withdrawal/button2_Click',boo = '';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["shopno"] = zmd;
+            
+            if(p == 'false'){
+                boo = 0;
+            }else if(p == 'true'){
+                boo = 1;
+            }
+            data["p"]    = p;
+            console.log(typeof(data["p"]));
+            ajax(url,data,function (e) {
+                console.log(e);
+                if(e.stat){
+                    // showErr(e.msg)
+                    // teller_tikuan.table_list1 = ;
+                }else if(e.stat == 0){
+                    showErr(e.errmsg);
+                }
+                document.getElementById('tikuan1').style.display = 'block';
+                document.getElementById('tikuan2').style.display = 'none';
+                // console.log()
+            })
+        }
+
+        function tikuan_exe(i){
+            var url = '/index.php?s=desktop/Distrbutor_Withdrawal/button3_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["id"] = i;
+            ajax(url,data,function (e) {
+                console.log(e);
+                if(e.stat){
+                    teller_tikuan.table_list2 = e.data;
+                    
+                }else if(e.stat == 0){
+                    showErr(e.errmsg);
+                }
+                document.getElementById('tikuan2').style.display = 'block';
+                document.getElementById('tikuan1').style.display = 'none';
+                // console.log()
+            })
+        }
+    </script>
     <!-- POS台账 -->
 
     <div id="pos_taizhang" style="display:none;">
