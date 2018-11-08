@@ -496,7 +496,7 @@
                                 <input type="submit" value="提交">
                             </form>
                             
-                        </div><div>批量确认</div><div></div>
+                        </div><div> <button @click="pl_confirm($event)" class="btn">批量确认</button></div><div></div>
                     </div>
             </div>
 
@@ -581,6 +581,10 @@
                    
                 },
                 methods:{
+
+                    pl_confirm(){
+
+                    },
                     check_onchange(){
                         console.log(this)
                     },
@@ -1846,7 +1850,7 @@
             },
             methods:{
                 zongzhang(){
-                    zongzhang_exe(this.tikuan_zmd,this.p_check)
+                    zongzhang_exe(this.tikuan_zmd,this.p_check?1:0)
                 },
                 tikuan(){
                     tikuan_exe($("#teller_tikuan_zmd").val())
@@ -1867,8 +1871,8 @@
             }else if(p == 'true'){
                 boo = 1;
             }
-            data["p"]    = p;
-            console.log(typeof(data["p"]));
+            data["p"] = p;
+            console.log(data);
             ajax(url,data,function (e) {
                 console.log(e);
                 if(e.stat){
