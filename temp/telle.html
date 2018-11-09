@@ -496,7 +496,7 @@
                                 <input type="submit" value="提交">
                             </form>
                             
-                        </div><div> <button @click="pl_confirm($event)" class="btn">批量确认</button></div><div></div>
+                        </div><div> <button @click="open_pl_confirm()" class="btn">批量确认</button></div><div></div>
                     </div>
             </div>
 
@@ -834,6 +834,11 @@
                         }
                         piliang_delete(this.mul_check);
                     },
+                    open_pl_confirm(){
+                        open_html("ConfirmTellerBatch","#pl_confirm","pl_confirm",function(){
+                            
+                        },700)
+                    },
 
                     open_check_sale(){
                         open_html("FD_UncheckPos","#nav_check_sale","nav_check_sale",function(){
@@ -1141,6 +1146,7 @@
                     Vdata_list.teller_region_list   = ret.data;
                     Vdata_list.r_teller_region_list = ret.data;
                     freeze_manage.region_list = ret.data;
+                    teller_tikuan.tikuan_region.list = ret.data;
                     // Vdata_list.region_list = ret;
                 })
             }
@@ -1303,7 +1309,7 @@
             </div>
         </div>
     </div>
-
+<!-- teller_use_query -->
     <script>
         var teller_query_wrap = new Vue({
             el:'#teller_use_query',
@@ -1653,7 +1659,62 @@
             </div>
             <div class="clear"></div>
         </div>
-
+        <div>
+                <table ref="" class="table table-border table-bordered table-bg" style="max-height:400px;width: 130%;margin:auto;background-color: rgba(200,200,200,.15);">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">系统ID</th>
+                            <th style="width: 60px;">手动ID</th>
+                            <th style="width: 50px;">系统银行</th>
+                            <th style="width: 60px;">手动银行</th>
+                            <th style="width: 100px;">有效日</th>
+                            <th style="width: 60px;">系统数额</th>
+                            <th style="width: 70px;">手动数额</th>
+                            <th style="width: 60px;">确认日期</th>
+                            <th style="width: 50px;">手动SC</th>
+                            <th style="width: 50px;">导入人</th>
+                            <th style="width: 60px;">系统备注</th>
+                            <th style="width: 60px;">转账类型</th>
+                            <th style="width: 50px;">使用</th
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in r_q_table_list">
+                            <td><input :teller="item['Teller编号']" :sc="item['账户']" :funds="item['使用']" @click="is_single_check($event)" class="freeze_check" type="checkbox">
+                            </td>
+                            <td>{{item["系统ID"]}}
+                            </td>
+                            <td>{{item["手动ID"]}}
+                            </td>
+                            <td>{{item["系统银行"]}}
+                            </td>
+                            <td>{{item["手动银行"]}}
+                            </td>
+                            <td>{{item["有效日"]}}
+                            </td>
+                            <td>{{item["系统数额"]}}
+                            </td>
+                            <td>{{item["手动数额"]}}
+                            </td>
+                            <td>{{item["确认日期"]}}
+                            </td>
+                            <td>{{item["手动SC"]}}
+                            </td>
+                            <td>{{item["导入人"]}}
+                            </td>
+                            <td>{{item["系统备注"]}}
+                            </td>
+                            <td>{{item["转账类型"]}}
+                            </td>
+                            <td>{{item["使用"]}}
+                            </td>
+                        </tr>
+                        <!-- <tr v-if="">
+                            <td colspan="15">no data</td>
+                        </tr> -->
+                    </tbody>
+                </table>
+        </div>
     </div>
     <script>
         relation_rearch_get_bank()
@@ -1661,6 +1722,7 @@
             el:'#relation_query',
             data:{
                 is_pos:false,
+                r_q_table_list:[],
                 comboBox1:{default:'有效日期',list:[{'name':'有效日期'},{'name':'确认日期'}]},
                 x_list:{default:'',list:[]},
                 manual:{default_:'系统',list:[{'name':'系统'},{'name':'手动'}]},
@@ -1705,10 +1767,12 @@
             data["pos"] = is_pos;
             ajax(url,data,function (ret) {
                 console.log(ret)
-                if(ret.stat == 1){
-
+                if(ret.stat){
+                    relation_query.r_q_table_list = ret.data;
                 }else if(ret.stat == 0){
-                    showErr(ret.errmsg);
+                    var text = ret.errmsg;
+                    showErr(text);
+                    // console.log();
                 }
             })
         }
@@ -1738,7 +1802,7 @@
             专卖店（经销商）<input v-model="tikuan_zmd" id="teller_tikuan_zmd" type="text">
             <button @click="zongzhang(arg, $event)" class="btn">总账查询</button>
             提款ID<input id="teller_tikuan_zmd" style="width:50px;" type="text">
-            <button @click="tikuan()" class="btn btn-primary">提款查询</button>
+            <button @click="tikuan_query()" class="btn btn-primary">提款查询</button>
             <input v-model="p_check" type="checkbox">P
             提款操作人：<input id="" value="管理员" disabled type="text">
         </div>
@@ -1809,29 +1873,32 @@
         <div style="margin-top:20px;">
             提款ID<input style="width:50px;" type="text">
             银行<input style="width:50px;" type="text">
-            提款日期<input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
-            用途<input style="width:50px;" type="text">
-            备注<input style="width:50px;" type="text">
-            <button class="btn">提款</button>
+            提款日期<input id="tikuan_date" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+            用途<input id="tikuan_use" style="width:50px;" type="text">
+            备注<input id="tikuan_remark" style="width:50px;" type="text">
+            <button @click="tikuan()" class="btn">提款</button>
         </div>
         <div>   
             业绩所属Year <select name="" style="width:60px;" v-model="btm_year.default" id="">
-                <option value="" v-for="item in btm_year.list">{{item.no}}</option>
+                <option :value="item.no" v-for="item in btm_year.list">{{item.no}}</option>
             </select>
             Month 
             <select name="" style="width:50px;" v-model="btm_month.default" id="">
-                <option value="" v-for="item in btm_month.list">{{item.no}}</option>
+                <option :value="item.no" v-for="item in btm_month.list">{{item.no}}</option>
             </select>
-            数额：<input style="width:50px;" type="text">
-            提款：<select name="" id="">
-                <option value=""></option>
+            数额：<input id="tikuan_amount" style="width:50px;" type="text">
+            提款：<select name="" v-model="tikuan_type.dafault" id="">
+                <option value="" v-for="item in tikuan_type.list">{{item.name}}</option>
             </select>
-            <input style="width:50px;" type="text">XXX
+            <input id="tikuan_down_shop" style="width:50px;" type="text">XXX
             REGION
-            <select name="" id="">
-                <option value=""></option>
+            <select name="" v-model="tikuan_region.dafault_region" id="">
+                <option :value="item.region" v-for="item in tikuan_region.list">{{item.region}}</option>
             </select>
-            <input type="text">
+            <input type="text" style="width:30px;">
+        </div>
+        <div>
+            <div class="right"><input v-model="tikuan_shouxu" type="checkbox">个人提款手续</div>
         </div>
     </div>
 
@@ -1840,25 +1907,69 @@
         var teller_tikuan = new Vue({
             el:'#teller_tikuan',
             data:{
+                tikuan_shouxu:false,
                 tikuan_zmd:'',
                 p_check:false,
+                tikuan_region:{dafault_region:'',list:[]},
                 btm_year:{default:'',list:[{'no':2014},{'no':2015},{'no':2016},{'no':2017},{'no':2018},{'no':2019},{'no':2020}]},
                 btm_month:{default:'',list:[{'no':'JAN'},{'no':'FEB'},{'no':'MAR'},{'no':'APR'},{'no':'MAY'},{'no':'JUN'},{'no':'JUL'},{'no':'AUG'},{'no':'SEP'},{'no':'OCT'},{'no':'DEC'}]},
+                tikuan_type:{dafault:'',list:[{'name':'专卖店'},{'name':'经销商'}]},
                 table_list1:[],
-                table_list2:[]
-            
+                table_list2:[],
+                
             },
             methods:{
                 zongzhang(){
                     zongzhang_exe(this.tikuan_zmd,this.p_check?1:0)
                 },
-                tikuan(){
+                tikuan_query(){
                     tikuan_exe($("#teller_tikuan_zmd").val())
                 },
+                tikuan(){
+                    console.log(this.tikuan_region)
+                    tikuan_act(
+                        $("#tikuan_down_shop").val(),
+                        $("#tikuan_amount").val(),
+                        this.tikuan_region.dafault_region,
+                        $("#tikuan_date").val(),
+                        $("#tikuan_use").val(),
+                        $("#tikuan_remark").val(),
+                        this.btm_year.default,
+                        this.btm_month.default,
+                        this.tikuan_shouxu
+                    )
+                }
+
             }
 
         })
+        //btm   提款
+        function tikuan_act(down_shop,Amount,Region,date,use,remark,Year,Month,person_check){
+            var url = '/index.php?s=desktop/Distrbutor_Withdrawal/button1_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["down_shop"] = down_shop;
+            data["Amount"] = Amount;
+            data["Region"] = Region;
+            data["date"] = date;
+            data["use"] = use;
+            data["remark"] = remark;
+            data["Year"] = Year;
+            data["Month"] = Month;
+            data["person_check"] = person_check;
+            ajax(url,data,function (e) {
+                console.log(e);
+                if(e.stat){
+                    // showErr(e.msg)
+                    // teller_tikuan.table_list1 = ;
+                }else if(e.stat == 0){
+                    showErr(e.errmsg);
+                }
+                // console.log()
+            })
 
+        }
         function zongzhang_exe(zmd,p){
             var url = '/index.php?s=desktop/Distrbutor_Withdrawal/button2_Click',boo = '';
             var user_token = get_cache('usertoken');
@@ -1877,7 +1988,7 @@
                 console.log(e);
                 if(e.stat){
                     // showErr(e.msg)
-                    // teller_tikuan.table_list1 = ;
+                    teller_tikuan.table_list1 = e.data;
                 }else if(e.stat == 0){
                     showErr(e.errmsg);
                 }
@@ -2227,7 +2338,7 @@
                 <div class="left">
                     status <span>管理员</span>
                 </div>
-                <div class="right"><button class="btn">导出</button></div>
+                <!-- <div class="right"><button class="btn">导出</button></div> -->
                 <div class="clear"></div>
             </div>
         </div>
@@ -2367,4 +2478,55 @@
             })
         }
     </script>
+
+    <div id="pl_confirm" style="display:none;">
+        <div>
+            <div class="left">
+                <span>上传日期</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                <button class="btn">搜索</button>
+                <input type="checkbox"> <span>已确认</span>
+                <input type="checkbox"> <span>未确认</span>
+            </div>
+            <div class="right">
+                <button class="btn btn-primary">确认</button>
+                <button class="btn">更新数据</button>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div>
+                <table id="" class="table table-border table-bordered table-bg" style="display:;max-height:400px;width: 130%;margin:auto;background-color: rgba(200,200,200,.15);">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">选择</th>
+                            <th style="width: 60px;">银行</th>
+                            <th style="width: 50px;">ShopNo</th>
+                            <th style="width: 50px;">POS日期</th>
+                            <th style="width: 60px;">存款</th>
+                            <th style="width: 50px;">来源</th>
+                            <th style="width: 50px;">备注</th>
+                            <th style="width: 50px;">Region</th>
+                            <th style="width: 30px;">Mark</th>
+                            <th style="width: 100px;">上传日期</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in table_list1">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <!-- <tr v-if="">
+                            <td colspan="15">no data</td>
+                        </tr> -->
+                    </tbody>
+                </table>
+        </div>
+    </div>
 </html>
