@@ -135,7 +135,7 @@
                                 <div class="left" style="margin-right: 5px;">
                                     <input type="text" v-model="sel_condition" style="width: 140px;padding-left: 0;">
                                 </div>
-                                <div class="left"><input type="checkbox" @click="confirm_is(confirm, $event)" v-model="confirm">已确认</div>
+                                <div class="left"><input type="checkbox" @click="confirm_is(confirm, $event)" v-model="confirmed">已确认</div>
                                 <div class="clear"></div>
                             </div>
                         </div>
@@ -171,7 +171,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr :class="[s['确认'] == 1?(s['使用']==1?'tr_blue':'tr_bg'):'','']" @click="get_teller_query_item(s.TellerID, s.Deposit, s['专卖店'] ,s.BANK_NAME,s.EFFECTIVE_DATE,s['用途'],s['确认'],s['使用'],index)" v-for="(s,index) in teller_query" v-if='teller_query.length'>
+                                    <tr :class="[s['确认'] == 1?(s['使用']==1?'tr_blue':'tr_bg'):(s['用途'] == '关联'?'tr_y':'')]" @click="get_teller_query_item(s.TellerID, s.Deposit, s['专卖店'] ,s.BANK_NAME,s.EFFECTIVE_DATE,s['用途'],s['确认'],s['使用'],index)" v-for="(s,index) in teller_query" v-if='teller_query.length'>
                                         <td>{{s.TellerID}}
                                         </td>
                                         <td> <input type="checkbox" :checked="s['确认'] == 1" >
@@ -490,16 +490,16 @@
                         <div>
                                 <!-- <input id="upfile" type="file" name="upfile">
                                 <button @click=upload_file()>上传文件</button> -->
-                            <form action="http://211.149.198.76/index.php?s=desktop/Teller_Recharge/ButtonUploadPos_Click" method="POST" enctype="multipart/form-data" >
+                            <form action="http://211.149.198.76/index.php?s=desktop/Teller_Recharge/ButtonUploadPos_Click" target="nm_iframe" method="POST" enctype="multipart/form-data" >
                                 <input type="hidden" :value="t" name="usertoken">
                                 <input id="upfile" type="file" name="upfile">
                                 <input type="submit" value="提交">
                             </form>
+                            <iframe width="100%" height="50px" id="id_iframe" name="nm_iframe" style="display:;"></iframe>
                             
-                        </div><div> <button @click="open_pl_confirm()" class=""></button></div><div></div>
+                        </div><div> <button @click="open_pl_confirm()" class="">批量确认</button></div><div></div>
                     </div>
             </div>
-
 
 
             <div class="clear"></div>
@@ -509,7 +509,8 @@
         </div>
     </div>
         <script>
-            
+            var lang = window.localStorage['lang'];
+            console.log(lang,'Tamia');
             var user_token = get_cache('usertoken'),
                 Vdata_list, //列表VUE
                 Vresult;
@@ -542,7 +543,7 @@
 
                     sel_val:-1,
                     sel_condition:'',
-                    confirm:false,
+                    confirmed:false,
                     un_confirm:false,
                     deposit:'',
                     region_item: '',
@@ -607,12 +608,12 @@
                     },
                     ac_query(){
                         console.log($('#ac_start').val(),$('#ac_end').val(),this.sel_val);
-                        ac_query_be($('#ac_start').val(),$('#ac_end').val(),this.sel_val,this.sel_condition,);
+                        ac_query_be($('#ac_start').val(),$('#ac_end').val(),this.sel_val,this.sel_condition,this.un_confirm,this.confirmed);
                     },
 
                     confirm_is(arg){
                         if(!arg){
-                            this.sel_val = 2;
+                            // this.sel_val = 2;
 
                         }
                     },
@@ -894,7 +895,7 @@
                 var user_token = get_cache('usertoken');
                 var data = {};
                 data["usertoken"]=user_token;
-
+                
             }
             //中间POS
             function pos_exe(para){
@@ -1020,7 +1021,7 @@
                 })
             }
 
-            function ac_query_be(start,end,c,d){
+            function ac_query_be(start,end,c,d,e,f){
                 var url = '/index.php?s=desktop/Teller_Recharge/button2_Click';
                 var user_token = get_cache('usertoken');
                 var data = {};
@@ -1029,12 +1030,19 @@
                 data["To"]   = end;
                 data["comboBLcondition"] = c;
                 data["textBox1"] = d;
+                data["Unconfirm"] = Number(e);
+                data["confirm"] = Number(f);
                 ajax(url,data,function (ret) {
-                    console.log(ret.data.Get_Teller_Info);
+                    // console.log(ret.data.Get_Teller_Info);
                     // localStorage.setItem('asdada',JSON.stringify(ret.data.Get_Teller_Info)) ;
-                    Vdata_list.teller_query = ret.data.Get_Teller_Info;
-                    Vdata_list.charge.income = ret.data.input.current_income;
-                    Vdata_list.charge.cur_expenditure = ret.data.input.current_expenditures;
+                    if(ret.stat){
+                        Vdata_list.teller_query = ret.data.Get_Teller_Info;
+                        Vdata_list.charge.income = ret.data.input.current_income;
+                        Vdata_list.charge.cur_expenditure = ret.data.input.current_expenditures;
+                    }else if(!ret.stat){
+                        showErr(ret.errmsg);
+                    }
+                    
                 })
             }
 
@@ -2126,16 +2134,16 @@
                         <span>ID</span><input type="text">
                         <button @click="mark($event)" class="btn">标记</button>
                         <input type="checkbox"><span>全选POS</span>
-                        <button class="btn">贷方</button>=<span style="display: inline-block;transform:scale(1.5);">></span>未标记
-                        <button class="btn">POS</button>=<span style="display: inline-block;transform:scale(1.5);">></span>未匹配
+                        <span style="display:inline-block;padding: 5px 10px;background-color: #cccccc;" class="">贷方</span>=<span style="display: inline-block;transform:scale(1.5);">></span>未标记
+                        <span style="display:inline-block;padding: 5px 10px;background-color: #ffffcc;" class="">POS</span>=<span style="display: inline-block;transform:scale(1.5);">></span>未匹配
                     </div>
                     <div class="">
                         贷方总额<input type="text">
                         <span>方向</span><input type="text">
                         <button class="btn">去标记</button>
                         <button>核对选中</button>
-                        <button class="btn btn-primary">双方</button>=<span style="display: inline-block;transform:scale(1.5);">></span>已核对
-                        <button class="btn btn-primary">POS</button>=<span style="display: inline-block;transform:scale(1.5);">></span>已标记
+                        <span style="display:inline-block;padding: 5px 10px;background-color: rgb(36, 214, 125);" class="">双方</span>=<span style="display: inline-block;transform:scale(1.5);">></span>已核对
+                        <span style="display:inline-block;padding: 5px 10px;background-color: #AFEEEE;" class="">双方</span>=<span style="display: inline-block;transform:scale(1.5);">></span>已标记
                         <button class="btn btn-disabled">反确认</button>
                     </div>
                 </div>
@@ -2482,14 +2490,14 @@
     <div id="pl_confirm" style="display:none;">
         <div>
             <div class="left">
-                <span>上传日期</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
-                <button class="btn">搜索</button>
-                <input type="checkbox"> <span>已确认</span>
-                <input type="checkbox"> <span>未确认</span>
+                <span>上传日期</span><input id="pl_upload_date" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                <button @click="pl_search($event)" class="btn">搜索</button>
+                <input v-model="pl_confirmed" type="checkbox"> <span>已确认</span>
+                <input v-model="pl_unconfirm" type="checkbox"> <span>未确认</span>
             </div>
             <div class="right">
-                <button class="btn btn-primary">确认</button>
-                <button class="btn">更新数据</button>
+                <button @click="pl_queren($event)" class="btn btn-primary">确认</button>
+                <button @click="pl_update($event)" class="btn">更新数据</button>
             </div>
             <div class="clear"></div>
         </div>
@@ -2510,7 +2518,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="item in table_list1">
+                        <tr v-for="item in pl_list">
                             <td></td>
                             <td></td>
                             <td></td>
@@ -2529,4 +2537,65 @@
                 </table>
         </div>
     </div>
+    <script>
+        var pl_confirm = new Vue({
+            el:'#pl_confirm',
+            data:{
+                pl_confirmed:false,
+                pl_unconfirm:false,
+                pl_list:[]
+            },
+            methods:{
+                pl_search(){
+                    pl_search_exe(
+                        $("#pl_upload_date").val(),
+                        this.pl_confirmed,
+                        this.pl_unconfirm
+                    )
+                },
+                pl_update(){
+                    pl_update_exe()
+                },
+                pl_queren(){
+                    
+                },
+
+            }
+        })
+
+        function pl_search_exe(date,is_confirm,is_unconfirm){
+            var url = '/index.php?s=desktop/Confirm_Teller_Batch/button4_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["date"] = date;
+            data["check"] = Number(is_confirm);
+            data["check_not"] = Number(is_unconfirm);
+            ajax(url,data,function (ret) {
+                console.log(ret);
+                if(ret.stat){
+                    showErr(ret.data);
+                }else if(ret.stat == 0){
+                    var a = ret.errmsg;
+                    showErr(a+'<span></span>');
+                }
+            })
+
+        }
+        function pl_update_exe() {
+            var url = '/index.php?s=desktop/Confirm_Teller_Batch/button1_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            ajax(url,data,function (ret) {
+                console.log(ret);
+                if(ret.stat){
+                    showErr(ret.data);
+                }else if(ret.stat == 0){
+                    showErr(ret.errmsg);
+                }
+            })
+        }
+    </script>
+
 </html>

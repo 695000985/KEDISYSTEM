@@ -32,51 +32,154 @@
     <div id="main">
         <div>
             <div>
-                <span>录入员</span><input type="text">
+                <button class="btn">历史借货HistoryBorrowCheck</button>
+                <button class="btn">开店铺货OpenNewShop</button>
+                <input disabled :value="history_no" type="text">
+                <button class="btn">AddNew新增</button>
+            </div>
+            <div>
+                <span>录入员</span><input disabled value="管理员" type="text">
                 <span>DATE</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
                 <span>SC/Distributor</span><input type="text">
                 <button class="btn">SerachHistory</button>
-                <span>Products:</span><input type="text">
+                <span>Products:</span><input id="producy_name_num" :type="producy_name_num.list[producy_name_num.default]">
                 <button class="btn">Reset</button>
 
             </div>
-            <div>
-
+            
+            <div style="padding:10px;">
+                    <table class="table table-border table-bordered table-bg" style="width: 800px;background-color: rgba(200,200,200,.15);">
+                        <thead>
+                            <tr>
+                                <th style="width: 70px;">编号</th>
+                                <th style="width: 80px;">Name</th>
+                                <th style="width: 70px;">MemberPrice</th>
+                                <th style="width: 60px;">BV</th>
+                                <th style="width: 60px;">PV</th>
+                                <th style="width: 70px;">HistoryQty</th>
+                                <th style="width: 60px;">BorrowQty</th>
+                                <th style="width: 50px;">NowQty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr :class="" @click="" v-for="(item,index) in borrow_product_list" v-if='borrow_product_list.length'>
+                                <td :connect_id="item.productid">
+                                    {{item.productno}}
+                                </td>
+                                <td>{{item.CName}}</td>
+                                <td>{{item.MemberPrice}}</td>
+                                <td>{{item.BV}}</td>
+                                <td>{{item.PV}}</td>
+                                <td>{{item.HistoryQty}}</td>
+                                <td>{{item.BorrowQty}}</td>
+                                <td>{{item.NowQty}}</td>
+        
+                            </tr>
+                            <tr v-if="!borrow_product_list.length">
+                                <td colspan="8"></td>
+                            </tr>
+                        </tbody>
+                    </table>
             </div>
+
             <div>
                 <div class="left">
-                    <div class="left">
-                        <span>BorrowedNaira</span> <span>0.0</span>
+                    <div class="">
+                        <div class="left">
+                            <span>BorrowedNaira</span> <span>0.0</span>
+                        </div>
+                        <div class="left">
+                            <span>BorrowedBV</span> <span>0.0</span>
+                        </div>
+                        <div class="left">
+                            <span>BorrowedPV</span> <span>0.0</span>
+                        </div>
+                        <div class="clear"></div>
                     </div>
-                    <div class="left">
-                        <span>BorrowedBV</span> <span>0.0</span>
+                    <div class="">
+                        <div class="left">
+                            <span>ToBorrowNaira</span> <span>0.0</span>
+                        </div>
+                        <div class="left">
+                            <span>ToBorrowBV</span> <span>0.0</span>
+                        </div>
+                        <div class="left">
+                            <span>ToBorrowPV</span> <span>0.0</span>
+                        </div>
+                        <div class="clear"></div>
                     </div>
-                    <div class="left">
-                        <span>BorrowedPV</span> <span>0.0</span>
-                    </div>
-                    <div class="clear"></div>
                 </div>
                 <div class="left">
-                    <div class="left">
-                        <span>ToBorrowNaira</span> <span>0.0</span>
-                    </div>
-                    <div class="left">
-                        <span>ToBorrowBV</span> <span>0.0</span>
-                    </div>
-                    <div class="left">
-                        <span>ToBorrowPV</span> <span>0.0</span>
-                    </div>
-                    <div class="clear"></div>
+                    <button class="btn btn-primary">CretaeReport</button>
                 </div>
-                <div class="left">
-                    <button class="btn">CretaeReport</button>
-                </div>
-                <div class=""></div>
+                <div class="clear"></div>
             </div>
         </div>
     </div>
     <script>
+        $(function () {
+            get_borrow_product_list();          //获取商品列表
+            $('.Wdate').val(get_local_time());
 
+
+            $("#producy_name_num").keyup(function(e){
+                if(e.keyCode == 13){
+                    // console.log('回车');
+                    bind_product_name();
+                }
+            })
+            
+        })
+        var borrow_main = new Vue({
+            el:'#main',
+            data:{ 
+                history_no:'231233',
+                borrow_product_list : [],
+                producy_name_num : {default:0,list:['text','number']},
+                product_borrow_history : [],
+            },
+            methods:{
+                // get_borrow_product_list(){
+
+                // }
+
+            }
+        })
+
+        function bind_product_name() {
+
+            var arr = ['A02'];
+
+            for (n in borrow_main.borrow_product_list) {
+                // arr.push(borrow_main.borrow_product_list[n].productid);
+
+            }
+            if(arr.includes($('#producy_name_num').val().toUpperCase())){
+                console.log('Tamia');
+            }
+
+        }
+        function get_borrow_product_list() {
+            var url = '/index.php?s=desktop/Borrow/Form1_Load';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    borrow_main.borrow_product_list = ret.data.Product_Info;
+                    borrow_main.product_borrow_history = ret.data.BorrowQty;
+                    for(var j = 0 ;j<borrow_main.product_borrow_history.length;j++){
+                        for(var k = 0; k<borrow_main.borrow_product_list.length;k++){
+                            if(borrow_main.borrow_product_list[k].productno == borrow_main.product_borrow_history[j].productno){
+                                console.log(borrow_main.borrow_product_list[k].productno);
+                                borrow_main.borrow_product_list[k].BorrowQty = borrow_main.product_borrow_history[j].QTY;
+                            }
+                        }
+                    }
+                }
+
+            })
+        }
     </script>
 </body>
 
