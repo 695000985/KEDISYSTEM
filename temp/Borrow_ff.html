@@ -32,16 +32,16 @@
     <div id="main">
         <div>
             <div>
-                <button class="btn">历史借货HistoryBorrowCheck</button>
-                <button class="btn">开店铺货OpenNewShop</button>
+                <button class="btn">{{lang_text.HistoryBorrow}}</button>
+                <button class="btn">{{lang_text.OpenNewShop}}</button>
                 <input disabled :value="history_no" type="text">
-                <button class="btn">AddNew新增</button>
+                <button class="btn">{{lang_text.AddNew}}</button>
             </div>
             <div>
-                <span>录入员</span><input disabled value="管理员" type="text">
+                <span>{{lang_text.reporter}}</span><input disabled value="管理员" type="text">
                 <span>DATE</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
-                <span>SC/Distributor</span><input type="text">
-                <button class="btn">SerachHistory</button>
+                <span>SC/Distributor</span><input v-model="searchByNo_no" type="text">
+                <button @click="searchByNo($event)" class="btn">SerachHistory</button>
                 <span>Products:</span><input id="producy_name_num" :type="producy_name_num.list[producy_name_num.default]">
                 <button class="btn">Reset</button>
 
@@ -123,39 +123,76 @@
 
 
             $("#producy_name_num").keyup(function(e){
-                if(e.keyCode == 13){
+                
+                if($(this).attr('type')=='text' && e.keyCode == 13){
+                    console.log($(this).attr('type'));
                     // console.log('回车');
                     bind_product_name();
+                }else if($(this).attr('type')=='number' && e.keyCode == 13){
+                    console.log($(this).attr('type'));
+
+                    bind_product_qty();
                 }
             })
             
         })
         var borrow_main = new Vue({
             el:'#main',
-            data:{ 
+            data:{
+                searchByNo_no:'', 
                 history_no:'231233',
                 borrow_product_list : [],
                 producy_name_num : {default:0,list:['text','number']},
                 product_borrow_history : [],
+                lang_text:splicing_obj(get_page_txt('borrow'))
             },
             methods:{
                 // get_borrow_product_list(){
 
                 // }
+                searchByNo(){
+                    searchByNo_exe(this.searchByNo_no)
+                },
+
 
             }
         })
+        function searchByNo_exe(para) {
+            var url = '/index.php?s=desktop/Borrow/Form1_Load';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["shopno"] = para;
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    
+                }
+            })
+        }
+
+        function bind_product_qty() {
+            var arr = ['123','235'];
+            if(arr.includes($('#producy_name_num').val())){
+                console.log('num');
+                
+                $('#producy_name_num').val('');
+                $('#producy_name_num').attr('type','text');
+            }
+        }
 
         function bind_product_name() {
 
             var arr = ['A02'];
 
-            for (n in borrow_main.borrow_product_list) {
+            // for (n in borrow_main.borrow_product_list) {
                 // arr.push(borrow_main.borrow_product_list[n].productid);
-
-            }
+                
+            // }
             if(arr.includes($('#producy_name_num').val().toUpperCase())){
                 console.log('Tamia');
+                $('#producy_name_num').val('');
+                $('#producy_name_num').attr('type','number');
+
             }
 
         }
@@ -167,15 +204,15 @@
             ajax(url,data,function (ret) {
                 if(ret.stat){
                     borrow_main.borrow_product_list = ret.data.Product_Info;
-                    borrow_main.product_borrow_history = ret.data.BorrowQty;
-                    for(var j = 0 ;j<borrow_main.product_borrow_history.length;j++){
-                        for(var k = 0; k<borrow_main.borrow_product_list.length;k++){
-                            if(borrow_main.borrow_product_list[k].productno == borrow_main.product_borrow_history[j].productno){
-                                console.log(borrow_main.borrow_product_list[k].productno);
-                                borrow_main.borrow_product_list[k].BorrowQty = borrow_main.product_borrow_history[j].QTY;
-                            }
-                        }
-                    }
+                    // borrow_main.product_borrow_history = ret.data.BorrowQty;
+                    // for(var j = 0 ;j<borrow_main.product_borrow_history.length;j++){
+                    //     for(var k = 0; k<borrow_main.borrow_product_list.length;k++){
+                    //         if(borrow_main.borrow_product_list[k].productno == borrow_main.product_borrow_history[j].productno){
+                    //             console.log(borrow_main.borrow_product_list[k].productno);
+                    //             borrow_main.borrow_product_list[k].BorrowQty = borrow_main.product_borrow_history[j].QTY;
+                    //         }
+                    //     }
+                    // }
                 }
 
             })
