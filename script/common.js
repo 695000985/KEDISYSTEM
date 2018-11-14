@@ -199,14 +199,16 @@ function open_frame(title, url) {
     });
 }
 
-function open_html(title, ht_id, id,fn,w) {
-    var h_w = (w+'px')||'800px';
+function open_html(title, ht_id, id,fn,win_width,win_height) {
+    var h_w = (win_width+'px')||'800px';
+    var h_h = (win_height+'px')||'500px';
     layer.open({
         type: 1,
+        // id:id,
         title: title,
         maxmin: true,
         content: $(ht_id), //这里content
-        area: [h_w, '500px'],
+        area: [h_w, h_h],
         end: function () { // 销毁弹出时 执行
             if(!!fn){
                 fn()

@@ -21,6 +21,8 @@
     <script src="../script/layer.js"></script>
     <script src="../script/jquery.pagination.js"></script>
     <script src="../script/excellentexport.js"></script>
+    <script src="https://cdn.bootcss.com/jquery.form/3.51/jquery.form.min.js"></script>
+    <!-- <script src="https://cdn.bootcss.com/jquery.form/4.2.2/jquery.form.js"></script> -->
     <style>
         [v-cloak] {
             display: none;
@@ -37,6 +39,16 @@
         .input_dis{}
 
         .middle_btn>div:hover{cursor: pointer;}
+
+
+        button:disabled{background-color: #d8d2d2;}
+        p.flash{
+            animation: p_flash 0.65s;
+        }
+        @keyframes p_flash{
+            0%{opacity: 0;}
+            100%{opacity: 1;}
+        }
     </style>
 </head>
 
@@ -72,9 +84,9 @@
                 <div class="left">
                     <input @click="open_acco_man()" type="button" class="btn" :value="lang_txt['FinancialManagement']" >
                 </div>
-                <!-- <div class="left">
-                    <input type="button" class="btn" value="导入Teller">
-                </div> -->
+                <div class="left">
+                    <input @click="import_teller($event)" type="button" class="btn" value="导入Teller">
+                </div>
                 <div class="left">
                     <input @click="open_teller_use_query()" type="button" class="btn" value="Teller使用查询">
                 </div>
@@ -490,12 +502,16 @@
                         <div>
                                 <!-- <input id="upfile" type="file" name="upfile">
                                 <button @click=upload_file()>上传文件</button> -->
-                            <form action="http://211.149.198.76/index.php?s=desktop/Teller_Recharge/ButtonUploadPos_Click" target="nm_iframe" method="POST" enctype="multipart/form-data" >
+                            <form id="up_file" action="http://211.149.198.76/index.php?s=desktop/Teller_Recharge/ButtonUploadPos_Click" target="nm_iframe" method="POST" enctype="multipart/form-data" >
                                 <input type="hidden" :value="t" name="usertoken">
-                                <input id="upfile" type="file" name="upfile">
-                                <input type="submit" value="提交">
+                                <!-- <input id="upfile" type="file" name="upfile"> -->
+                                <span class="upload_file" style="position: relative;width:50px;height:20px; text-align:center;color:#fff;background:#A1A1A1; display: inline-block;overflow: hidden;">
+                                    <span class="upload_btn">上传</span>
+                                    <input type="file" name="upfile" onchange="file_up()" id="upfile" value="" style="position: absolute;right: 0px;top: 0px;opacity: 0;-ms-filter: 'alpha(opacity=0)';" />
+                                </span>
+                                <input id="file_sub" hidden type="submit" value="提交">
                             </form>
-                            <iframe width="100%" height="50px" id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
+                            <iframe width="100%" height="50px" id="id_iframe" name="nm_iframe" style="display:;"></iframe>
                             
                         </div><div> <button @click="open_pl_confirm()" class="">批量确认</button></div><div></div>
                     </div>
@@ -509,6 +525,15 @@
         </div>
     </div>
         <script>
+            function file_up(){
+                console.log('tamia');
+                
+                $("#file_sub").click();
+                
+            }
+            $("#up_file").ajaxForm(function(data){ 
+                console.log(data);
+        　　});
             var lang = window.localStorage['lang'];
             console.log(lang,'Tamia');
             var user_token = get_cache('usertoken'),
@@ -534,6 +559,7 @@
                     teller_query:[],
                     no_data: config_txt.no_data.zn, 
                     lang_txt: splicing_obj(get_page_txt('teller')), // 对象拼接
+                    import_lang:'请输入验证码',
                     huizong_num:'2018555555',
                     ac_query_list:[{'sel':'Deposit'},{'sel':'银行'},{'sel':'专卖店'},{'sel':'备注'}],
                     main_stock_out_num:'',
@@ -846,6 +872,12 @@
                             
                         },900)
                     },
+                    
+                    import_teller(){
+                        open_html(this.import_lang,"#import_teller","import_teller",function () {
+
+                        },270,120)
+                    },
 
                     open_acco_man(){
                         open_html("AccountManage","#account_manage","account_manage",function(){
@@ -878,7 +910,7 @@
                     open_pos_taizhang(){
                         open_html("FDPOSInfo","#pos_taizhang","pos_taizhang",function(){
                             
-                        },800)
+                        },800,500)
 
                     },
                     upload_file(){
@@ -2091,14 +2123,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="item in button1_Click">
-                            <td><input :check_index="item.TellerID" :mark="item.Mark" :direction="item['方向']" class="taizhang_input" type="checkbox">
+                        <tr @click="pos_tr_click(index,item.TellerID,item.ShopNo,item['方向'], $event)" v-for="(item,index) in button1_Click">
+                            <td><input :check_index="item.TellerID" :mark="item.Mark" :pos="item.PosID" :summary="item['摘要']" :direction="item['方向']" class="taizhang_input" type="checkbox">
                             </td>
                             <td>{{item.TellerID}}
                             </td>
                             <td>{{item.Bank}}
                             </td>
-                            <td>{{item.shopNo}}
+                            <td>{{item.ShopNo}}
                             </td>
                             <td>{{item.EffectDate}}</td>
                             <td>{{item.确认日期}}</td>
@@ -2140,11 +2172,11 @@
                     <div class="">
                         贷方总额<input type="text">
                         <span>方向</span><input type="text">
-                        <button class="btn">去标记</button>
-                        <button>核对选中</button>
+                        <button @click="del_mark($event)" class="btn">去标记</button>
+                        <button @click="check_selected($event)">核对选中</button>
                         <span style="display:inline-block;padding: 5px 10px;background-color: rgb(36, 214, 125);" class="">双方</span>=<span style="display: inline-block;transform:scale(1.5);">></span>已核对
                         <span style="display:inline-block;padding: 5px 10px;background-color: #AFEEEE;" class="">双方</span>=<span style="display: inline-block;transform:scale(1.5);">></span>已标记
-                        <button class="btn btn-disabled">反确认</button>
+                        <button @click="ver_confirm($event)" class="btn btn-disabled">反确认</button>
                     </div>
                 </div>
 
@@ -2172,7 +2204,8 @@
                     list:[{'value':0,'name':'无日期'},{'value':1,'name':'EffectDate'},{'value':2,'name':'确认日期'},{'value':3,'name':'POS日期'}]
                 },
                 button1_Click:[],
-                mul_select:[]
+                mul_select:[],
+                ver_confirm_data:{}
             },
             methods:{
                 button1_Click_req(){
@@ -2185,7 +2218,7 @@
                         this.comboBox2.default,
                         this.comboBox1.default,
                         $("#textBox1").val()
-
+                    
 
                     )
 
@@ -2200,15 +2233,83 @@
                             }
                                 
                         }
-                        taizhang_mark_exe(this.mul_select,0)
+                        taizhang_mark_exe(this.mul_select,1)
                 },
                 del_mark(){
-
+                    var a = this.$refs.reference_taizhang.getElementsByClassName('taizhang_input');
+                        this.mul_select = [];
+                        for(var i = 0; i<a.length; i++){
+                            if(a[i].checked){
+                                // console.log(a[i].getAttribute("check_id"));
+                                this.mul_select.push({'TellerID':a[i].getAttribute("check_index"),'Mark':a[i].getAttribute("mark"),'方向':a[i].getAttribute("direction")});                                    
+                            }
+                                
+                        }
+                        taizhang_mark_exe(this.mul_select,0)
+                },
+                ver_confirm(){
+                    // var ;
+                    ver_confirm_exe()
+                },
+                pos_tr_click(index,tid,sc,d){
+                    console.log(index,tid,sc,d);
+                    this.ver_confirm_data.TellerID = tid;
+                    this.ver_confirm_data.SC = sc;
+                    this.ver_confirm_data.direction = d;
+                },
+                check_selected(){
+                    var a = this.$refs.reference_taizhang.getElementsByClassName('taizhang_input');
+                        this.mul_select = [];
+                        for(var i = 0; i<a.length; i++){
+                            if(a[i].checked){
+                                // console.log(a[i].getAttribute("check_id"));
+                                this.mul_select.push({'PosID':a[i].getAttribute("pos"),'摘要':a[i].getAttribute("summary")});                                    
+                            }
+                                
+                        }
+                        check_selected_exe(this.mul_select)
                 }
 
             }
 
         })
+
+        function check_selected_exe(para){
+            var url = '/index.php?s=desktop/Fd_Pos_Info/button6_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["data"] = para.toString();
+            ajax(url,data,function (e) {
+                console.log(e);
+                if(e.stat){
+                    showErr('核对'+e.data)
+                }else if(e.stat == 0){
+                    showErr(e.errmsg);
+                }
+                // console.log()
+            })
+        }
+
+        function ver_confirm_exe(){
+            var url = '/index.php?s=desktop/Fd_Pos_Info/button4_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["TellerID"] = pos_taizhang.ver_confirm_data.TellerID;
+            data["SC"] = pos_taizhang.ver_confirm_data.SC;
+            data["direction"] = pos_taizhang.ver_confirm_data.direction;
+            ajax(url,data,function (e) {
+                console.log(e);
+                if(e.stat){
+                    showErr(e.data)
+                }else if(e.stat == 0){
+                    showErr(e.errmsg);
+                }
+                // console.log()
+            })
+        }
+
         function taizhang_mark_exe(param,mark) {
             var url = '/index.php?s=desktop/Fd_Pos_Info/button2_Click';
             var user_token = get_cache('usertoken');
@@ -2219,7 +2320,7 @@
             ajax(url,data,function (e) {
                 console.log(e);
                 if(e.stat){
-                    showErr(e.msg)
+                    showErr(e.data.msg)
                 }else if(e.stat == 0){
                     showErr(e.errmsg);
                 }
@@ -2597,5 +2698,49 @@
             })
         }
     </script>
+    <div id="import_teller" style="display:none;">
+        <div style="">
+            <input v-model="import_verify" type="text" value="teller">
+            <button :disabled="import_verify==''?true:false" @click="import_t($event)" class="btn">导入</button>
+            <p :class="is_addClass?'flash':''" style="columns: #d8d2d2;">请输入验证码</p>
+        </div>
+    </div>
+    <script>
+        var import_teller = new Vue({
+            el:'#import_teller',
+            data:{
+                
+                import_verify:'',
+                is_addClass:false
+            },
+            methods:{
+                import_t(){
+                    if(this.import_verify == ''){
+                        this.is_addClass = true;
+                    }else{
+                        this.is_addClass = false;
+                        import_teller_exe(this.import_verify)
+                        // document.getElementById('import_teller').style.display = 'none';
+                        // layer.close('import_teller');
+                    }
+                }
+            }
+        })
 
+        function import_teller_exe(code){
+            var url = '/index.php?s=desktop/Teller_Recharge/jurisdiction';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["key"] = code;
+            ajax(url,data,function (ret) {
+                console.log(ret);
+                if(ret.stat){
+                    
+                }else if(ret.stat == 0){
+                    showErr(ret.errmsg);
+                }
+            })
+        }
+    </script>
 </html>
