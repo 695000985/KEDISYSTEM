@@ -531,9 +531,12 @@
                 $("#file_sub").click();
                 
             }
-            $("#up_file").ajaxForm(function(data){ 
-                console.log(data);
-        　　});
+            $(function(){
+                $("#up_file").ajaxForm(function(data){ 
+                    console.log(data);
+            　　});
+            })
+            
             var lang = window.localStorage['lang'];
             console.log(lang,'Tamia');
             var user_token = get_cache('usertoken'),
