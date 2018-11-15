@@ -2717,9 +2717,9 @@
                     <button :disabled="import_verify==''?true:false" @click="import_t($event)" class="btn">导入</button>
                     <span class="upload_file" style="position: relative;width:0px;height:20px; text-align:center;color:#fff;background:#A1A1A1; display: inline-block;overflow: hidden;">
                         <span class="upload_btn">导入</span>
-                        <input type="file" name="upfile" onchange="teller_file_up()" id="teller_upfile" value="" style="position: absolute;right: 0px;top: 0px;opacity: 0;-ms-filter: 'alpha(opacity=0)';" />
+                        <input type="file" name="teller_file" onchange="teller_file_up()" id="teller_upfile" value="" style="position: absolute;right: 0px;top: 0px;opacity: 0;-ms-filter: 'alpha(opacity=0)';" />
                     </span>
-                    <input id="file_sub" hidden type="submit" value="提交">
+                    <input id="teller_file_sub" hidden type="submit" value="提交">
                 </form>
                 <iframe width="100%" height="50px" id="id_iframe" name="teller_iframe" style="display:none;"></iframe>
             </div>
@@ -2750,7 +2750,7 @@
             }
         })
         function teller_file_up(){
-
+            $("#teller_file_sub").click()
         }
 
         function import_teller_exe(code){
