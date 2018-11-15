@@ -41,7 +41,7 @@
         .middle_btn>div:hover{cursor: pointer;}
 
 
-        button:disabled{background-color: #d8d2d2;}
+        button:disabled{background-color: #A9A9A9;}
         p.flash{
             animation: p_flash 0.65s;
         }
@@ -506,12 +506,12 @@
                                 <input type="hidden" :value="t" name="usertoken">
                                 <!-- <input id="upfile" type="file" name="upfile"> -->
                                 <span class="upload_file" style="position: relative;width:50px;height:20px; text-align:center;color:#fff;background:#A1A1A1; display: inline-block;overflow: hidden;">
-                                    <span class="upload_btn">上传</span>
+                                    <span class="upload_btn">上传POS</span>
                                     <input type="file" name="upfile" onchange="file_up()" id="upfile" value="" style="position: absolute;right: 0px;top: 0px;opacity: 0;-ms-filter: 'alpha(opacity=0)';" />
                                 </span>
                                 <input id="file_sub" hidden type="submit" value="提交">
                             </form>
-                            <iframe width="100%" height="50px" id="id_iframe" name="nm_iframe" style="display:;"></iframe>
+                            <iframe width="100%" height="50px" id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
                             
                         </div><div> <button @click="open_pl_confirm()" class="">批量确认</button></div><div></div>
                     </div>
@@ -532,9 +532,13 @@
                 
             }
             $(function(){
-                $("#up_file").ajaxForm(function(data){ 
-                    console.log(data);
+                $("#up_file").ajaxForm(function(data){
+                    showErr(data.data);
             　　});
+                $("#teller_up_file").ajaxForm(function(data){
+                    showErr(data.data);
+            　　});
+            
             })
             
             var lang = window.localStorage['lang'];
@@ -963,6 +967,7 @@
 
             function get_tok(){
                 Vdata_list.t = get_cache('usertoken');
+                import_teller.t = get_cache('usertoken');
             }
             function upload_excel(){
                 var ser = window.location.href;
@@ -2701,11 +2706,25 @@
             })
         }
     </script>
+    <!-- 导入Teller -->
     <div id="import_teller" style="display:none;">
         <div style="">
             <input v-model="import_verify" type="text" value="teller">
-            <button :disabled="import_verify==''?true:false" @click="import_t($event)" class="btn">导入</button>
-            <p :class="is_addClass?'flash':''" style="columns: #d8d2d2;">请输入验证码</p>
+            <div style="display:inline-block;">
+                <form id="teller_up_file" action="http://211.149.198.76/index.php?s=desktop/Teller_Recharge/UploadTeller" target="teller_iframe" method="POST" enctype="multipart/form-data" >
+                    <input type="hidden" :value="t" name="usertoken">
+                    <!-- <input id="upfile" type="file" name="upfile"> -->
+                    <button :disabled="import_verify==''?true:false" @click="import_t($event)" class="btn">导入</button>
+                    <span class="upload_file" style="position: relative;width:0px;height:20px; text-align:center;color:#fff;background:#A1A1A1; display: inline-block;overflow: hidden;">
+                        <span class="upload_btn">导入</span>
+                        <input type="file" name="upfile" onchange="teller_file_up()" id="teller_upfile" value="" style="position: absolute;right: 0px;top: 0px;opacity: 0;-ms-filter: 'alpha(opacity=0)';" />
+                    </span>
+                    <input id="file_sub" hidden type="submit" value="提交">
+                </form>
+                <iframe width="100%" height="50px" id="id_iframe" name="teller_iframe" style="display:none;"></iframe>
+            </div>
+            <!-- <button :disabled="import_verify==''?true:false" @click="import_t($event)" class="btn">导入</button> -->
+            <!-- <p :class="is_addClass?'flash':''" style="columns: #d8d2d2;">请输入验证码</p> -->
         </div>
     </div>
     <script>
@@ -2714,7 +2733,8 @@
             data:{
                 
                 import_verify:'',
-                is_addClass:false
+                is_addClass:false,
+                t:''
             },
             methods:{
                 import_t(){
@@ -2729,6 +2749,9 @@
                 }
             }
         })
+        function teller_file_up(){
+
+        }
 
         function import_teller_exe(code){
             var url = '/index.php?s=desktop/Teller_Recharge/jurisdiction';
@@ -2736,10 +2759,13 @@
             var data = {};
             data["usertoken"] = user_token;
             data["key"] = code;
+            // $("#teller_upfile").click()
             ajax(url,data,function (ret) {
                 console.log(ret);
                 if(ret.stat){
-                    
+                    // open_html(this.import_lang,"#import_teller","import_teller",function () {
+                    $("#teller_upfile").click()
+                    // },270,120)
                 }else if(ret.stat == 0){
                     showErr(ret.errmsg);
                 }
