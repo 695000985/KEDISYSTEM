@@ -535,10 +535,11 @@
                 $("#up_file").ajaxForm(function(data){
                     showErr(data.data);
             　　});
-                $("#teller_up_file").ajaxForm(function(data){
-                    showErr(data.data);
+                
+                $("#teller_upfile_form").ajaxForm(function(data){
+                    showErr(data.data.msg);
+                    // console.log(data);
             　　});
-            
             })
             
             var lang = window.localStorage['lang'];
@@ -2711,11 +2712,11 @@
         <div style="">
             <input v-model="import_verify" type="text" value="teller">
             <div style="display:inline-block;">
-                <form id="teller_up_file" action="http://211.149.198.76/index.php?s=desktop/Teller_Recharge/UploadTeller" target="teller_iframe" method="POST" enctype="multipart/form-data" >
+                <form id="teller_upfile_form" action="http://211.149.198.76/index.php?s=desktop/Teller_Recharge/UploadTeller" target="teller_iframe" method="POST" enctype="multipart/form-data" >
                     <input type="hidden" :value="t" name="usertoken">
                     <!-- <input id="upfile" type="file" name="upfile"> -->
-                    <button :disabled="import_verify==''?true:false" @click="import_t($event)" class="btn">导入</button>
-                    <span class="upload_file" style="position: relative;width:0px;height:20px; text-align:center;color:#fff;background:#A1A1A1; display: inline-block;overflow: hidden;">
+                    <button @click="import_t($event)" class="btn">导入</button>
+                    <span class="upload_file_teller upload_file" style="position: relative;width:10px;height:20px; text-align:center;color:#fff;background:#A1A1A1; display: inline-block;overflow: hidden;">
                         <span class="upload_btn">导入</span>
                         <input type="file" name="teller_file" onchange="teller_file_up()" id="teller_upfile" value="" style="position: absolute;right: 0px;top: 0px;opacity: 0;-ms-filter: 'alpha(opacity=0)';" />
                     </span>
@@ -2734,42 +2735,55 @@
                 
                 import_verify:'',
                 is_addClass:false,
-                t:''
+                t:'',
+                ver:''
             },
             methods:{
                 import_t(){
-                    if(this.import_verify == ''){
-                        this.is_addClass = true;
-                    }else{
-                        this.is_addClass = false;
-                        import_teller_exe(this.import_verify)
-                        // document.getElementById('import_teller').style.display = 'none';
-                        // layer.close('import_teller');
-                    }
+                    import_teller_exe(this.import_verify)
+                    // if(this.import_verify == ''){
+                    //     this.is_addClass = true;
+                    // }else{
+                    //     this.is_addClass = false;
+                    //     import_teller_exe()
+                    //     // document.getElementById('import_teller').style.display = 'none';
+                    //     // layer.close('import_teller');
+                    // }
                 }
             }
         })
         function teller_file_up(){
-            $("#teller_file_sub").click()
+            $("#teller_file_sub").click();
+            
         }
 
-        function import_teller_exe(code){
+        fet_ver()
+        function fet_ver(){
             var url = '/index.php?s=desktop/Teller_Recharge/jurisdiction';
             var user_token = get_cache('usertoken');
             var data = {};
             data["usertoken"] = user_token;
-            data["key"] = code;
-            // $("#teller_upfile").click()
             ajax(url,data,function (ret) {
-                console.log(ret);
-                if(ret.stat){
-                    // open_html(this.import_lang,"#import_teller","import_teller",function () {
-                    $("#teller_upfile").click()
-                    // },270,120)
-                }else if(ret.stat == 0){
-                    showErr(ret.errmsg);
-                }
+                // console.log(ret+'1111');
+                import_teller.ver = ret.data;
+                console.log(import_teller.ver);
             })
+        }
+
+        // import_teller_exe()
+        function import_teller_exe(code){
+            console.log('上传前');
+            if(code == import_teller.ver){
+                $("#teller_upfile").click()
+            }
+            else{
+                showErr('请输入正确的验证码')
+            }
+            
+        }
+
+        function r_click(){
+            return $("#teller_upfile").click();
         }
     </script>
 </html>
