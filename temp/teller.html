@@ -538,7 +538,25 @@
                 
                 $("#teller_upfile_form").ajaxForm(function(data){
                     showErr(data.data.msg);
+                    teller_up_app.teller_up_data = data.data.select;
+                    teller_up_app.teller_l = data.data.select.length;
+                    teller_up_app.teller_all_amount = computer_all();
+                    function computer_all(){
+                        var all = 0;
+                        for(var i = 0; i < data.data.select.length;i++){
+                            all += Number(data.data.select[i].DEPOSIT);
+                        }
+                        return all;
+                    }
+                    
                     // console.log(data);
+                    setTimeout(function () {
+                        open_html('核对上传数据','#teller_up_success','teller_up_success',function () {
+                            
+                        },800,500)
+                        console.log(teller_up_app.teller_up_data);
+                    },2200)
+                    
             　　});
             })
             
@@ -2612,7 +2630,7 @@
             <div class="clear"></div>
         </div>
         <div>
-                <table id="" class="table table-border table-bordered table-bg" style="display:;max-height:400px;width: 130%;margin:auto;background-color: rgba(200,200,200,.15);">
+                <table id="" class="table table-border table-bordered table-bg" style="max-height:400px;width: 130%;margin:auto;background-color: rgba(200,200,200,.15);">
                     <thead>
                         <tr>
                             <th style="width: 50px;">选择</th>
@@ -2716,8 +2734,8 @@
                     <input type="hidden" :value="t" name="usertoken">
                     <!-- <input id="upfile" type="file" name="upfile"> -->
                     <button @click="import_t($event)" class="btn">导入</button>
-                    <span class="upload_file_teller upload_file" style="position: relative;width:10px;height:20px; text-align:center;color:#fff;background:#A1A1A1; display: inline-block;overflow: hidden;">
-                        <span class="upload_btn">导入</span>
+                    <span class="upload_file_teller upload_file" style="position: relative;width:10px;height:20px; text-align:center;color:#fff;background:; display: inline-block;overflow: hidden;">
+                        <span class="upload_btn" style="opacity:0;"></span>
                         <input type="file" name="teller_file" onchange="teller_file_up()" id="teller_upfile" value="" style="position: absolute;right: 0px;top: 0px;opacity: 0;-ms-filter: 'alpha(opacity=0)';" />
                     </span>
                     <input id="teller_file_sub" hidden type="submit" value="提交">
@@ -2782,8 +2800,79 @@
             
         }
 
-        function r_click(){
-            return $("#teller_upfile").click();
+        // function r_click(){
+        //     return $("#teller_upfile").click();
+        // }
+    </script>
+
+    <div id="teller_up_success">
+        <div>
+            <table id="" class="table table-border table-bordered table-bg" style="max-height:400px;width: 130%;margin:auto;background-color: rgba(200,200,200,.15);">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">BANK_NAME</th>
+                        <th style="width: 160px;">EFFECTIVE_DATE</th>
+                        <th style="width: 220px;">DESCRIPTION</th>
+                        <th style="width: 50px;">DEPOSIT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr :class="index == tr_index?'tr_bg':'' " @click="teller_up_tr(index, $event)" v-for="(item,index) in teller_up_data">
+                        <td>{{item.BANK_NAME}}</td>
+                        <td>{{item.EFFECTIVE_DATE}}</td>
+                        <td>{{item.DESCRIPTION}}</td>
+                        <td>{{item.DEPOSIT}}</td>
+                    </tr>
+                    <!-- <tr v-if="">
+                        <td colspan="15">no data</td>
+                    </tr> -->
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <span>上传人：</span><input style="width:70px;" disabled type="text" value="管理员">
+            <span>上传条数：</span><input style="width:50px;" disabled type="text" :value="teller_l">
+            <span>Teller总额：</span><input style="width:80px;" disabled type="text" :value="teller_all_amount">
+        </div>
+        <div>
+            <button class="btn">取消</button>
+            <button @click="teller_up_update( $event)" class="btn btn-primary">更新</button>
+            <button @click="close_teller_up( $event)" class="btn">关闭</button>
+        </div>
+    </div>
+    <script>
+        var teller_up_app = new Vue({
+            el:'#teller_up_success',
+            data:{
+                teller_up_data:'',
+                teller_l:0 ,
+                teller_all_amount: '',
+                tr_index:-1
+            },
+            methods:{
+                close_teller_up(){
+                    layer.close(layer.index);
+                },
+                teller_up_tr(a){
+                    this.tr_index = a;
+                    console.log(a)
+                },
+                teller_up_update(){
+                    teller_up_update_exe()
+                }
+            }
+        })
+
+        function teller_up_update_exe(){
+            var url = '/index.php?s=desktop/Teller_Recharge/checkdata';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            ajax(url,data,function (ret) {
+                // console.log(ret+'1111');
+                showErr(ret.msg)
+            })
         }
+        
     </script>
 </html>
