@@ -548,14 +548,16 @@
                         }
                         return all;
                     }
-                    
+                    firm('提交成功',data.data.msg,function(){
+                        console.log('tamia');
+                    })
                     // console.log(data);
-                    setTimeout(function () {
-                        open_html('核对上传数据','#teller_up_success','teller_up_success',function () {
+                    // setTimeout(function () {
+                    //     open_html('核对上传数据','#teller_up_success','teller_up_success',function () {
                             
-                        },800,500)
-                        console.log(teller_up_app.teller_up_data);
-                    },2200)
+                    //     },800,500)
+                    //     console.log(teller_up_app.teller_up_data);
+                    // },2200)
                     
             　　});
             })
@@ -2870,7 +2872,12 @@
             data["usertoken"] = user_token;
             ajax(url,data,function (ret) {
                 // console.log(ret+'1111');
-                showErr(ret.msg)
+                if(ret.stat){
+                    showErr(ret.msg)
+                }else{
+                    showErr(ret.errmsg)
+                }
+                
             })
         }
         

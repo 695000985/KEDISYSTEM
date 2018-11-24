@@ -43,7 +43,7 @@
                 <span>SC/Distributor</span><input v-model="searchByNo_no" type="text">
                 <button @click="searchByNo($event)" class="btn">SerachHistory</button>
                 <span>Products:</span><input id="producy_name_num" :type="producy_name_num.list[producy_name_num.default]">
-                <button class="btn">Reset</button>
+                <button @click="reset($event)" class="btn">Reset</button>
 
             </div>
             
@@ -86,37 +86,89 @@
                 <div class="left">
                     <div class="">
                         <div class="left">
-                            <span>BorrowedNaira</span> <span>0.0</span>
+                            <span>BorrowedNaira</span> <span style="display:inline-block;width:100px;">0.0</span>
                         </div>
                         <div class="left">
-                            <span>BorrowedBV</span> <span>0.0</span>
+                            <span>BorrowedBV</span> <span style="display:inline-block;width:100px;">0.0</span>
                         </div>
                         <div class="left">
-                            <span>BorrowedPV</span> <span>0.0</span>
+                            <span>BorrowedPV</span> <span style="display:inline-block;width:100px;">0.0</span>
                         </div>
                         <div class="clear"></div>
                     </div>
                     <div class="">
                         <div class="left">
-                            <span>ToBorrowNaira</span> <span>0.0</span>
+                            <span>ToBorrowNaira</span> <span style="display:inline-block;width:100px;">0.0</span>
                         </div>
                         <div class="left">
-                            <span>ToBorrowBV</span> <span>0.0</span>
+                            <span>ToBorrowBV</span> <span style="display:inline-block;width:100px;">0.0</span>
                         </div>
                         <div class="left">
-                            <span>ToBorrowPV</span> <span>0.0</span>
+                            <span>ToBorrowPV</span> <span style="display:inline-block;width:100px;">0.0</span>
                         </div>
                         <div class="clear"></div>
                     </div>
                 </div>
                 <div class="left">
-                    <button class="btn btn-primary">CretaeReport</button>
+                    <button @click="open_sale_report()" class="btn btn-primary">CretaeReport</button>
                 </div>
                 <div class="clear"></div>
             </div>
         </div>
     </div>
+
+    <div id="sale_report" style="display:none;">
+        <div>
+            <div>
+                编号：<input type="text">
+                日期：<input disabled id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
+                专卖店(SC)：<input disabled type="text" style="width:30px;">
+                Memo：<input type="text">
+            </div>
+            <div>
+
+            </div>
+
+            <div>
+
+            </div>
+        </div>
+
+
+
+        <div>
+            <div class="left">
+                <fieldset id="" style="">
+                    <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">信息Info</legend>
+                
+                    <div>
+                        <span style="display:inline-block;width: 40px">Aera：</span><input type="text" style="width: 70px" >
+                        <span style="display:inline-block;width: 120px">System Total：</span><input type="text" style="width: 150px" >
+                        <span style="display:inline-block;width: 100px">Total Gurantee：</span><input type="text" style="width: 120px" >
+                    </div>
+                    <div>
+                        <span style="display:inline-block;width: 40px">Kits：</span><input type="text" style="width: 70px" >
+                        <span style="display:inline-block;width: 120px">Gurantee Money：</span><input type="text" style="width: 150px" >
+                        <span style="display:inline-block;width: 100px">TotalNR：</span><input type="text" style="width: 120px" >
+                    </div>
+                </fieldset>
+            </div>
+            <div class="left">
+                <fieldset id="" style="">
+                    <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">操作Operate</legend>
+                    <div>
+                        <button class="btn" style="width: 180px;">保存Save</button><br/>
+                        <button class="btn" style="width: 180px;">GoToWareHouse</button><br/>
+                        <button class="btn">RevertFromWareHouse</button>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>    
+
     <script>
+
+        var p_index = '';
         $(function () {
             get_borrow_product_list();          //获取商品列表
             $('.Wdate').val(get_local_time());
@@ -126,11 +178,11 @@
                 
                 if($(this).attr('type')=='text' && e.keyCode == 13){
                     console.log($(this).attr('type'));
-                    // console.log('回车');
+                    // console.log(check_has_name($(this).val()));
                     bind_product_name();
                 }else if($(this).attr('type')=='number' && e.keyCode == 13){
                     console.log($(this).attr('type'));
-
+                    borrow_main.borrow_product_list[p_index].BorrowQty = $(this).val();
                     bind_product_qty();
                 }
             })
@@ -140,7 +192,7 @@
             el:'#main',
             data:{
                 searchByNo_no:'', 
-                history_no:'231233',
+                history_no:'',
                 borrow_product_list : [],
                 producy_name_num : {default:0,list:['text','number']},
                 product_borrow_history : [],
@@ -153,7 +205,14 @@
                 searchByNo(){
                     searchByNo_exe(this.searchByNo_no)
                 },
-
+                open_sale_report(){
+                    open_html("SaleReport",'#sale_report','sale_report',function(){
+    //		                Refresh()
+                    },700,300)
+                },
+                reset(){
+                    reset_exe()
+                }
 
             }
         })
@@ -170,32 +229,44 @@
             })
         }
 
-        function bind_product_qty() {
-            var arr = ['123','235'];
-            if(arr.includes($('#producy_name_num').val())){
-                console.log('num');
-                
+        function bind_product_qty() {  
                 $('#producy_name_num').val('');
                 $('#producy_name_num').attr('type','text');
-            }
         }
 
         function bind_product_name() {
 
-            var arr = ['A02'];
+            if(check_has_name($('#producy_name_num').val().toUpperCase())>=0){
 
-            // for (n in borrow_main.borrow_product_list) {
-                // arr.push(borrow_main.borrow_product_list[n].productid);
-                
-            // }
-            if(arr.includes($('#producy_name_num').val().toUpperCase())){
-                console.log('Tamia');
+                p_index = check_has_name($('#producy_name_num').val().toUpperCase());
+                console.log(check_has_name($('#producy_name_num').val().toUpperCase()));
+                console.log( borrow_main.borrow_product_list);    
                 $('#producy_name_num').val('');
-                $('#producy_name_num').attr('type','number');
 
+                $('#producy_name_num').attr('type','number');
             }
+            
+            // if(arr.includes($('#producy_name_num').val().toUpperCase())){
+            //     console.log('Tamia');
+            //     $('#producy_name_num').val('');
+
+            //     $('#producy_name_num').attr('type','number');
+
+            // }
 
         }
+        
+        function check_has_name(a){
+            var l = borrow_main.borrow_product_list,index = -1||'';
+            for(var i = 0;i<l.length;i++){
+                if(a.toUpperCase() == l[i].productno){
+                    index = i;
+                }
+                // console.log(l[i].productno);
+            }
+            return index;
+        }
+
         function get_borrow_product_list() {
             var url = '/index.php?s=desktop/Borrow/Form1_Load';
             var user_token = get_cache('usertoken');
@@ -204,6 +275,8 @@
             ajax(url,data,function (ret) {
                 if(ret.stat){
                     borrow_main.borrow_product_list = ret.data.Product_Info;
+                    borrow_main.history_no = ret.data.groupid;
+                    borrow_main.searchByNo_no = ret.data.shopno;
                     // borrow_main.product_borrow_history = ret.data.BorrowQty;
                     // for(var j = 0 ;j<borrow_main.product_borrow_history.length;j++){
                     //     for(var k = 0; k<borrow_main.borrow_product_list.length;k++){
@@ -217,7 +290,15 @@
 
             })
         }
+
+        function reset_exe() {
+            var l = borrow_main.borrow_product_list;
+            for(var i = 0;i<l.length;i++){
+                l[i].BorrowQty = '';
+            }
+        }
     </script>
+
 </body>
 
 </html>
