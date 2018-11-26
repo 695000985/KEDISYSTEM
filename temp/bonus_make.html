@@ -25,14 +25,69 @@
         [v-cloak] {
             display: none;
         }
+        .btn_cur{background-color: #cccccc;}
+        .bonus_step ul{overflow: hidden;}
+        .bonus_step ul li{
+            box-sizing: border-box;
+            float: left;width: 30%;margin: 0 1%;height: 50px;line-height: 50px;
+            background-color: azure;border: 1px solid #cccccc;
+        }
+        .bonus_step ul li:nth-child(3n+2){margin: 0 3%;}
     </style>
 </head>
 
 <body>
     <div id="bonus">
-        奖金
+        <div>
+            <button :class="top_switch.jjbzz?'btn_cur':''"  @click="jjbzz($event)" class="btn">奖金表制作</button>
+            <button :class="top_switch.jjbzz?'':'btn_cur'" @click="jjbzz($event)" class="btn">店费表制作</button>
+        </div>
+
+        <div class="bonus_step" v-show="top_switch.jjbzz">
+            <ul>
+                <li>1)升级情况表=></li>
+                <li>2)DBPV修改=></li>
+                <li>3)3星以下修改=></li>
+                <li>4)修改日期和荣衔=></li>
+                <li>5)增加四列=></li>
+                <li>6)填补三列=></li>
+                <li>7)调整最后奖金=></li>
+                <li>8)尼日利亚奖金=></li>
+                <li>9)导出加纳奖金=></li>
+                <li>10)导出贝宁南非奖金=></li>
+            </ul>
+            <div>
+                日期<input type="text">
+            </div>
+
+            <div>
+                <button class="btn">导出奖金原始表</button>
+                <button class="btn">制作奖金</button>
+                <button class="btn">调整C盘奖金上传</button>
+            </div>
+        </div>
+        <div v-show="!top_switch.jjbzz">
+            店费表制作
+        </div>
     </div>
     <script>
+        var bonus_make = new Vue({
+            el:'#bonus',
+            data:{
+                top_switch:{
+                    jjbzz:true,
+                }
+            },
+            computed:{
+                // dfbzz = !this.top_switch.jjbzz
+            },
+            methods:{
+                jjbzz(){
+                    this.top_switch.jjbzz = !this.top_switch.jjbzz;
+                }
+            }
+        })
+
     </script>
 </body>
 

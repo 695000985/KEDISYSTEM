@@ -39,7 +39,7 @@
             </div>
             <div>
                 <span>{{lang_text.reporter}}</span><input disabled value="管理员" type="text">
-                <span>DATE</span><input id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+                <span>DATE</span><input id="borrow_date" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
                 <span>SC/Distributor</span><input v-model="searchByNo_no" type="text">
                 <button @click="searchByNo($event)" class="btn">SerachHistory</button>
                 <span>Products:</span><input id="producy_name_num" :type="producy_name_num.list[producy_name_num.default]">
@@ -126,7 +126,41 @@
                 Memo：<input type="text">
             </div>
             <div>
+                <table class="table table-border table-bordered table-bg" style="width: 800px;background-color: rgba(200,200,200,.15);">
+                    <thead>
+                        <tr>
+                            <th style="width: 70px;">Code</th>
+                            <th style="width: 80px;">Products</th>
+                            
+                            <th style="width: 60px;">BV</th>
+                            <th style="width: 60px;">PV</th>
+                            <th style="width: 70px;">MemberPrice</th>
+                            <th style="width: 60px;">BorrowQty</th>
+                            <th style="width: 50px;">Total BV</th>
+                            <th style="width: 50px;">Total PV</th>
+                            <th style="width: 50px;">Total NR</th>
+                            <th style="width: 50px;">Code1</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr @click="" v-for="(item,index) in pro_list" v-if=''>
+                            <td>{{item.productno}}</td>
+                            <td>{{item.CName}}</td>
+                            <td>{{item.BV}}</td>
+                            <td>{{item.PV}}</td>
+                            <td>{{item.MemberPrice}}</td>
+                            <td>{{item.BorrowQty}}</td>
+                            <td>{{item.BorrowQty*item.BV}}</td>
+                            <td>{{item.BorrowQty*item.PV}}</td>
+                            <td>{{item.BorrowQty*item.MemberPrice}}</td>
+                            <td>{{item.productno}}</td>
 
+                        </tr>
+                        <tr v-if="">
+                            <td colspan="8"></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
             <div>
@@ -147,8 +181,8 @@
                         <span style="display:inline-block;width: 100px">Total Gurantee：</span><input type="text" style="width: 120px" >
                     </div>
                     <div>
-                        <span style="display:inline-block;width: 40px">Kits：</span><input type="text" style="width: 70px" >
-                        <span style="display:inline-block;width: 120px">Gurantee Money：</span><input type="text" style="width: 150px" >
+                        <span style="display:inline-block;width: 40px">Kits：</span><input type="text" style="width: 20px" ><input type="checkbox" name="" id=""> <span>French</span>
+                        <span style="display:inline-block;width: 115px">Gurantee Money：</span><input type="text" style="width: 150px" >
                         <span style="display:inline-block;width: 100px">TotalNR：</span><input type="text" style="width: 120px" >
                     </div>
                 </fieldset>
@@ -196,6 +230,7 @@
                 borrow_product_list : [],
                 producy_name_num : {default:0,list:['text','number']},
                 product_borrow_history : [],
+                product_history_borrow_qty:[],
                 lang_text:splicing_obj(get_page_txt('borrow'))
             },
             methods:{
@@ -206,9 +241,18 @@
                     searchByNo_exe(this.searchByNo_no)
                 },
                 open_sale_report(){
-                    open_html("SaleReport",'#sale_report','sale_report',function(){
-    //		                Refresh()
-                    },700,300)
+                    var naira;
+                    // compute_bv()
+                    var str = `
+                        <div style="padding:0 20px;">
+                            <div></div>
+                            <div>SC:${this.history_no||''}  NAIRA:${compute_by('MemberPrice')}</div>
+                            <div>BV: ${compute_by('BV')}   PV:${compute_by('PV')}</div>
+                            <p>以上订单信息是否正确?</p>
+                        </div>
+                    `
+                    firm('订单信息检查',str,{l:'是',r:'否'},check_pass_open)
+                    
                 },
                 reset(){
                     reset_exe()
@@ -216,6 +260,42 @@
 
             }
         })
+
+        function check_pass_open() {
+            sale_report.pro_list = borrow_main.borrow_product_list;
+            var arr = [],o_arr = borrow_main.borrow_product_list;
+            for(var i = 0; i < o_arr.length;i++){
+                if(o_arr[i].BorrowQty!=''){
+                    arr.push({'productno':o_arr[i].productno,'BorrowQty':o_arr[i].BorrowQty})
+                }
+            }
+            
+            var url = '/index.php?s=desktop/Borrow/button6_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["totalBv"] = compute_by('BV');
+            data["totalpv"] = compute_by('PV');
+            data["totalnaira"] = compute_by('MemberPrice');
+            data["Date"] = $('#borrow_date').val();
+            data["data"] = arr;
+            data["GroupID"] = borrow_main.history_no;
+            data["shopno"] = borrow_main.searchByNo_no;
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    console.log(ret);
+                }
+            })
+
+
+            console.log(arr)
+            open_html("SaleReport",'#sale_report','sale_report',function(){
+//		                Refresh()
+                
+            },900,500)
+
+        }
+
         function searchByNo_exe(para) {
             var url = '/index.php?s=desktop/Borrow/Form1_Load';
             var user_token = get_cache('usertoken');
@@ -277,15 +357,26 @@
                     borrow_main.borrow_product_list = ret.data.Product_Info;
                     borrow_main.history_no = ret.data.groupid;
                     borrow_main.searchByNo_no = ret.data.shopno;
-                    // borrow_main.product_borrow_history = ret.data.BorrowQty;
-                    // for(var j = 0 ;j<borrow_main.product_borrow_history.length;j++){
-                    //     for(var k = 0; k<borrow_main.borrow_product_list.length;k++){
-                    //         if(borrow_main.borrow_product_list[k].productno == borrow_main.product_borrow_history[j].productno){
-                    //             console.log(borrow_main.borrow_product_list[k].productno);
-                    //             borrow_main.borrow_product_list[k].BorrowQty = borrow_main.product_borrow_history[j].QTY;
-                    //         }
-                    //     }
-                    // }
+                    borrow_main.product_borrow_history = ret.data.BorrowQty||[];
+
+                    borrow_main.product_history_borrow_qty = ret.data.HistoryBorrow||[];
+                    
+                    for(var j = 0 ;j<borrow_main.product_borrow_history.length;j++){
+                        for(var k = 0; k<borrow_main.borrow_product_list.length;k++){
+                            if(borrow_main.borrow_product_list[k].productno == borrow_main.product_borrow_history[j].productno){
+                                console.log(borrow_main.borrow_product_list[k].productno);
+                                borrow_main.borrow_product_list[k].BorrowQty = borrow_main.product_borrow_history[j].QTY;
+                            }
+                        }
+                    }
+                    for(var j = 0 ;j<borrow_main.product_history_borrow_qty.length;j++){
+                        for(var k = 0; k<borrow_main.borrow_product_list.length;k++){
+                            if(borrow_main.borrow_product_list[k].productno == borrow_main.product_history_borrow_qty[j].productno){
+                                // console.log(borrow_main.borrow_product_list[k].productno);
+                                borrow_main.borrow_product_list[k].HistoryQty = borrow_main.product_history_borrow_qty[j].QTY;
+                            }
+                        }
+                    }
                 }
 
             })
@@ -294,9 +385,31 @@
         function reset_exe() {
             var l = borrow_main.borrow_product_list;
             for(var i = 0;i<l.length;i++){
-                l[i].BorrowQty = '';
+                l[i].BorrowQty = '-';
             }
         }
+
+        //计算
+        function compute_by(item) {
+            var para = 0,arr = borrow_main.borrow_product_list;
+            for(var i = 0;i<arr.length;i++){
+                // console.log(i)
+                if(!isNaN(arr[i].BorrowQty)){
+                    // console.log(arr[i].BorrowQty*arr[i].BV)
+                    para += (arr[i].BorrowQty*arr[i][item]);
+                }
+                
+            }
+            return para;
+        }
+
+        var sale_report = new Vue({
+            el:'#sale_report',
+            data:{
+                pro_list:[]
+
+            }
+        })
     </script>
 
 </body>

@@ -165,12 +165,12 @@ function success(msg_cn) { //信息弹出框
     $.Huimodalalert(msg_cn, 2000)
 }
 
-function firm(title, txt, fun) { // 确认框
+function firm(title, txt,obj, fun) { // 确认框
     layer.open({
         type: 1,
         title: title,
         content: txt, //这里content是一个普通的String
-        btn: ['确定', '取消'],
+        btn: [obj.l||'确定', obj.r||'取消'],
         area: ['300px', '200px'],
         yes: function(index, layero) {
             fun()
