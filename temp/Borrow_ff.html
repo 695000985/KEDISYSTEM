@@ -300,7 +300,8 @@
             var arr = [],o_arr = borrow_main.borrow_product_list;
             for(var i = 0; i < o_arr.length;i++){
                 if(o_arr[i].BorrowQty!=''){
-                    arr.push({'productid':o_arr[i].productid,'productno':o_arr[i].productno,'BorrowQty':o_arr[i].BorrowQty})
+                    // arr.push({'productid':o_arr[i].productid,'productno':o_arr[i].productno,'BorrowQty':o_arr[i].BorrowQty})
+                    arr.push(o_arr[i]);
                 }
             }
             
@@ -324,6 +325,7 @@
                 data["totalnaira"] = compute_by('MemberPrice');
                 data["Date"] = $('#borrow_date').val();
                 data["data"] = arr;
+                // data["data"] = borrow_main.borrow_product_list;
                 data["GroupID"] = borrow_main.history_no;
                 data["shopno"] = borrow_main.searchByNo_no;
                 ajax(url,data,function (ret) {
