@@ -25,6 +25,7 @@
         [v-cloak] {
             display: none;
         }
+        .tr_bg{background-color: #cccccc;}
     </style>
 </head>
 
@@ -86,25 +87,25 @@
                 <div class="left">
                     <div class="">
                         <div class="left">
-                            <span>BorrowedNaira</span> <span style="display:inline-block;width:100px;">0.0</span>
+                            <span>BorrowedNaira</span> <span v-html="btm_borrow.n" style="display:inline-block;width:100px;">0.0</span>
                         </div>
                         <div class="left">
-                            <span>BorrowedBV</span> <span style="display:inline-block;width:100px;">0.0</span>
+                            <span>BorrowedBV</span> <span v-html="btm_borrow.bv" style="display:inline-block;width:100px;">0.0</span>
                         </div>
                         <div class="left">
-                            <span>BorrowedPV</span> <span style="display:inline-block;width:100px;">0.0</span>
+                            <span>BorrowedPV</span> <span v-html="btm_borrow.pv" style="display:inline-block;width:100px;">0.0</span>
                         </div>
                         <div class="clear"></div>
                     </div>
                     <div class="">
                         <div class="left">
-                            <span>ToBorrowNaira</span> <span style="display:inline-block;width:100px;">0.0</span>
+                            <span>ToBorrowNaira</span> <span v-html="btm_total.n" style="display:inline-block;width:100px;">0.0</span>
                         </div>
                         <div class="left">
-                            <span>ToBorrowBV</span> <span style="display:inline-block;width:100px;">0.0</span>
+                            <span>ToBorrowBV</span> <span v-html="btm_total.bv" style="display:inline-block;width:100px;">0.0</span>
                         </div>
                         <div class="left">
-                            <span>ToBorrowPV</span> <span style="display:inline-block;width:100px;">0.0</span>
+                            <span>ToBorrowPV</span> <span v-html="btm_total.pv" style="display:inline-block;width:100px;">0.0</span>
                         </div>
                         <div class="clear"></div>
                     </div>
@@ -120,10 +121,10 @@
     <div id="sale_report" style="display:none;">
         <div>
             <div>
-                编号：<input type="text">
-                日期：<input disabled id="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
-                专卖店(SC)：<input disabled type="text" style="width:30px;">
-                Memo：<input type="text">
+                编号：<input disabled v-model="GroupID" type="text">
+                日期：<input disabled id="sale_date" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
+                专卖店(SC)：<input disabled type="text" v-model="shop_no" style="width:30px;">
+                Memo：<input id="sale_memo" type="text">
             </div>
             <div>
                 <table class="table table-border table-bordered table-bg" style="width: 800px;background-color: rgba(200,200,200,.15);">
@@ -176,27 +177,50 @@
                     <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">信息Info</legend>
                 
                     <div>
-                        <span style="display:inline-block;width: 40px">Aera：</span><input type="text" style="width: 70px" >
-                        <span style="display:inline-block;width: 120px">System Total：</span><input type="text" style="width: 150px" >
-                        <span style="display:inline-block;width: 100px">Total Gurantee：</span><input type="text" style="width: 120px" >
+                        <span style="display:inline-block;width: 40px">Aera：</span>
+                        <select name="" id="sale_area" style="width: 70px">
+                            <option v-for="(item,index) in sale_area" :value="index">{{item.name}}</option>
+                        </select>
+                        <span style="display:inline-block;width: 120px">System Total：</span><input v-model="kits_and_system_total" type="text" style="width: 150px" >
+                        <span style="display:inline-block;width: 100px">Total Gurantee：</span><input disabled v-model="jiesuan_cash" type="text" style="width: 120px" >
                     </div>
                     <div>
-                        <span style="display:inline-block;width: 40px">Kits：</span><input type="text" style="width: 20px" ><input type="checkbox" name="" id=""> <span>French</span>
-                        <span style="display:inline-block;width: 115px">Gurantee Money：</span><input type="text" style="width: 150px" >
-                        <span style="display:inline-block;width: 100px">TotalNR：</span><input type="text" style="width: 120px" >
+                        <span style="display:inline-block;width: 40px">Kits：</span><input v-model="kits" type="text" style="width: 20px" ><input v-model="is_french" type="checkbox" name="" id=""> <span>French</span>
+                        <span style="display:inline-block;width: 115px">Gurantee Money：</span><input disabled v-model="jiesuan_cash" type="text" style="width: 150px" >
+                        <span style="display:inline-block;width: 100px">TotalNR：</span><input disabled v-model="kits_and_system_total" type="text" style="width: 120px" >
                     </div>
+                    <div>
+                        <div class="left">
+                            <span style="display:inline-block;width: 55px">Percent：</span><input v-model="percent" disabled type="text" style="width: 70px" ><br/>
+                            <span style="display:inline-block;width: 55px">Grant：</span><input type="text" style="width: 30px" ><button>G</button>
+                        </div>
+                        <div class="left">
+                            <span style="display:inline-block;width: 120px">Cash(NR)：</span><input disabled type="text" v-model="jiesuan_cash" style="width: 150px" ><button @click="cash_click($event)">...</button><br/>
+                            <span style="display:inline-block;width: 120px">Bank Deposit：</span><input type="text" style="width: 150px" ><button>...</button>
+                        </div>
+                        <div class="left">
+                            <p>当前状态</p>
+                            <div>
+                                <input disabled v-model="percent_int" type="text" style="font-size:20px;width:125px;height:50px;line-height:50px;">
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
                 </fieldset>
             </div>
             <div class="left">
                 <fieldset id="" style="">
                     <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">操作Operate</legend>
                     <div>
-                        <button class="btn" style="width: 180px;">保存Save</button><br/>
-                        <button class="btn" style="width: 180px;">GoToWareHouse</button><br/>
-                        <button class="btn">RevertFromWareHouse</button>
+                        <button @click="SaveReport($event)" class="btn" style="width: 180px;">保存Save</button><br/>
+                        <button @click="GoToWareHouse($event)" class="btn" style="width: 180px;">GoToWareHouse</button><br/>
+                        <button @click="RevertFromWareHouse($event)" class="btn">RevertFromWareHouse</button>
                     </div>
                 </fieldset>
             </div>
+            
+            <div class="clear"></div>
         </div>
     </div>    
 
@@ -231,7 +255,17 @@
                 producy_name_num : {default:0,list:['text','number']},
                 product_borrow_history : [],
                 product_history_borrow_qty:[],
-                lang_text:splicing_obj(get_page_txt('borrow'))
+                lang_text:splicing_obj(get_page_txt('borrow')),
+                btm_borrow:{
+                    n : 0,
+                    bv: 0 ,
+                    pv: 0 
+                },
+                btm_total:{
+                    n:0,
+                    bv:0,
+                    pv:0
+                }
             },
             methods:{
                 // get_borrow_product_list(){
@@ -270,34 +304,50 @@
                 }
             }
             
-            var url = '/index.php?s=desktop/Borrow/button6_Click';
-            var user_token = get_cache('usertoken');
-            var data = {};
-            data["usertoken"] = user_token;
-            data["totalBv"] = compute_by('BV');
-            data["totalpv"] = compute_by('PV');
-            data["totalnaira"] = compute_by('MemberPrice');
-            data["Date"] = $('#borrow_date').val();
-            data["data"] = arr;
-            data["GroupID"] = borrow_main.history_no;
-            data["shopno"] = borrow_main.searchByNo_no;
-            ajax(url,data,function (ret) {
-                if(ret.stat){
-                    console.log(ret);
-                }
-            })
 
+            if(borrow_main.history_no != ''){
 
-            console.log(arr)
-            open_html("SaleReport",'#sale_report','sale_report',function(){
-//		                Refresh()
-                
-            },900,500)
+                sale_report.GroupID = borrow_main.history_no;
+                cash.group_id = borrow_main.history_no;
+                sale_report.shop_no = borrow_main.searchByNo_no;
+                cash.sc = borrow_main.searchByNo_no;
+                open_html("SaleReport",'#sale_report','sale_report',function(){
+    //		                Refresh()
+                },900,500)
+            }else{
+                var url = '/index.php?s=desktop/Borrow/button6_Click';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"] = user_token;
+                data["totalBv"] = compute_by('BV');
+                data["totalpv"] = compute_by('PV');
+                data["totalnaira"] = compute_by('MemberPrice');
+                data["Date"] = $('#borrow_date').val();
+                data["data"] = arr;
+                data["GroupID"] = borrow_main.history_no;
+                data["shopno"] = borrow_main.searchByNo_no;
+                ajax(url,data,function (ret) {
+                    if(ret.stat){
+                        console.log(ret);
+                        sale_report.GroupID = ret.data.GroupID;
+                        cash.group_id = ret.data.GroupID;
+                        sale_report.shop_no = borrow_main.searchByNo_no;
+                        cash.sc = borrow_main.searchByNo_no;
+
+                        open_html("SaleReport",'#sale_report','sale_report',function(){
+            //		                Refresh()
+                        },900,500)
+                    }
+                    else{
+                        showErr('获取编号失败.请重新获取');
+                    }
+                })
+            }
 
         }
 
         function searchByNo_exe(para) {
-            var url = '/index.php?s=desktop/Borrow/Form1_Load';
+            var url = '/index.php?s=desktop/Borrow/button2_Click';
             var user_token = get_cache('usertoken');
             var data = {};
             data["usertoken"] = user_token;
@@ -308,12 +358,20 @@
                 }
             })
         }
-
+        
+        //数量
         function bind_product_qty() {  
                 $('#producy_name_num').val('');
                 $('#producy_name_num').attr('type','text');
-        }
+                borrow_main.btm_total.n = compute_by('MemberPrice');
+                borrow_main.btm_total.bv = compute_by('BV');
+                borrow_main.btm_total.pv = compute_by('PV');
 
+                //sale_report页获取
+                sale_report.system_total = borrow_main.btm_total.n;
+        }
+        
+        //商品
         function bind_product_name() {
 
             if(check_has_name($('#producy_name_num').val().toUpperCase())>=0){
@@ -377,6 +435,12 @@
                             }
                         }
                     }
+
+                    borrow_main.btm_borrow.n = compute_by_history('MemberPrice');
+                    borrow_main.btm_borrow.bv = compute_by_history('BV');
+                    borrow_main.btm_borrow.pv = compute_by_history('PV');
+                    console.log(compute_by_history('BV'))
+
                 }
 
             })
@@ -403,15 +467,273 @@
             return para;
         }
 
+        //计算Borrow
+        function compute_by_history(item) {
+            var para = 0,arr = borrow_main.borrow_product_list;
+            for(var i = 0;i<arr.length;i++){
+                // console.log(i)
+                if(!isNaN(arr[i].HistoryQty)){
+                    // console.log(arr[i].BorrowQty*arr[i].BV)
+                    para += (arr[i].HistoryQty*arr[i][item]);
+                }
+                
+            }
+            return para;
+        }
+
         var sale_report = new Vue({
             el:'#sale_report',
             data:{
-                pro_list:[]
+                pro_list:[],
+                GroupID:'',
+                shop_no:'',
+                jiesuan_cash:0,
+                kits:'',
+                is_french:true,
+                kits_unit_price:4000,       //kits单价
+                system_total:0,
+                sale_area:[{'name':'NONE'},{'name':'MOSES'},{'name':'EMANUEL'},{'name':'ABA'},{'name':'ABUJA'},{'name':'EMEM'},{'name':'RICHARD'},{'name':'JOPPACO'},{'name':'PRINCE'},{'name':'IKEJA'},{'name':'KANO'}],
+                save_edit:0
+            },
+            computed: {
+                kits_and_system_total(){
+                    return this.system_total + this.kits*this.kits_unit_price;
+                },
+                percent() {
+                    if(this.system_total + this.kits*this.kits_unit_price>0){
+                        return (this.jiesuan_cash/(this.system_total + this.kits*this.kits_unit_price)*100).toFixed(2)+'%';
+                    }else{
+                        return 0+'%';
+                    }
+                    
+                },
+                percent_int(){
+                    if((this.jiesuan_cash/this.kits_and_system_total*100).toFixed(2)<30 && (this.jiesuan_cash/this.kits_and_system_total*100).toFixed(2)>0){
+                        return 'Low';
+                    }
+                    else if((this.jiesuan_cash/this.kits_and_system_total*100).toFixed(2)>30 && (this.jiesuan_cash/this.kits_and_system_total*100).toFixed(2)<40){
+                        return 'Normal';
+                    }
+                }
+            },
+            methods:{
+                SaveReport(){               //保存/编辑
+                    SaveReport_exe()
+                },
+                GoToWareHouse(){
+                    GoToWareHouse_exe()
+                },
+                RevertFromWareHouse(){          //撤销订单
+                    RevertFromWareHouse_exe()
+                },
+                cash_click(){
+                    cash_click_exe()
+                }
+                
 
             }
         })
+        //打开cash
+        function cash_click_exe(){
+            open_html("CashData",'#cash','cash',function(){
+                modify()
+            },500,300)
+        }
+
+        //付款后修改金额
+        function modify() {
+            sale_report.jiesuan_cash = cash.money_list_all;
+        }
+
+        //保存save
+        function SaveReport_exe() {
+            console.log('保存')
+            var url = '/index.php?s=desktop/Borrow/SaveReport';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["GroupID"] = sale_report.GroupID;
+            data["SystemTotal"] = sale_report.kits_and_system_total;
+            data["Percent"] = sale_report.percent;
+            data["percentstatus"] = sale_report.percent_int;
+            data["Cash"] = sale_report.jiesuan_cash;
+            data["TotalGurantee"] = sale_report.jiesuan_cash;
+            // data["save_edit"] = sale_report.save_edit;
+            data["kits"] = sale_report.kits;
+            data["memo"] = $('#sale_memo').val();
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    showErr(ret.data);
+                }
+            })
+
+        }
+
+        //订单入库提货系统(GoToWareHouse)
+        function GoToWareHouse_exe() {
+            var url = '/index.php?s=desktop/Borrow/button5_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["GroupID"] = sale_report.GroupID;
+            data["SystemTotal"] = sale_report.kits_and_system_total;
+            data["Percent"] = sale_report.percent;
+            data["shopno"] = sale_report.shop_no;
+            data["Date"] = $('#sale_date').val();
+            data["kits"] = sale_report.kits;
+            data["French"] = sale_report.is_french;
+            // data["allowcode"] = ;
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    
+                }
+            })
+        }
+
+        //撤销订单(RevertFromWareHouse)
+        function RevertFromWareHouse_exe() {
+            var url = '/index.php?s=desktop/Borrow/RevertFromWareHouse';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["GroupID"] = sale_report.GroupID;       //订单编号
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    
+                }
+            })
+        }
     </script>
 
+    <div id="cash" style="display:none;">
+        <div>
+            编号：<input disabled v-model="group_id" style="width:150px;" type="text" name="" id="">
+            Data：<input id="cash_date" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+            SC：<input v-model="sc" style="width:30px;" disabled type="text" name="" id="">
+        </div>
+        <div>
+            Total：<input disabled v-model="money_list_all" type="text" style="width:70px;">
+            Amount：<input type="text" v-model="cash_amount" style="width:120px;">
+        </div>
+        <div style="text-align:center;">
+            <button @click="cash_delete($event)" class="btn">DELETE</button>
+            <button @click="add( $event)" class="btn btn-primary" style="margin-left:100px;">ADD</button>
+        </div>
+        <div>
+            <table class="table table-border table-bordered table-bg" style="width: ;background-color: rgba(200,200,200,.15);">
+                <thead>
+                    <tr>
+                        <th style="width: 70px;">GroupID</th>
+                        <th style="width: 80px;">CashID</th>
+                        
+                        <th style="width: 60px;">ShopNo</th>
+                        <th style="width: 60px;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr :class="tr_index == index?'tr_bg':''" @click="get_cash_id_del(index,item.CashID)" v-for="(item,index) in money_list" v-if=''>
+                        <td>{{item.GroupID}}</td>
+                        <td>{{item.CashID}}</td>
+                        <td>{{item.ShopNo}}</td>
+                        <td>{{item.Amount}}</td>
+
+                    </tr>
+                    <tr v-if="money_list.lenth<0">
+                        <td colspan="4"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        var cash = new Vue({
+            el:'#cash',
+            data:{
+                group_id:'',
+                sc:'',
+                money_list:[],
+                tr_index:-1,
+                // cash_amount:0,
+                del_cashid : ''
+            },
+            computed:{
+                money_list_all(){
+                    var a = 0;
+                    for(var i = 0;i<this.money_list.length;i++){
+                        a+= parseFloat(this.money_list[i].Amount);
+                    }
+                    return a;
+                },
+            },
+            methods:{
+                
+                add(){
+                    add_req(this.group_id,this.sc,this.cash_amount)
+                },
+                cash_delete(){
+                    if(this.del_cashid != ''){
+                        cash_delete_req(this.del_cashid)
+                    }
+                },
+                get_cash_id_del(index,cashid){
+                    this.del_cashid = cashid;
+                    this.tr_index = index;
+                    console.log(this.del_cashid);
+                }
+
+            }
+        })
+
+        //add
+        function add_req(g,sc,cash_amount){
+            var url = '/index.php?s=desktop/Front_Desk_Cash/Add_Cash';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["GroupID"] = g;       //订单编号
+            data["ShopNO"] = sc;
+            data["RealDate"] = $('#cash_date').val();
+            data["Amount"] = cash_amount;
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    get_cash_id()
+                }
+            })
+        }
+
+        //delete
+        function cash_delete_req(cashid){
+            var url = '/index.php?s=desktop/Front_Desk_Cash/Delete_Cash';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["CashID"] = cashid;
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    showErr(ret.data);
+                    get_cash_id()
+                }
+            })
+        }
+        //get_cash_id
+        function get_cash_id(){
+            console.log(cash.group_id,cash.sc)
+            var url = '/index.php?s=desktop/Front_Desk_Cash/CashData';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["GroupID"] = cash.group_id;       //订单编号
+            data["ShopNO"] = cash.sc;
+            data["RealDate"] = $('#cash_date').val();
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    cash.money_list = ret.data.list;
+
+                }
+            })
+        }
+    </script>
 </body>
 
 </html>

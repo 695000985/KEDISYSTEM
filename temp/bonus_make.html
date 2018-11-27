@@ -28,6 +28,7 @@
         .btn_cur{background-color: #cccccc;}
         .bonus_step ul{overflow: hidden;}
         .bonus_step ul li{
+            font-size: 16px;
             box-sizing: border-box;
             float: left;width: 30%;margin: 0 1%;height: 50px;line-height: 50px;
             background-color: azure;border: 1px solid #cccccc;
@@ -45,25 +46,88 @@
 
         <div class="bonus_step" v-show="top_switch.jjbzz">
             <ul>
-                <li>1)升级情况表=></li>
+                <li @click="export_update_state($event)">1)升级情况表=></li>
                 <li>2)DBPV修改=></li>
                 <li>3)3星以下修改=></li>
                 <li>4)修改日期和荣衔=></li>
                 <li>5)增加四列=></li>
                 <li>6)填补三列=></li>
                 <li>7)调整最后奖金=></li>
-                <li>8)尼日利亚奖金=></li>
-                <li>9)导出加纳奖金=></li>
-                <li>10)导出贝宁南非奖金=></li>
+                <li @click="exportNigeria($event)">8)尼日利亚奖金=></li>
+                <li @click="exportBonusGhana($event)">9)导出加纳奖金=></li>
+                <li @click="exportBenninBonus($event)">10)导出贝宁南非奖金=></li>
             </ul>
             <div>
-                日期<input type="text">
+                日期<input type="text" disabled v-model="req_date">
             </div>
 
             <div>
-                <button class="btn">导出奖金原始表</button>
-                <button class="btn">制作奖金</button>
+                <button @click="export_jj_ori($event)" class="btn">导出奖金原始表</button>
+                <button @click="make_jj($event)" class="btn">制作奖金</button>
                 <button class="btn">调整C盘奖金上传</button>
+            </div>
+            <a download="data.xls" id="anchorNewApi-xls" href="#" class="btn btn-success ExportReport" onclick="return newApi('xls','nrly');"
+                    style="display: ;">导出尼日利亚奖金</a>
+
+            <div>
+                
+            </div>
+            <div id="nrly">
+                    <table class="table table-border table-bordered table-bg" style="width: ;height:800px;background-color: rgba(200,200,200,.15);">
+                        <thead>
+                            <tr>
+                                <th style="width: 30px;">NO</th>
+                                <th style="width: 80px;">CODE</th>
+                                
+                                <th style="width: 60px;">NAME</th>
+                                <th style="width: 60px;">DATE</th>
+                                <th style="width: 50px;">SC</th>
+                                <th style="width: 30px;">GRADE</th>
+                                <th style="width: 50px;">HONOR</th>
+                                <th style="width: 50px;">PPV</th>
+                                <th style="width: 50px;">CPPV</th>
+                                <th style="width: 50px;">GBV</th>
+                                <th style="width: 50px;">TNPV</th>
+                                <th style="width: 50px;">CPV</th>
+                                <th style="width: 50px;">DB</th>
+                                <th style="width: 50px;">IDB</th>
+                                <th style="width: 50px;">LSB</th>
+                                <th style="width: 50px;">DPBV</th>
+                                <th style="width: 50px;">SUBTOTAL</th>
+                                <th style="width: 50px;">MF</th>
+                                <th style="width: 50px;">TAX</th>
+                                <th style="width: 50px;">TOTAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr @click="" v-for="(item,index) in nrly" v-if=''>
+                                <td>{{index+1}}</td>
+                                <td>{{item.CODE}}</td>
+                                <td>{{item.NAME}}</td>
+                                <td>{{item.DATE}}</td>
+                                <td>{{item.SC}}</td>
+                                <td>{{item.GRADE}}</td>
+                                <td>{{item.HONORARY}}</td>
+                                <td>{{item.PPV}}</td>
+                                <td>{{item.CPPV}}</td>
+                                <td>{{item.GBV}}</td>
+                                
+                                <td>{{item.TNPV}}</td>
+                                <td>{{item.CPV}}</td>
+                                <td>{{item.DB}}</td>
+                                <td>{{item.IDB}}</td>
+                                <td>{{item.LSB}}</td>
+                                <td>{{item.DPBV}}</td>
+                                <td>{{item.SUBTOTAL}}</td>
+                                <td>{{item.MF}}</td>
+                                <td>{{item.TAX}}</td>
+                                <td>{{item.TOTAL}}</td>
+                            </tr>
+                            <tr v-if="nrly.LENGTH<0">
+                                <td colspan="20"></td>
+                            </tr>
+                        </tbody>
+                    </table>
             </div>
         </div>
         <div v-show="!top_switch.jjbzz">
@@ -71,12 +135,18 @@
         </div>
     </div>
     <script>
+        $(function() {
+            get_date()
+        })
         var bonus_make = new Vue({
             el:'#bonus',
             data:{
                 top_switch:{
                     jjbzz:true,
-                }
+                },
+                req_date:'',
+                nrly : [],
+
             },
             computed:{
                 // dfbzz = !this.top_switch.jjbzz
@@ -84,9 +154,122 @@
             methods:{
                 jjbzz(){
                     this.top_switch.jjbzz = !this.top_switch.jjbzz;
+                },
+                make_jj(){
+                    make_jj_exe()
+                },
+                export_jj_ori(){
+                    export_jj_ori_exe()
+
+                },
+                export_update_state(){
+                    export_update_state_exe()
+                },
+
+                exportNigeria(){
+                    exportNigeria_exe()
+                },
+                exportBonusGhana(){
+                    exportBonusGhana_exe()
+                },
+                exportBenninBonus(){
+                    exportBenninBonus_exe()
                 }
+
             }
         })
+        
+        //制作奖金
+        function make_jj_exe() {
+            var url = '/index.php?s=desktop/Bonus/button12_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            data["Date"] = bonus_make.req_date;
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    
+                }
+            })
+        }
+
+        //导出奖金原始表
+        function export_jj_ori_exe(){
+            var url = '/index.php?s=desktop/Bonus/button2_Click';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    
+                }
+            })
+        }
+
+        //导出升级情况表
+        function export_update_state_exe() {
+            var url = '/index.php?s=desktop/Bonus/Shengji1';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    
+                }
+            })
+        }
+
+        //导出尼日利亚奖金
+        function exportNigeria_exe(){
+            var url = '/index.php?s=desktop/Bonus/ExportNigeria';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token; 
+            ajax_data(url,data,function (ret) {
+                if(ret.stat){
+                    bonus_make.nrly = ret.data;
+                }
+            })
+        }
+
+        //加纳奖金
+        function exportBonusGhana_exe(){
+            var url = '/index.php?s=desktop/Bonus/ExportBonusGhana';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    
+                }
+            })
+        }
+        //导出贝宁奖金
+        function exportBenninBonus_exe(){
+            var url = '/index.php?s=desktop/Bonus/ExportBenninBonus';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    
+                }
+            })
+        }
+
+        //获取日期
+        function get_date() {
+            var url = '/index.php?s=desktop/Bonus/getBonuDate';
+            var user_token = get_cache('usertoken');
+            var data = {};
+            data["usertoken"] = user_token;
+            ajax(url,data,function (ret) {
+                if(ret.stat){
+                    // bonus_make.req_date = ret;
+                }
+            })
+        }
+
 
     </script>
 </body>

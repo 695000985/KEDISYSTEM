@@ -98,6 +98,36 @@ function openWin(url, opt, fn) {
     })
 }
 
+function ajax_data(url, opt, basefunc) {
+    $("body").mLoading({text:'数据量大，加载中...'});
+    $("body").mLoading("show");
+    var allurl = AddServerHead(url);
+    $.ajax({
+        url: allurl,
+        data: opt,
+        type: "post",
+        dataType: "json",
+        success: function(retjson) {
+            basefunc(retjson);
+            hide_loading()
+            if (retjson.errcode == 1001) {
+                showErr(retjson.errmsg, retjson.errmsg_en, retjson.errcode)
+                setTimeout(function() {
+                    top.location.href = '../temp/login.html'
+                }, 2000)
+            }
+        },
+        error: function(XMLHttpRequest) {
+            //console.log(XMLHttpRequest.status)
+            showErr(config_txt.network_err.zn_network_err, config_txt.network_err.en_network_err + XMLHttpRequest.status);
+            $('input[type="button"]').attr('disabled', false);
+            $('input[type="button"]').css('filter', 'none');
+            hide_loading()
+        }
+    });
+
+}
+
 function ajax(url, opt, basefunc) {
     show_loading()
     var allurl = AddServerHead(url);
@@ -328,4 +358,21 @@ function get_version(fn) { // 获取软件的版本号
             showErr(e.errmsg, e.errmsg_en, e.errcode)
         }
     })
+}
+
+
+
+
+function newApi(format,form_name) { //导出数据
+    return ExcellentExport.convert({
+        anchor: 'anchorNewApi-' + format,
+        filename: 'TellerSearch',
+        format: format
+    }, [{
+        name: 'Sheet Name Here 1',
+        from: {
+            table: form_name
+        }
+    }]);
+
 }
