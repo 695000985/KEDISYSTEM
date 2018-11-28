@@ -21,7 +21,7 @@
     <script src="../DatePicker/WdatePicker.js"></script>
     <script src="../script/layer.js"></script>
     <script src="../script/jquery.pagination.js"></script>
-    <script src="../script/jquery.jsonExportExcel.js"></script>
+    <script src="../script/jsonExportExcel.js"></script>
     <style>
         [v-cloak] {
             display: none;
@@ -245,7 +245,7 @@
 
         var option={};
 
-        option.fileName = 'Tamia'
+        option.fileName = '尼日利亚奖金表'
         option.datas=[
         {
             sheetData:[],
@@ -257,8 +257,6 @@
         //			    sheetData:[{one:'一行一列',two:'一行二列'},{one:'二222列',two:'二行二列'}]
         //			  }
         ];
-        var toExcel=new ExportJsonExcel(option);
-        
 
         //导出尼日利亚奖金
         function exportNigeria_exe(){
