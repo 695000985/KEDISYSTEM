@@ -376,7 +376,7 @@ function JSONToExcelConvertor(JSONData, FileName, ShowLabel) {
     excel += row + "</tr>";
      
     //设置数据
-    for (var i = 0; i < 800; i++) {
+    for (var i = 0; i < arrData.length; i++) {
          var row = "<tr>";
      
        for(var j=0;j<arrData[i].length;j++){
