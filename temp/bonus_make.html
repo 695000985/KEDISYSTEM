@@ -251,7 +251,7 @@
             sheetData:[],
             sheetName:'尼日利亚',
         //			    sheetFilter:['two','one'],
-            sheetHeader:['NO','CODE','NAME','DATE','SC']
+            sheetHeader:['NO','CODE','NAME','DATE','SC','GRADE','HONORARY','PPV','CPPV','GBV','TNPV','CPV','DB','IDB','LSB','DPBV','SUBTOTAL','MF','TAX','TOTAL'],
         },
         //			  {
         //			    sheetData:[{one:'一行一列',two:'一行二列'},{one:'二222列',two:'二行二列'}]
@@ -275,21 +275,21 @@
                             c:item.NAME,
                             d:item.DATE,
                             e:item.SC,
-                            // {'value':item.GRADE},
-                            // {'value':item.HONORARY},
-                            // {'value':item.PPV},
-                            // {'value':item.CPPV},
-                            // {'value':item.GBV},
-                            // {'value':item.TNPV},
-                            // {'value':item.CPV},
-                            // {'value':item.DB},
-                            // {'value':item.IDB},
-                            // {'value':item.LSB},
-                            // {'value':item.DPBV},
-                            // {'value':item.SUBTOTAL},
-                            // {'value':item.MF},
-                            // {'value':item.TAX},
-                            // {'value':item.TOTAL}
+                            f:item.GRADE,
+                            g:item.HONORARY,
+                            h:item.PPV,
+                            i:item.CPPV,
+                            j:item.GBV,
+                            k:item.TNPV,
+                            l:item.CPV,
+                            m:item.DB,
+                            n:item.IDB,
+                            o:item.LSB,
+                            p:item.DPBV,
+                            q:item.SUBTOTAL,
+                            r:item.MF,
+                            s:item.TAX,
+                            t:item.TOTAL
                         })
                     });
                     var toExcel=new ExportJsonExcel(option);
