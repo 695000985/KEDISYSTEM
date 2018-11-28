@@ -306,16 +306,16 @@
             }
             
             console.log(borrow_main.history_no);
-            if(borrow_main.history_no != undefined){
+    //         if(borrow_main.history_no != undefined){
 
-                sale_report.GroupID = borrow_main.history_no;
-                cash.group_id = borrow_main.history_no;
-                sale_report.shop_no = borrow_main.searchByNo_no;
-                cash.sc = borrow_main.searchByNo_no;
-                open_html("SaleReport",'#sale_report','sale_report',function(){
-    //		                Refresh()
-                },900,500)
-            }else{
+    //             sale_report.GroupID = borrow_main.history_no;
+    //             cash.group_id = borrow_main.history_no;
+    //             sale_report.shop_no = borrow_main.searchByNo_no;
+    //             cash.sc = borrow_main.searchByNo_no;
+    //             open_html("SaleReport",'#sale_report','sale_report',function(){
+    // //		                Refresh()
+    //             },900,500)
+    //         }else{
                 var url = '/index.php?s=desktop/Borrow/button6_Click';
                 var user_token = get_cache('usertoken');
                 var data = {};
@@ -344,7 +344,7 @@
                         showErr('获取编号失败.请重新获取');
                     }
                 })
-            }
+            // }
 
         }
 
