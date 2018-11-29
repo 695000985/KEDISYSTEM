@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>科迪会员录入系统</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <!-- <link rel="stylesheet" href="../css/H-ui.min.css"> -->
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/iconfont.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+    <script src="../script/jquery.pagination.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+	<div class="container" id="app" v-cloak>
+		<h1 class="text-center">{{formtypelist.head}}</h1>
+		<h5 class="page-header"></h5>
+		<form class="form-horizontal">
+			<div class="form-group">
+				<div class="row">
+					<label class="col-sm-2 control-label">借还方向：</label>
+
+					<div class="col-sm-10">
+						<label class="radio-inline" v-for="item in formtypelist.list">
+							<input type="radio" :value="item.id" name="formtype" v-model="data.direction">{{item.name}}
+						</label>
+						
+					</div>
+				</div>
+
+			</div>
+			<div class="form-group">
+				<div class="row">
+					<label class="col-sm-2 control-label">专卖店或经销商号：</label>
+					<div class="col-sm-5">
+						<input id="sc_blur" type="" name="" class="form-control" v-model="data.sc">	
+					</div>
+					<h6 class="col-sm-2">姓名：{{scname}}</h6>
+				</div>
+
+			</div>
+			<div class="form-group" v-show="formtype != 'borrow'">
+				<div class="row">
+					<label class="col-sm-2 control-label">指定还的欠款：</label>
+					<div class="col-sm-10">
+						<select class="form-control" v-model="data.borrow_id">
+							<option v-for="item in borrowlist" :value="item.id">{{item.title}}</option>
+							
+						</select>
+						<p class="help-block">此处已无出指定店或经销商名下所有未还清的记录。请选择一个去还款吧！</p>
+					</div>
+				</div>
+
+			</div>
+			<div class="form-group" v-show="formtype != 'borrow'">
+				<div class="row">
+					<label class="col-sm-2 control-label">还款方式：</label>
+					<div class="col-sm-10">
+						<label class="radio-inline" v-for="(item, key) in payback_typelist">
+							<input type="radio" :value="key" name="payback_type" v-model="payback_type">{{item.type_name}}
+						</label>
+						
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="row">
+					<label class="col-sm-2 control-label" v-html="formtype != 'borrow'?'还款时间：':'借款时间：'"></label>
+				
+					<div class="col-sm-4">
+						<input id="exchange_date" name="" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="row">
+					<label class="col-sm-2 control-label" v-html="formtype != 'borrow'?'还款金额：':'借款金额：'"></label>
+				
+					<div class="col-sm-4">
+						<input class="form-control" type="number" name="" :placeholder="formtype != 'borrow'?'还款总金额':'借款总金额'" v-model="data.amount">
+					</div>
+				</div>
+			</div>			
+			<div class="form-group"  v-show="formtype == 'borrow'">
+				<div class="row">
+					<label class="col-sm-2 control-label">借款类型：</label>
+					<div class="col-sm-10">
+						<label class="radio-inline" v-for="item in borrowtypelist">
+							<input type="radio" :value="item.id" name="borrowtype" v-model="data.borrowtype">{{item.type_name}}
+						</label>
+						
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="row">
+					<label class="col-sm-2 control-label">备注：</label>
+					<div class="col-sm-10">
+						<textarea class="form-control col-sm-10" v-model="data.memo" rows=6></textarea>						
+					</div>
+
+				</div>
+			</div>
+		</form>
+		<button class="btn btn-primary btn-lg btn-block" @click="submit()">提交</button>
+
+	</div>	
+</body>
+
+<script type="text/javascript">
+	var formtype; //borrow 借款， payback_active主动还款 ，payback_passive被动还款
+
+	var vm = new Vue({
+		el:'#app',
+		data:{
+
+            formtypelist_1 : 
+
+               {head:'借款'
+                   ,list: [
+                    {'id':1,'name':'借款'}
+                ]},
+            formtypelist_2 : 
+                {head:'还款',
+                  list:  [
+                    {'id':2,'name':'主动还款'},
+                    {'id':3,'name':'被动扣款'}
+                ]},
+
+                
+			payback_typelist : {
+				'teller': 'TELLER',
+				'cash'  : 'CASH'
+			},
+			formtype : formtype, 
+			payback_type : 0,
+
+			borrowtypelist : [],
+
+			borrowlist : [],
+
+			data : {
+                direction:1,
+                // log_time:'',
+				sc : '001',
+				borrow_id:1,
+                borrowtype : 1,
+                amount:'',
+                memo:''
+			},
+			scname : '张三'
+
+		},
+		computed:{
+			formtypelist : function(){
+				if(this.formtype == 'borrow') return this.formtypelist_1;
+				else                          return this.formtypelist_2;
+			}
+		},
+		methods : {
+			init : function(){
+
+                this.formtype = GetRequest('ex_type');
+                // alert()
+
+				this.getborrowlist();
+                this.getborrowtypelist();
+                this.get_repay_way();    //还款方式
+
+                this.get_borrow_record();
+
+                this.date_init()
+            },
+            date_init :function(){
+                $('.Wdate').val(get_local_time());
+            },
+			submit : function(){
+                var url = '/index.php?s=desktop/Refund_Borrow_Log/addlog';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"] = user_token;
+                data["log_time"] = $('#exchange_date').val();
+                data['sc'] = this.data.sc;
+                data['direction'] = this.data.direction;
+                data["amount"] = this.data.amount;
+                data["memo"] = this.data.memo;
+
+				if(this.formtype == 'borrow'){
+                    // data["direction"] = 
+                    data["typeid"] = vm.data.borrowtype;
+                    ajax(url,data,function (ret) {
+                    if(ret.stat){
+                           
+                        }
+                    })
+
+				}else{
+
+				}
+				alert(JSON.stringify(this.data));
+			},
+			getborrowlist : function(){
+				if(1){
+					this.borrowlist = [
+						{id:1, title:"2017-01-02 个人 20000"},
+						{id:2, title:"2017-01-03 个人 20000"},
+						{id:3, title:"2017-01-04 个人 20000"},
+						{id:4, title:"2017-01-05 个人 20000"},
+					];
+				}else{
+					console.log('未查到此用户欠款');
+				}
+
+			},
+			getborrowtypelist:function(){
+                var url = '/index.php?s=desktop/Refund_Borrow_Type/listAc';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"] = user_token;
+                // data[""] = ;
+                console.log(data)
+                ajax(url,data,function (ret) {
+                    if(ret.stat){
+                        vm.borrowtypelist = ret.data;
+                    }
+                })
+            },
+            get_repay_way:function(){
+                var url = '/index.php?s=desktop/Refund_Borrow_Type/refund_list';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"] = user_token;
+                // data[""] = ;
+                console.log(data)
+                ajax(url,data,function (ret) {
+                    if(ret.stat){
+                        vm.payback_typelist = ret.data;
+                    }
+                })
+            },
+            get_borrow_record:function(){
+                var url = '/index.php?s=desktop/Refund_Borrow/refundlog';
+                var user_token = get_cache('usertoken');
+                var data = {};
+                data["usertoken"] = user_token;
+                data["sc"] = data.sc;
+                console.log(data)
+                ajax(url,data,function (ret) {
+                    if(ret.stat){
+                        // vm.payback_typelist = ret.data;
+                    }
+                })
+            }
+
+		}
+	});
+    vm.init();
+    
+    $('#sc_blur').on('blur',function(){
+        console.log($(this).val());
+        var url = '/index.php?s=desktop/Refund_Borrow_Log/get_scname';
+        var user_token = get_cache('usertoken');
+        var data = {};
+        data["usertoken"] = user_token;
+        data["sc"] = vm.data.sc;
+        console.log(data)
+        ajax(url,data,function (ret) {
+            if(ret.stat){
+                // vm.payback_typelist = ret.data;
+            }
+        })
+
+    })
+</script>
+
+</html>

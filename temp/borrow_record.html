@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>科迪会员录入系统</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/iconfont.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/bootstrap.js"></script>
+    <!-- <script src="../script/H-ui.min.js"></script> -->
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+    <script src="../script/jquery.pagination.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <body>
+        <div class="container" id="app">
+            <h1 class="text-center">贷款列表</h1>
+            <h5 class="page-header"></h5>
+            <form class="form-inline">
+                <div class="form-group">
+                    <label>类型：</label>
+                    <select class="form-control" v-model="where.dtype">
+                        <option v-for="item in typelist" :value="item.id">{{item.type_name}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">贷款编号:</label>
+                    <input class="form-control" v-model="where.id"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">专卖店号/经销商号：</label>
+                    <input class="form-control" v-model="where.sc">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">借款时间范围：</label>
+                    <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to" type="" name="" v-model="where.start_time"> - <input class="form-control Wdate date_to" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" type="" name="" v-model="where.end_time">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">是否还清：</label>
+                    <select class="form-control" v-model="where.is_over">
+                        <option value="0">全部</option>
+                        <option value="2">是</option>
+                        <option value="1">否</option>
+                    </select>
+                </div>
+                <a class="btn btn-primary" @click="getdata()"> SEARCH</a>
+            </form>
+            <h5 class="page-header"></h5>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr><th style="width:auto;">贷款编号</th><th>sc</th>
+                        <th>贷款日期</th>
+                        <th>贷款类型</th>
+                        <th>贷款总额</th>
+                        <th>剩余还款</th>
+                        <th>是否还清</th>
+                        <th>备注</th>
+                        <th>操作员</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in datalist" @click="showdetail(item)">
+                        <td>{{item.id}}</td>
+                        <td>{{item.sc}}</td>
+                        <td>{{}}</td>
+                        <td>{{}}</td>
+                        <td>{{}}</td>
+                        <td>{{}}</td>
+                        <td>{{}}</td>
+                        <td>{{item.memo}}</td>
+                        <td>{{}}</td>
+                        <td><a class="btn btn-primary btn-xs" @click.stop=openlist(item.id)>还款列表</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <nav class="pull-right" style="background:none;">
+              <ul class="pagination">
+                <li>
+                  <a href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                <li><a href="#">1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">4</a></li>
+                <li><a href="#">5</a></li>
+                <li>
+                  <a href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+            <div class="modal fade" tabindex="-1" id="momo_win">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">备注信息</h4>
+                      </div>
+                      <div class="modal-body">
+                          <form class="form-horizontal">
+                              <div class="form-group">
+                                  <label class="col-sm-3 control-label">贷款编号：</label>
+                                  <div class="col-sm-7">
+                                      <input class="form-control" :value="detail.id" readonly />
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <label class="col-sm-3 control-label">备注：</label>
+                                  <div class="col-sm-7">
+                                      <textarea class="col-sm-7 form-control" rows=5 readonly>{{detail.memo}}</textarea>
+                                  </div>
+                              </div>
+                          </form>
+            
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+    
+            </div>	
+    </body>
+    
+    <script type="text/javascript">
+        var formtype = 'borrow'; //borrow 借款， payback_active主动还款 ，payback_passive被动还款
+    
+        var vm = new Vue({
+            el:'#app',
+            data:{
+                typelist : [],
+                datalist : [],
+                where : {
+                    is_over:0,
+                    start_time : '2017-01-01',
+                    end_time : '2018-11-08',
+                    id : '',
+                    dtype : 1,
+                    sc : ''
+                },
+                detail:{},
+                pagination:{
+                    maxpage : 10,
+                    currentpage:1
+                }
+            },
+            methods : {
+                init : function(){
+                    this.gettypelist();
+                    // this.getdata();
+                    this.date_init();
+                },
+                date_init : function(){
+                    console.log(45613656)
+                    $('.Wdate').val(get_local_time());
+                },
+                gettypelist : function(){
+                    // this.typelist = [
+                    //     {id:0,title:'==全部=='},
+                    //     {id:1,title:'个人'},
+                    //     {id:2,title:'房'},
+                    //     {id:3,title:'车'}
+                    // ];
+
+                    var url = '/index.php?s=desktop/Refund_Borrow_Type/listAc';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    // data[""] = ;
+                    console.log(data)
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            vm.typelist = ret.data;
+                        }
+                    })
+                },
+                getdata:function(){
+
+                    var url = '/index.php?s=desktop/Refund_Borrow/listAc';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["sc"] = this.where.sc;
+                    data["is_over"] = this.where.is_over;
+                    data["typeid"] = this.where.dtype;
+                    data["id"] = this.where.id;
+                    data["from"] = this.where.start_time;
+                    data["to"] = this.where.end_time;
+                    data["offset"] = '';
+                    data["limit"] = '';    
+                    console.log(data)
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                        
+                        }
+                    })
+                    //根据where条件查找数据
+                    alert(JSON.stringify(this.where));
+                    // this.datalist = [
+                    //     {id:1,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:2,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:3,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:4,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:5,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:6,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:7,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:8,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:9,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:11,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:12,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    // ];
+                },
+                showdetail : function(detail){
+                    this.detail = detail;
+                    $("#momo_win").modal();
+                },
+                openlist : function(id){
+                    console.log(459879)
+                    // alert(id + '打开相应的还款列表')
+                }
+            }
+        });
+        vm.init();
+    
+    </script>
+</body>
+
+</html>
