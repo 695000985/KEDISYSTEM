@@ -50,10 +50,10 @@
 			<div class="form-group">
 				<div class="row">
 					<label class="col-sm-2 control-label">专卖店或经销商号：</label>
-					<div class="col-sm-5">
-						<input id="sc_blur" type="" name="" class="form-control" v-model="data.sc">	
+					<div class="col-sm-4">
+						<input id="sc_blur" type="" name="" placeholder="sc001" class="form-control" v-model="data.sc">	
 					</div>
-					<h6 class="col-sm-2">姓名：{{scname}}</h6>
+					<h6 class="col-sm-4">姓名：{{scname}}</h6>
 				</div>
 
 			</div>
@@ -62,7 +62,7 @@
 					<label class="col-sm-2 control-label">指定还的欠款：</label>
 					<div class="col-sm-10">
 						<select class="form-control" v-model="data.borrow_id">
-							<option v-for="item in borrowlist" :value="item.id">{{item.title}}</option>
+							<option v-for="item in borrowlist" :value="item.id">{{item.date}}--{{borrowtypelist[Number(item.type_id)-1].type_name}}--{{item.surplus_money}}</option>
 							
 						</select>
 						<p class="help-block">此处已无出指定店或经销商名下所有未还清的记录。请选择一个去还款吧！</p>
@@ -124,6 +124,8 @@
 		<button class="btn btn-primary btn-lg btn-block" @click="submit()">提交</button>
 
 	</div>	
+
+	
 </body>
 
 <script type="text/javascript">
@@ -161,19 +163,23 @@
 			data : {
                 direction:1,
                 // log_time:'',
-				sc : '001',
+				sc : 'sc001',
 				borrow_id:1,
                 borrowtype : 1,
                 amount:'',
                 memo:''
 			},
-			scname : '张三'
+			scname : '---'
 
 		},
 		computed:{
 			formtypelist : function(){
-				if(this.formtype == 'borrow') return this.formtypelist_1;
-				else                          return this.formtypelist_2;
+				if(this.formtype == 'borrow') 
+				{this.data.direction = 1;
+					return this.formtypelist_1;}
+				else                          
+				{	this.data.direction = 2;
+					return this.formtypelist_2;}
 			}
 		},
 		methods : {
@@ -182,11 +188,11 @@
                 this.formtype = GetRequest('ex_type');
                 // alert()
 
-				this.getborrowlist();
+				// this.getborrowlist();
                 this.getborrowtypelist();
                 this.get_repay_way();    //还款方式
 
-                this.get_borrow_record();
+                // this.get_borrow_record();
 
                 this.date_init()
             },
@@ -209,14 +215,22 @@
                     data["typeid"] = vm.data.borrowtype;
                     ajax(url,data,function (ret) {
                     if(ret.stat){
-                           
+							showErr_bs(ret.data);
                         }
                     })
 
 				}else{
-
+					data["typeid"] = vm.payback_type;
+					data["id"] = vm.data.borrow_id;
+					ajax(url,data,function (ret) {
+                    	if(ret.stat){
+							showErr_bs(ret.data);
+                        }
+                    })
+					// data["id"] = ;
+					console.log(data)
 				}
-				alert(JSON.stringify(this.data));
+				// alert(JSON.stringify(this.data));	
 			},
 			getborrowlist : function(){
 				if(1){
@@ -257,17 +271,19 @@
                     }
                 })
             },
-            get_borrow_record:function(){
-                var url = '/index.php?s=desktop/Refund_Borrow/refundlog';
+			get_borrow_record:function(){					//还款页下拉------未还清借款记录查询
+				console.log('继续查询')
+                var url = '/index.php?s=desktop/Refund_Borrow/refundlog';   
                 var user_token = get_cache('usertoken');
                 var data = {};
                 data["usertoken"] = user_token;
-                data["sc"] = data.sc;
+                data["sc"] = this.data.sc;
                 console.log(data)
                 ajax(url,data,function (ret) {
-                    if(ret.stat){
-                        // vm.payback_typelist = ret.data;
-                    }
+                    // if(ret){
+						// vm.payback_typelist = ret.data;
+						vm.borrowlist = ret
+                    // }
                 })
             }
 
@@ -283,10 +299,21 @@
         data["usertoken"] = user_token;
         data["sc"] = vm.data.sc;
         console.log(data)
-        ajax(url,data,function (ret) {
+		ajax(url,data,function (ret) {
+			console.log(vm.formtype);
             if(ret.stat){
-                // vm.payback_typelist = ret.data;
-            }
+				// showErr_bs('success');
+				if(ret.data !=''){
+					vm.scname = ret.data + '('+ vm.data.sc + ')';
+				}
+				
+				// vm.payback_typelist = ret.data;
+				if(vm.formtype != 'borrow'){
+					vm.get_borrow_record()
+				}
+			}else{
+				showErr_bs(ret.errmsg);
+			}
         })
 
     })
