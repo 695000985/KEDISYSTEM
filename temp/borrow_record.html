@@ -28,8 +28,8 @@
         }
 
         @media (min-width: 768px){
-            .modal-dialog {
-                width:80%;
+            .huankuan_modal {
+               width: 80%!important;
             }
         }
     </style>
@@ -57,7 +57,7 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">借款时间范围：</label>
-                    <input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="form-control Wdate date_to" type="" name="" v-model="where.start_time"> - <input class="form-control Wdate date_to" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" type="" name="" v-model="where.end_time">
+                    <input id="r_start" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="form-control Wdate date_to" type="" name="" v-model="where.start_time"> - <input id="r_end" class="form-control Wdate date_to" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" type="" name="" v-model="where.end_time">
                 </div>
                 <div class="form-group">
                     <label class="control-label">是否还清：</label>
@@ -70,7 +70,7 @@
                 <a class="btn btn-primary" @click="getdata()"> SEARCH</a>
             </form>
             <h5 class="page-header"></h5>
-            <table class="table table-striped table-hover">
+            <table id="daikuan_table" class="table table-striped table-hover">
                 <thead>
                     <tr><th style="width:auto;">贷款编号</th>
                         <th>sc</th>
@@ -92,10 +92,10 @@
                         <td>{{typelist[Number(item.type_id)].type_name}}</td>
                         <td>{{item.total_money}}</td>
                         <td>{{item.surplus_money}}</td>
-                        <td>{{}}</td>
+                        <td>{{item.is_over == 1?'否':'是'}}</td>
                         <td>{{item.memo}}</td>
                         <td>{{item.oper}}</td>
-                        <td><a class="btn btn-primary btn-xs" @click.stop=openlist(item.id)>还款列表</a></td>
+                        <td><a class="btn btn-primary btn-xs" @click.stop=xiugai() style="margin-right:5px;">修改</a><a class="btn btn-primary btn-xs" @click.stop=openlist(item.id)>还款列表</a></td>
                     </tr>
                 </tbody>
             </table>
@@ -119,58 +119,151 @@
               </ul>
             </nav>
             <div class="modal fade" tabindex="-1" id="momo_win">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">备注信息</h4>
-                      </div>
-                      <div class="modal-body">
-                          <form class="form-horizontal">
-                              <div class="form-group">
-                                  <label class="col-sm-3 control-label">贷款编号：</label>
-                                  <div class="col-sm-7">
-                                      <input class="form-control" :value="detail.id" readonly />
-                                  </div>
-                              </div>
-                              <div class="form-group">
-                                  <label class="col-sm-3 control-label">备注：</label>
-                                  <div class="col-sm-7">
-                                      <textarea class="col-sm-7 form-control" rows=5 readonly>{{detail.memo}}</textarea>
-                                  </div>
-                              </div>
-                          </form>
-            
-                      </div>
-                      <div class="modal-footer">
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">贷款编号：</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" :value="detail.id" readonly />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">sc:</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" :value="detail.sc" readonly />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">贷款日期：</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" :value="detail.date" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">贷款类型：</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" readonly />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">贷款总额：</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" :value="detail.total_money" readonly />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">剩余总额：</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" :value="detail.surplus_money" readonly />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">备注：</label>
+                                <div class="col-sm-7">
+                                    <textarea class="col-sm-7 form-control" rows=5 readonly>{{detail.memo}}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">操作员：</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" :value="detail.oper" readonly />
+                                </div>
+                            </div>
+                        </form>
+        
+                    </div>
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                      </div>
-                    </div><!-- /.modal-content -->
-                  </div><!-- /.modal-dialog -->
-                </div><!-- /.modal -->
+                    </div>
+                </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
     
-            </div>	
-
-
-            <!-- 还款列表 -->
+                <!-- 还款列表 -->
             <div class="modal fade" id="repay_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                <div class="modal-dialog" role="document">
+                <div class="modal-dialog huankuan_modal" role="document">
                     <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title" id="myModalLabel">还款列表</h4>
                     </div>
                     <div class="modal-body">
-                        
+                        <form class="form-inline">
+                                <div class="form-group">
+                                    <label>类型：</label>
+                                    <select class="form-control" v-model="re_where.dtype">
+                                        <option v-for="item in typelist" :value="item.id">{{item.type_name}}</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">贷款编号:</label>
+                                    <input class="form-control" v-model="re_where.id"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">专卖店号/经销商号：</label>
+                                    <input class="form-control" v-model="re_where.sc">
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">还款时间范围：</label>
+                                    <input id="huankuan_start" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="form-control Wdate date_to" type="" name=""> - <input id="huankuan_end" class="form-control Wdate date_to" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" type="" name="">
+                                </div>
+                                <span class="btn btn-primary" @click.stop="get_redata()">SEARCH</span>
+                        </form>
+                        <div style="overflow-x:scroll;">
+                        <table style="width:120%;" class="table table-striped table-hover">
+                            <thead>
+                                <tr><th style="width:auto;">贷款编号</th>
+                                    <th>sc</th>
+                                    <th>贷款日期</th>
+                                    <th>贷款类型</th>
+                                    <th>贷款总额</th>
+                                    <th>剩余还款总额</th>
+                                    <th>是否已还清</th>
+                                    <th>还款日期</th>
+                                    <th>还款金额</th>
+                                    <th>备注</th>
+                                    <th>操作员</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr onselectstart="return false" v-for="item in repay_list">
+                                    <td>{{item.id}}</td>
+                                    <td>{{item.sc}}</td>
+                                    <td >{{item.date}}</td>
+                                    <td>{{typelist[Number(item.type_id)].type_name}}</td>
+                                    <td>{{item.total_money}}</td>
+                                    <td>{{item.surplus_money}}</td>
+                                    <td>{{item.is_over == 1?'否':'是'}}</td>
+                                    <td>还款日期</td>
+                                    <td>还款金额</td>
+                                    <td>{{item.memo}}</td>
+                                    <td>{{item.oper}}</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
                     </div>
                     </div>
                 </div>
             </div>
-                  
+                      
+
+            </div>	
+
+
+            
     </body>
     
 
@@ -181,14 +274,21 @@
         var vm = new Vue({
             el:'#app',
             data:{
-                typelist : [],
+                typelist : [ {id: "0", type_name: "全部", key: "1"}],
+                repay_list:[],
                 datalist : [],
+                re_where:{
+                    dtype : 0,
+                    id:'',
+                    sc:'',
+
+                },
                 where : {
                     is_over:0,
-                    start_time : '2017-01-01',
-                    end_time : '2018-11-08',
+                    start_time : '',
+                    end_time : '',
                     id : '',
-                    dtype : 1,
+                    dtype : 0,
                     sc : ''
                 },
                 detail:{},
@@ -200,12 +300,12 @@
             methods : {
                 init : function(){
                     this.gettypelist();
-                    // this.getdata();
-                    this.date_init();
+                    this.getdata();
+                    // this.date_init();
                 },
                 date_init : function(){
                     console.log(45613656)
-                    $('.Wdate').val(get_local_time());
+                    // $('.Wdate').val(get_local_time());
                 },
                 gettypelist : function(){
                     // this.typelist = [
@@ -223,7 +323,10 @@
                     console.log(data)
                     ajax(url,data,function (ret) {
                         if(ret.stat){
-                            vm.typelist = ret.data;
+                            var l = ret.data;
+                            for(var i = 0; i < l.length;i++){
+                                vm.typelist.push(l[i]);
+                            }
                         }
                     })
                 },
@@ -237,40 +340,71 @@
                     data["is_over"] = this.where.is_over;
                     data["typeid"] = this.where.dtype;
                     data["id"] = this.where.id;
-                    data["from"] = this.where.start_time;
-                    data["to"] = this.where.end_time;
+                    // data["from"] = this.where.start_time;
+                    data["from"] = $("#r_start").val();
+                    data["to"] = $("#r_end").val();
+                    // data["to"] = this.where.end_time;
                     data["offset"] = '';
                     data["limit"] = '';    
                     console.log(data)
                     ajax(url,data,function (ret) {
                         if(ret.stat){
-                            this.datalist = ret.data.list;
+                            vm.datalist = ret.data.list;
                         }
                     })
                     //根据where条件查找数据
                     // alert(JSON.stringify(this.where));
-                    this.datalist = [
-                        {id:1,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
-                        {id:2,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
-                        {id:3,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
-                        {id:4,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
-                        {id:5,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
-                        {id:6,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
-                        {id:7,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
-                        {id:8,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
-                        {id:9,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
-                        {id:11,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
-                        {id:12,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
-                    ];
+                    // this.datalist = [
+                    //     {id:1,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:2,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:3,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:4,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:5,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:6,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:7,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:8,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:9,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:11,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    //     {id:12,sc:'001','memo':'很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本'},
+                    // ];
+                },
+                get_redata : function(){
+                    console.log('返回还款');
+                    var url = '/index.php?s=desktop/Refund_Borrow_Log/get_refund_list';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["sc"] = this.re_where.sc;
+                    data["typeid"] = this.re_where.dtype;
+                    data["id"] = this.re_where.id;
+                    // data["from"] = this.where.start_time;
+                    data["from"] = $("#huankuan_start").val();
+                    data["to"] = $("#huankuan_end").val();
+                    // data["to"] = this.where.end_time;
+                    data["offset"] = '';
+                    data["limit"] = '';    
+                    console.log(data)
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            // vm.repay_list = ret.data.list;
+                        }
+                    })
                 },
                 showdetail : function(detail){
                     this.detail = detail;
+                    $("#daikuan_table tr td").select(function () {
+                        console.log(45561349999)
+                    })
+                    // $("#daikuan_table tr td").onselectstart=function(){console.log(456566)}
                     $("#momo_win").modal();
                 },
                 openlist : function(id){
                     console.log(459879)
                     $('#repay_modal').modal()
                     // alert(id + '打开相应的还款列表')
+                },
+                xiugai : function(){
+
                 }
             }
         });

@@ -74,8 +74,8 @@
 				<div class="row">
 					<label class="col-sm-2 control-label">还款方式：</label>
 					<div class="col-sm-10">
-						<label class="radio-inline" v-for="(item, key) in payback_typelist">
-							<input type="radio" :value="key" name="payback_type" v-model="payback_type">{{item.type_name}}
+						<label class="radio-inline" v-for="item in payback_typelist">
+							<input type="radio" :value="item.id" name="payback_type" v-model="payback_type">{{item.type_name}}
 						</label>
 						
 					</div>
@@ -149,12 +149,9 @@
                 ]},
 
                 
-			payback_typelist : {
-				'teller': 'TELLER',
-				'cash'  : 'CASH'
-			},
+			payback_typelist : [],
 			formtype : formtype, 
-			payback_type : 0,
+			payback_type : 4,
 
 			borrowtypelist : [],
 
@@ -163,8 +160,8 @@
 			data : {
                 direction:1,
                 // log_time:'',
-				sc : 'sc001',
-				borrow_id:1,
+				sc : '',
+				borrow_id:'',
                 borrowtype : 1,
                 amount:'',
                 memo:''
@@ -216,6 +213,7 @@
                     ajax(url,data,function (ret) {
                     if(ret.stat){
 							showErr_bs(ret.data);
+							clear_input()
                         }
                     })
 
@@ -225,6 +223,7 @@
 					ajax(url,data,function (ret) {
                     	if(ret.stat){
 							showErr_bs(ret.data);
+							clear_input()
                         }
                     })
 					// data["id"] = ;
@@ -267,7 +266,7 @@
                 console.log(data)
                 ajax(url,data,function (ret) {
                     if(ret.stat){
-                        vm.payback_typelist = ret.data;
+						vm.payback_typelist = ret.data;
                     }
                 })
             },
@@ -282,7 +281,8 @@
                 ajax(url,data,function (ret) {
                     // if(ret){
 						// vm.payback_typelist = ret.data;
-						vm.borrowlist = ret
+						vm.borrowlist = ret;
+						vm.data.borrow_id = ret[0].id;
                     // }
                 })
             }
@@ -290,7 +290,16 @@
 		}
 	});
     vm.init();
-    
+	
+	function clear_input(){
+		vm.data.sc = '';
+		vm.data.amount = '';
+		vm.data.memo = '';
+		// vm.borrowtypelist = [];
+		vm.borrowtype = 1,
+		vm.scname = '---';
+	}
+
     $('#sc_blur').on('blur',function(){
         console.log($(this).val());
         var url = '/index.php?s=desktop/Refund_Borrow_Log/get_scname';
@@ -298,23 +307,25 @@
         var data = {};
         data["usertoken"] = user_token;
         data["sc"] = vm.data.sc;
-        console.log(data)
-		ajax(url,data,function (ret) {
-			console.log(vm.formtype);
-            if(ret.stat){
-				// showErr_bs('success');
-				if(ret.data !=''){
-					vm.scname = ret.data + '('+ vm.data.sc + ')';
+		console.log(data);
+		if(vm.data.sc != ''){
+			ajax(url,data,function (ret) {
+				console.log(vm.formtype);
+				if(ret.stat){
+					// showErr_bs('success');
+					if(ret.data !=''){
+						vm.scname = ret.data + '('+ vm.data.sc + ')';
+					}
+					
+					if(vm.formtype != 'borrow'){
+						vm.get_borrow_record()
+					}
+				}else{
+					showErr_bs(ret.errmsg);
 				}
-				
-				// vm.payback_typelist = ret.data;
-				if(vm.formtype != 'borrow'){
-					vm.get_borrow_record()
-				}
-			}else{
-				showErr_bs(ret.errmsg);
-			}
-        })
+			})
+		}
+		
 
     })
 </script>
