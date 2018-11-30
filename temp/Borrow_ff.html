@@ -223,7 +223,79 @@
             <div class="clear"></div>
         </div>
     </div>    
-
+    <div class="codeView docs-example">
+            <form action="" method="post" class="form form-horizontal" id="demoform-1">
+                <legend>表单布局</legend>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">文本框：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" autocomplete="off" placeholder="帐号">
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">密码框：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="password" class="input-text" autocomplete="off" placeholder="密码">
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">单选框：</label>
+                    <div class="formControls skin-minimal col-xs-8 col-sm-9">
+                        <div class="radio-box">
+                            <input type="radio" id="sex-1" name="sex" checked>
+                            <label for="sex-1">男</label>
+                        </div>
+                        <div class="radio-box">
+                            <input type="radio" id="sex-0" name="sex">
+                            <label for="sex-0">女</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">复选框：</label>
+                    <div class="formControls skin-minimal col-xs-8 col-sm-9">
+                        <div class="check-box">
+                            <input type="checkbox" id="checkbox-5">
+                            <label for="checkbox-5">复选框</label>
+                        </div>
+                        <div class="check-box">
+                            <input type="checkbox" id="checkbox-6" checked>
+                            <label for="checkbox-6">复选框 checked状态</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">文件域：</label>
+                    <div class="formControls col-xs-8 col-sm-9"> <span class="btn-upload form-group">
+                        <input class="input-text upload-url" type="text" name="uploadfile-2" id="uploadfile-2" readonly>
+                        <a href="javascript:void();" class="btn btn-primary upload-btn"><i class="Hui-iconfont">&#xe642;</i> 浏览文件</a>
+                        <input type="file" multiple name="file-2" class="input-file">
+                        </span> </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">下拉框：</label>
+                    <div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
+                        <select class="select" size="1" name="demo1">
+                            <option value="" selected>默认select</option>
+                            <option value="1">菜单一</option>
+                            <option value="2">菜单二</option>
+                            <option value="3">菜单三</option>
+                        </select>
+                        </span> </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-3">文本域：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea class="textarea" placeholder="说点什么..." rows="" cols="" name=""></textarea>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                        <input class="btn btn-primary radius" type="submit" value="提交">
+                    </div>
+                </div>
+            </form>
+        </div>
     <script>
 
         var p_index = '';
