@@ -454,7 +454,7 @@ function GetRequest(value) {
 
 function showErr_bs(msg){
     console.log('adadad')
-    var alert = '<div class="alert alert-warning alert-dismissible" role="alert" style="padding: 25px 15px;color:#333333;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0px 0px 3px 2px #cccccc;background-color:#ffffff;border-color:#ffffff;">'+
+    var alert = '<div class="alert alert-warning alert-dismissible" role="alert" style="z-index:10000;padding: 25px 15px;color:#333333;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0px 0px 3px 2px #cccccc;background-color:#ffffff;border-color:#ffffff;">'+
         '<button type="button" class="close_ close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>'+
         '<strong></strong>'+msg+
         '</div>'

@@ -464,7 +464,7 @@
 
                 },
                 refund_delete: function(repay_id,borrow_id,amount){
-                    console.log(repay_id,borrow_id,amount);
+                    // console.log(repay_id,borrow_id,amount);
                     var url = '/index.php?s=desktop/Refund_Borrow_Log/del_refund';
                     var user_token = get_cache('usertoken');
                     var data = {};
@@ -474,14 +474,18 @@
                     data["amount"] = amount;
                     ajax(url,data,function (ret) {
                         if(ret.stat){
+                            showErr_bs(ret.data);
                             vm.get_redata()
                         }
                     })
+                    
                 }
             }
         });
         vm.init();
     
+        // 使后打开的模态窗优先级高
+
     </script>
 </body>
 
