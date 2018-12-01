@@ -134,7 +134,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-3 control-label">sc:</label>
+                                <label class="col-sm-3 control-label">sc：</label>
                                 <div class="col-sm-7">
                                     <input class="form-control" :value="detail.sc" readonly />
                                 </div>
@@ -142,13 +142,13 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">贷款日期：</label>
                                 <div class="col-sm-7">
-                                    <input class="form-control" :value="detail.date" />
+                                    <input class="form-control" :value="detail.date"  readonly />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">贷款类型：</label>
                                 <div class="col-sm-7">
-                                    <input class="form-control" readonly />
+                                    <input class="form-control" :value="detail.type_id==1?'':''" readonly />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -307,6 +307,9 @@
                     console.log(45613656)
                     // $('.Wdate').val(get_local_time());
                 },
+                compute_type : function(i){
+                    return this.typelist[i].type_name;
+                },
                 gettypelist : function(){
                     // this.typelist = [
                     //     {id:0,title:'==全部=='},
@@ -392,6 +395,7 @@
                 },
                 showdetail : function(detail){
                     this.detail = detail;
+                    console.log(this.typelist,detail);
                     $("#daikuan_table tr td").select(function () {
                         console.log(45561349999)
                     })
