@@ -244,10 +244,11 @@
                                     <td>{{item.borrow_ret.is_over == 1?'否':'是'}}</td>
                                     <td>{{item.log_time}}</td>
                                     <td>{{item.amount}}</td>
-                                    <td>{{item.type_id == 4?'teller':item.type_id == 5?'cash':''}}</td>
+                                    <td>{{compute_refund_type(item.type_id)}}</td>
+                                    <!-- <td>{{item.type_id == 4?'teller':item.type_id == 5?'cash':''}}</td> -->
                                     <td>{{item.memo}}</td>
                                     <td>{{item.oper}}</td>
-                                    <td><a class="btn btn-primary btn-xs" @click.stop=refund_delete(item)>删除</a></td>
+                                    <td><a class="btn btn-primary btn-xs" @click.stop=refund_delete(item.id,item.borrow_ret.id,item.amount)>删除</a></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -278,7 +279,6 @@
             data:{
                 typelist : [ {id: "0", type_name: "全部", key: "1"}],
                 refund_typelist : [ {id: "0", type_name: "全部", key: "1"}],
-                repay_list:[],
                 datalist : [],
                 re_where:{
                     dtype : 0,
@@ -314,6 +314,15 @@
                 },
                 compute_type : function(i){
                     return this.typelist[i].type_name;
+                },
+
+                compute_refund_type : function(para){
+                    console.log(para);
+                    for(var i = 0; i<this.refund_typelist.length; i++){
+                        if(para == this.refund_typelist[i].id){
+                            return this.refund_typelist[i].type_name;
+                        }
+                    }
                 },
                 gettypelist : function(){
                     // this.typelist = [
@@ -410,7 +419,6 @@
                     console.log(data)
                     ajax(url,data,function (ret) {
                         if(ret.stat){
-                            // vm.repay_list = ret.data.list;
                             var borrow_ret = ret.data.borrow_info,borrow_ex={},
                                 refund_ret = ret.data.refund_info;
                             for (const i in borrow_ret) {
@@ -434,15 +442,18 @@
                 },
                 showdetail : function(detail){
                     this.detail = detail;
-                    console.log(this.typelist,detail);
-                    $("#daikuan_table tr td").select(function () {
-                        console.log(45561349999)
-                    })
-                    // $("#daikuan_table tr td").onselectstart=function(){console.log(456566)}
-                    $("#momo_win").modal();
+                    // console.log(this.typelist,detail);
+                    var selectionObj = window.getSelection();
+            　　　　 var rangeObj = selectionObj.getRangeAt(0);
+            　　　 　var docFragment = rangeObj.cloneContents();
+                    console.log(selectionObj.toString());
+                    if(selectionObj.toString() == ''){
+                        $("#momo_win").modal();
+                    }
+                    // $("#momo_win").modal();
                 },
                 openlist : function(item){
-                    console.log(item)
+                    
                     // vm.re_where.id = item.id;
                     vm.re_where.sc = item.sc;
                     $('#repay_modal').modal()
@@ -452,8 +463,20 @@
                 xiugai : function(){
 
                 },
-                refund_delete: function(){
-                    
+                refund_delete: function(repay_id,borrow_id,amount){
+                    console.log(repay_id,borrow_id,amount);
+                    var url = '/index.php?s=desktop/Refund_Borrow_Log/del_refund';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["id"] = repay_id;
+                    data["refundborrow_id"] = borrow_id;
+                    data["amount"] = amount;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            vm.get_redata()
+                        }
+                    })
                 }
             }
         });
