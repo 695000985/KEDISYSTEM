@@ -62,7 +62,7 @@
 					<label class="col-sm-2 control-label">指定还的欠款：</label>
 					<div class="col-sm-10">
 						<select class="form-control" v-model="data.borrow_id">
-							<option v-for="item in borrowlist" :value="item.id">{{item.date}}--{{borrowtypelist[Number(item.type_id)-1].type_name}}--{{item.surplus_money}}</option>
+							<option v-for="item in borrowlist" :value="item.id">{{item.date}}--{{borrowtypelist[Number(item.type_id)-1].type_name}}--{{item.total_money}}(剩：{{item.surplus_money}})</option>
 							
 						</select>
 						<p class="help-block">此处已无出指定店或经销商名下所有未还清的记录。请选择一个去还款吧！</p>

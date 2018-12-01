@@ -95,7 +95,7 @@
                         <td>{{item.is_over == 1?'否':'是'}}</td>
                         <td>{{item.memo}}</td>
                         <td>{{item.oper}}</td>
-                        <td><a class="btn btn-primary btn-xs" @click.stop=xiugai() style="margin-right:5px;">修改</a><a class="btn btn-primary btn-xs" @click.stop=openlist(item.id)>还款列表</a></td>
+                        <td><a class="btn btn-primary btn-xs" @click.stop=xiugai() style="margin-right:5px;">修改</a><a class="btn btn-primary btn-xs" @click.stop=openlist(item)>还款列表</a></td>
                     </tr>
                 </tbody>
             </table>
@@ -148,7 +148,7 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">贷款类型：</label>
                                 <div class="col-sm-7">
-                                    <input class="form-control" :value="detail.type_id==1?'':''" readonly />
+                                    <input class="form-control" :value="detail.type_id==1?'个人':detail.type_id==2?'房屋':'业绩'" readonly />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -186,7 +186,7 @@
             </div><!-- /.modal -->
     
                 <!-- 还款列表 -->
-            <div class="modal fade" id="repay_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal fade" style="min-height:200px;" id="repay_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog huankuan_modal" role="document">
                     <div class="modal-content">
                     <div class="modal-header">
@@ -198,7 +198,7 @@
                                 <div class="form-group">
                                     <label>类型：</label>
                                     <select class="form-control" v-model="re_where.dtype">
-                                        <option v-for="item in typelist" :value="item.id">{{item.type_name}}</option>
+                                        <option v-for="item in refund_typelist" :value="item.id">{{item.type_name}}</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
@@ -227,25 +227,27 @@
                                     <th>是否已还清</th>
                                     <th>还款日期</th>
                                     <th>还款金额</th>
+                                    <th>还款类型</th>
                                     <th>备注</th>
                                     <th>操作员</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr onselectstart="return false" v-for="item in repay_list">
-                                    <td>{{item.id}}</td>
-                                    <td>{{item.sc}}</td>
-                                    <td >{{item.date}}</td>
-                                    <td>{{typelist[Number(item.type_id)].type_name}}</td>
-                                    <td>{{item.total_money}}</td>
-                                    <td>{{item.surplus_money}}</td>
-                                    <td>{{item.is_over == 1?'否':'是'}}</td>
-                                    <td>还款日期</td>
-                                    <td>还款金额</td>
+                                <tr v-for="item in refund_list">
+                                    <td>{{item.borrow_ret.id}}</td>
+                                    <td>{{item.borrow_ret.sc}}</td>
+                                    <td>{{item.borrow_ret.date}}</td>
+                                    <td>{{item.borrow_ret.type_id}}</td>
+                                    <td>{{item.borrow_ret.total_money}}</td>
+                                    <td>{{item.borrow_ret.surplus_money}}</td>
+                                    <td>{{item.borrow_ret.is_over == 1?'否':'是'}}</td>
+                                    <td>{{item.log_time}}</td>
+                                    <td>{{item.amount}}</td>
+                                    <td>{{item.type_id == 4?'teller':item.type_id == 5?'cash':''}}</td>
                                     <td>{{item.memo}}</td>
                                     <td>{{item.oper}}</td>
-                                    <td></td>
+                                    <td><a class="btn btn-primary btn-xs" @click.stop=refund_delete(item)>删除</a></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -275,6 +277,7 @@
             el:'#app',
             data:{
                 typelist : [ {id: "0", type_name: "全部", key: "1"}],
+                refund_typelist : [ {id: "0", type_name: "全部", key: "1"}],
                 repay_list:[],
                 datalist : [],
                 re_where:{
@@ -295,12 +298,14 @@
                 pagination:{
                     maxpage : 10,
                     currentpage:1
-                }
+                },
+                refund_list:[]
             },
             methods : {
                 init : function(){
                     this.gettypelist();
                     this.getdata();
+                    this.getrefund_typelist();
                     // this.date_init();
                 },
                 date_init : function(){
@@ -329,6 +334,22 @@
                             var l = ret.data;
                             for(var i = 0; i < l.length;i++){
                                 vm.typelist.push(l[i]);
+                            }
+                        }
+                    })
+                },
+                getrefund_typelist(){
+                    var url = '/index.php?s=desktop/Refund_Borrow_Type/refund_list';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    // data[""] = ;
+                    console.log(data)
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            var l = ret.data;
+                            for(var i = 0; i < l.length;i++){
+                                vm.refund_typelist.push(l[i]);
                             }
                         }
                     })
@@ -390,6 +411,24 @@
                     ajax(url,data,function (ret) {
                         if(ret.stat){
                             // vm.repay_list = ret.data.list;
+                            var borrow_ret = ret.data.borrow_info,borrow_ex={},
+                                refund_ret = ret.data.refund_info;
+                            for (const i in borrow_ret) {
+                                // borrow_ex[borrow_ret[i].id] = borrow_ret[i];
+                                for(const j in  refund_ret){
+                                    
+                                    if(refund_ret[j].refundborrow_id == borrow_ret[i].id){
+                                        refund_ret[j].borrow_ret = borrow_ret[i];
+                                        
+                                    }
+                                    
+                                }
+                            }
+                            vm.refund_list = refund_ret;
+                            console.log( vm.refund_list)
+
+                        }else if(ret.stat == 0){
+                            showErr_bs(ret.errmsg);
                         }
                     })
                 },
@@ -402,13 +441,19 @@
                     // $("#daikuan_table tr td").onselectstart=function(){console.log(456566)}
                     $("#momo_win").modal();
                 },
-                openlist : function(id){
-                    console.log(459879)
+                openlist : function(item){
+                    console.log(item)
+                    // vm.re_where.id = item.id;
+                    vm.re_where.sc = item.sc;
                     $('#repay_modal').modal()
+                    this.get_redata()
                     // alert(id + '打开相应的还款列表')
                 },
                 xiugai : function(){
 
+                },
+                refund_delete: function(){
+                    
                 }
             }
         });
