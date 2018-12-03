@@ -211,10 +211,12 @@
                     // data["direction"] = 
                     data["typeid"] = vm.data.borrowtype;
                     ajax(url,data,function (ret) {
-                    if(ret.stat){
+                    	if(ret.stat){
 							showErr_bs(ret.data);
 							clear_input()
-                        }
+                        }else{
+							showErr_bs(ret.errmsg);
+						}
                     })
 
 				}else{

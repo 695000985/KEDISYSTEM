@@ -419,6 +419,7 @@
                     console.log(data)
                     ajax(url,data,function (ret) {
                         if(ret.stat){
+                            vm.refund_list = [];
                             var borrow_ret = ret.data.borrow_info,borrow_ex={},
                                 refund_ret = ret.data.refund_info;
                             for (const i in borrow_ret) {
