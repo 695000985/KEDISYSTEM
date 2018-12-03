@@ -453,8 +453,8 @@
                     // $("#momo_win").modal();
                 },
                 openlist : function(item){
-                    
-                    // vm.re_where.id = item.id;
+                    vm.refund_list = [];
+                    vm.re_where.id = item.id;
                     vm.re_where.sc = item.sc;
                     $('#repay_modal').modal()
                     this.get_redata()
