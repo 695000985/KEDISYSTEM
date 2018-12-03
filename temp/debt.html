@@ -226,7 +226,9 @@
                     	if(ret.stat){
 							showErr_bs(ret.data);
 							clear_input()
-                        }
+                        }else{
+							showErr_bs(ret.errmsg);
+						}
                     })
 					// data["id"] = ;
 					console.log(data)
