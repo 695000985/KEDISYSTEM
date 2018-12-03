@@ -26,6 +26,13 @@
         [v-cloak] {
             display: none;
         }
+		input::-webkit-outer-spin-button,
+		input::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+		}
+		input[type="number"]{
+			-moz-appearance: textfield;
+		}
     </style>
 </head>
 
@@ -98,6 +105,8 @@
 					<div class="col-sm-4">
 						<input class="form-control" type="number" name="" :placeholder="formtype != 'borrow'?'还款总金额':'借款总金额'" v-model="data.amount">
 					</div>
+
+					<h5 class="col-sm-4" v-show="data.amount != ''">({{thousand_ex}})</h5>
 				</div>
 			</div>			
 			<div class="form-group"  v-show="formtype == 'borrow'">
@@ -177,6 +186,19 @@
 				else                          
 				{	this.data.direction = 2;
 					return this.formtypelist_2;}
+			},
+			thousand_ex:function( precision, separator) {
+				var parts;
+				var num = this.data.amount;
+				if (!isNaN(parseFloat(num)) && isFinite(num)) {
+					num = Number(num);
+					num = (typeof precision !== 'undefined' ? num.toFixed(precision) : num).toString();
+					parts = num.split('.');
+					parts[0] = parts[0].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1' + (separator || ','));
+
+					return parts.join('.');
+				}
+				return NaN;
 			}
 		},
 		methods : {
