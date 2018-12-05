@@ -33,6 +33,8 @@
 		input[type="number"]{
 			-moz-appearance: textfield;
 		}
+
+		#i_amount{user-select: none;}
     </style>
 </head>
 
@@ -102,11 +104,11 @@
 				<div class="row">
 					<label class="col-sm-2 control-label" v-html="formtype != 'borrow'?'还款金额：':'借款金额：'"></label>
 				
-					<div class="col-sm-4">
-						<input class="form-control" type="number" name="" :placeholder="formtype != 'borrow'?'还款总金额':'借款总金额'" v-model="data.amount">
+					<div class="col-sm-4" style="position:relative;">
+						<!-- <input class="form-control" type="" name="" :placeholder="formtype != 'borrow'?'还款总金额':'借款总金额'" v-model="data.display"> -->
+						<input id="i_amount" class="form-control" type="" name="" oninput="value=value.replace(/[^\d]/g,'')" @keyup="thousand_ex(data.amount)" :placeholder="formtype != 'borrow'?'还款总金额':'借款总金额'" v-model="data.amount">
+						<!-- <span style="position:absolute;top:7px;left:30px;-webkit-user-select:none; ;" v-show="data.amount!=''">{{data.display}}</span> -->
 					</div>
-
-					<h5 class="col-sm-4" v-show="data.amount != ''">({{thousand_ex}})</h5>
 				</div>
 			</div>			
 			<div class="form-group"  v-show="formtype == 'borrow'">
@@ -139,7 +141,7 @@
 
 <script type="text/javascript">
 	var formtype; //borrow 借款， payback_active主动还款 ，payback_passive被动还款
-
+	var	a_amount;
 	var vm = new Vue({
 		el:'#app',
 		data:{
@@ -172,7 +174,8 @@
 				sc : '',
 				borrow_id:'',
                 borrowtype : 1,
-                amount:'',
+				amount:'',
+				display:'',
                 memo:''
 			},
 			scname : '---'
@@ -187,21 +190,27 @@
 				{	this.data.direction = 2;
 					return this.formtypelist_2;}
 			},
-			thousand_ex:function( precision, separator) {
+			
+			
+		},
+		methods : {
+			thousand_ex:function(num, precision, separator) {
+				console.log($("#i_amount").val());
+				a_amount = $("#i_amount").val();
 				var parts;
-				var num = this.data.amount;
+				var num = num;
 				if (!isNaN(parseFloat(num)) && isFinite(num)) {
 					num = Number(num);
 					num = (typeof precision !== 'undefined' ? num.toFixed(precision) : num).toString();
 					parts = num.split('.');
 					parts[0] = parts[0].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1' + (separator || ','));
+					// console.log('tamia' ,parts.join('.'))
 
+					this.data.amount = parts.join('.');
 					return parts.join('.');
 				}
 				return NaN;
-			}
-		},
-		methods : {
+			},
 			init : function(){
 
                 this.formtype = GetRequest('ex_type');
@@ -226,7 +235,7 @@
                 data["log_time"] = $('#exchange_date').val();
                 data['sc'] = this.data.sc;
                 data['direction'] = this.data.direction;
-                data["amount"] = this.data.amount;
+                data["amount"] = a_amount;
                 data["memo"] = this.data.memo;
 
 				if(this.formtype == 'borrow'){

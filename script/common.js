@@ -438,9 +438,9 @@ $('#index_content dl dd ul li a').on('click',function () {
 function GetRequest(value) {  
     var url = decodeURI(location.search); //?id="123456"&Name="bicycle";
     var object = {};
-    if(url.indexOf("?") != -1)//url中存在问号，也就说有参数。  
+    if(url.indexOf("?") != -1)
     {   
-      var str = url.substr(1);  //得到?后面的字符串
+      var str = url.substr(1);  
       var strs = str.split("&");  //将得到的参数分隔成数组[id="123456",Name="bicycle"];
       for(var i = 0; i < strs.length; i ++)  
         {   
@@ -453,7 +453,6 @@ function GetRequest(value) {
 
 
 function showErr_bs(msg){
-    console.log('adadad')
     var alert = '<div class="alert alert-warning alert-dismissible" role="alert" style="z-index:10000;padding: 25px 15px;color:#333333;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0px 0px 3px 2px #cccccc;background-color:#ffffff;border-color:#ffffff;">'+
         '<button type="button" class="close_ close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>'+
         '<strong></strong>'+msg+
@@ -463,3 +462,29 @@ function showErr_bs(msg){
             $('.close_').click();
         },1500)
 }
+
+$(document).ready(function() {
+    // 通过该方法来为每次弹出的模态框设置最新的zIndex值，从而使最新的modal显示在最前面
+    var zIndex;
+    $(document).on('show.bs.modal', '.modal', function() {
+        zIndex = 1040 + (10 * $('.modal:visible').length);
+        $(this).css('z-index', zIndex);
+        console.log($(this).css('z-index'));
+        setTimeout(function() {
+            $('.modal-backdrop').css('opacity',0);
+            $('.modal-backdrop:last').css({'opacity':0.5,'z-index': zIndex - 1});
+            // $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+        }, 0);
+    });
+
+    $(document).on('hide.bs.modal', '.modal', function() {
+        // zIndex = 1040 + (10 * $('.modal:visible').length);
+        // console.log($(this).css('z-index'));
+        $('.modal-backdrop').css('opacity',0.5);
+        // $('.modal-backdrop:last').css({'opacity':0.5,'z-index': zIndex - 1});
+        setTimeout(function() {
+            
+            // $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+        }, 0);
+    });
+});
