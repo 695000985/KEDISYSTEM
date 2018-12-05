@@ -59,11 +59,20 @@
                         <th>当月个人欠款</th>
                         <th>当月业绩欠款</th>
                         <th>当月cash还款</th>
+                        <th>当月teller还款</th>
+                        <th>当月还款合计</th>
+                        <th>当月发生欠款总计</th>
+                        <th>当月累计欠款</th>
+                        <th>扣款(业绩)</th>
+                        <th>扣款(个人)</th>
+                        <th>扣款(房屋)</th>
+                        <th>扣款(车款)</th>
+                        <th>截至当月剩余欠款</th>
                         <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="item in datalist" @click="showdetail(item)">
+                    <tr v-for="item in data_list" @click="showdetail(item)">
                         <td>{{item.id}}</td>
                         <td>{{item.sc}}</td>
                         <td>{{item.date}}</td>
@@ -95,7 +104,13 @@
             var vm = new Vue({
                 el:'#app',
                 data:{
-                    data_sle:dataArr
+                    data_sle:dataArr,
+                    data_list:[]
+                },
+                methods:{
+                    showdetail(){
+
+                    }
                 }
             })
     </script>
