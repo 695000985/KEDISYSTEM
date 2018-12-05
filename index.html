@@ -33,7 +33,7 @@
         <div>
             你好,
             <span class="user_info" style="color: #fff"></span>
-            <button class="btn btn-primary">退出</button>
+            <button onclick="login_out()" class="btn btn-primary">退出</button>
         </div>
     </nav>
     <aside class="Hui-aside" id="index_content" style="top: 65px;">
@@ -130,6 +130,7 @@
         'get_list_applay': './temp/apply_shop_list.html', //申请 列表
         "account_password": "./temp/user_password.html", // 设置密码
         "personal_details": "./temp/user_info.html", // 信息详情
+        "code_management" : "./temp/code_manage.html",  //审批码
         'stock_sys_from':'./temp/Stock_frommanage.html', //库存_货源地管理
         'stock_sys_fromcontry':'./temp/Stock_sys_fromcontry.html', //库存_货源地管理
         'stock_sys_manage':'./temp/Stock_manage.html',   //库存_仓库管理
@@ -144,7 +145,8 @@
         'bonus_make_pro' : './temp/bonus_make.html?tamia=adada',  //奖金制作
         'borrow_money' : './temp/debt.html?ex_type=borrow', //
         'repay' : './temp/debt.html?ex_type=payback_active',//
-        'borrow_record' : './temp/borrow_record.html'
+        'borrow_record' : './temp/borrow_record.html',
+        'jiehuan_total' : './temp/jiehuan_total.html'
     };
 
     $(function() {
@@ -217,6 +219,22 @@
         })
 
     }
+
+    function login_out(){
+        window.localStorage.clear();
+        window.sessionStorage.clear();
+        showErr('退出成功!');
+        setTimeout(function(){
+            show_loading()
+        },2700)
+        
+        setTimeout(function () {
+            
+            window.location.href = './temp/login.html';
+        },3000)
+        // 
+    }
+
     // var os = require("os");
 
     // var networkInterfaces = os.networkInterfaces();

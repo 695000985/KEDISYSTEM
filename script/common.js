@@ -431,7 +431,6 @@ function JSONToExcelConvertor(JSONData, FileName, ShowLabel) {
 
 
 $('#index_content dl dd ul li a').on('click',function () {
-    console.log('5555')
     // console.log($(this).attr('data-title'))
 })
 
@@ -480,6 +479,7 @@ $(document).ready(function() {
     $(document).on('hide.bs.modal', '.modal', function() {
         // zIndex = 1040 + (10 * $('.modal:visible').length);
         // console.log($(this).css('z-index'));
+        console.log($('.modal-backdrop').length);
         $('.modal-backdrop').css('opacity',0.5);
         // $('.modal-backdrop:last').css({'opacity':0.5,'z-index': zIndex - 1});
         setTimeout(function() {
