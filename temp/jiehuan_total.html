@@ -37,10 +37,12 @@
             <h5 class="page-header"></h5>
             <form class="form-inline">
                 <div class="form-group">
-                    <label class="control-label">月份：</label>
-                    <select name="" id="" style="height: 34px;border-radius: 4px;">
+                    <label class="control-label">日期区间：</label>
+                    <input id="r_start" style="height: 34px;" class="form-control Wdate date_to" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" type="" name="">
+                    <input id="r_end" style="height: 34px;" class="form-control Wdate date_to" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" type="" name="">
+                    <!-- <select name="" id="" style="height: 34px;border-radius: 4px;">
                         <option value="" v-for="item in data_sle" :key="item.id">{{item.month}}</option>
-                    </select>
+                    </select> -->
 
                     <input style="width:220px;" placeholder="专卖店或会员号，不填则全部" class="form-control">
                 </div>
@@ -48,7 +50,7 @@
             </form>
             <h5 class="page-header"></h5>
             
-            <table id="daikuan_table" class="table table-striped table-hover">
+            <table id="daikuan_table" class="table table-striped table-hover" style="margin-left:-10%;width:120%;max-width:120%;">
                 <thead>
                     <tr><th style="width:auto;">SC/MCODE</th>
                         <th>历史业绩欠款</th>
@@ -57,35 +59,54 @@
                         <th>历史个人欠款</th>
                         <th>历史保险总额</th>
                         <th>当月个人欠款</th>
+                        <th>当月房贷借款</th>
+                        <th>当月车贷借款</th>
                         <th>当月业绩欠款</th>
                         <th>当月cash还款</th>
                         <th>当月teller还款</th>
                         <th>当月还款合计</th>
-                        <th>当月发生欠款总计</th>
+                        <!-- <th>当月发生欠款总计</th> -->
                         <th>当月累计欠款</th>
                         <th>扣款(业绩)</th>
                         <th>扣款(个人)</th>
                         <th>扣款(房屋)</th>
                         <th>扣款(车款)</th>
-                        <th>截至当月剩余欠款</th>
-                        <th>操作</th>
+                        <!-- <th>截至当月剩余欠款</th> -->
+                        <!-- <th>操作</th> -->
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="item in data_list" @click="showdetail(item)">
-                        <td>{{item.id}}</td>
-                        <td>{{item.sc}}</td>
-                        <td>{{item.date}}</td>
-                        <td>{{typelist[Number(item.type_id)].type_name}}</td>
-                        <td>{{thousand_ex(item.total_money)}}</td>
-                        <td>{{thousand_ex(item.surplus_money)}}</td>
-                        <td>{{item.is_over == 1?'否':'是'}}</td>
-                        <td>{{item.memo}}</td>
-                        <td>{{item.oper}}</td>
-                        <td><a class="btn btn-primary btn-xs" @click.stop=xiugai(item) style="margin-right:5px;">修改</a><a class="btn btn-primary btn-xs" @click.stop=openlist(item)>还款列表</a></td>
+                        <td>{{item["sc"]}}</td>
+                        <td>{{thousand_ex(item["历史业绩欠款"])}}</td>
+                        <td>{{thousand_ex(item["历史房贷欠款"])}}</td>
+                        <td>{{thousand_ex(item["历史车贷欠款"])}}</td>
+                        <td>{{thousand_ex(item["历史个人欠款"])}}</td>
+                        <td>{{thousand_ex(item["历史保险欠款"])}}</td>
+                        <td>{{thousand_ex(item["当月个人借款"])}}</td>
+                        <td>{{thousand_ex(item["当月房贷借款"])}}</td>
+                        <td>{{thousand_ex(item["当月车贷借款"])}}</td>
+                        <td>{{thousand_ex(item["当月业绩借款"])}}</td>
+                        <td>{{thousand_ex(item["当月cash还款"])}}</td>
+                        <td>{{thousand_ex(item["当月teller还款"])}}</td>
+                        <td>{{parseFloat(item["当月cash还款"])+parseFloat(item["当月teller还款"])}}</td>
+                        <!-- <td>{{item["(当月发生欠款总计"]}}</)td> -->
+                        <td>{{thousand_ex(item["当月累计欠款"])}}</td>
+                        <td>{{thousand_ex(item["当月业绩扣款"])}}</td>
+                        <td>{{thousand_ex(item["当月个人扣款"])}}</td>
+                        <td>{{thousand_ex(item["当月房贷扣款"])}}</td>
+                        <td>{{thousand_ex(item["当月车贷扣款"])}}</td>
+                        <!-- <td>{{item["截至当月剩余欠款"]}}</td> -->
+                        <!-- <td><a class="btn btn-primary btn-xs" @click.stop=xiugai(item) style="margin-right:5px;">修改</a><a class="btn btn-primary btn-xs" @click.stop=openlist(item)>还款列表</a></td> -->
                     </tr>
                 </tbody>
             </table>
+
+            <nav class="pull-right" style="background:none;">
+                <!-- <div class="my_page m-style">
+
+                </div> -->
+            </nav>
     </div>
     <script>
 
@@ -108,9 +129,74 @@
                     data_list:[]
                 },
                 methods:{
+
                     showdetail(){
 
-                    }
+                    },
+
+                    getdata(){
+                        var pagecounts;
+                        var page = 1;
+                        var obj;
+                        var pagesize = 2;
+                        var pagestat = 0;
+                        $('.my_page').pagination({
+                            totalData: 0,
+                            pageCount: 0,
+                            current: 0
+                        })
+                        var url = '/index.php?s=desktop/Refund_Borrow/summarizing';
+                        var user_token = get_cache('usertoken');
+                        var data = {};
+                        data["usertoken"] = user_token;
+                        data["from"] = $("#r_start").val();
+                        data["to"] = $("#r_end").val();
+                        var opt = $.extend({}, data, obj) ;
+                        ajax(url,data,function (ret) {
+                            
+                            if(ret.stat){
+                                // pagecounts = ret.data.rows;
+                                vm.data_list = ret.data;
+                                $('.my_page').pagination({
+                                    totalData: parseInt(pagecounts),
+                                    pageCount: Math.ceil(pagecounts / pagesize),
+                                    jump: true,
+                                    coping: true,
+                                    prevContent: '&laquo;',
+                                    current: page,
+                                    nextContent: '&raquo;',
+                                    callback: function (api) {
+                                        console.log(api.getCurrent(), pagecounts , pagesize )
+                                        page = api.getCurrent();
+                                        pagestat = pagesize * (api.getCurrent() - 1)
+                                        // var x = {
+                                        //     'limit': [pagestat, pagesize].join(',')
+                                        // };
+                                        var x = {
+                                            'offset': pagestat,
+                                            'limit' :pagesize
+                                        };
+                                        var d = $.extend({}, x);
+                                        vm.getdata(d)
+                                    }
+                                });
+                            }
+                        })
+                    },
+
+                    thousand_ex:function(num, precision, separator) {
+                        var parts;
+                        var num = num;
+                        if (!isNaN(parseFloat(num)) && isFinite(num)) {
+                            num = Number(num);
+                            num = (typeof precision !== 'undefined' ? num.toFixed(precision) : num).toString();
+                            parts = num.split('.');
+                            parts[0] = parts[0].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1' + (separator || ','));
+                            // console.log('tamia' ,parts.join('.'))
+                            return parts.join('.');
+                        }
+                        return NaN;
+                    },
                 }
             })
     </script>

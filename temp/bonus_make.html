@@ -28,48 +28,47 @@
         }
         .btn_cur{background-color: #cccccc;}
         .bonus_step{height: ;}
-        .bonus_step ul{overflow: hidden;}
-        .bonus_step ul li{
-            font-size: 16px;
-            box-sizing: border-box;
-            float: left;width: 30%;margin: 0 1%;height: 50px;line-height: 50px;
-            border: 1px solid #cccccc;
-        }
-        .bonus_step ul li.act{background-color: azure;}
-        .bonus_step ul li.act:hover{cursor: pointer;}
-        .bonus_step ul li:nth-child(3n+2){margin: 0 3%;}
+        .bonus_step .steps{margin: 20px;}
+        .bonus_step .steps span{white-space: nowrap;text-overflow: ellipsis;overflow: hidden;}
     </style>
 </head>
 
 <body>
     <div id="bonus">
         <div>
-            <button :class="top_switch.jjbzz?'btn_cur':''"  @click="jjbzz($event)" class="btn">奖金表制作</button>
-            <button :class="top_switch.jjbzz?'':'btn_cur'" @click="jjbzz($event)" class="btn">店费表制作</button>
+            <button :class="top_btn_val==item.val?' btn-primary':''" @click="top_sw(item.val, $event)" class="btn size-L radius" v-for="item in top_switch_list">{{item.name}}</button>
         </div>
 
-        <div class="bonus_step"  v-show="top_switch.jjbzz">
-            <ul>
-                <li class="act" @click="export_update_state($event)">1)升级情况表=></li>
-                <li>2)DBPV修改=></li>
-                <li>3)3星以下修改=></li>
-                <li>4)修改日期和荣衔=></li>
-                <li>5)增加四列=></li>
-                <li>6)填补三列=></li>
-                <li>7)调整最后奖金=></li>
-                <li class="act" @click="exportNigeria($event)">8)尼日利亚奖金=></li>
-                <li class="act" @click="exportBonusGhana($event)">9)导出加纳奖金=></li>
-                <li class="act" @click="exportBenninBonus($event)">10)导出贝宁南非奖金=></li>
-                <li class="act" @click="exportBelowF($event)">11)导出低于40万专卖店=></li>
-            </ul>
-            <div>
-                日期<input type="text" disabled v-model="req_date">
+        <div class="bonus_step"  v-show="top_btn_val==1">
+
+            <div class="four steps">
+                <span class="active step" @click="export_update_state($event)">1)升级情况表</span>
+                <span class="disabled step">2)DBPV修改</span>
+                <span class="disabled step">3)3星以下修改</span>
+                <span class="disabled step">4)修改日期和荣衔</span>
+            </div>
+            <div class="four steps">
+                <span class="disabled step">5)增加四列</span>
+                <span class="disabled step">6)填补三列</span>
+                <span class="disabled step">7)调整最后奖金</span>
+                <span class="disabled step" @click="exportNigeria($event)">8)尼日利亚奖金</span>
+            </div>
+            <div class="four steps">
+                <span class="step" @click="exportBonusGhana($event)">9)导出加纳奖金</span>
+                <span class="step" @click="exportBenninBonus($event)">10)导出贝宁南非奖金</span>
+                <span class="step" @click="exportBelowF($event)" title="导出低于40万专卖店">11)导出低于40万专卖店</span>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-sm-1"><span style="display:block;text-align:right;">日期</span></label>
+                <div class="formControls col-sm-2">
+                    <input type="text" class="input-text" v-model="req_date" readonly>
+                </div>
             </div>
 
             <div>
                 <button @click="export_jj_ori($event)" class="btn">导出奖金原始表</button>
                 <button @click="make_jj($event)" class="btn">制作奖金</button>
-                <select name="" v-model="tablemarked" id="tablemark">
+                <select name="" v-model="tablemarked" id="tablemark" style="height:30px;vertical-align:bottom;">
                     <option :value="index" v-for="(item,index) in tablemark_list" :key="item.id">{{item.name}}</option>
                 </select>
                 <button @click="adjust($event)"  class="btn">调整C盘奖金上传</button>
@@ -81,8 +80,44 @@
             </div>
 
         </div>
-        <div v-show="!top_switch.jjbzz" style="padding: 10px 20px;">
-            <button class="btn">店费表制作</button>
+        <!-- &&dianfei_enable_make -->
+        <div v-show="top_btn_val==2" style="padding: 10px 20px;">
+            <form action="" method="post" class="form form-horizontal responsive" id="demoform">
+                <div class="row cl">
+                    <label class="form-label col-xs-3">开始日期：</label>
+                    <div class="formControls col-xs-8">
+                        <input id="r_start" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="form-control Wdate date_to" type="" name="">
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-3">结束日期：</label>
+                    <div class="formControls col-xs-8">
+                        <input id="r_end" class="form-control Wdate date_to" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" type="" name="">
+                    </div>
+                </div>
+               
+                <div class="row cl">
+                    <div class="col-xs-8 col-xs-offset-3">
+                        <button @click="btn17($event)" type="button" class="btn btn-primary radius">店费表制作</button>
+                        <button @click="btn2($event)" type="button" class="btn btn-primary radius">店费表导出</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <!-- && gedianjj_enable_make -->
+        <div v-show="top_btn_val==3" style="padding: 10px 20px;">
+            <div class="three steps">
+                <span :class="step_now==step.step_one.id?'active':''" class="step" @click="step_one(step.step_one.id,$event)" id="step_one">1）验证上传奖金表的时间</span>
+                <span :class="step_now==step.step_two.id?'active':''" class="step" @click="step_two(step.step_two.id,$event)">2）获取奖金本数据</span>
+                <span :class="step_now==step.step_three.id?'active':''" class="step" @click="step_three(step.step_three.id,$event)">3）录入各店店费</span>
+                
+            </div>
+            <div class="three steps">
+                <span :class="step_now==step.step_four.id?'active':''" class="step"  @click="step_four(step.step_four.id,$event)">4）</span>
+                <span :class="step_now==step.step_five.id?'active':''" class="step"  @click="step_four(step.step_five.id,$event)">5）</span>
+                <span :class="step_now==step.step_six.id?'active':''" class="step"  @click="step_four(step.step_six.id,$event)">6）</span>
+            </div>
         </div>
     </div>
     <script>
@@ -101,7 +136,6 @@
         // }
  
         $('.bonus_step').scroll(function(){
-            console.log('sssss')
             if(($(this)[0].scrollTop + $(this).height() + 10) >= $(this)[0].scrollHeight){
                 console.log(456123);
             }
@@ -112,9 +146,9 @@
         var bonus_make = new Vue({
             el:'#bonus',
             data:{
-                top_switch:{
-                    jjbzz:true,
-                },
+                top_btn_val:1,
+                top_switch_list:[{'val':1,'name':'奖金表制作'},{'val':2,'name':'店费表制作','enable':'disabled'},{'val':3,'name':'各店奖金和制作'}],
+
                 req_date:'',
                 nrly : [],
                 simu : [{'CODE':1,'NAME':'mike','DATE':'2018-8','SC':'017','GRADE':5,'HONORARY':'会员'},
@@ -130,20 +164,47 @@
                     {'name':'加纳奖金'},
                     {'name':'贝宁奖金'}
                 ],
-                tablemarked:0
+                tablemarked:0,
+                prize_enable_f:false,
+                dianfei_enable_make:false,
+                gedianjj_enable_make:false,
+                all_export:false,
+                step:{  
+                        'step_one':{
+                            'id':1,
+                            'next':false
+                        },
+                        'step_two':{
+                            'id':2,
+                            'next':false
+                        },
+                        'step_three':{
+                            'id':3,
+                            'next':false
+                        },
+                        'step_four':{
+                            'id':4,
+                            'next':false
+                        },
+                        'step_five':{
+                            'id':5,
+                            'next':false
+                        },
+                        'step_six':{
+                            'id':6,
+                            'next':false
+                        }
+                    
+                },
+                step_now : 1,
             },
             computed:{
                 // dfbzz = !this.top_switch.jjbzz
             },
             methods:{
                 init(){
-                    
-
                     // get_add(location.href);
                     get_date()
-                },
-                jjbzz(){
-                    this.top_switch.jjbzz = !this.top_switch.jjbzz;
                 },
                 make_jj(){
                     make_jj_exe()
@@ -171,6 +232,121 @@
                 },
                 adjust(){
                     adjust_exe(this.tablemarked)
+                },
+                top_sw(val){
+                    this.top_btn_val = val;
+                    console.log(this.top_btn_val);
+
+                    if(this.top_btn_val == 2){
+                    // if(this.top_btn_val == 2 && !this.dianfei_enable_make){
+                        // this.top_btn_val = 1;
+                        // showErr('请先完成奖金表制作！');
+                    }
+                    // if(this.top_btn_val == 3 && !this.gedianjj_enable_make){
+                    //     this.top_btn_val = 1;
+                    //     showErr('请先完成奖金表制作和店费表制作！！');
+                    // }
+                },
+                btn17(){     //店费表制作 
+                    
+                    var url = '/index.php?s=desktop/Bonus/button17_Click';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data['from'] = $("#r_start").val();
+                    data['to'] = $("#r_end").val();
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.msg);
+                            bonus_make.gedianjj_enable_make = true;
+                        }else{
+
+                        }
+                    })
+                },
+                btn2(){
+                    var url = '/index.php?s=desktop/Bonus/button2_Click';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    if(bonus_make.gedianjj_enable_make){
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                var c_data = ret.data;
+                                c_data.forEach(function(item,index) {
+                                    option.datas[0].sheetData.push({
+                                        a:item.App,
+                                        b:item.Bonus,
+                                        c:item.DATE,
+                                        k:item.DEBT,
+                                        d:item.D_Sign,
+                                        e:item.MF,
+                                        f:item.NO,
+                                        g:item.SC,
+                                        h:item["Sub Amount"],
+                                        i:item["Total Amount"],
+                                        j:item["Total PV"],
+
+                                    })
+                                });
+                                var toExcel=new ExportJsonExcel(option);
+                                toExcel.saveExcel();
+                            }
+                        })
+                    }else{
+                        showErr('请先制作店费表!')
+                    }
+                    
+
+                },
+                step_one(a){
+                    this.step_now = a;
+                    
+                    var url = '/index.php?s=desktop/Bonus/CheckBonusDate';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            this.step.step_one.next = true;
+                        }
+                    })
+                },
+                step_two(a){
+                    this.step_now = a;
+                    var url = '/index.php?s=desktop/Bonus/create_tempsc';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    if(this.step.step_one.next){
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                this.step.step_two.next = true;
+                            }
+                        })
+                    }else{
+                        showErr('请先完成第一步!');
+                    }
+                    
+                },
+                step_three(a){
+                    this.step_now = a;
+                    var url = '/index.php?s=desktop/Bonus/insert_tempsc';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    if(this.step.step_two.next){
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                this.step.step_three.next = true;
+                            }
+                        })
+                    }else{
+                        showErr('请先完成第二步!');
+                    }
+                },
+                step_four(a){
+                    this.step_now = a;
                 }
 
             }
@@ -188,12 +364,17 @@
             var data = {};
             data["usertoken"] = user_token;
             data["tablemark"] = para;
-            console.log(data)
-            ajax(url,data,function (ret) {
-                if(ret.stat){
-
-                }
-            })
+            console.log(data);
+            if(bonus_make.prize_enable_f){
+                ajax(url,data,function (ret) {
+                    if(ret.stat){
+                        showErr(ret.data);
+                    }
+                })
+            }else{
+                showErr('请先制作奖金!');
+            }
+            
         }
 
         //制作奖金
@@ -203,11 +384,16 @@
             var data = {};
             data["usertoken"] = user_token;
             data["Date"] = bonus_make.req_date;
-            ajax(url,data,function (ret) {
-                if(ret.stat){
-                    
-                }
-            })
+            if(bonus_make.prize_enable_f){
+                ajax(url,data,function (ret) {
+                    if(ret.stat){
+                        bonus_make.all_export = true;
+                    }
+                })
+            }else{
+                showErr('请先导出奖金原始表');
+            }
+            
         }
 
         //导出奖金原始表
@@ -218,6 +404,7 @@
             data["usertoken"] = user_token;
             ajax(url,data,function (ret) {
                 if(ret.stat){
+                    bonus_make.prize_enable_f = true;
                     showErr(ret.data);
                 }
             })
@@ -304,39 +491,42 @@
             var user_token = get_cache('usertoken');
             var data = {};
             data["usertoken"] = user_token; 
-            ajax_data(url,data,function (ret) {
-                if(ret.stat){
-                    // bonus_make.nrly = ret.data;
-                    var c_data = ret.data;
-                    c_data.forEach(function(item,index) {
-                        option.datas[0].sheetData.push({
-                            a:index+1,
-                            b:item.CODE,
-                            c:item.NAME,
-                            d:item.DATE,
-                            e:item.SC,
-                            f:item.GRADE,
-                            g:item.HONORARY,
-                            h:item.PPV,
-                            i:item.CPPV,
-                            j:item.GBV,
-                            k:item.TNPV,
-                            l:item.CPV,
-                            m:item.DB,
-                            n:item.IDB,
-                            o:item.LSB,
-                            p:item.DPBV,
-                            q:item.SUBTOTAL,
-                            r:item.MF,
-                            s:item.TAX,
-                            t:item.TOTAL
-                        })
-                    });
-                    var toExcel=new ExportJsonExcel(option);
-                    toExcel.saveExcel();
-                }
-            })
-
+            if(bonus_make.all_export){
+                ajax_data(url,data,function (ret) {
+                    if(ret.stat){
+                        // bonus_make.nrly = ret.data;
+                        var c_data = ret.data;
+                        c_data.forEach(function(item,index) {
+                            option.datas[0].sheetData.push({
+                                a:index+1,
+                                b:item.CODE,
+                                c:item.NAME,
+                                d:item.DATE,
+                                e:item.SC,
+                                f:item.GRADE,
+                                g:item.HONORARY,
+                                h:item.PPV,
+                                i:item.CPPV,
+                                j:item.GBV,
+                                k:item.TNPV,
+                                l:item.CPV,
+                                m:item.DB,
+                                n:item.IDB,
+                                o:item.LSB,
+                                p:item.DPBV,
+                                q:item.SUBTOTAL,
+                                r:item.MF,
+                                s:item.TAX,
+                                t:item.TOTAL
+                            })
+                        });
+                        var toExcel=new ExportJsonExcel(option);
+                        toExcel.saveExcel();
+                    }
+                })
+            }else{
+                    showErr('请先完成奖金制作');
+            }
             
         }
 
@@ -357,36 +547,42 @@
             var user_token = get_cache('usertoken');
             var data = {};
             data["usertoken"] = user_token;
-            ajax(url,data,function (ret) {
-                if(ret.stat){
-                    var c_data = ret.data;
-                    c_data.forEach(function(item,index) {
-                        option.datas[0].sheetData.push({
-                            b:item.CODE,
-                            c:item.NAME,
-                            d:item.DATE,
-                            e:item.SC,
-                            f:item.GRADE,
-                            g:item.HONORARY,
-                            h:item.PPV,
-                            i:item.CPPV,
-                            j:item.GBV,
-                            k:item.TNPV,
-                            l:item.CPV,
-                            m:item.DB,
-                            n:item.IDB,
-                            o:item.LSB,
-                            p:item.DPBV,
-                            q:item.SUBTOTAL,
-                            r:item.MF,
-                            s:item.TAX,
-                            t:item.TOTAL
-                        })
-                    });
-                    var toExcel=new ExportJsonExcel(option);
-                    toExcel.saveExcel();
-                }
-            })
+            if(bonus_make.all_export){
+                ajax(url,data,function (ret) {
+                    if(ret.stat){
+                        var c_data = ret.data;
+                        c_data.forEach(function(item,index) {
+                            option.datas[0].sheetData.push({
+                                b:item.CODE,
+                                c:item.NAME,
+                                d:item.DATE,
+                                e:item.SC,
+                                f:item.GRADE,
+                                g:item.HONORARY,
+                                h:item.PPV,
+                                i:item.CPPV,
+                                j:item.GBV,
+                                k:item.TNPV,
+                                l:item.CPV,
+                                m:item.DB,
+                                n:item.IDB,
+                                o:item.LSB,
+                                p:item.DPBV,
+                                q:item.SUBTOTAL,
+                                r:item.MF,
+                                s:item.TAX,
+                                t:item.TOTAL
+                            })
+                        });
+                        var toExcel=new ExportJsonExcel(option);
+                        toExcel.saveExcel();
+                    }
+                })
+                
+            }else{
+                    showErr('请先完成奖金制作');
+            }
+            
         }
         //导出贝宁奖金
         function exportBenninBonus_exe(){
@@ -410,36 +606,40 @@
             var user_token = get_cache('usertoken');
             var data = {};
             data["usertoken"] = user_token;
-            ajax(url,data,function (ret) {
-                if(ret.stat){
-                    var c_data = ret.data;
-                    c_data.forEach(function(item,index) {
-                        option.datas[0].sheetData.push({
-                            b:item.CODE,
-                            c:item.NAME,
-                            d:item.DATE,
-                            e:item.SC,
-                            f:item.GRADE,
-                            g:item.HONORARY,
-                            h:item.PPV,
-                            i:item.CPPV,
-                            j:item.GBV,
-                            k:item.TNPV,
-                            l:item.CPV,
-                            m:item.DB,
-                            n:item.IDB,
-                            o:item.LSB,
-                            p:item.DPBV,
-                            q:item.SUBTOTAL,
-                            r:item.MF,
-                            s:item.TAX,
-                            t:item.TOTAL
-                        })
-                    });
-                    var toExcel=new ExportJsonExcel(option);
-                    toExcel.saveExcel();
-                }
-            })
+            if(bonus_make.all_export){
+                ajax(url,data,function (ret) {
+                    if(ret.stat){
+                        var c_data = ret.data;
+                        c_data.forEach(function(item,index) {
+                            option.datas[0].sheetData.push({
+                                b:item.CODE,
+                                c:item.NAME,
+                                d:item.DATE,
+                                e:item.SC,
+                                f:item.GRADE,
+                                g:item.HONORARY,
+                                h:item.PPV,
+                                i:item.CPPV,
+                                j:item.GBV,
+                                k:item.TNPV,
+                                l:item.CPV,
+                                m:item.DB,
+                                n:item.IDB,
+                                o:item.LSB,
+                                p:item.DPBV,
+                                q:item.SUBTOTAL,
+                                r:item.MF,
+                                s:item.TAX,
+                                t:item.TOTAL
+                            })
+                        });
+                        var toExcel=new ExportJsonExcel(option);
+                        toExcel.saveExcel();
+                    }
+                })
+            }else{
+                showErr('请先完成奖金制作');
+            }
         }
         
         //导出低于40万
@@ -459,20 +659,25 @@
             var user_token = get_cache('usertoken');
             var data = {};
             data["usertoken"] = user_token; 
-            ajax_data(url,data,function (ret) {
-                if(ret.stat){
-                    // bonus_make.nrly = ret.data;
-                    var c_data = ret.data;
-                    c_data.forEach(function(item,index) {
-                        option.datas[0].sheetData.push({
-                            b:item.Shopno,
-                            c:item.MonthAchieve
-                        })
-                    });
-                    var toExcel=new ExportJsonExcel(option);
-                    toExcel.saveExcel();
-                }
-            })
+            if(bonus_make.all_export){
+                ajax_data(url,data,function (ret) {
+                    if(ret.stat){
+                        // bonus_make.nrly = ret.data;
+                        var c_data = ret.data;
+                        c_data.forEach(function(item,index) {
+                            option.datas[0].sheetData.push({
+                                b:item.Shopno,
+                                c:item.MonthAchieve
+                            })
+                        });
+                        var toExcel=new ExportJsonExcel(option);
+                        toExcel.saveExcel();
+                    }
+                })
+            }else{
+                showErr('请先完成奖金制作');
+            }
+            
         }
         //获取日期
         function get_date() {

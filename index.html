@@ -28,7 +28,7 @@
 </head>
 
 <body>
-    <nav>
+    <nav id="top_r">
         <img src="./images/kedi_logo.png" alt="">
         <div>
             你好,
@@ -36,6 +36,14 @@
             <button onclick="login_out()" class="btn btn-primary">退出</button>
         </div>
     </nav>
+    <script>
+        var top_nav = new Vue({
+            el:'#top_r',
+            data:{
+                exit:exit_r_top
+            }
+        })
+    </script>
     <aside class="Hui-aside" id="index_content" style="top: 65px;">
         <div class="menu_dropdown bk_2">
             <dl id="" v-for="(x,$index) in menu_list" v-if="x.Menu_name.length">
@@ -189,6 +197,14 @@
             this.lang_toggle()
         },
         methods: {
+            get_lang(){
+                var a = get_local_cache('lang');
+                if(a != ''){
+                    return true;
+                }else{
+                    return false;
+                }
+            },
             select(index) {
                 if (index == this.ac_index) {
                     this.ac_index = -1
