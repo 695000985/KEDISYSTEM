@@ -113,10 +113,27 @@
                 <span :class="step_now==step.step_three.id?'active':''" class="step" @click="step_three(step.step_three.id,$event)">3）录入各店店费</span>
                 
             </div>
+            <div>
+                <div class="row cl text-right">
+                    <label class="form-label col-xs-1">扣款开始日期：</label>
+                    <div class="formControls col-xs-8">
+                        <input id="step_four_start" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="form-control Wdate date_to" type="" name="">
+                    </div>
+                </div>
+                <div class="row cl text-right">
+                    <label class="form-label col-xs-1">扣款结束日期：</label>
+                    <div class="formControls col-xs-8">
+                        <input id="step_four_end" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="form-control Wdate date_to" type="" name="">
+                    </div>
+                </div>
+            </div>
             <div class="three steps">
-                <span :class="step_now==step.step_four.id?'active':''" class="step"  @click="step_four(step.step_four.id,$event)">4）</span>
-                <span :class="step_now==step.step_five.id?'active':''" class="step"  @click="step_four(step.step_five.id,$event)">5）</span>
-                <span :class="step_now==step.step_six.id?'active':''" class="step"  @click="step_four(step.step_six.id,$event)">6）</span>
+                <span :class="step_now==step.step_four.id?'active':''" class="step"  @click="step_four(step.step_four.id,$event)">4）录入被动扣款</span>
+                <span :class="step_now==step.step_five.id?'active':''" class="step"  @click="step_five(step.step_five.id,$event)">5）统计Remain余额</span>
+                <span :class="step_now==step.step_six.id?'active':''" class="step"  @click="step_six(step.step_six.id,$event)">6）导出各店奖金和</span>
+            </div>
+            <div class="three steps">
+                <span :class="step_now==step.step_seven.id?'active':''" class="step"  @click="step_seven(step.step_seven.id,$event)"> 7）导出奖金不足的装卖店</span>
             </div>
         </div>
     </div>
@@ -193,6 +210,10 @@
                         'step_six':{
                             'id':6,
                             'next':false
+                        },
+                        'step_seven':{
+                            'id':7,
+                            'next':false
                         }
                     
                 },
@@ -202,6 +223,19 @@
                 // dfbzz = !this.top_switch.jjbzz
             },
             methods:{
+                thousand_ex:function(num, precision, separator) {
+                    var parts;
+                    var num = num;
+                    if (!isNaN(parseFloat(num)) && isFinite(num)) {
+                        num = Number(num);
+                        num = (typeof precision !== 'undefined' ? num.toFixed(precision) : num).toString();
+                        parts = num.split('.');
+                        parts[0] = parts[0].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1' + (separator || ','));
+                        // console.log('tamia' ,parts.join('.'))
+                        return parts.join('.');
+                    }
+                    return NaN;
+                },
                 init(){
                     // get_add(location.href);
                     get_date()
@@ -308,7 +342,8 @@
                     data["usertoken"] = user_token;
                     ajax(url,data,function (ret) {
                         if(ret.stat){
-                            this.step.step_one.next = true;
+                            bonus_make.step.step_one.next = true;
+                            showErr(ret.data);
                         }
                     })
                 },
@@ -321,7 +356,8 @@
                     if(this.step.step_one.next){
                         ajax(url,data,function (ret) {
                             if(ret.stat){
-                                this.step.step_two.next = true;
+                                bonus_make.step.step_two.next = true;
+                                showErr(ret.data);
                             }
                         })
                     }else{
@@ -338,7 +374,8 @@
                     if(this.step.step_two.next){
                         ajax(url,data,function (ret) {
                             if(ret.stat){
-                                this.step.step_three.next = true;
+                                bonus_make.step.step_three.next = true;
+                                showErr(ret.data);
                             }
                         })
                     }else{
@@ -347,6 +384,93 @@
                 },
                 step_four(a){
                     this.step_now = a;
+                    var url = '/index.php?s=desktop/Bonus/insert_debt_tempsc';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data['from'] = $("#step_four_start").val();
+                    data['to'] = $("#step_four_end").val();
+                    if(this.step.step_three.next){
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                bonus_make.step.step_four.next = true;
+                                showErr(ret.data);
+                            }
+                        })
+                    }else{
+                        showErr('请先完成第三步!');
+                    }
+                },
+                step_five(a){
+                    this.step_now = a;
+                    var url = '/index.php?s=desktop/Bonus/insert_remain_tempsc';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    if(this.step.step_four.next){
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                bonus_make.step.step_five.next = true;
+                                showErr(ret.data);
+                            }
+                        })
+                    }else{
+                        showErr('请先完成第四步!');
+                    }
+                },
+                step_six(a){
+                    this.step_now = a;
+                    var option={};
+                    option.fileName = '各店奖金和'
+                    option.datas=[
+                        {
+                            sheetData:[],
+                            sheetName:'各店奖金和',
+                        //	sheetFilter:['two','one'],
+                            sheetHeader:['SC专卖店','Bonus会员奖金和','SC_Bonus店费','Total总和','Debt总欠款','Remain余额'],
+                        }
+                    ];
+                    var url = '/index.php?s=desktop/Bonus/fresh';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    if(this.step.step_five.next){
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                bonus_make.step.step_six.next = true;
+                                // showErr(ret.data);
+                                var c_data = ret.data;
+                                c_data.forEach(function(item,index) {
+                                    option.datas[0].sheetData.push({
+                                        b:item.SC,
+                                        c:bonus_make.thousand_ex(item.Bonus),
+                                        d:bonus_make.thousand_ex(item.Sc_Bonus),
+                                        a:item.Total,
+                                        e:item.Debt,
+                                        f:item.Remain,
+                                    })
+                                });
+                                var toExcel=new ExportJsonExcel(option);
+                                toExcel.saveExcel();
+                            }
+                        })
+                    }else{
+                        showErr('请先完成第四步!');
+                    }
+                },
+                step_seven(a){
+                    this.step_now = a;
+                    var url = '/index.php?s=desktop/Bonus/insufficient';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    if(this.step.step_six.next){
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+
+                            }
+                        })
+                    }
                 }
 
             }
