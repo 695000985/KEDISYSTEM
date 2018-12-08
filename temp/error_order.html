@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>科迪会员录入系统</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/iconfont.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+    <script src="../script/jquery.pagination.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main" class="pd-20">
+        <div class="btn-group">
+            <span class="btn btn-default size-L radius">帮助</span>
+            <span class="btn btn-default size-L radius">查询S</span>
+            <span class="btn btn-default size-L radius">错误单管理</span>
+            <input type="text" style="width: 100px;" class="size-L input-text radius" placeholder="">
+            <span class="btn btn-default size-L radius">SearchNO</span>
+        </div>
+
+        <div class="cl">
+            <div class="f-l" style="width:55%;">
+                <div class="cl bk-gray pd-5 mt-5">
+                    <div class="f-l" style="width:20%;">
+                        <h4>操作员：</h4>
+                        <input disabled v-model="oper" style="width:85%;" type="text" class="input-text radius">
+                    </div>
+                    <div class="f-l" style="width:50%;">
+                        <h4>前台业绩编号：</h4>
+                        <div style="">
+                            <input style="width:80%;" v-model="front_dest_no" type="text" class="input-text radius" placeholder="">
+                            <span @click="entry_search($event)" class="btn btn-default radius">Search</span>
+                        </div>
+                        
+                    </div>
+                    <div class="f-l" style="width:30%;">
+                        <h4 class="text-c">FD_SC_BV:</h4>
+                        <div>
+                            <input id="FD_SC_BV" style="width:75%;" v-model="FD_SC_BV" type="text" class="input-text radius" placeholder="">
+                            <span @click="FD_SC_BV_clear($event)" class="btn btn-default radius">清除</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-10 bk-gray pd-10">
+                    <table class="table table-border table-bg">
+                        <thead>
+                            <tr>
+                            <th>报单编号</th>
+                            <th>会员编号</th>
+                            <th>专卖店</th>
+                            <th>总BV</th>
+                            <th>总PV</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <th>类别</th>
+                            <td>表格内容</td>
+                            <td>表格内容</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-10">
+                    <fieldset id="" style="border-radius: 4px;">
+                        <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">Info</legend>
+                        <div>
+                            <div class="cl">
+                                <div class="f-l" style="width:35%;">
+                                    <span>SaleNo:</span>
+                                    <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                                </div>
+                                <div class="f-l" style="width:30%;">
+                                    <span>SC:</span>
+                                    <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                                </div>
+                                <div class="f-l" style="width:35%;">
+                                    <span>Naira:</span>
+                                    <input style="width:65%;" type="text" class="input-text radius" placeholder="">
+                                </div>
+                            </div>
+                            <div class="mt-5 cl">
+                                <div class="f-l" style="width:35%;">
+                                    <span>    BV:</span>
+                                    <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                                </div>
+                                <div class="f-l" style="width:30%;">
+                                    <span>PV:</span>
+                                    <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                                </div>
+                                <div class="f-l" style="width:35%;">
+                                    <span>Code:</span>
+                                    <input style="width:65%;" type="text" class="input-text radius" placeholder="">
+                                </div>
+                            </div>
+                            <div class="mt-5 cl">
+                                <div class="f-l text-r" style="width:65%;">
+                                    <span>    Name:</span>
+                                    <input style="width:65%;" type="text" class="input-text radius" placeholder="">
+                                </div>
+                                <div class="f-l" style="width:35%;">
+                                    <span class="btn btn-default radius">OK</span>
+                                    <span class="btn btn-default radius">GoToError</span>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            
+            <div class="f-l" style="margin-left:1%;width:44%;">
+                <div class="bk-gray pd-10">
+                    <table class="table table-border table-bg">
+                        <thead>
+                            <tr>
+                            <th>报单编号</th>
+                            <th>会员编号</th>
+                            <th>专卖店</th>
+                            <th>总BV</th>
+                            <th>总PV</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>类别</th>
+                                <td>表格内容</td>
+                                <td>表格内容</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="bk-gray mt-10 pd-10">
+                    <div class="cl mb-5 ">
+                        <div class="f-l text-r pt-10" style="width:50%;">
+                            <div class="mb-5">
+                                <span>   SC:</span>
+                                <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                            </div>
+                            <div class="mb-5">
+                                <span>  Total PV:</span>
+                                <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                            </div>
+                            <div class="mb-5">
+                                <span>Error Number:</span>
+                                <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                            </div>
+                            <div>
+                                <span>Calc_SC_BV:</span>
+                                <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="f-l text-r pt-10" style="width:45%;padding-right: 5%;">
+                            <div class="mb-5">
+                                <span>  Total BV:</span>
+                                <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                            </div>
+                            
+                            <div class="mb-5">
+                                <span>  Total Naira:</span>
+                                <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                            </div>
+                            <div class="mb-5">
+                                <span>  Error BV:</span>
+                                <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                            </div>
+                            <div>
+                                <span class="btn btn-default radius">F</span>
+                                <span>Status:</span>
+                                <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cl">
+                        <div class="f-l text-c" style="width:33%;">
+                            <span class="btn btn-default radius">Back</span>
+                        </div>
+                        <div class="f-l text-c" style="width:33%;">
+                            <span class="btn btn-default radius">Submit</span>
+                        </div>
+                        <div class="f-l text-c" style="width:33%;">
+                            <span class="btn btn-default radius">Export</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        </div>
+        
+    </div>
+    <script>
+
+        var main = new Vue({
+            el:'#main',
+            data:{
+                oper:'',
+                front_dest_no:'201891715102-102',
+                FD_SC_BV:'123141',
+
+            },
+            methods:{
+                init(){
+                    this.get_oper();
+                },
+                get_oper(){
+                    get_user_info(function(ret) {
+                        var oper = ret.username;
+                        main.oper = oper;
+                    })
+                },
+                entry_search(){
+                    var url = '/index.php?s=desktop/Sale_Entered_By_Front/Get_Mem_Info';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GroupID"] = this.front_dest_no;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            
+                        }
+                    })
+                },
+                FD_SC_BV_clear(){
+                    $("#FD_SC_BV").focus();
+                    this.FD_SC_BV = ''
+
+                },
+            }
+        })
+
+        main.init();
+    </script>
+</body>
+
+</html>
