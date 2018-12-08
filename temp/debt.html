@@ -362,7 +362,34 @@
 		}
 		
 
-    })
+	})
+	
+	$(document).ready(function() {
+		// 通过该方法来为每次弹出的模态框设置最新的zIndex值，从而使最新的modal显示在最前面
+		var zIndex;
+		$(document).on('show.bs.modal', '.modal', function() {
+			zIndex = 1040 + (10 * $('.modal:visible').length);
+			$(this).css('z-index', zIndex);
+			console.log($(this).css('z-index'));
+			setTimeout(function() {
+				$('.modal-backdrop').css('opacity',0);
+				$('.modal-backdrop:last').css({'opacity':0.5,'z-index': zIndex - 1});
+				// $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+			}, 0);
+		});
+
+		$(document).on('hide.bs.modal', '.modal', function() {
+			// zIndex = 1040 + (10 * $('.modal:visible').length);
+			// console.log($(this).css('z-index'));
+			console.log($('.modal-backdrop').length);
+			$('.modal-backdrop').css('opacity',0.5);
+			// $('.modal-backdrop:last').css({'opacity':0.5,'z-index': zIndex - 1});
+			setTimeout(function() {
+				
+				// $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+			}, 0);
+		});
+	});
 </script>
 
 </html>
