@@ -238,17 +238,26 @@
     }
 
     function login_out(){
-        window.localStorage.clear();
-        window.sessionStorage.clear();
-        showErr('退出成功!');
-        setTimeout(function(){
-            show_loading()
-        },2700)
         
-        setTimeout(function () {
-            
-            window.location.href = './temp/login.html';
-        },3000)
+        
+        var url = "/index.php/desktop/Login/logout";
+        var data = {};
+        data['usertoken'] = user_token;
+        ajax(url, data, function(e) {
+            if (e.stat == 1) {
+                showErr(e.data);
+                window.localStorage.clear();
+                window.sessionStorage.clear();
+                
+                setTimeout(function () {
+                    window.location.href = './temp/login.html';
+                },3000)
+            } else {
+                showErr(e.errmsg, e.errmsg_en, e.errcode)
+            }
+        })
+
+        
         // 
     }
 
