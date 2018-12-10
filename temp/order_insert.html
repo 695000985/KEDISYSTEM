@@ -302,6 +302,7 @@
                 return
             }
             product_list.listdata[0].Qty = $('.set_num').val();
+            console.log($('.set_num').val(),productdata);
             total_price = total_price + $('.set_num').val() * product_list.listdata[0].MemberPrice;
             total_bv = total_bv + $('.set_num').val() * product_list.listdata[0].BV;
             total_pv = total_pv + $('.set_num').val() * product_list.listdata[0].PV;
