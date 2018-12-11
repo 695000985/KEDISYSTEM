@@ -124,7 +124,7 @@
                             <div class="mt-5 cl">
                                 <div class="f-l text-r" style="width:65%;">
                                     <span>    Name:</span>
-                                    <input style="width:65%;" v-model="code_name" type="text" class="input-text radius" placeholder="">
+                                    <input style="width:65%;" disabled v-model="code_name" type="text" class="input-text radius" placeholder="">
                                 </div>
                                 <div class="f-l" style="width:35%;">
                                     <span @click="ok_click($event)" class="btn btn-default radius">OK</span>
@@ -210,7 +210,7 @@
                     </div>
                     <div class="cl">
                         <div class="f-l text-c" style="width:33%;">
-                            <span class="btn btn-default radius">Back</span>
+                            <span @click="r_btm_back($event)" class="btn btn-default radius">BackBack</span>
                         </div>
                         <div class="f-l text-c" style="width:33%;">
                             <span @click="r_btm_submit($event)" class="btn btn-default radius">Submit</span>
@@ -240,6 +240,8 @@
                 l_btm_customerid : '',
                 l_btm_naira:'',
                 r_table:{},
+                
+                SaleNO:'',
 
 
             },
@@ -342,6 +344,13 @@
 
                     console.log()
 
+                },
+                r_btm_back(){
+                    var url = '/index.php?s=desktop/Sale_Entered_By_Front/BringBack_Fromtb_sale';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    // data["SaleNO"] = SaleNO ;
                 },
                 r_btm_submit(){
                     var url = '/index.php?s=desktop/sale/Activate_Order';

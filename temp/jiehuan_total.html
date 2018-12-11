@@ -89,7 +89,7 @@
                         <td>{{thousand_ex(item["当月业绩借款"])}}</td>
                         <td>{{thousand_ex(item["当月cash还款"])}}</td>
                         <td>{{thousand_ex(item["当月teller还款"])}}</td>
-                        <td>{{parseFloat(item["当月cash还款"])+parseFloat(item["当月teller还款"])}}</td>
+                        <td>{{thousand_ex(parseFloat(item["当月cash还款"])+parseFloat(item["当月teller还款"]))}}</td>
                         <!-- <td>{{item["(当月发生欠款总计"]}}</)td> -->
                         <td>{{thousand_ex(item["当月累计欠款"])}}</td>
                         <td>{{thousand_ex(item["当月业绩扣款"])}}</td>
@@ -129,7 +129,9 @@
                     data_list:[]
                 },
                 methods:{
-
+                    init(){
+                        $('.Wdate').val(get_local_time());
+                    },
                     showdetail(){
 
                     },
@@ -199,6 +201,33 @@
                     },
                 }
             })
+
+            vm.init();
+            
+
+            function Copy(p, c) {
+                var c = c || {};
+                for (var i in p) {
+                    console.log(p[i]);
+                　　if (typeof p[i] === 'object') {
+                    
+                　　    c[i] = (p[i].constructor === Array) ? [] : {};
+                　　    Copy(p[i], c[i]);
+                
+                　　} else {
+                    
+                    
+                        c[i] = p[i];
+                        console.log(c.length);
+                　　}
+                    
+                }
+                return c;
+        　　}
+            var a = {};    
+            a.key2 = ['小辉','Tamia'];
+            var b={};
+            b = Copy(a,b); 
     </script>
 </body>
 </html>
