@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -63,7 +62,7 @@
 					@click="query_out()">
 				<!--<input type="button" id="" name="" value="SearchProduct" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
 				@click="">-->
-				<input type="button"  value="出库管理" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
+				<input type="button" id="chuku_guanli"  value="出库管理" class="btn btn-success btn-radius btn-serach" style="height: 30px;"
 					@click="open_stockout_manage()">
 			</div>
 
@@ -154,7 +153,7 @@
 			$(function(){
 				$('.Wdate').val(get_local_time());
 				get_stock_manage();
-				
+				$('#chuku_guanli').click();
 				// aaaa();
 			})
 
@@ -192,7 +191,7 @@
 					var url = "/index.php?s=desktop/Manage_Stock_List/Search";
 					ajax(url, opt, function (retjson) {
 						if (retjson.stat == 1) {
-							let a=[];
+							let a=[];			//出库管理处获取
 							retjson.data.forEach(function(val){
 								if(val.Status == 1){
 									a.push(val)
@@ -283,14 +282,22 @@
 </body>
 
 <div id="main" v-cloak class="market_shop" style="display:none;">
+	<div class="cl">
+		<div class="f-r">
+			<span class=" size-L">GID</span>
+			<input type="text" v-model="top.gid" style="width: 185px;" disabled class="input-text radius" placeholder="">
+			<span class="size-L">SC/Region</span>
+			<input type="text" v-model="top.sc" style="width: 70px;" disabled class="input-text radius" placeholder="">
+		</div>
+	</div>
 	<div class="search_txt" style="display:-webkit-box;">
 		<div>
 			<p>RetailKEDICard</p>
-			<input type="text" id="search_CName" :placeholder="obj_txt.CName">
+			<input type="text" id="search_CName" class="radius" :placeholder="obj_txt.CName">
 		</div>
 		<div>
 			<p>汇总编号(NO):</p>
-			<input type="text" id="search_EName" v-model="huizong_num" disabled :placeholder="obj_txt.EName">
+			<input type="text" id="search_EName" class="radius" v-model="huizong_num" disabled :placeholder="obj_txt.EName">
 		</div>
 
 
@@ -299,7 +306,7 @@
 		
 		<div>
 			<p>Region:</p>
-			<input v-model="main_stock_out_num" type="text" id="search_EName" placeholder="">
+			<input v-model="main_stock_out_num" class="radius" type="text" id="search_EName" placeholder="">
 			<input type="button"  value="..." class="btn btn-success btn-radius btn-serach" style="height: 30px;"
 			@click="openRegion_select()">
 		</div>
@@ -335,26 +342,22 @@
 	</div>
 	
 	<div>
-		<div class="left" style="min-height: 500px; width: 55%;padding: 1%;box-sizing: border-box;">
-			
+		<div class="left" style="min-height: 500px; width: 55%;padding: 1%;box-sizing: border-box;">			
 			<fieldset id="" style="width: 95%;">
 				<legend style="width: auto;border-bottom: none;">Condition</legend>
-				
-				
-			
 				<div class="marginbtm_15">
 					<div class="left" style="margin-right: 5px;">
-						<select name="" id="" style="width: 140px;">
-							<option value="123" v-for="(item , index) in region_list">{{item.result}}</option>
+						<select name="" v-model="stock_sel" id="" style="width: 140px;">
+							<option :value="item.result" v-for="(item , index) in region_list">{{item.result}}</option>
 						</select>
 					</div>
 					<div class="left">
 						<span>From</span>
-						<input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
+						<input id="sa_start" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from">
 					</div>
 					<div class="left">
 						<span>To</span>
-						<input onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
+						<input id="sa_end" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to">
 					</div>
 					<div class="clear"></div>
 				</div>
@@ -366,7 +369,7 @@
 				<div class="marginbtm_15">
 					<span style="display: inline-block;width: 90px;text-align: right;">汇总编号No:</span>
 					<input type="text" id="" placeholder="">
-					<input type="button" id="" name="" value="SearchAll" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
+					<input type="button" id="" @click="searchall()" name="" value="SearchAll" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
 				@click="">
 				</div>
 				<div class="marginbtm_15">
@@ -376,58 +379,32 @@
 				@click="">
 				</div>
 			</fieldset>	
-			<div style="">
-				<table class="table table-border table-bordered table-bg" style="width: 95%; margin: 10px auto;background-color: rgba(200,200,200,.15);">
+			<div style="overflow-x:scroll;overflow-y:scroll;height:250px;">
+				<table class="table table-border table-bordered table-bg" style="width: 125%; margin: 10px auto;background-color: rgba(200,200,200,.15);">
 					<thead>
 						<tr>
 							<th style="width: 150px;">GroupID</th>
 							<th style="width: 80px;">ShopNO</th>
 							<th style="width: 100px;">SaleType</th>
 							<th style="width: 100px;">SaleDate</th>
-							<th style="width: 200px;">Status</th>
+							<th style="width: 50px;">Status</th>
 							<th style="width: 150px;">regiontogether</th>
-							<th style="width: 100px;"></th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="(s,index) in list_l" v-if='list_l.length'>
-							<td>
+						<tr v-for="(s,index) in list_l" @click="cellclick(s)" v-if='list_l.length'>
+							<td>{{s.GroupID}}
 							</td>
-							<td>
+							<td>{{s.ShopNO}}
 							</td>
-							<td>
+							<td>{{s.SaleType}}
 							</td>
-							<td>
+							<td>{{s.SaleDate}}
 							</td>
-							<td>
-								<a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
-								check
-									<!--<i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i>-->
-								</a>
-								<a title="删除" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
-								delete
-									<!--<i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i>-->
-								</a>
+							<td>{{s.Status}}
 							</td>
-	
-						</tr>
-						<tr @click="a()">
-							<!--测试
-							-->
-							<td>2018464656562</td>
-							<td>123</td>
-							<td>出库</td>
-							<td>09-25</td>
-							<td>
-								<a title="审核" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
-								check
-								<i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
-								<a title="删除" href="javascript:;" class="btn btn-primary size-S radius" style="text-decoration: none;">
-								delete
-								<i class="Hui-iconfont Hui-iconfont-yuedu" style="color: rgb(255, 255, 255);"></i></a>
+							<td>{{s.regiontogether}}
 							</td>
-							<td>地区</td>
-							<td></td>
 						</tr>
 						<!--<tr v-if="!list.length">
 							<td colspan="5">{{no_data}}</td>
@@ -436,8 +413,7 @@
 				</table>
 				<div class="my_page m-style">
 	
-				</div>
-				
+				</div>	
 			</div>
 		</div>
 		<!-- 订单详细列表  -->
@@ -500,7 +476,7 @@
 		
     	var 
     	user_token = get_cache('usertoken'),
-	    Vdata_list, //列表VUE
+	    stock_out_manage, //列表VUE
 	    Vresult;
 // 	    $(function(){
 // 	        $('.Wdate').val(get_local_time())
@@ -514,7 +490,7 @@
 // 			search_region_g();
 // 	    });
     	
-    	Vdata_list = new Vue({
+    	stock_out_manage = new Vue({
 	        el:"#main",
 	        data:{
 	        	list_l:[],
@@ -523,20 +499,27 @@
 	            obj_txt: splicing_obj(get_page_txt('stock_out')), // 对象拼接
 	            huizong_num:'2018555555',
 	            region_list:[],
-				main_stock_out_num:''
+				main_stock_out_num:'',
+
+				stock_sel:'',
+				top:{
+					gid:'',
+					sc:''
+				}
 	        },
 	        mounted: function(){
 	           
 	        },
 	        methods:{
+				init(){
+					this.get_stock_list();
+					console.log(this.region_list)
+				},
 	            open_add_stock(){ //打开入库窗口
 	                add()
-	               open_html("stockIn",'#stock_add','stock_add',function(){
+	                open_html("stockIn",'#stock_add','stock_add',function(){
 	                Refresh()
 	               })
-	            },
-	            a(){
-	            	console.log('更新汇总编号');
 	            },
 	            openRegion_select(){
 	            	console.log('选择区域');
@@ -547,10 +530,45 @@
 	            search_region(){
 	            	search_region_g()
 	            	
-	            }
+	            },
+
+				get_stock_list(){
+					var data = {};
+					data["usertoken"] = user_token;
+					var url = "/index.php?s=desktop/common/GetRegion";
+					ajax(url, data, function (retjson) {
+							stock_out_manage.region_list = retjson;	
+					})
+				},
+
+				searchall(){		//搜索全部
+					var data = {};
+					data["usertoken"] = user_token;
+					data['F'] = $('#sa_start').val();
+					data['T'] = $('#sa_end').val();
+					var url = "/index.php?s=desktop/Stock_Out_Management/SearchAll";
+					ajax(url, data, function (ret) {
+						if(ret.stat){
+							stock_out_manage.list_l = ret.data.list;
+						}
+					})
+				},
+				cellclick(s){
+					var data = {};
+					data["usertoken"] = user_token;
+					data['cell'] = JSON.stringify(s);
+					data['Condition'] = this.stock_sel;
+					var url = "/index.php?s=desktop/Stock_Out_Management/GridView1_CellClick";
+					ajax(url, data, function (ret) {
+						if(ret.stat){
+							stock_out_manage.top.gid = ret.data.inpput.GID;
+							stock_out_manage.top.sc = ret.data.inpput["SC/Region"];
+						}
+					})
+				}
 	        }
 	    });
-	    
+	    stock_out_manage.init();
 	    function get_region(){
 	    	var url = '/index.php?s=desktop/common/GetRegion';
 	    	var user_token = get_cache('usertoken');
@@ -565,7 +583,7 @@
 ////	                showErr(e.errmsg, e.errmsg_en, e.errcode)
 //	            }
 				
-				Vdata_list.region_list = ret;
+				stock_out_manage.region_list = ret;
 	        })
 	    }
 	    
@@ -598,7 +616,7 @@
 	    	data["Condition"] = '123';
 	    	ajax(url,data,function (e) {
 	            if(e.stat == 1){
-	            	Vdata_list.list = e.data.LoadRegionStockOutInfo;
+	            	stock_out_manage.list = e.data.LoadRegionStockOutInfo;
 	            }else{
 	                showErr(e.errmsg, e.errmsg_en, e.errcode)
 	            }
@@ -666,7 +684,7 @@
 			get_item_product_no(a){
 				
 				stock_out_num = a;
-				Vdata_list.main_stock_out_num = a;
+				stock_out_manage.main_stock_out_num = a;
 				console.log(stock_out_num);
 			}
 		}

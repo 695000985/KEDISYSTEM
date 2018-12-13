@@ -77,14 +77,14 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <th>{{search_ret['报单编号']}}</th>
-                                <td>{{search_ret["会员编号"]}}</td>
-                                <td>{{search_ret["专卖店"]}}</td>
-                                <td>{{search_ret["总BV"]}}</td>
-                                <td>{{search_ret["总PV"]}}</td>
-                                <td>{{search_ret["总金额"]}}</td>
+                                <th>{{search_ret['saleno']}}</th>
+                                <td>{{search_ret["customerno"]}}</td>
+                                <td>{{search_ret["shopno"]}}</td>
+                                <td>{{search_ret["Total_BV"]}}</td>
+                                <td>{{search_ret["Total_PV"]}}</td>
+                                <td>{{search_ret["Total_naira"]}}</td>
                                 <!-- <td>{{search_ret.oper_name}}</td> -->
-                                <td>{{search_ret["购买日期"]}}</td>
+                                <td>{{search_ret["realdate"]}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -96,11 +96,11 @@
                             <div class="cl">
                                 <div class="f-l" style="width:35%;">
                                     <span>SaleNo:</span>
-                                    <input style="width:55%;" type="text" disabled v-model="search_ret['报单编号']" class="input-text radius" placeholder="">
+                                    <input style="width:55%;" type="text" disabled v-model="search_ret['saleno']" class="input-text radius" placeholder="">
                                 </div>
                                 <div class="f-l" style="width:30%;">
                                     <span>SC:</span>
-                                    <input style="width:55%;" type="text" disabled v-model="search_ret['专卖店']" class="input-text radius" placeholder="">
+                                    <input style="width:55%;" type="text" disabled v-model="search_ret['shopno']" class="input-text radius" placeholder="">
                                 </div>
                                 <div class="f-l" style="width:35%;">
                                     <span>Naira:</span>
@@ -110,11 +110,11 @@
                             <div class="mt-5 cl">
                                 <div class="f-l" style="width:35%;">
                                     <span>    BV:</span>
-                                    <input style="width:55%;" type="text" disabled v-model="search_ret['总BV']" class="input-text radius" placeholder="">
+                                    <input style="width:55%;" type="text" disabled v-model="search_ret['Total_BV']" class="input-text radius" placeholder="">
                                 </div>
                                 <div class="f-l" style="width:30%;">
                                     <span>PV:</span>
-                                    <input style="width:55%;" type="text" disabled v-model="search_ret['总PV']" class="input-text radius" placeholder="">
+                                    <input style="width:55%;" type="text" disabled v-model="search_ret['Total_PV']" class="input-text radius" placeholder="">
                                 </div>
                                 <div class="f-l" style="width:35%;">
                                     <span>Code:</span>
@@ -140,7 +140,7 @@
                 <div class="bk-gray pd-10">
                     <table class="table table-border table-bg">
                         <thead>
-                            <th>
+                            <tr>
                                 <th>报单编号</th>
                                 <th>会员编号</th>
                                 <th>专卖店</th>
@@ -149,11 +149,11 @@
                                 <th>naira</th>
                                 <th>操作人</th>
                                 <th>时间</th>
-                            </th>
+                            </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>{{ok_ret.saleno}}</td>
+                                <th>{{ok_ret.saleno}}</th>
                                 <td>{{ok_ret.customerno}}</td>
                                 <td>{{ok_ret.shopno}}</td>
                                 <td>{{ok_ret.Total_BV}}</td>
@@ -179,11 +179,11 @@
                             </div>
                             <div class="mb-5">
                                 <span>Error Number:</span>
-                                <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                                <input style="width:55%;" v-model="error_number" type="text" class="input-text radius" placeholder="">
                             </div>
                             <div>
                                 <span>Calc_SC_BV:</span>
-                                <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                                <input style="width:55%;" type="text" v-model="Calc_SC_BV" class="input-text radius" placeholder="">
                             </div>
                         </div>
 
@@ -204,20 +204,20 @@
                             <div>
                                 <span @click="r_btm_fresh($event)" class="btn btn-default radius">F</span>
                                 <span>Status:</span>
-                                <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                                <input style="width:55%;" disabled v-model="by_r_status()" type="text" class="input-text radius" placeholder="">
                             </div>
                         </div>
                     </div>
                     <div class="cl">
-                        <div class="f-l text-c" style="width:33%;">
+                        <div class="f-l text-c" style="width:50%;">
                             <span @click="r_btm_back($event)" class="btn btn-default radius">BackBack</span>
                         </div>
-                        <div class="f-l text-c" style="width:33%;">
+                        <div class="f-l text-c" style="width:50%;">
                             <span @click="r_btm_submit($event)" class="btn btn-default radius">Submit</span>
                         </div>
-                        <div class="f-l text-c" style="width:33%;">
+                        <!-- <div class="f-l text-c" style="width:33%;">
                             <span class="btn btn-default radius">Export</span>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -231,9 +231,11 @@
             el:'#main',
             data:{
                 oper:'',
-                front_dest_no:'201891715102-102',
+                front_dest_no:'20181212142352-917',
                 FD_SC_BV:'123141',
-                search_ret:'',
+                search_ret:{
+                    'saleno':'',
+                },
                 ok_ret:{},
                 code_name : '',
                 l_btm_saleid :'',
@@ -242,17 +244,25 @@
                 r_table:{},
                 
                 SaleNO:'',
+                r_status:false,
 
-
+                error_number:0,
+                Calc_SC_BV:'',
             },
             methods:{
                 init(){
                     this.get_oper();
                     this.get_code();
                 },
+                by_r_status(){
+                    if(!this.r_status){
+                        return 'NO';
+                    }else{
+                        return 'OK';
+                    }
+                },
                 get_code(){
                     $("#i_code").on('blur',function () {  
-                        console.log(4561);
                         var url = '/index.php?s=desktop/Tb_Customer/get_list';
                         var user_token = get_cache('usertoken');
                         var data = {};
@@ -284,9 +294,25 @@
                     data["GroupID"] = this.front_dest_no;
                     ajax(url,data,function (ret) {
                         if(ret.stat){
-                            main.search_ret = ret.data.Sale;
-                            main.l_btm_saleid = ret.data.Sale.SaleID;
-                            main.l_btm_naira = ret.data.report.ScNaira
+                            if(!ret.sale &&ret.data.search.length){
+                                main.search_ret = ret.data.search[0];
+                                main.l_btm_saleid = ret.data.search[0].saleid;
+                                main.l_btm_naira = ret.data.report.ScNaira;
+                            }else if(!ret.data.search.length){
+                                main.search_ret.saleno = ret.data.Sale[0]["报单编号"];
+                                main.search_ret.customerno = ret.data.Sale[0]["会员编号"];
+                                main.search_ret.shopno = ret.data.Sale[0]["专卖店"];
+                                main.search_ret.Total_BV = ret.data.Sale[0]["总BV"];
+                                main.search_ret.Total_PV = ret.data.Sale[0]["总PV"];
+                                main.search_ret.Total_naira = ret.data.Sale[0]["总金额"];
+                                main.search_ret.realdate = ret.data.Sale[0]["购买日期"];
+
+                                main.l_btm_saleid = ret.data.Sale[0]["SaleID"];
+                                main.l_btm_naira = ret.data.Sale[0]["总金额"];
+
+                                $('#i_code').val(ret.data.Sale[0]["会员编号"]);
+                            }
+                            console.log(main.search_ret)
                             if(ret.data.search[0] != null){
                                 // main.l_btm_saleid = ret.data.search[0].saleid;
                             }
@@ -324,8 +350,7 @@
                     ajax(url,data,function (ret) {
                         if(ret.stat){
                             showErr(ret.data.data);
-                            main.search_ret = {};
-
+                            main.ok_ret = main.search_ret
                         }
                     })
                 },
@@ -334,15 +359,30 @@
                     var user_token = get_cache('usertoken');
                     var data = {};
                     data["usertoken"] = user_token;
+                    data["SaleNO"] = this.search_ret['saleno'];
+                    data["CustomerNO"] = this.search_ret['customerno'];
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data[1].data);
+                        }
+                    })
                     
                 },
                 r_btm_fresh(){
-                    var url = '/index.php?s=desktop/sale/Activate_Order';
+                    var url = '/index.php?s=desktop/sale/fresh';
                     var user_token = get_cache('usertoken');
                     var data = {};
                     data["usertoken"] = user_token;
-
-                    console.log()
+                    data["SaleID"] = main.l_btm_saleid;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            main.r_table = main.ok_ret;
+                            main.Calc_SC_BV = main.r_table.Total_BV;
+                            if(ret.data.Totalmember - main.r_table.Total_naira >= 0){
+                                main.r_status = true;
+                            }
+                        }
+                    })
 
                 },
                 r_btm_back(){
@@ -350,16 +390,32 @@
                     var user_token = get_cache('usertoken');
                     var data = {};
                     data["usertoken"] = user_token;
-                    // data["SaleNO"] = SaleNO ;
+                    data["SaleNO"] = this.search_ret['saleno'] ;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                        }
+                    })
                 },
                 r_btm_submit(){
                     var url = '/index.php?s=desktop/sale/Activate_Order';
                     var user_token = get_cache('usertoken');
                     var data = {};
                     data["usertoken"] = user_token;
-                    // data["CustomerID"] = ;
-                    // data["SaleID"] = '';
+                    data["CustomerID"] = this.l_btm_customerid;
+                    data["SaleID"] = this.l_btm_saleid;
+                    if(this.r_status){
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                showErr(ret.data);
+                            }
+                        })
+                    }else{
+                        showErr('无法提交!');
+                    }
+                    
                     console.log('Tamia');
+
                 },
             }
         })

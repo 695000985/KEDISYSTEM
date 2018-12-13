@@ -208,19 +208,13 @@
             function Copy(p, c) {
                 var c = c || {};
                 for (var i in p) {
-                    console.log(p[i]);
                 　　if (typeof p[i] === 'object') {
-                    
                 　　    c[i] = (p[i].constructor === Array) ? [] : {};
                 　　    Copy(p[i], c[i]);
                 
                 　　} else {
-                    
-                    
                         c[i] = p[i];
-                        console.log(c.length);
                 　　}
-                    
                 }
                 return c;
         　　}

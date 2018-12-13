@@ -285,7 +285,6 @@
                 var data = {};
                 data["usertoken"] = user_token;
                 // data[""] = ;
-                console.log(data)
                 ajax(url,data,function (ret) {
                     if(ret.stat){
                         vm.borrowtypelist = ret.data;
@@ -298,7 +297,6 @@
                 var data = {};
                 data["usertoken"] = user_token;
                 // data[""] = ;
-                console.log(data)
                 ajax(url,data,function (ret) {
                     if(ret.stat){
 						vm.payback_typelist = ret.data;
@@ -312,7 +310,6 @@
                 var data = {};
                 data["usertoken"] = user_token;
                 data["sc"] = this.data.sc;
-                console.log(data)
                 ajax(url,data,function (ret) {
                     // if(ret){
 						// vm.payback_typelist = ret.data;
