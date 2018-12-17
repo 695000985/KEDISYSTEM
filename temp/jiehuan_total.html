@@ -91,7 +91,7 @@
                         <td>{{thousand_ex(item["当月teller还款"])}}</td>
                         <td>{{thousand_ex(parseFloat(item["当月cash还款"])+parseFloat(item["当月teller还款"]))}}</td>
                         <!-- <td>{{item["(当月发生欠款总计"]}}</)td> -->
-                        <td>{{thousand_ex(item["当月累计欠款"])}}</td>
+                        <td>{{thousand_ex(parseFloat(item["当月个人借款"])+parseFloat(item["当月房贷借款"])+parseFloat(item["当月车贷借款"])+parseFloat(item["当月业绩借款"]))}}</td>
                         <td>{{thousand_ex(item["当月业绩扣款"])}}</td>
                         <td>{{thousand_ex(item["当月个人扣款"])}}</td>
                         <td>{{thousand_ex(item["当月房贷扣款"])}}</td>
