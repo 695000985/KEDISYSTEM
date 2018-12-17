@@ -54,9 +54,10 @@
                         
                     </div>
                     <div class="f-l" style="width:30%;">
-                        <h4 class="text-c">FD_SC_BV:</h4>
+                        <h4>&nbsp;&nbsp;</h4>
+                        <!-- <h4 class="text-c">FD_SC_BV:</h4> -->
                         <div>
-                            <input id="FD_SC_BV" style="width:75%;" v-model="FD_SC_BV" type="text" class="input-text radius" placeholder="">
+                            <!-- <input id="FD_SC_BV" style="width:75%;" v-model="FD_SC_BV" type="text" class="input-text radius" placeholder=""> -->
                             <span @click="FD_SC_BV_clear($event)" class="btn btn-default radius">清除</span>
                         </div>
                     </div>
@@ -231,8 +232,9 @@
             el:'#main',
             data:{
                 oper:'',
-                front_dest_no:'20181212142352-917',
-                FD_SC_BV:'123141',
+                // front_dest_no:'20181212142352-917',
+                front_dest_no : '',
+                FD_SC_BV:'',
                 search_ret:{
                     'saleno':'',
                 },
