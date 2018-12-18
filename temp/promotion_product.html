@@ -43,6 +43,7 @@
         .tr_brick{background-color: #FF4500;}
         .tr_green{background-color:	#90EE90;}
         .td_bg{background-color: #FF4500;}
+        .tr_gray{background-color: lightgray;}
     </style>
 </head>
 
@@ -254,7 +255,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="item in list" :key="item.id">
+                    <tr :class="tr_index==index?'tr_gray':''" @click="tr_click(item.StockTypeID,item.TypeName,item.Dept,index,$event)" v-for="(item,index) in list" :key="item.id">
                         <td>{{item["StockTypeID"]}}</td>
                         <td>{{item["TypeName"]}}</td>
                         <td>{{item["TypeName_E"]}}</td>
@@ -269,12 +270,13 @@
             </table>
         </div>
         <div class="mt-10">
-            <input class="btn btn-primary size-M radius" type="button" value="Start启用">
-            <input class="btn btn-primary size-M radius" type="button" value="Stop停用">
-            <input class="btn btn-primary size-M radius" type="button" value="Add新增">
+            <input @click="enable($event)" class="btn btn-primary size-M radius" type="button" value="Start启用">
+            <input @click="disable($event)" class="btn btn-primary size-M radius" type="button" value="Stop停用">
+            <input @click="add($event)" class="btn btn-primary size-M radius" type="button" value="Add新增">
             <input class="btn btn-primary size-M radius" type="button" value="Update修改">
-            TypeID:<input style="width:80px;" type="text" class="input-text radius" placeholder="">
-            Name:<input style="width:100px;" type="text" class="input-text radius" placeholder="">
+            TypeID:<input style="width:80px;" v-model="btm_data.TypeID" type="text" class="input-text radius" placeholder="">
+            Name:<input style="width:100px;" v-model="btm_data.Name" type="text" class="input-text radius" placeholder="">
+            Dept:<input style="width:70px;" v-model="btm_data.Dept" type="text" class="input-text radius" placeholder="">
         </div>
     </div>
     <script>
@@ -479,33 +481,83 @@
         var sale_type = new Vue({
             el:'#SaleType',
             data:{
+                tr_index:-1,
                 saletype:'',
-                list:[]
+                list:[],
+                btm_data:{
+                    TypeID:'',
+                    Name:'',
+                    Dept:''
+                }
             },
             methods:{
 
-
                 search(){
-                    var url = "/index.php?s=desktop/Promo_Collect/PromoTypeSearchAll";
+                    var url = "/index.php?s=desktop/Promo_Collect/SaleTypeSearch";
                     var user_token = get_cache('usertoken');
                     var data = {};
                     data["usertoken"] = user_token;
-                    // ajax(url,data,function (ret) {
-                    //     if(ret.stat){
-
-                    //     }
-                    // })
+                    data["TypeName"] = this.saletype;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            sale_type.list = ret.data;
+                        }
+                    })
                 },
                 search_all(){
                     var url = "/index.php?s=desktop/Promo_Collect/SaleTypeSearchAll";
                     var user_token = get_cache('usertoken');
                     var data = {};
                     data["usertoken"] = user_token;
-                    // ajax(url,data,function (ret) {
-                    //     if(ret.stat){
-                    //         sale_type.list = ret.data;
-                    //     }
-                    // })
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            sale_type.list = ret.data;
+                        }
+                    })
+                },
+                tr_click(i,n,dep,index){
+                    this.btm_data.TypeID = i;
+                    this.btm_data.Name = n;
+                    this.btm_data.Dept = dep;
+                    this.tr_index = index;
+                },
+                enable(){
+                    this.able('SaleTypeStart')
+                },
+                disable(){
+                    this.able('SaleTypeStop')
+                },
+                add(){
+                    var url = "/index.php?s=desktop/Promo_Collect/SaleTypeAdd";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["TypeName"] = this.btm_data.Name;
+                    data["Dept"] = this.btm_data.Dept;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                            sale_type.search_all();
+                        }
+                    })
+                },
+                able(suffix){
+                    var url = "/index.php?s=desktop/Promo_Collect/" + suffix;
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["StockTypeID"] = this.btm_data.TypeID;
+                    if(this.btm_data.TypeID!=''){
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                showErr(ret.data);
+                                sale_type.search_all();
+                            }
+                        })
+                    }else{
+
+                    }
+                    
                 }
             }
 

@@ -96,7 +96,7 @@
                                 <td>{{x.MemberPrice}}</td>
                                 <td>{{x.BV}}</td>
                                 <td>{{x.PV}}</td>
-                                <td>{{x.Qty}}</td>
+                                <td ref="reference_qty">{{x.Qty==0?'':x.Qty}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -226,16 +226,18 @@
             })
 
             $('.product_no').keyup(function (event) {
-                if (event.keyCode == 13) {
+                if (event.keyCode == 13 && $(this).attr('type') == 'text') {
                     btn_query();
-                }
-            });
-            $('.set_num').keyup(function (event) {
-                if (event.keyCode == 13) {
+                }else if(event.keyCode == 13 && $(this).attr('type') == 'number'){
                     set_num()
                 }
             });
-            $('.shop_no').keyup(function () {
+            // $('.set_num').keyup(function (event) {
+            //     if (event.keyCode == 13) {
+            //         set_num()
+            //     }
+            // });
+            $('.shop_no').keyup(function () {   
                 $('.select_shop_no').val($(this).val())
             })
             $('.Wdate').val(get_local_time())
@@ -252,15 +254,18 @@
             var url = '/index.php?s=desktop/Tb_Product/get_list';
             var data = {};
             data['usertoken'] = get_cache('usertoken');
-            var option = $.extend({}, data, obj);
+            var option = $.extend({}, data, obj);   
             ajax(url, option, function (e) {
                 query_stat = e.stat;
                 if (e.stat == 1) {
-                    productdata = productdata.concat(e.data.list);
+                    // productdata = productdata.concat(e.data.list);
+                    productdata = e.data.list;
                     productdata.unshift(productdata.pop())
                     //productdata.remove(productdata.pop())
                     product_list.listdata = productdata;
-
+                    for(var i = 0; i < productdata.length;i++){
+                        product_list.listdata[i]['Qty'] = 0;
+                    }
                 } else {
                     showErr(e.errmsg, e.errmsg_en, e.errcode)
                     return
@@ -283,35 +288,56 @@
                 obj['ProductNO'] = $('.product_no').val();
 
                 var del_index = $.inArray($('.product_no').val().toUpperCase(), arr);
+                var temp_o = productdata[del_index];
                 productdata.splice(del_index, 1)
-                query_product(obj)
-                if (query_stat == 1) {
-                    product_list.index_active = 0;
-                    $('.product_no').css('display', 'none')
-                    $('.product_no').val('')
-                    $('.set_num').css('display', 'inline-block').focus()
+                chcha()
+                function chcha() {
+                    // query_product(obj)
                 }
+                productdata.unshift(temp_o);
+                // if (query_stat == 1) {
+                    product_list.index_active = 0;
+                    // $('.product_no').css('display', 'none')
+                    // $('.product_no').val('')
+                    // $('.set_num').css('display', 'inline-block').focus();
+                    $('.product_no').attr('type', 'number')
+                    $('.product_no').val('');
+                    $('.product_no').focus();
+                    $('#p_list tbody tr:first td:last').html('');  
+                    // $('.set_num').css('display', 'inline-block').focus();
+                // }
             } else {
                 showErr(config_txt.not_product_no.zn,config_txt.not_product_no.en)
             }
         }
 
         function set_num() { //设置产品数量
-            if (!!!$('.set_num').val()) {
+            if (!!!$('.product_no').val()) {
                 showErr(config_txt.set_num.zn,config_txt.set_num.en);
                 return
             }
-            product_list.listdata[0].Qty = $('.set_num').val();
-            console.log($('.set_num').val(),productdata);
-            total_price = total_price + $('.set_num').val() * product_list.listdata[0].MemberPrice;
-            total_bv = total_bv + $('.set_num').val() * product_list.listdata[0].BV;
-            total_pv = total_pv + $('.set_num').val() * product_list.listdata[0].PV;
+            // product_list.listdata[0]['Qty'] = $('.set_num').val();
+            productdata[0]['Qty'] = $('.product_no').val();
+            var c = $('.product_no').val();
+            $('#p_list tbody tr:first td:last').html(c);  
+            // Vue.set(product_list.listdata[0], 'Qty', 5000)
+            total_price = total_price + $('.product_no').val() * product_list.listdata[0].MemberPrice;
+            if(product_list.listdata[0].BV != undefined){
+                total_bv = total_bv + $('.product_no').val() * product_list.listdata[0].BV;
+            }
+            if(product_list.listdata[0].PV != undefined){
+                total_pv = total_pv + $('.product_no').val() * product_list.listdata[0].PV;
+            }
+            // console.log(product_list.listdata[0].BV,product_list.listdata[0].PV)
             total.total_data.total_price = total_price;
-            total.total_data.total_pv = total_bv;
-            total.total_data.total_bv = total_pv;
-            $('.set_num').css('display', 'none')
-            $('.set_num').val('')
-            $('.product_no').css('display', 'inline-block').focus();
+            total.total_data.total_pv = total_pv;
+            total.total_data.total_bv = total_bv;
+            // $('.set_num').css('display', 'none')
+            // $('.set_num').val('');
+            // $('.product_no').css('display', 'inline-block').focus();
+            $('.product_no').attr('type', 'text')
+            $('.product_no').val('');
+            $('.product_no').focus();
         }
 
         function order_entry_list(obj) { // 产品录入
@@ -361,7 +387,7 @@
         var product_list = new Vue({ //产品列表
             el: '#p_list',
             data: {
-                listdata: [],
+                listdata: [{'Qty':''}],
                 sale_list: [],
                 index_active: -1,
                 obj_txt:page_all_lang
@@ -411,29 +437,29 @@
             },
             methods: {
                 commit() {
-                    if (!!!$('.shop_no').val()) {
-                        showErr(config_txt.select_shop_no.zn_select_sn, config_txt.select_shop_no.zn_select_en)
-                        return
-                    }
+                    // if (!!!$('.shop_no').val()) {
+                    //     showErr(config_txt.select_shop_no.zn_select_sn, config_txt.select_shop_no.zn_select_en)
+                    //     return
+                    // }
                     if (this.total_data.total_price <= 0) {
                         showErr(config_txt.select_product.zn, config_txt.select_product.en)
                     } else {
                         var txt =
                             `
                     <table class="table-border">
-            <tr>
-                <td>NAIRA</td>
-                <td>${this.total_data.total_price}</td>
-                <td>BV</td>
-                <td>${this.total_data.total_bv}</td>
-            </tr>
-            <tr>
-                <td>PV</td>
-                <td>${this.total_data.total_pv}</td>
-                <td>SC</td>
-                <td>${$('.shop_no').val()}</td>
-            </tr>
-        </table> `
+                        <tr>
+                            <td>NAIRA</td>
+                            <td>${this.total_data.total_price}</td>
+                            <td>BV</td>
+                            <td>${this.total_data.total_bv}</td>
+                        </tr>
+                        <tr>
+                            <td>PV</td>
+                            <td>${this.total_data.total_pv}</td>
+                            <td>SC</td>
+                            <td>${$('.shop_no').val()}</td>
+                        </tr>
+                    </table> `
 
                         firm(this.obj_txt.Order_Product_title, txt, function () {
                             var x = [];
