@@ -39,6 +39,10 @@
 				width:10%;
 			}
 		}
+
+        .tr_brick{background-color: #FF4500;}
+        .tr_green{background-color:	#90EE90;}
+        .td_bg{background-color: #FF4500;}
     </style>
 </head>
 
@@ -74,7 +78,7 @@
                         <select name="" style="width:55%;border-color: rgb(221,221,221);height: 30px;" class="radius" id="">
                             <option value=""></option>
                         </select>
-                        <span class="btn btn-default radius">T</span>
+                        <span @click="SaleType_select($event)" class="btn btn-default radius">T</span>
                     </div>
                 </div>
                 <div class="f-l text-r pt-10" style="width:18%;">
@@ -139,8 +143,8 @@
 
     <div id="PromoType" class='pd-10' style="display:none;">
         <div class="top-nav">
-            Date:<input style="height: 30px;border-color: rgb(221,221,221);" id=""  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from">
-            PromoName:<input style="width:100px;" type="text" class="input-text radius" placeholder="">
+            Date:<input style="height: 30px;border-color: rgb(221,221,221);" id="search_date"  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from">
+            PromoName:<input style="width:100px;" v-model="PromoName" type="text" class="input-text radius" placeholder="">
             <input @click="search($event)" class="btn btn-primary size-M radius" type="button" value="Search">
             <input @click="search_all($event)" class="btn btn-primary size-M radius" type="button" value="SearchAll">
         </div>
@@ -149,20 +153,26 @@
             <table class="table table-border table-bg" style="width:800px;">
                 <thead>
                     <tr>
-                        <th>ProductNO</th>
-                        <th>Name</th>
-                        <th>MemberPrice</th>
-                        <th>StockQTY</th>
-                        <th>说明Memo</th>
+                        <th>PromoID</th>
+                        <th>PromoName</th>
+                        <th>Describe</th>
+                        <th>ValidDateForm</th>
+                        <th>ValidDateTo</th>
+                        <th>Oper</th>
+                        <th>Memo</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr @click="tr_click(index,$event)" v-if="promotype_list.length" v-for="(item,index) in promotype_list" >
-                        <td>{{item.ProductNO}}</td>
-                        <td>{{item.CName}}</td>
-                        <td>{{item.MemberPrice}}</td>
-                        <td ref="td_ref_qty" @click="add_td_bg(item.index,$event)" @dblclick="i_qty($event)"><input id="td_ref_qty" style="position:relative;z-index:-1;border:none;width:100%;" type="text"></td>
-                        <td ref="td_ref_memo" @dblclick="i_memo($event)"><input id="td_ref_memo" style="position:relative;z-index:-1;border:none;width:100%;" type="text"></td>
+                    <tr :class="item.Status == 0 ?'tr_brick':'tr_green'" @click="tr_click(item,index,$event)" v-if="promotype_list.length" v-for="(item,index) in promotype_list" >
+                        <td>{{item.PromoID}}</td>
+                        <td>{{item.PromoName}}</td>
+                        <td>{{item.Describe}}</td>
+                        <td>{{item.ValidDateFrom.substring(0,10)}}</td>
+                        <td>{{item.ValidDateTo.substring(0,10)}}</td>
+                        <td>{{item.Oper}}</td>
+                        <td>{{item.Memo}}</td>
+                        <td>{{item.Status}}</td>
                     </tr>
                     <tr  v-if="!promotype_list.length">
                         <td colspan="5">暂无数据</td>
@@ -175,50 +185,96 @@
             <div class="cl mb-5 ">
                 <div class="f-l text-r pt-5" style="width:30%;">
                     <div class="mb-5">
-                        <input class="btn size-M radius" type="button" value="Start启用">
-                        <input class="btn size-M radius" type="button" value="Stop停用">
+                        <input @click="enable($event)" class="btn size-M radius" type="button" value="Start启用">
+                        <input @click="disable($event)" class="btn size-M radius" type="button" value="Stop停用">
                     </div>
                     <div>
-                        <input class="btn size-M radius" type="button" value="Add新增">
-                        <input class="btn size-M radius" type="button" value="Update修改">
+                        <input @click="add($event)" class="btn size-M radius" type="button" value="Add新增">
+                        <input @click="modify($event)" class="btn size-M radius" type="button" value="Update修改">
                     </div>
                 </div>
                 <div class="f-l text-r pt-10" style="width:20%;">
                     <div class="mb-5">
                         <span>   PromoID:</span>
-                        <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                        <input style="width:55%;" v-model="btm_act.id" type="text" class="input-text radius" placeholder="">
                         
                     </div>
                     <div>
                         <span>From:</span>
-                        <input style="width:60%;height: 30px;border-color: rgb(221,221,221);" id=""  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from">
+                        <input style="width:60%;height: 30px;border-color: rgb(221,221,221);" v-model="btm_act.from" id=""  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from">
                     </div>
                 </div>
 
                 <div class="f-l text-r pt-10" style="width:18%;">
                     <div class="mb-5">
                         <span>Name:</span>
-                        <input style="width:60%;" type="text" class="input-text radius" placeholder="">
+                        <input style="width:60%;" type="text" class="input-text radius" v-model="btm_act.name" placeholder="">
                     </div>
                     <div>
                         
                         <span>To:</span>
-                        <input style="width:60%;height: 30px;border-color: rgb(221,221,221);" id=""  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from">
+                        <input style="width:60%;height: 30px;border-color: rgb(221,221,221);" v-model="btm_act.to" id=""  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from">
                         <!-- <input style="width:55%;" type="text" class="input-text radius" placeholder=""> -->
                     </div>
                 </div>
                 <div class="f-l text-r pt-10" style="width:25%;">
                     <div class="mb-5">
                         <span>Describe:</span>
-                        <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                        <input style="width:55%;" v-model="btm_act.describe" type="text" class="input-text radius" placeholder="">
                     </div>
                     <div>
                         
                         <span>Memo:</span>
-                        <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                        <input style="width:55%;" v-model="btm_act.memo" type="text" class="input-text radius" placeholder="">
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="SaleType" class="pd-10" style="display:none;">
+        <div class="top-nav">
+            SaleType:<input style="width:100px;" v-model="saletype" type="text" class="input-text radius" placeholder="">
+            <input @click="search($event)" class="btn btn-primary size-M radius" type="button" value="Search">
+            <input @click="search_all($event)" class="btn btn-primary size-M radius" type="button" value="SearchAll">
+        </div>
+        <div class="mt-10 bk-gray pd-10 radius" style="height:300px;overflow-y:scroll;">
+            <table class="table table-border table-bg" style="width:800px;">
+                <thead>
+                    <tr>
+                        <th>StockTypeID</th>
+                        <th>TypeName</th>
+                        <th>TypeName_E</th>
+                        <th>Status</th>
+                        <th>Memo</th>
+                        <th>Oper</th>
+                        <th>CreateTime</th>
+                        <th>LastEditDate</th>
+                        <th>Dept</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in list" :key="item.id">
+                        <td>{{item["StockTypeID"]}}</td>
+                        <td>{{item["TypeName"]}}</td>
+                        <td>{{item["TypeName_E"]}}</td>
+                        <td :class="item['Status']==0?'td_bg':''">{{item["Status"]==0?'停用':'正常'}}</td>
+                        <td>{{item["Memo"]}}</td>
+                        <td>{{item["Oper"]}}</td>
+                        <td>{{item["CreateTime"].substring(0,19)}}</td>
+                        <td>{{item["LastEditDate"].substring(0,19)}}</td>
+                        <td>{{item["Dept"]}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-10">
+            <input class="btn btn-primary size-M radius" type="button" value="Start启用">
+            <input class="btn btn-primary size-M radius" type="button" value="Stop停用">
+            <input class="btn btn-primary size-M radius" type="button" value="Add新增">
+            <input class="btn btn-primary size-M radius" type="button" value="Update修改">
+            TypeID:<input style="width:80px;" type="text" class="input-text radius" placeholder="">
+            Name:<input style="width:100px;" type="text" class="input-text radius" placeholder="">
         </div>
     </div>
     <script>
@@ -253,7 +309,12 @@
                     console.log(46566);
                     open_html('PromoType','#PromoType','PromoType',function () {
 
-                    },800,500)
+                    },800,570)
+                },
+                SaleType_select(){
+                    open_html('SaleType','#SaleType','SaleType',function () {
+
+                    },800,570)
                 },
                 add_td_bg(){        //单击
                     
@@ -281,45 +342,174 @@
         var promotype = new Vue({
             el:'#PromoType',
             data:{
+                PromoName:'',
                 promotype_list : [],
                 tr_index_def : '-1',
                 tr_index_cur : '',
+                btm_act:{
+                    id:'',
+                    name:'',
+                    describe:'',
+                    from:'',
+                    to:'',
+                    memo:''
+                }
             },
             methods:{
                 init(){
                     $('.Wdate').val(
                         get_local_time()
-                    )
+                    );
+                    var a = '2018-10-25 00:00:00'
+                    var reg = /^[1-9]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/;
+                    var regExp = new RegExp(reg);
+                    console.log(regExp.test(a))
                 },
                 search(){
-                    var url = "";
+                    var url = "/index.php?s=desktop/Promo_Collect/PromoTypeSearch";
                     var user_token = get_cache('usertoken');
                     var data = {};
                     data["usertoken"] = user_token;
-                    ajax(url,data,function (ret) {
-                        if(ret.stat){
-                            
-                        }
-                    })
+                    data["Date"] = $('#search_date').val();
+                    data["PromoName"] = this.PromoName;
+                    if(this.PromoName != ''){
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                promotype.promotype_list = ret.data;
+                            }
+                        })
+                    }else{
+                        showErr('请填写PromoName');
+                    }
+                    
 
                 },
                 search_all(){
-                    var url = "";
+                    var url = "/index.php?s=desktop/Promo_Collect/PromoTypeSearchAll";
                     var user_token = get_cache('usertoken');
                     var data = {};
                     data["usertoken"] = user_token;
                     ajax(url,data,function (ret) {
                         if(ret.stat){
-                            // promotype.promotype_list = ret.data;
+                            promotype.promotype_list = ret.data;
                         }
                     })
                 },
-                tr_click(){
-
+                tr_click(item,index){
+                    this.btm_act.id = item.PromoID;
+                    this.btm_act.name = item.PromoName;
+                    this.btm_act.describe = item.Describe;
+                    this.btm_act.from = item.ValidDateFrom.substring(0,10);
+                    this.btm_act.to = item.ValidDateTo.substring(0,10);
+                    this.btm_act.memo = item.Memo;
+                },
+                enable(){
+                    var url = "/index.php?s=desktop/Promo_Collect/PromoTypeStart";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["PromoID"] = this.btm_act.id;
+                    if(data["PromoID"] != ''){
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                showErr(ret.data);
+                                promotype.search_all();
+                            }
+                        })
+                    }else{
+                        // showErr('')
+                    }
+                },
+                disable(){
+                    var url = "/index.php?s=desktop/Promo_Collect/PromoTypeStop";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["PromoID"] = this.btm_act.id;
+                    if(data["PromoID"] != ''){
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                showErr(ret.data);
+                                promotype.search_all();
+                            }
+                        })
+                    }else{
+                        // showErr('')
+                    }
+                },
+                add(){
+                    var url = "/index.php?s=desktop/Promo_Collect/PromoTypeAdd";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["Name"] = this.btm_act.name;
+                    data["From"] = this.btm_act.from;
+                    data["To"] = this.btm_act.to;
+                    data["Describe"] = this.btm_act.describe;
+                    data["Memo"] = this.btm_act.memo;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                            promotype.search_all();
+                        }
+                    })
+                },
+                modify(){
+                    var url = "/index.php?s=desktop/Promo_Collect/PromoTypeUpdate";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["PromoID"] = this.btm_act.id;
+                    data["Name"] = this.btm_act.name;
+                    data["From"] = this.btm_act.from;
+                    data["To"] = this.btm_act.to;
+                    data["Describe"] = this.btm_act.describe;
+                    data["Memo"] = this.btm_act.memo;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                            promotype.search_all();
+                        }
+                    })
                 }
             }
         })
         promotype.init()
+
+        var sale_type = new Vue({
+            el:'#SaleType',
+            data:{
+                saletype:'',
+                list:[]
+            },
+            methods:{
+
+
+                search(){
+                    var url = "/index.php?s=desktop/Promo_Collect/PromoTypeSearchAll";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    // ajax(url,data,function (ret) {
+                    //     if(ret.stat){
+
+                    //     }
+                    // })
+                },
+                search_all(){
+                    var url = "/index.php?s=desktop/Promo_Collect/SaleTypeSearchAll";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    // ajax(url,data,function (ret) {
+                    //     if(ret.stat){
+                    //         sale_type.list = ret.data;
+                    //     }
+                    // })
+                }
+            }
+
+        })
     </script>
 </body>
 
