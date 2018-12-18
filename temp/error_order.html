@@ -352,7 +352,8 @@
                     ajax(url,data,function (ret) {
                         if(ret.stat){
                             showErr(ret.data.data);
-                            main.ok_ret = main.search_ret
+                            main.ok_ret = main.search_ret;
+                            main.ok_ret.customerno = $("#i_code").val();
                         }
                     })
                 },
