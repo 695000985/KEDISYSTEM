@@ -29,6 +29,7 @@
         }
         .marginbtm_15{margin-bottom: 15px;}
 		.m-style{width: auto;}
+		
     </style>
 </head>
 
@@ -146,8 +147,13 @@
 				<div class="clear"></div>
 			</div>
 		</div>
-
+		
 		<script>
+			window.onload = function () {
+				setTimeout(function () {
+					$('.pb_span1').addClass('act');
+				},2000)
+			}
 			var stock_out_num = '';
 			var pagecounts,page=1,pagesize=30,pagestat=0,obj; // 分页相关的参数
 			$(function(){

@@ -33,7 +33,7 @@
         <div class="btn-group">
             <span class="btn btn-default size-L radius">帮助</span>
             <span class="btn btn-default size-L radius">查询S</span>
-            <span class="btn btn-default size-L radius">错误单管理</span>
+            <span @click="err_manage($event)" class="btn btn-default size-L radius">错误单管理</span>
             <input type="text" style="width: 100px;" class="size-L input-text radius" placeholder="">
             <span class="btn btn-default size-L radius">SearchNO</span>
         </div>
@@ -226,8 +226,136 @@
         </div>
         
     </div>
-    <script>
 
+
+    <div id="ErrorOrderManage" class="cl" style="display:none;">
+        <div class="cl pd-5">
+            <div class="f-r">
+                <span @click="fresh($event)" class="btn btn-default radius">Fresh</span>
+            </div>
+        </div>
+        <div class="f-l pd-5" style="width:65%;box-sizing: border-box;">
+            <div class="cl">
+                <div class="f-l" style="width:85%;">
+                    <fieldset id="" style="">
+                        <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">Condition</legend>
+                        <div class="cl">
+                            <div class="f-l">
+                                <select class="radius" v-model="option_val" name="" id="" style="height:31px;vertical-align: bottom;">
+                                    <option :value="index" v-for="(item,index) in option" :key="item.id">{{item.name}}</option>
+                                </select>
+                                    <input v-model="s_val" style="width:120px;" type="text" class="input-text radius" placeholder="">
+                                    <span @click="search($event)" class="btn btn-default radius">Search</span>
+                            </div>
+        
+                            <div class="f-r">
+                                Code:<input id="get_name" style="width:100px;" type="text" class="input-text radius" placeholder="">
+                            </div>
+                        </div>
+        
+                    </fieldset>
+                    <fieldset id="" style="padding-bottom: 0;">
+                        <legend style="width: auto;margin-bottom: 5px; border-bottom: none;">Info</legend>
+                        <div>
+                            <div class="cl mb-5 ">
+                                <div class="f-l text-r pt-10" style="width:32%;">
+                                    <div class="mb-5">
+                                        <span>报单编号:</span>
+                                        <input style="width:55%;" v-model="l_m['报单编号']" type="text" class="input-text radius" placeholder="">
+                                    </div>
+                                    <div class="mb-5">
+                                        <span>BV:</span>
+                                        <input style="width:55%;" v-model="l_m['总BV']" type="text" class="input-text radius" placeholder="">
+                                    </div>
+                                    <div class="mb-5">
+                                        <span>SaleID:</span>
+                                        <input style="width:55%;" v-model="l_m['SaleID']" type="text" class="input-text radius" placeholder="">
+                                    </div>
+                                </div>
+        
+                                <div class="f-l text-r pt-10" style="width:38%;">
+                                    <div class="mb-5">
+                                        <span>专卖店SC:</span>
+                                        <input style="width:55%;" v-model="l_m['专卖店']" type="text" class="input-text radius" placeholder="">
+                                    </div>
+                                    
+                                    <div class="mb-5">
+                                        <span>PV:</span>
+                                        <input style="width:55%;" v-model="l_m['总PV']"  type="text" class="input-text radius" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="f-l text-r pt-10" style="width:30%;">
+                                    <div class="mb-5">
+                                        <span>NAIRA:</span>
+                                        <input style="width:55%;" v-model="l_m['总金额']" type="text" class="input-text radius" placeholder="">
+                                    </div>
+                                    
+                                    <div class="mb-5">
+                                        <span style="vertical-align:top;">Name:</span>
+                                        <textarea style="width:55%;height: 50px;" v-model="code_name"  type="text" class="input-text radius" placeholder="">
+                                        </textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+        
+                    </fieldset>
+                </div>
+
+                <div class="f-l" style="width:15%;">
+                    <fieldset id="" style="">
+                            <legend style="width: auto;margin-bottom: 5px; border-bottom: none;font-size: 14px;">Operate</legend>
+                            <div class="mt-50 pt-30 pb-30 mb-50">
+                                <span @click="submit($event)" class="btn btn-default radius">SUBMIT</span>
+                            </div>
+                    </fieldset>
+                </div>
+            </div>
+            
+            <div class="bk-gray pd-10 mt-10" style="height:200px;overflow-y: scroll;">
+                <table class="table table-border table-bg" style="width:120%;">
+                    <thead>
+                        <tr>
+                            <th>报单编号</th>
+                            <th>会员编号</th>
+                            <th>专卖店</th>
+                            <th>总BV</th>
+                            <th>总PV</th>
+                            <th>naira</th>
+                            <th>操作人</th>
+                            <th>时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr @click="tr_click(item, $event)" v-for="item in l_list" :key="item.id">
+                            <th>{{item["报单编号"]}}</th>
+                            <td>{{item["会员编号"]}}</td>
+                            <td>{{item["专卖店"]}}</td>
+                            <td>{{item["总BV"]}}</td>
+                            <td>{{item["总PV"]}}</td>
+                            <td>{{item["总金额"]}}</td>
+                            <td>{{item["操作员"]}}</td>
+                            <td>{{item["购买日期"].substring(0,10)}}</td>
+                        </tr>
+                
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="f-l pd-5" style="width:35%;box-sizing: border-box;">
+            <div class="bk-gray pd-10" style="height:200px;overflow-y: scroll;">
+                
+            </div>
+            <div class="cl pd-10">
+                <div class="col-xs-4 text-c"><span class="btn btn-default radius">Back</span></div>
+                <div class="col-xs-4 text-c"><span class="btn btn-default radius">Submit</span></div>
+                <div class="col-xs-4 text-c"><span class="btn btn-default radius">Export</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
         var main = new Vue({
             el:'#main',
             data:{
@@ -255,6 +383,11 @@
                 init(){
                     this.get_oper();
                     this.get_code();
+                },
+                err_manage(){
+                    open_html('ErrorOrderManage','#ErrorOrderManage','ErrorOrderManage',function () {
+
+                    },1000,550);
                 },
                 by_r_status(){
                     if(!this.r_status){
@@ -424,6 +557,78 @@
         })
 
         main.init();
+
+
+
+        var ErrorOrderManage = new Vue({
+            el:'#ErrorOrderManage',
+            data:{
+                option:[{'name':'报单编号'},{'name':'专卖店'},{'name':'BV'},{'name':'PV'},{'name':'NAIRA'}],
+                s_val:'11502820',
+                option_val:0,
+                code_name:'',
+                l_list:[],
+                l_m:{},
+
+            },
+            methods:{
+                init(){
+                    this.get_name()
+                },
+                fresh(){
+
+                    console.log('Tamia');
+                },
+                get_name(){
+                    $('#get_name').on('blur',function () {
+                        var url = '/index.php?s=desktop/Tb_Customer/get_list';
+                        var user_token = get_cache('usertoken');
+                        var data = {};
+                        data["usertoken"] = user_token;
+                        data["CustomerNO"] = $("#get_name").val();
+                        if($("#get_name").val() !=''){
+                            ajax(url,data,function (ret) {
+                                if(ret.stat){
+                                    ErrorOrderManage.code_name = ret.data.list[0].CustomerName;
+                                    // main.l_btm_customerid = ret.data.list[0].CustomerID;
+                                }
+                            })
+                        }
+                    })
+
+                },
+                search(){
+                    var url = '/index.php?s=desktop/Error_Order_Manage/Search';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["condition"] = this.option_val;
+                    data["textBox1"] = this.s_val;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            ErrorOrderManage.l_list = ret.data;
+                        }else{
+                            showErr(ret.errmsg);
+                        }
+                    })
+                },
+                tr_click(item){
+                    this.l_m = item;
+                    
+                },
+                submit(){
+                    // var url = '/index.php?s=desktop/Error_Order_Manage/Search';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    
+                },
+
+
+            }
+        })
+
+        ErrorOrderManage.init()
     </script>
 </body>
 
