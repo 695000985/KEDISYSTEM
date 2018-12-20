@@ -229,11 +229,11 @@
 
 
     <div id="ErrorOrderManage" class="cl" style="display:none;">
-        <div class="cl pd-5">
+        <!-- <div class="cl pd-5">
             <div class="f-r">
                 <span @click="fresh($event)" class="btn btn-default radius">Fresh</span>
             </div>
-        </div>
+        </div> -->
         <div class="f-l pd-5" style="width:65%;box-sizing: border-box;">
             <div class="cl">
                 <div class="f-l" style="width:85%;">
@@ -344,12 +344,38 @@
         </div>
         <div class="f-l pd-5" style="width:35%;box-sizing: border-box;">
             <div class="bk-gray pd-10" style="height:200px;overflow-y: scroll;">
+                <table class="table table-border table-bg" style="width:190%;">
+                    <thead>
+                        <tr>
+                            <th>报单编号</th>
+                            <th>会员编号</th>
+                            <th>专卖店</th>
+                            <th>总BV</th>
+                            <th>总PV</th>
+                            <th>naira</th>
+                            <th>操作人</th>
+                            <th>时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>{{r_table["报单编号"]}}</th>
+                            <td>{{r_table["会员编号"]}}</td>
+                            <td>{{r_table["专卖店"]}}</td>
+                            <td>{{r_table["总BV"]}}</td>
+                            <td>{{r_table["总PV"]}}</td>
+                            <td>{{r_table["总金额"]}}</td>
+                            <td>{{r_table["操作员"]}}</td>
+                            <td>{{r_table["购买日期"]}}</td>
+                        </tr>
                 
+                    </tbody>
+                </table>
             </div>
             <div class="cl pd-10">
-                <div class="col-xs-4 text-c"><span class="btn btn-default radius">Back</span></div>
-                <div class="col-xs-4 text-c"><span class="btn btn-default radius">Submit</span></div>
-                <div class="col-xs-4 text-c"><span class="btn btn-default radius">Export</span></div>
+                <div class="col-xs-6 text-c"><span @click="r_back($event)" class="btn btn-default radius">Back</span></div>
+                <div class="col-xs-6 text-c"><span @click="r_submit($event)" class="btn btn-default radius">Submit</span></div>
+                <!-- <div class="col-xs-4 text-c"><span class="btn btn-default radius">Export</span></div> -->
             </div>
         </div>
     </div>
@@ -550,7 +576,6 @@
                         showErr('无法提交!');
                     }
                     
-                    console.log('Tamia');
 
                 },
             }
@@ -569,7 +594,9 @@
                 code_name:'',
                 l_list:[],
                 l_m:{},
-
+                CustomerID:'',
+                CustomerNO:'',
+                r_table:{}
             },
             methods:{
                 init(){
@@ -577,7 +604,7 @@
                 },
                 fresh(){
 
-                    console.log('Tamia');
+                    console.log('fresh');
                 },
                 get_name(){
                     $('#get_name').on('blur',function () {
@@ -590,6 +617,8 @@
                             ajax(url,data,function (ret) {
                                 if(ret.stat){
                                     ErrorOrderManage.code_name = ret.data.list[0].CustomerName;
+                                    ErrorOrderManage.CustomerID = ret.data.list[0].CustomerID;
+                                    ErrorOrderManage.CustomerNO = ret.data.list[0].CustomerNO;
                                     // main.l_btm_customerid = ret.data.list[0].CustomerID;
                                 }
                             })
@@ -617,18 +646,63 @@
                     
                 },
                 submit(){
-                    // var url = '/index.php?s=desktop/Error_Order_Manage/Search';
+                    var url = '/index.php?s=desktop/Error_Order_Manage/submit_left';
                     var user_token = get_cache('usertoken');
                     var data = {};
                     data["usertoken"] = user_token;
-                    
-                },
+                    data["SaleID"] = this.l_m['SaleID'];
+                    data["SaleNO"] = this.l_m['报单编号'];
+                    data["CustomerID"] = this.CustomerID;
+                    data["CustomerNO"] = this.CustomerNO;
+                    data["ShopNO"] = this.l_m['专卖店'];
+                    data["BV"] = this.l_m['总BV'];
+                    data["PV"] = this.l_m['总BV'];
+                    data["NAIRA"] = this.l_m['总金额'];
+                    data["Name"] = this.l_m['操作员'];
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                            ErrorOrderManage.r_table = ErrorOrderManage.l_m;
+                            ErrorOrderManage.r_table['会员编号'] = $('#get_name').val();
+                        }else{
+                            showErr(ret.errmsg);
+                        }
+                    })
+                    console.log(data);
 
+                },
+                r_submit(){
+                    var url = '/index.php?s=desktop/sale/Activate_Order';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["CustomerID"] = this.CustomerID;
+                    data["SaleID"] = this.l_m['SaleID'];
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                showErr(ret.data);
+                            }
+                        })
+                },
+                r_back(){
+                    var url = '/index.php?s=desktop/Sale_Entered_By_Front/BringBack_Fromtb_sale';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["SaleNO"] = this.l_m['报单编号'];
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                        }
+                    })
+                }
 
             }
         })
 
         ErrorOrderManage.init()
+
+        
     </script>
 </body>
 
