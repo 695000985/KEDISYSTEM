@@ -39,22 +39,26 @@
 				width:10%;
 			}
 		}
+        .Wdate{border-color: #dddddd;}
 
         .tr_brick{background-color: #FF4500;}
         .tr_green{background-color:	#90EE90;}
         .td_bg{background-color: #FF4500;}
         .tr_gray{background-color: lightgray;}
+        input::-webkit-outer-spin-button,
+		input::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+		}
+        input[type="number"]{
+			-moz-appearance: textfield;
+		}
     </style>
 </head>
 
 <body>
     <div id="pro_main" class="pd-10" v-cloak>
         <div class="top-nav">
-            <input class="btn btn-primary size-M radius" type="button" value="<LastOne">
-            <input class="btn btn-primary size-M radius" type="button" value="NextOne>">
-            <input class="btn btn-primary size-M radius" type="button" value="编辑Edit>">
-            <input class="btn btn-primary size-M radius" type="button" value="新增Add>">
-
+            <input @click="open_query($event)" class="btn btn-primary size-M radius" type="button" value="查询">
         </div>
 
         <div class="bk-gray mt-10 pd-10 radius">
@@ -80,7 +84,7 @@
                         
                         <span>SaleType:</span>
                         <select name="" style="width:55%;border-color: rgb(221,221,221);height: 30px;" class="radius" id="">
-                            <option value=""></option>
+                            <option value="" v-for="item in saletype_list" :key="item.id">{{item.TypeName}}</option>
                         </select>
                         <span @click="SaleType_select($event)" class="btn btn-default radius">T</span>
                     </div>
@@ -89,7 +93,7 @@
                     <div class="mb-5">
                         <span>PromoType:</span>
                         <select name="" style="width:55%;border-color: rgb(221,221,221);height: 30px;" class="radius" id="">
-                            <option value=""></option>
+                            <option value="item.PromoName" v-for="item in promotype_list" :key="item.id">{{item.PromoName}}</option>
                         </select>
                         <!-- <input style="width:55%;" type="text" class="input-text radius" placeholder=""> -->
                         <span @click="promotype_select($event)" class="btn btn-default radius">P</span>
@@ -110,7 +114,7 @@
                         
                         <span>Search:</span>
                         <input style="width:35%;" type="text" class="input-text radius" placeholder="">
-                        <span class="btn btn-default radius">Submit</span>
+                        <span @click="submit($event)" class="btn btn-default radius">Submit</span>
                     </div>
                 </div>
             </div>
@@ -126,17 +130,17 @@
                         <th>说明Memo</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr v-if="promoProduct_list.length" v-for="(item,index) in promoProduct_list" >
+                <tbody ref="sub_data">
+                    <tr v-for="(item,index) in promoProduct_list" :data="item.ProductID">
                         <td>{{item.ProductNO}}</td>
                         <td>{{item.CName}}</td>
                         <td>{{item.MemberPrice}}</td>
-                        <td ref="td_ref_qty" @click="add_td_bg(item.index,$event)" @dblclick="i_qty($event)"><input id="td_ref_qty" style="position:relative;z-index:-1;border:none;width:100%;" type="text"></td>
-                        <td ref="td_ref_memo" @dblclick="i_memo($event)"><input id="td_ref_memo" style="position:relative;z-index:-1;border:none;width:100%;" type="text"></td>
+                        <td ref="td_ref_qty" @click="add_td_bg(item.index,$event)" @dblclick="i_qty($event)"><input class="sub_qty" style="position:relative;z-index:;border:none;width:100%;" type="number"></td>
+                        <td ref="td_ref_memo" @dblclick="i_memo($event)"><input class="sub_memo" style="position:relative;z-index:;border:none;width:100%;" type="text"></td>
                     </tr>
-                    <tr  v-if="!promoProduct_list.length">
+                    <!-- <tr  v-if="!promoProduct_list.length">
                         <td colspan="5">暂无数据</td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
         </div>
@@ -282,12 +286,85 @@
             Dept:<input style="width:70px;" v-model="btm_data.Dept" type="text" class="input-text radius" placeholder="">
         </div>
     </div>
+
+
+
+    <div id="query" class="radius" style="display:none;">
+        <div class="pd-10">
+            <input @click="last($event)" class="btn btn-primary size-M radius" type="button" value="<LastOne">
+            <input @click="next($event)" class="btn btn-primary size-M radius" type="button" value="NextOne>">
+            <input class="btn btn-primary size-M radius" type="button" value="删除Del">
+        </div>
+        <div class="pd-10">
+            <fieldset id="" class="radius" style="">
+                <legend style="width: auto;margin-bottom: 0px;line-height: 16px; border-bottom: none;font-size: 14px;">Search</legend>
+                <div class="">
+                    GroupID：<input v-model="search_sc" class="input-text radius size-M" style="width:20%;" type="text">
+                    起始日期：<input id="s_start" class="Wdate size-M input-text radius" style="width:125px;" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                    结束日期：<input id="s_end" class="Wdate size-M input-text radius" style="width:125px;" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                    <span @click="search($event)" class="btn btn-default radius">Search</span>
+                    <span @click="searchall($event)" class="btn btn-default radius">SearchAll</span>
+                </div>
+            </fieldset>
+        </div>
+        <div class="pd-10 cl">
+            <div class="f-l col-lg-8" style="overflow-x:scroll;">
+                    <!-- <legend style="width: auto;margin-bottom: 5px;line-height: 16px; border-bottom: none;font-size: 14px;">查询结果</legend> -->
+                    <div class="mt-10 bk-gray pd-10 radius" style="height:300px;overflow-y:scroll;">
+                        <table class="table table-border table-bg" style="width:500px;">
+                            <thead>
+                                <tr>
+                                    <th>GroupID</th><th>SC</th><th>Promoname</th><th>Saletype</th><th>Memo</th><th>Collectdate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr @click="tr_click(one.GroupID,one.status, $event)" :class="tr_index==index?'tr_gray':''">
+                                    <td>{{one.GroupID}}</td>
+                                    <td>{{one.collector}}</td>
+                                    <td>{{one.promoname}}</td>
+                                    <td>{{one.saletype}}</td>
+                                    <td>{{one.memo}}</td>
+                                    <td>{{one.collectdate}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+            <div class="f-l col-lg-4" style="overflow-x:scroll;">
+                <div class="mt-10 bk-gray pd-10 radius" style="height:300px;overflow-y:scroll;">
+                        <table class="table table-border table-bg" style="width:200%;">
+                            <thead>
+                                <tr>
+                                    <th>ProductNO</th><th>Name</th><th>Amount</th><th>说明Memo</th><th>Maker</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr :class="tr_index==index?'tr_gray':''" v-for="item in r_list" :key="item.id">
+                                    <td>{{item.ProductNO}}</td>
+                                    <td>{{item.Name}}</td>
+                                    <td>{{item.Amount}}</td>
+                                    <td>{{item["说明Memo"]}}</td>
+                                    <td>{{item.Maker}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         var pro_main = new Vue({
             el:'#pro_main',
             data:{
                 promoProduct_list:[],
-                
+                promotype_list:[],
+                saletype_list:[]
+            },
+            computed: {
+                get_id : function(){
+                    return 'td_ref_qty_';
+                }
             },
             methods:{
                 init(){
@@ -309,6 +386,29 @@
                     //         // $('.pb_span2').addClass('act');
                     //     }
                     // })
+
+                    this.get_product_list()
+                    this.get_prom_type()
+                    this.get_sale_type()
+                },
+                get_product_list(){
+                    var url = '/index.php?s=desktop/Tb_Product/get_list';
+                    var data = {};
+                    data['usertoken'] = get_cache('usertoken'); 
+                    ajax(url, data, function (e) {
+                        query_stat = e.stat;
+                        if (e.stat == 1) {
+                            var a = e.data.list;
+                            for(var i = 0;i < a.length;i++){
+                                // a[i]['qty'] = 0;
+                            }
+                            pro_main.promoProduct_list = a;
+                        } else {
+                            showErr(e.errmsg, e.errmsg_en, e.errcode)
+                            return
+                        }
+                    })
+
                 },
                 promotype_select(){
                     console.log(46566);
@@ -326,18 +426,51 @@
                 },
                 i_qty(e){        //双击输入
                     if(e.isTrusted){
-                        this.$refs.td_ref_qty.getElementsByTagName('input')[0].style.zIndex = '1'; 
+                        // this.$refs.td_ref_qty.getElementsByTagName('input')[0].style.zIndex = '1'; 
                     }
                     $('#td_ref_qty').on('blur',function () {
-                        $(this).css('z-index','-1');
+                        // $(this).css('z-index','-1');
                     })
                 },
                 i_memo(e){        //双击输入
                     if(e.isTrusted){
-                        this.$refs.td_ref_memo.getElementsByTagName('input')[0].style.zIndex = '1'; 
+                        // this.$refs.td_ref_memo.getElementsByTagName('input')[0].style.zIndex = '1'; 
                     }
                     $('#td_ref_memo').on('blur',function () {
-                        $(this).css('z-index','-1');
+                        // $(this).css('z-index','-1');
+                    })
+                },
+                open_query(){
+                    open_html('查询','#query','query',function () {  },1000,600)
+                },
+                submit(){
+                    var tr = this.$refs.sub_data.getElementsByTagName('tr');
+                    for(var i = 0; i< tr.length;i++){
+                        console.log(tr[i].getElementsByTagName('input')[0].value , tr[i].getAttribute('data'));
+                    }
+                    // console.log(this.$refs.sub_data)
+
+                },
+                get_prom_type(){
+                    var url = "/index.php?s=desktop/Promo_Collect/GetPromoTypeName";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            pro_main.promotype_list = ret.data;
+                        }
+                    })
+                },
+                get_sale_type(){
+                    var url = "/index.php?s=desktop/Promo_Collect/GetTypeName";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            pro_main.saletype_list = ret.data;
+                        }
                     })
                 }
             }
@@ -365,10 +498,6 @@
                     $('.Wdate').val(
                         get_local_time()
                     );
-                    var a = '2018-10-25 00:00:00'
-                    var reg = /^[1-9]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/;
-                    var regExp = new RegExp(reg);
-                    console.log(regExp.test(a))
                 },
                 search(){
                     var url = "/index.php?s=desktop/Promo_Collect/PromoTypeSearch";
@@ -565,7 +694,105 @@
             }
 
         })
+    
+    
+        var query = new Vue({
+            el:'#query',
+            data:{
+                index:0,
+                tr_index:-1,
+                search_sc:'',
+                search_res:[],
+                one:{},
+                r_list:[],
+                one_more_c:{
+                    gid:'',
+                    status:''
+                }
+            },
+            methods:{
+                init(){
+                    $('.Wdate').val(
+                        get_local_time()
+                    )
+                },
+                last(){
+                    var url = '/index.php?s=desktop/Promo_Collect/LastOne';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            query.one = ret.data[0];query.one.GroupID = ret.data.GroupID;
+                        }
+                    })
+                },
+                next(){
+                    var url = '/index.php?s=desktop/Promo_Collect/NextOne';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            query.one = ret.data[0];query.one.GroupID = ret.data.GroupID;
+                            // search_res = ret.data;
+                        }
+                    })
+                },
+
+                one_more(){
+                    var url = '/index.php?s=desktop/Promo_Collect/GetDetailInfo';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GroupID"] = this.one_more_c.gid;
+                    data["status"] = this.one_more_c.status;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            query.r_list = ret.data;
+                            // search_res = ret.data;
+                        }
+                    })
+                },
+                searchall(){
+                    var url = '/index.php?s=desktop/Promo_Collect/SearchAll';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GroupID"] = this.search_sc;
+                    data["From"] = $('#s_start').val();
+                    data["To"] = $('#s_end').val();
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+
+                        }else{
+                            showErr(ret.errmsg,ret.errmsg_en)
+                        }
+                    })
+                },
+                search(){
+                    var url = '/index.php?s=desktop/Promo_Collect/GetDetailInfo';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GroupID"] = this.search_sc;
+                    data["From"] = $('#s_start').val();
+                    data["To"] = $('#s_end').val();
+                    console.log(this.search_sc, $('#s_start').val(), $('#s_end').val())
+                },
+                tr_click(gid,status){
+                    console.log(gid,status)
+                    this.one_more_c.gid = gid;
+                    this.one_more_c.status = status;
+                    this.one_more();
+                },
+
+            }
+        })
+    
+        query.init()
     </script>
+
 </body>
 
 </html>
