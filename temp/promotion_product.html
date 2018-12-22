@@ -70,15 +70,15 @@
                     </div>
                     <div>
                         <span>SC/Card:</span>
-                        <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                        <input style="width:55%;" v-model="code_name" type="text" class="input-text radius" placeholder="">
                     </div>
                 </div>
 
                 <div class="f-l text-r pt-10" style="width:18%;">
                     <div class="mb-5">
                         <span>  Name:</span>
-                        <input style="width:55%;" type="text" class="input-text radius" placeholder="">
-                        <span class="btn btn-default radius">G</span>
+                        <input style="width:55%;" v-model="name_code" type="text" class="input-text radius" placeholder="">
+                        <span @click="getNameBycode( $event)" class="btn btn-default radius">G</span>
                     </div>
                     <div>
                         
@@ -293,7 +293,7 @@
         <div class="pd-10">
             <input @click="last($event)" class="btn btn-primary size-M radius" type="button" value="<LastOne">
             <input @click="next($event)" class="btn btn-primary size-M radius" type="button" value="NextOne>">
-            <input class="btn btn-primary size-M radius" type="button" value="删除Del">
+            <input @click="delete_item($event)" class="btn btn-primary size-M radius" type="button" value="删除Del">
         </div>
         <div class="pd-10">
             <fieldset id="" class="radius" style="">
@@ -318,13 +318,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr @click="tr_click(one.GroupID,one.status, $event)" :class="tr_index==index?'tr_gray':''">
-                                    <td>{{one.GroupID}}</td>
-                                    <td>{{one.collector}}</td>
-                                    <td>{{one.promoname}}</td>
-                                    <td>{{one.saletype}}</td>
-                                    <td>{{one.memo}}</td>
-                                    <td>{{one.collectdate}}</td>
+                                <tr @click="tr_click(one.GroupID,one.status,one.saletype, $event)" v-for="(item,index) in one.list" :class="tr_index==index?'tr_gray':''">
+                                    <td>{{item.GroupID}}</td>
+                                    <!-- <td>{{one.list[0]!=undefined?one.list[0].collector:''}}</td>
+                                    <td>{{one.list[0]!=undefined?one.list[0].promoname:''}}</td>
+                                    <td>{{one.list[0]!=undefined?one.list[0].saletype:''}}</td>
+                                    <td>{{one.list[0]!=undefined?one.list[0].memo:''}}</td>
+                                    <td>{{one.list[0]!=undefined?one.list[0].collectdate:''}}</td> -->
                                 </tr>
                             </tbody>
                         </table>
@@ -359,7 +359,9 @@
             data:{
                 promoProduct_list:[],
                 promotype_list:[],
-                saletype_list:[]
+                saletype_list:[],
+                code_name:'',
+                name_code:''
             },
             computed: {
                 get_id : function(){
@@ -446,7 +448,10 @@
                 submit(){
                     var tr = this.$refs.sub_data.getElementsByTagName('tr');
                     for(var i = 0; i< tr.length;i++){
-                        console.log(tr[i].getElementsByTagName('input')[0].value , tr[i].getAttribute('data'));
+                        if(tr[i].getElementsByTagName('input')[0].value != ''){
+                            console.log(tr[i].getElementsByTagName('input')[0].value , tr[i].getAttribute('data'));
+                        }
+                        
                     }
                     // console.log(this.$refs.sub_data)
 
@@ -472,6 +477,21 @@
                             pro_main.saletype_list = ret.data;
                         }
                     })
+                },
+                getNameBycode(){
+                    var url = '/index.php?s=desktop/Tb_Customer/get_list';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["CustomerNO"] = this.code_name;
+                    if($("#get_name").val() !=''){
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                pro_main.name_code = ret.data.list[0].CustomerName;
+                                console.log('傻傻臭臭臭玥');
+                            }
+                        })
+                    }
                 }
             }
         })
@@ -703,11 +723,18 @@
                 tr_index:-1,
                 search_sc:'',
                 search_res:[],
-                one:{},
+                one:{
+                    GroupID:'',
+                    list:[]
+                },
                 r_list:[],
                 one_more_c:{
                     gid:'',
                     status:''
+                },
+                del:{
+                    GroupID:'',
+                    SaleType:''
                 }
             },
             methods:{
@@ -723,7 +750,10 @@
                     data["usertoken"] = user_token;
                     ajax(url,data,function (ret) {
                         if(ret.stat){
-                            query.one = ret.data[0];query.one.GroupID = ret.data.GroupID;
+                            query.one.list = ret.data;
+                            if(ret.data.GroupID!=false){
+                                query.one.GroupID = ret.data.GroupID;
+                            }
                         }
                     })
                 },
@@ -734,12 +764,28 @@
                     data["usertoken"] = user_token;
                     ajax(url,data,function (ret) {
                         if(ret.stat){
-                            query.one = ret.data[0];query.one.GroupID = ret.data.GroupID;
+                            query.one.list = ret.data;
+                            if(ret.data.GroupID!=false){
+                                query.one.GroupID = ret.data.GroupID;
+                            }
                             // search_res = ret.data;
                         }
                     })
                 },
-
+                delete_item(){
+                    var url = '/index.php?s=desktop/Promo_Collect/del_data';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GroupID"] = '';
+                    data["SaleType"] = '';
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                            // search_res = ret.data;
+                        }
+                    })
+                },
                 one_more(){
                     var url = '/index.php?s=desktop/Promo_Collect/GetDetailInfo';
                     var user_token = get_cache('usertoken');
@@ -764,7 +810,7 @@
                     data["To"] = $('#s_end').val();
                     ajax(url,data,function (ret) {
                         if(ret.stat){
-
+                            query.search_res = ret.data;
                         }else{
                             showErr(ret.errmsg,ret.errmsg_en)
                         }
@@ -780,10 +826,13 @@
                     data["To"] = $('#s_end').val();
                     console.log(this.search_sc, $('#s_start').val(), $('#s_end').val())
                 },
-                tr_click(gid,status){
+                tr_click(gid,status,saletype){
                     console.log(gid,status)
                     this.one_more_c.gid = gid;
+                    
                     this.one_more_c.status = status;
+                    this.del.GroupID = gid;
+                    this.del.SaleType = saletype;
                     this.one_more();
                 },
 

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>科迪会员录入系统</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/iconfont.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+    <script src="../script/jquery.pagination.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        .progress{width:100%;height: 30px;line-height: 30px;}
+        .progress-bar{width:100%;height: inherit;background-color:#efefef}
+
+		.pb_span{width:;height: inherit;line-height: 30px;font-size: 16px;}
+        .pb_span_width{width: 10%;}
+		.pb_span2{background-color: #d9534f;}
+		.pb_span.act{width: 10%;color: #ffffff;font-weight:bold;animation: pbspan 1.5s ease 1;}
+		@keyframes pbspan{
+			0%{
+				width:0%
+			}
+			100%{
+				width:9%;
+			}
+		}
+    </style>
+</head>
+
+<body>
+    <div id="pro_main" class="pd-10" v-cloak>
+        <div class="top-nav">
+            <input @click="promo_update_s($event)" class="btn btn-primary size-XL radius" type="button" value="更新字段">
+            <input @click="promo_update($event)" class="btn size-XL radius" :class="promo_update_enable?'btn-primary':''" type="button" value="插入更新">
+        </div>
+
+        <div class="pd-10" v-show="promo_update_enable">
+            <h4>更新进度：</h4>
+            <div class="progress radius">
+                <div class="progress-bar">
+                    <!-- <span class="pb_span pb_span1 sr-only" :class="progress.one?'pb_span_width act':''"></span> -->
+                    <span class="pb_span text-c pb_span2 sr-only" style></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    
+    <script>
+        var pro_main = new Vue({
+            el:'#pro_main',
+            data:{
+                promo_update_enable:false,
+                progress:{
+                    'one':true,
+                }
+            },
+            methods:{
+                promo_update_s(){
+                    var url = '/index.php?s=desktop/Promotion/AddColumn';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            pro_main.promo_update_enable = true;
+                            console.log(ret);
+                            // $('.pb_span2').addClass('act');
+                        }
+                    })
+                },
+                promo_update(){
+                    // $('.pb_span2').addClass('act');
+                    // var url = '/index.php?s=desktop/Promotion/InsertDate1';
+                    // var user_token = get_cache('usertoken');
+                    // var data = {};
+                    // data["usertoken"] = user_token;
+                    // ajax(url,data,function (ret) {
+                    //     if(ret.stat){
+                    //         $('.pb_span2').addClass('act');
+                    //     }
+                    // })
+                    if(this.promo_update_enable){
+                        this.update_exe('1');
+                    }else{
+                        showErr('请先更新字段...');
+                    }
+                    
+                },
+                update_exe(para){
+                    var url = '/index.php?s=desktop/Promotion/InsertDate' + para;
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            var a = 9*para + '%';
+                            $('.pb_span2').text(Math.ceil(9.09*para) + '%');
+                            $('.pb_span2').css({'width':9.09*para + '%'});
+                            $('.pb_span2').addClass('act');
+                            // $('.pb_span2').addClass('act');
+
+                            setTimeout(() => {
+                                para++;
+                                if(para<12){
+                                    pro_main.update_exe(para);
+                                }
+                                
+                            }, 2000);
+                        }
+                    })
+                    console.log(para);
+                    // if(1){
+                    //     var a = 9*para + '%';
+                    //     $('.pb_span2').text(Math.ceil(9.09*para) + '%');
+                    //     $('.pb_span2').css({'width':9.09*para + '%'});
+                    //     $('.pb_span2').addClass('act');
+                    // }
+                    // setTimeout(() => {
+                    //     para++;
+                    //     if(para<12){
+                    //         this.update_exe(para);
+                    //     }
+                        
+                    // }, 2000);
+                    
+                    // ajax(url,data,function (ret) {
+                    //     if(ret.stat){
+                    //         console.log(para,123);
+                    //         // $('.pb_span2').addClass('act');
+                    //     }
+                    // })
+                }
+            }
+        })
+        
+
+    </script>
+</body>
+
+</html>
