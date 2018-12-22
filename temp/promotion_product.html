@@ -84,7 +84,7 @@
                         
                         <span>SaleType:</span>
                         <select name="" style="width:55%;border-color: rgb(221,221,221);height: 30px;" class="radius" id="">
-                            <option value="" v-for="item in saletype_list" :key="item.id">{{item.TypeName}}</option>
+                            <option value="" v-for="item in saletype_list" :key="item.id">{{item.TypeName+'（'+item.TypeName_E+'）'}}</option>
                         </select>
                         <span @click="SaleType_select($event)" class="btn btn-default radius">T</span>
                     </div>
@@ -110,10 +110,10 @@
                         <span>  Memo:</span>
                         <input style="width:61%;" type="text" class="input-text radius" placeholder="">
                     </div>
-                    <div>
+                    <div class="text-c">
                         
-                        <span>Search:</span>
-                        <input style="width:35%;" type="text" class="input-text radius" placeholder="">
+                        <!-- <span>Search:</span>
+                        <input style="width:35%;" type="text" class="input-text radius" placeholder=""> -->
                         <span @click="submit($event)" class="btn btn-default radius">Submit</span>
                     </div>
                 </div>
@@ -318,13 +318,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr @click="tr_click(one.GroupID,one.status,one.saletype, $event)" v-for="(item,index) in one.list" :class="tr_index==index?'tr_gray':''">
-                                    <td>{{item.GroupID}}</td>
-                                    <!-- <td>{{one.list[0]!=undefined?one.list[0].collector:''}}</td>
-                                    <td>{{one.list[0]!=undefined?one.list[0].promoname:''}}</td>
-                                    <td>{{one.list[0]!=undefined?one.list[0].saletype:''}}</td>
-                                    <td>{{one.list[0]!=undefined?one.list[0].memo:''}}</td>
-                                    <td>{{one.list[0]!=undefined?one.list[0].collectdate:''}}</td> -->
+                                <tr @click="tr_click(item.groupid,item.status,item.saletype, $event)" v-for="(item,index) in one.list" :class="tr_index==index?'tr_gray':''">
+                                    <td>{{item.groupid}}</td>
+                                    <td>{{item.collector}}</td>
+                                    <td>{{item.promoname}}</td>    
+                                    <td>{{item.saletype}}</td>
+                                    <td>{{item.memo}}</td>
+                                    <td>{{item.collectdate.substring(0,10)}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -353,6 +353,40 @@
         </div>
     </div>
 
+
+    <div id="promocollect" style="display:none;">
+        <div class="pd-10">
+            <input @click="print($event)" class="btn btn-primary size-M radius" type="button" value="Print打印">
+        </div>
+        <div class="cl pd-10">
+            <div class="f-l">
+                <div class="mb-5">
+                    <span>   Date:</span>
+                    <input style="height: 30px;border-color: rgb(221,221,221);" id=""  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from">
+                    <span>   Name:</span>
+                    <input id="" type="text" style="width:100px;" class="input-text radius">
+                    <span>   Saletype:</span>
+                    <input id="" type="text" style="width:100px;" class="input-text radius">
+                    <span>   SC/Card:</span>
+                    <input id="" type="text" style="width:150px;" class="input-text radius">
+                </div>
+                <div>
+                    <input @click="GoToWarehouse($event)" class="btn size-M radius" type="button" value="GoToWarehouse">
+                    <input @click="BackFormStockOut($event)" class="btn size-M radius" type="button" value="BackFormStockOut">
+                </div>
+            </div>
+            <div class="f-r">
+                <div class="text-r mb-5">
+                    <span>   Promotype:</span>
+                    <input id="" type="text" style="width:100px;" class="input-text radius">
+                </div>
+                <div>
+                    <span>   GroupID:</span>
+                    <input id="" type="text" style="width:150px;" class="input-text radius">
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         var pro_main = new Vue({
             el:'#pro_main',
@@ -392,6 +426,9 @@
                     this.get_product_list()
                     this.get_prom_type()
                     this.get_sale_type()
+                    // open_html('PromoCollectPrint','#promocollect','promocollect',function () {
+
+                    // },1000,600)
                 },
                 get_product_list(){
                     var url = '/index.php?s=desktop/Tb_Product/get_list';
@@ -744,6 +781,7 @@
                     )
                 },
                 last(){
+                    query.r_list = [];
                     var url = '/index.php?s=desktop/Promo_Collect/LastOne';
                     var user_token = get_cache('usertoken');
                     var data = {};
@@ -758,6 +796,7 @@
                     })
                 },
                 next(){
+                    query.r_list = [];
                     var url = '/index.php?s=desktop/Promo_Collect/NextOne';
                     var user_token = get_cache('usertoken');
                     var data = {};
@@ -777,8 +816,8 @@
                     var user_token = get_cache('usertoken');
                     var data = {};
                     data["usertoken"] = user_token;
-                    data["GroupID"] = '';
-                    data["SaleType"] = '';
+                    data["GroupID"] = this.del.GroupID;
+                    data["SaleType"] = this.del.SaleType;
                     ajax(url,data,function (ret) {
                         if(ret.stat){
                             showErr(ret.data);
@@ -792,7 +831,7 @@
                     var data = {};
                     data["usertoken"] = user_token;
                     data["GroupID"] = this.one_more_c.gid;
-                    data["status"] = this.one_more_c.status;
+                    data["status"] = parseInt(this.one_more_c.status);
                     ajax(url,data,function (ret) {
                         if(ret.stat){
                             query.r_list = ret.data;
@@ -801,6 +840,7 @@
                     })
                 },
                 searchall(){
+                    query.r_list = [];
                     var url = '/index.php?s=desktop/Promo_Collect/SearchAll';
                     var user_token = get_cache('usertoken');
                     var data = {};
@@ -810,13 +850,14 @@
                     data["To"] = $('#s_end').val();
                     ajax(url,data,function (ret) {
                         if(ret.stat){
-                            query.search_res = ret.data;
+                            query.one.list = ret.data;
                         }else{
                             showErr(ret.errmsg,ret.errmsg_en)
                         }
                     })
                 },
                 search(){
+                    query.r_list = [];
                     var url = '/index.php?s=desktop/Promo_Collect/GetDetailInfo';
                     var user_token = get_cache('usertoken');
                     var data = {};
@@ -827,6 +868,7 @@
                     console.log(this.search_sc, $('#s_start').val(), $('#s_end').val())
                 },
                 tr_click(gid,status,saletype){
+                    query.r_list = [];
                     console.log(gid,status)
                     this.one_more_c.gid = gid;
                     
@@ -838,10 +880,32 @@
 
             }
         })
-    
+
         query.init()
     </script>
 
+    <script>
+    
+        var promo_collect = new Vue({
+            el:'#promocollect',
+            data:{
+
+            },
+            methods:{
+                init(){
+
+                },
+                GoToWarehouse(){
+
+
+                },
+
+                BackFormStockOut(){
+                    
+                },
+            }
+        })
+    </script>
 </body>
 
 </html>
