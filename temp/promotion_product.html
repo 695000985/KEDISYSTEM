@@ -66,7 +66,7 @@
                 <div class="f-l text-r pt-10" style="width:18%;">
                     <div class="mb-5">
                         <span>   Date:</span>
-                        <input style="width:55%;height: 30px;border-color: rgb(221,221,221);" id=""  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from">
+                        <input style="width:55%;height: 30px;border-color: rgb(221,221,221);" id="pq_date"  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from">
                     </div>
                     <div>
                         <span>SC/Card:</span>
@@ -83,8 +83,8 @@
                     <div>
                         
                         <span>SaleType:</span>
-                        <select name="" style="width:55%;border-color: rgb(221,221,221);height: 30px;" class="radius" id="">
-                            <option value="" v-for="item in saletype_list" :key="item.id">{{item.TypeName+'（'+item.TypeName_E+'）'}}</option>
+                        <select v-model="SaleType" name="" style="width:55%;border-color: rgb(221,221,221);height: 30px;" class="radius" id="">
+                            <option :value="item.TypeName" v-for="item in saletype_list" :key="item.id">{{item.TypeName+'（'+item.TypeName_E+'）'}}</option>
                         </select>
                         <span @click="SaleType_select($event)" class="btn btn-default radius">T</span>
                     </div>
@@ -92,8 +92,8 @@
                 <div class="f-l text-r pt-10" style="width:18%;">
                     <div class="mb-5">
                         <span>PromoType:</span>
-                        <select name="" style="width:55%;border-color: rgb(221,221,221);height: 30px;" class="radius" id="">
-                            <option value="item.PromoName" v-for="item in promotype_list" :key="item.id">{{item.PromoName}}</option>
+                        <select v-model="PromoType" name="" style="width:55%;border-color: rgb(221,221,221);height: 30px;" class="radius" id="">
+                            <option :value="item.PromoName" v-for="item in promotype_list" :key="item.id">{{item.PromoName}}</option>
                         </select>
                         <!-- <input style="width:55%;" type="text" class="input-text radius" placeholder=""> -->
                         <span @click="promotype_select($event)" class="btn btn-default radius">P</span>
@@ -101,14 +101,14 @@
                     <div>
                         
                         <span>GroupID:</span>
-                        <input style="width:55%;" type="text" class="input-text radius" placeholder="">
+                        <input v-model="GroupID" style="width:55%;" type="text" class="input-text radius" placeholder="">
                         <span style="opacity:0;" class="btn btn-default radius">E</span>
                     </div>
                 </div>
                 <div class="f-l text-r pt-10" style="width:18%;">
                     <div class="mb-5">
                         <span>  Memo:</span>
-                        <input style="width:61%;" type="text" class="input-text radius" placeholder="">
+                        <input v-model="Memo" style="width:61%;" type="text" class="input-text radius" placeholder="">
                     </div>
                     <div class="text-c">
                         
@@ -340,11 +340,11 @@
                             </thead>
                             <tbody>
                                 <tr :class="tr_index==index?'tr_gray':''" v-for="item in r_list" :key="item.id">
-                                    <td>{{item.ProductNO}}</td>
-                                    <td>{{item.Name}}</td>
-                                    <td>{{item.Amount}}</td>
-                                    <td>{{item["说明Memo"]}}</td>
-                                    <td>{{item.Maker}}</td>
+                                    <td>{{item.ProductNO!=undefined?item.ProductNO:''}}</td>
+                                    <td>{{item.Name!=undefined?item.Name:''}}</td>
+                                    <td>{{item.Amount!=undefined?item.Amount:''}}</td>
+                                    <td>{{item["说明Memo"]!=undefined?item["说明Memo"]:''}}</td>
+                                    <td>{{item.Maker!=undefined?item.Maker:''}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -362,13 +362,13 @@
             <div class="f-l">
                 <div class="mb-5">
                     <span>   Date:</span>
-                    <input style="height: 30px;border-color: rgb(221,221,221);" id=""  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from">
+                    <input v-model="Date" style="height: 30px;border-color: rgb(221,221,221);" id=""  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from">
                     <span>   Name:</span>
-                    <input id="" type="text" style="width:100px;" class="input-text radius">
+                    <input v-model="name" id="" type="text" style="width:100px;" class="input-text radius">
                     <span>   Saletype:</span>
-                    <input id="" type="text" style="width:100px;" class="input-text radius">
+                    <input v-model="SaleType" id="" type="text" style="width:100px;" class="input-text radius">
                     <span>   SC/Card:</span>
-                    <input id="" type="text" style="width:150px;" class="input-text radius">
+                    <input v-model="SC" id="" type="text" style="width:150px;" class="input-text radius">
                 </div>
                 <div>
                     <input @click="GoToWarehouse($event)" class="btn size-M radius" type="button" value="GoToWarehouse">
@@ -378,13 +378,17 @@
             <div class="f-r">
                 <div class="text-r mb-5">
                     <span>   Promotype:</span>
-                    <input id="" type="text" style="width:100px;" class="input-text radius">
+                    <input v-model="PromoType" id="" type="text" style="width:100px;" class="input-text radius">
                 </div>
                 <div>
                     <span>   GroupID:</span>
-                    <input id="" type="text" style="width:150px;" class="input-text radius">
+                    <input v-model="GroupID" id="" type="text" style="width:150px;" class="input-text radius">
                 </div>
             </div>
+        </div>
+
+        <div class="mt-5">
+            
         </div>
     </div>
     <script>
@@ -395,7 +399,12 @@
                 promotype_list:[],
                 saletype_list:[],
                 code_name:'',
-                name_code:''
+                name_code:'',
+                SaleType:'',
+                PromoType:'',
+                GroupID:'',
+                Memo:'',    
+
             },
             computed: {
                 get_id : function(){
@@ -484,14 +493,45 @@
                 },
                 submit(){
                     var tr = this.$refs.sub_data.getElementsByTagName('tr');
+                    var cell = [];
+
                     for(var i = 0; i< tr.length;i++){
                         if(tr[i].getElementsByTagName('input')[0].value != ''){
-                            console.log(tr[i].getElementsByTagName('input')[0].value , tr[i].getAttribute('data'));
+                            // console.log( , , );
+                            cell.push({'productid':tr[i].getAttribute('data'),'amount':tr[i].getElementsByTagName('input')[0].value,'memo':tr[i].getElementsByClassName('sub_memo')[0].value})
                         }
                         
                     }
+                    var url = "/index.php?s=desktop/Promo_Collect/button2_Click";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["SC/Card"] = this.code_name;
+                    data["Date"] = $('#pq_date').val();
+                    data["Memo"] = this.Memo;
+                    data["PromoType"] = this.PromoType;
+                    data["SaleType"] = this.SaleType;
+                    data["GroupID"] = this.GroupID;
+                    data["cell"] = JSON.stringify(cell);
+                    // data[""] = ;
+                    
                     // console.log(this.$refs.sub_data)
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data.msg);
+                            var ret = ret.data.input;
+                            promo_collect.Date = ret.Date;
+                            promo_collect.GroupID = ret.GroupID;
+                            promo_collect.SC = ret['SC/Card'];
+                            promo_collect.PromoType = ret.PromoType;
+                            promo_collect.name = pro_main.name_code;
+                            promo_collect.SaleType = ret.SaleType;
+                            open_html('PromoCollectPrint','#promocollect','promocollect',function () {
 
+                            },1000,600)
+                            // pro_main.promotype_list = ret.data;
+                        }else{showErr(ret.errmsg,ret.errmsg_en)}
+                    })
                 },
                 get_prom_type(){
                     var url = "/index.php?s=desktop/Promo_Collect/GetPromoTypeName";
@@ -525,7 +565,8 @@
                         ajax(url,data,function (ret) {
                             if(ret.stat){
                                 pro_main.name_code = ret.data.list[0].CustomerName;
-                                console.log('傻傻臭臭臭玥');
+                                promo_collect.CustomerID = ret.data.list[0].CustomerID;
+                                console.log('');
                             }
                         })
                     }
@@ -858,13 +899,21 @@
                 },
                 search(){
                     query.r_list = [];
-                    var url = '/index.php?s=desktop/Promo_Collect/GetDetailInfo';
+                    var url = '/index.php?s=desktop/Promo_Collect/Search';
                     var user_token = get_cache('usertoken');
                     var data = {};
                     data["usertoken"] = user_token;
                     data["GroupID"] = this.search_sc;
                     data["From"] = $('#s_start').val();
                     data["To"] = $('#s_end').val();
+
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            query.one.list = ret.data;
+                        }else{
+                            showErr(ret.errmsg,ret.errmsg_en)
+                        }
+                    })
                     console.log(this.search_sc, $('#s_start').val(), $('#s_end').val())
                 },
                 tr_click(gid,status,saletype){
@@ -889,19 +938,54 @@
         var promo_collect = new Vue({
             el:'#promocollect',
             data:{
-
+                GroupID:'',
+                SC:'',
+                Date:'',
+                name:'',
+                PromoType:'',
+                SaleType:'',
+                CustomerID:''
             },
             methods:{
                 init(){
 
                 },
                 GoToWarehouse(){
+                    var url = '/index.php?s=desktop/Promo_Collect/button1_Click';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GroupID"] = this.GroupID;
+                    data["SaleType"] = this.SaleType;
+                    data["Date"] = this.Date;
+                    data["CustomerID"] = this.CustomerID;
+                    data["CustomerName"] = this.name;
+                    data["SC/Card"] = this.SC;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                        }else{
+                            showErr(ret.errmsg,ret.errmsg_en)
+                        }
+                    })
 
 
                 },
 
                 BackFormStockOut(){
-                    
+                    var url = '/index.php?s=desktop/Promo_Collect/RevertWareHouse';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GroupID"] = this.GroupID;
+                    data["SaleType"] = this.SaleType;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                        }else{
+                            showErr(ret.errmsg,ret.errmsg_en)
+                        }
+                    })
                 },
             }
         })
