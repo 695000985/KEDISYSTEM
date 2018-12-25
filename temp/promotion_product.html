@@ -131,7 +131,7 @@
                     </tr>
                 </thead>
                 <tbody ref="sub_data">
-                    <tr v-for="(item,index) in promoProduct_list" :data="item.ProductID">
+                    <tr v-for="(item,index) in promoProduct_list" :no="item.ProductNO" :name="item.CName" :data="item.ProductID">
                         <td>{{item.ProductNO}}</td>
                         <td>{{item.CName}}</td>
                         <td>{{item.MemberPrice}}</td>
@@ -290,10 +290,15 @@
 
 
     <div id="query" class="radius" style="display:none;">
-        <div class="pd-10">
-            <input @click="last($event)" class="btn btn-primary size-M radius" type="button" value="<LastOne">
-            <input @click="next($event)" class="btn btn-primary size-M radius" type="button" value="NextOne>">
-            <input @click="delete_item($event)" class="btn btn-primary size-M radius" type="button" value="删除Del">
+        <div class="pd-10 cl">
+            <div class="f-l">
+                <input @click="last($event)" class="btn btn-primary size-M radius" type="button" value="<LastOne">
+                <input @click="next($event)" class="btn btn-primary size-M radius" type="button" value="NextOne>">
+            </div>
+            <div class="f-r">
+                <input @click="delete_item($event)" class="btn btn-primary size-M radius" type="button" value="删除Del">
+                <input @click="delete_manage($event)" class="btn btn-primary size-M radius" type="button" value="删除管理">
+            </div>
         </div>
         <div class="pd-10">
             <fieldset id="" class="radius" style="">
@@ -382,16 +387,150 @@
                 </div>
                 <div>
                     <span>   GroupID:</span>
-                    <input v-model="GroupID" id="" type="text" style="width:150px;" class="input-text radius">
+                    <input v-model="GroupID" disabled id="" type="text" style="width:150px;" class="input-text radius">
                 </div>
             </div>
         </div>
 
-        <div class="mt-5">
-            
+        <div class="mt-5 pd-10" style="height:300px;overflow-y:scroll;">
+            <table class="table table-border table-bg">
+                <thead>
+                    <tr>
+                        <th>ProductNO</th><th>Name</th><th>Amount</th><th>说明Memo</th><th>Maker</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in list" :key="item.id">
+                        <td>{{item["prono"]}}</td>
+                        <td>{{item["name"]}}</td>
+                        <td>{{item["amount"]}}</td>
+                        <td>{{item["memo"]}}</td>
+                        <td>{{realname}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div id="delete_manage" style="display:none;">
+        <div class="pd-10">
+            <fieldset id="" class="radius" style="">
+                <legend style="width: auto;margin-bottom: 0px;line-height: 16px; border-bottom: none;font-size: 14px;">Search</legend>
+                <div class="">
+                    GroupID：<input v-model="search_sc" class="input-text radius size-M" style="width:20%;" type="text">
+                    起始日期：<input id="del_start" class="Wdate size-M input-text radius" style="width:125px;" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                    结束日期：<input id="del_end" class="Wdate size-M input-text radius" style="width:125px;" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})">
+                    <span @click="search($event)" class="btn btn-default radius">Search</span>
+                    <span @click="searchall($event)" class="btn btn-default radius">SearchAll</span>
+                </div>
+            </fieldset>
+        </div>
+        <div class="pd-10 cl">
+            <div class="" style="overflow-x:scroll;">
+                <!-- <legend style="width: auto;margin-bottom: 5px;line-height: 16px; border-bottom: none;font-size: 14px;">查询结果</legend> -->
+                <div class="mt-10 bk-gray pd-10 radius" style="height:400px;overflow-y:scroll;">
+                    <table class="table table-border table-bg">
+                        <thead>
+                            <tr>
+                                <th>GroupID</th><th>SC</th><th>Promoname</th><th>Saletype</th><th>Memo</th><th>Collectdate</th><th>Operate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr @click="tr_click(index,$event)" v-for="(item,index) in del_list" :class="tr_index==index?'tr_gray':''">
+                                <td>{{item.groupid}}</td>
+                                <td>{{item.collector}}</td>
+                                <td>{{item.promoname}}</td>    
+                                <td>{{item.saletype}}</td>
+                                <td>{{item.memo}}</td>
+                                <td>{{item.collectdate.substring(0,10)}}</td>
+                                <td v-show="item.status == 0"><span @click="del_deep(item.groupid,$event)" class="btn btn-warning mr-10 radius">彻底删除</span><span @click="del_back(item.groupid,$event)" class="btn btn-secondary  radius">撤销删除</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
     <script>
+        var del_manage = new Vue({
+            el:'#delete_manage',
+            data:{
+                index: '',
+                tr_index:-1,
+                search_sc:'',
+                del_list:[],
+
+            },
+            methods:{
+                search(){
+                    var url = '/index.php?s=desktop/Promo_Collect/del_search';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GroupID"] = this.search_sc;
+                    data["From"] = $('#del_start').val();
+                    data["To"] = $('#del_end').val();
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            del_manage.del_list = ret.data;
+                        }else{
+                            showErr(ret.errmsg,ret.errmsg_en)
+                        }
+                    })
+                },
+                searchall(){
+                    query.r_list = [];
+                    var url = '/index.php?s=desktop/Promo_Collect/del_search_all';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GroupID"] = this.search_sc;
+                    data["From"] = $('#del_start').val();
+                    data["To"] = $('#del_end').val();
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            del_manage.del_list = ret.data;
+                        }else{
+                            showErr(ret.errmsg,ret.errmsg_en)
+                        }
+                    })
+                },
+                tr_click(index){
+                    this.tr_index = index;
+                    console.log(index);
+                },
+                del_deep(gid){
+                    var url = '/index.php?s=desktop/Promo_Collect/del_perpetual';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GroupID"] = gid;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                        }else{
+                            showErr(ret.errmsg,ret.errmsg_en)
+                        }
+                    })
+                },
+                del_back(gid){
+                    var url = '/index.php?s=desktop/Promo_Collect/repal_del';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GroupID"] = gid;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                        }else{
+                            showErr(ret.errmsg,ret.errmsg_en)
+                        }
+                    })
+                }
+            }
+        })
+
         var pro_main = new Vue({
             el:'#pro_main',
             data:{
@@ -498,7 +637,7 @@
                     for(var i = 0; i< tr.length;i++){
                         if(tr[i].getElementsByTagName('input')[0].value != ''){
                             // console.log( , , );
-                            cell.push({'productid':tr[i].getAttribute('data'),'amount':tr[i].getElementsByTagName('input')[0].value,'memo':tr[i].getElementsByClassName('sub_memo')[0].value})
+                            cell.push({'prono':tr[i].getAttribute('no'),'name':tr[i].getAttribute('name'),'productid':tr[i].getAttribute('data'),'amount':tr[i].getElementsByTagName('input')[0].value,'memo':tr[i].getElementsByClassName('sub_memo')[0].value})
                         }
                         
                     }
@@ -526,6 +665,7 @@
                             promo_collect.PromoType = ret.PromoType;
                             promo_collect.name = pro_main.name_code;
                             promo_collect.SaleType = ret.SaleType;
+                            promo_collect.list = JSON.parse(ret.cell);
                             open_html('PromoCollectPrint','#promocollect','promocollect',function () {
 
                             },1000,600)
@@ -866,6 +1006,12 @@
                         }
                     })
                 },
+                delete_manage(){
+                    // window.location.href = 'http://www.baidu.com';
+                    open_html('删除管理','#delete_manage','delete_manage',function () {
+                        
+                    },1000,600)
+                },
                 one_more(){
                     var url = '/index.php?s=desktop/Promo_Collect/GetDetailInfo';
                     var user_token = get_cache('usertoken');
@@ -944,11 +1090,14 @@
                 name:'',
                 PromoType:'',
                 SaleType:'',
-                CustomerID:''
+                CustomerID:'',
+                list:[],
+                realname:''
             },
             methods:{
                 init(){
-
+                    this.realname = JSON.parse(get_cache('user_info'))["realname"];
+                    console.log(this.realname,JSON.parse(get_cache('user_info')))
                 },
                 GoToWarehouse(){
                     var url = '/index.php?s=desktop/Promo_Collect/button1_Click';
@@ -989,6 +1138,7 @@
                 },
             }
         })
+        promo_collect.init()
     </script>
 </body>
 

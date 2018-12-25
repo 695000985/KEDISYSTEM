@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>科迪会员录入系统</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/iconfont.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+    <script src="../script/jquery.pagination.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main">
+
+        <div class="bk-gray ml-10 mr-10 mt-10 pd-10 radius">
+            <div class="mb-5">
+                <div class="pt-10">
+                    <div class="mb-5">
+                        <span>Member:</span>
+                        <input style="width:10%;" v-model="search_no" type="text" class="input-text radius" placeholder="">
+                        <span @click="search($event)" class="btn btn-primary radius">搜索</span>
+                        <span class="btn btn-default radius">打印</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-10 ml-10 mr-10 bk-gray pd-10 radius" style="height:400px;overflow-y:scroll;">
+            <table class="table table-border table-bg">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>NAME</th>
+                        <th>Grade</th>
+                        <th>CarGrade</th>
+                        <th>CarYear</th>
+                        <th>RegDate</th>
+                        <th>ShopNo</th>
+                    </tr>
+                </thead>
+                <tbody ref="sub_data">
+                    <tr @click="tr_click(item.CustomerID,item.Code,item.NAME,item.RegDate,item.ShopNo,$event)" v-for="(item,index) in search_list" :data="item.ProductID">
+                        <td>{{item.Code}}</td>
+                        <td>{{item.NAME}}</td>
+                        <td>{{item.Grade}}</td>
+                        <td>{{item.CarGrade}}</td>
+                        <td>{{item.CarYear}}</td>
+                        <td>{{item.RegDate}}</td>
+                        <td>{{item.ShopNo}}</td>
+                    </tr>
+                    <!-- <tr  v-if="!promoProduct_list.length">
+                        <td colspan="5">暂无数据</td>
+                    </tr> -->
+                </tbody>
+            </table>
+        </div>
+        <div class="bk-gray ml-10 mr-10 mt-10 pd-10 radius">
+            <div class="cl mb-5 ">
+                <div class="f-l text-r pt-10" style="width:15%;">
+                    <div class="mb-5">
+                        <span>   编号:</span>
+                        <input style="width:55%;" disabled v-model="no" type="text" class="input-text radius" placeholder="">
+                    </div>
+                    <div>
+                        <span>发车级别:</span>
+                        <input style="width:55%;" v-model="car_level" type="text" class="input-text radius" placeholder="">
+                    </div>
+                </div>
+
+                <div class="f-l text-r pt-10" style="width:15%;">
+                    <div class="mb-5">
+                        <span>  姓名:</span>
+                        <input style="width:55%;" disabled v-model="name" type="text" class="input-text radius" placeholder="">
+                    </div>
+                    <div>    
+                        <span>发车年份:</span>
+                        <input style="width:55%;" v-model="car_year" type="text" class="input-text radius" placeholder="">
+                    </div>
+                </div>
+                <div class="f-l text-r pt-10" style="width:15%;">
+                    <div class="mb-5">
+                        <span>注册日期:</span>
+                        <input v-model="reg_date" disabled style="width:55%;" type="text" class="input-text radius" placeholder="">
+                        <!-- <input style="width:55%;height: 30px;border-color: rgb(221,221,221);" id="reg_date"  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from"> -->
+                    </div>
+                    <div>
+                        <span>领取人:</span>
+                        <input v-model="recipient" style="width:55%;" type="text" class="input-text radius" placeholder="">
+                    </div>
+                </div>
+                <div class="f-l text-r pt-10" style="width:10%;">
+                    <div class="text-c">
+                        <span @click="mark($event)" class="btn btn-default radius">标记</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var main = new Vue({
+            el:'#main',
+            data:{
+                search_no:'',
+                no:'',
+                car_level:'',
+                name:'',
+                car_year:'',
+                reg_date:'',
+                recipient:'',
+                ShopNo:'',
+                cid:'',
+
+                search_list:[]
+            },
+            methods:{
+                
+                search(){
+                    var url = "/index.php?s=desktop/Promo_Certificate/car_search";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["CustomerNO"] = this.search_no;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            main.search_list = ret.data;
+                        }
+                    })
+                },
+                mark(){
+                    var url = "/index.php?s=desktop/Promo_Certificate/button2_Click";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["CustomerID"] = this.cid;
+                    data["CustomerNO"] = this.no;
+                    data["ShopNo"] = this.ShopNo;
+                    data["NAME"]= this.name;
+                    data["textBox4"] = this.car_level;
+                    data["memo"] = this.car_year;
+                    data["textBox7"] = this.recipient;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                        }else{
+                            showErr(ret.errmsg,ret.errmsg_en);
+                        }
+                    })
+                },
+                tr_click(cid,no,name,date,shopno){
+                    this.cid = cid;
+                    this.no = no;
+                    this.name = name;
+                    this.reg_date = date;
+                    this.ShopNo = shopno;
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
