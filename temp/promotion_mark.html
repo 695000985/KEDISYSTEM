@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>科迪会员录入系统</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/iconfont.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+    <script src="../script/jquery.pagination.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        .tr_gray{background-color: lightgray;}
+
+        table tr td{white-space:nowrap; text-overflow:ellipsis; -o-text-overflow:ellipsis; overflow:hidden;}
+    </style>
+</head>
+
+<body>
+    <div id="main" class="cl" v-cloak>
+        <div class="f-l" style="width:50%;">
+            <div class="bk-gray mt-10 ml-10 mr-10 pd-10 radius">
+                <div class="cl mb-5 ">
+                    <div class="f-l text-r pt-10" style="width:25%;">
+                        <div class="mb-5">
+                            <span>From:</span>
+                            <input style="width:55%;height: 30px;box-sizing:border-box;border-color: rgb(221,221,221);" id="s_s"  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from">
+                        </div>
+                        <div class="mb-5">
+                            <span>  SC/Card:</span>
+                            <input v-model="sc" style="width:55%;" type="text" class="input-text radius" placeholder=""> 
+                        </div>
+                    </div>
+    
+                    <div class="f-l text-r pt-10" style="width:25%;">
+                        <div class="mb-5">
+                            <span>   To:</span>
+                            <input style="width:55%;height: 30px;box-sizing:border-box;border-color: rgb(221,221,221);" id="s_e"  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from">
+                        </div>
+                        <div>
+                            <span>Grade:</span>
+                            <select class="radius" style="width:55%;height: 30px;" v-model="grade.sel" name="" id="">
+                                <option :value="item.l" v-for="item in grade.list">{{item.l}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="f-l text-r ml-10 pt-10" style="">
+                        <div class="mb-5" style="height:30px;">
+                        </div>
+                        <div class="text-c">
+                            <span @click="search($event)" class="btn btn-default radius">查询</span>
+                            <div class="check-box">
+                                <input type="checkbox" id="checkbox-2" v-model="check_one">
+                                <label for="checkbox-2">模糊查询</label>
+                                </div>
+                            <div class="check-box ml-25">
+                                <input type="checkbox" id="checkbox-1"  v-model="check_two">
+                                <label for="checkbox-1">全选</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-10 ml-10 mr-10 bk-gray pd-10 radius" style="height:400px;overflow-y:scroll;">
+                <table ref="reference_check" class="table table-border table-bg">
+                    <thead>
+                        <tr>
+                            <th>S</th><th>Mk</th><th>Code</th><th>Sc</th><th>Name</th><th>PromoDate</th><th>Grade</th><th>Status</th><th>Oper</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="tr_s" @click="tr_click(1,index,$event)" v-for="(item,index) in listL" :class="tr_l_index==index?'tr_gray':''">
+                            <td style="max-width: ;"><input :index="index" :sign="item.Mk" type="checkbox" name="" id=""></td>
+                            <td>{{item.Mk}}</td>
+                            <td>{{item.Code}}</td>    
+                            <td>{{item.Sc}}</td>
+                            <td style="max-width: ;">{{item.Name}}</td>
+                            <td>{{item.PromoDate.substring(0,10)}}</td>
+                            <td>{{item.Grade}}</td>
+                            <td>{{item.Status}}</td>
+                            <td>{{item.Oper}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="f-l text-c pt-20" style="width:5%;">
+            <span @click="to_r(1,$event)" style="height: 200px;line-height:200px;font-size: 30px;" class="btn btn-default radius mt-20 mb-20">&raquo;</span>
+            <span @click="to_l(0,$event)" style="height: 200px;line-height:200px;font-size: 30px;" class="btn btn-default radius">&laquo;</span>
+        </div>
+        <div class="f-l" style="width:45%;">
+            <div class="mt-10 ml-10 mr-10 bk-gray pd-10 radius" style="height:500px;overflow-y:scroll;">
+                <table ref="reference_back" class="table table-border table-bg">
+                    <thead>
+                        <tr>
+                            <th>S</th><th>Mk</th><th>Code</th><th>Sc</th><th>Name</th><th>PromoDate</th><th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="tr_s" @click="tr_click(2,index,$event)" v-for="(item,index) in listR" :class="tr_r_index==index?'tr_gray':''">
+                            <td style="max-width: ;"><input :index="index" :sign="item.Mk" type="checkbox" name="" id=""></td>
+                            <td>{{item.Mk}}</td>
+                            <td>{{item.Code}}</td>    
+                            <td>{{item.Sc}}</td>
+                            <td style="max-width: ;">{{item.Name}}</td>
+                            <td>{{item.PromoDate.substring(0,10)}}</td>
+                            <td>{{item.Grade}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-c pd-10">
+                <span @click="print($event)" class="btn btn-default radius">打印</span>
+            </div>
+        </div>
+        
+    </div>
+    <script>
+        var main = new Vue({
+            el:'#main',
+            data:{
+                tr_l_index:-1,
+                tr_r_index:-1,
+                sc:'',
+                grade:{
+                    sel:1,
+                    list:[
+                        {'l':1},
+                        {'l':2},
+                        {'l':3},
+                        {'l':4},
+                        {'l':5},
+                        {'l':6},
+                        {'l':7},
+                        {'l':8},
+                    ]
+                },
+                check_one:true,
+                check_two:false,
+                listL:[],
+                listR:[],
+            },
+            methods:{
+                init(){
+                    console.log(this.grade.default)
+                },
+                search(){
+                    var url = "/index.php?s=desktop/Promo_Certificate/button3_Click";
+                    var data = {};
+                    data["usertoken"] = get_cache('usertoken');
+                    data["SC/Card"] = this.sc;
+                    data["Grade"] = this.grade.sel;
+                    data["From"] = $('#s_s').val();
+                    data["To"] = $('#s_e').val();
+                    data["checkBox1"] = this.check_one?1:0;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            main.listL = ret.data;
+                        }
+                        
+                    })  
+
+                },
+                tr_click(dir,index){
+                    if(dir ==1 ){
+                        this.tr_l_index = index;
+                    }else if(dir == 2){
+                        this.tr_r_index = index;
+                    }
+                    
+                    console.log(index)
+                },
+                to_r(mark){
+                    var tr = this.$refs.reference_check.getElementsByClassName('tr_s'),arr = [],r_index = [];
+                    for(var i = 0; i<tr.length;i++){
+                        if(tr[i].getElementsByTagName('input')[0].checked){
+                            console.log(tr[i].getElementsByTagName('input')[0].getAttribute('sign'))
+                            arr.push(tr[i].getElementsByTagName('input')[0].getAttribute('sign'));
+                            r_index.push(tr[i].getElementsByTagName('input')[0].getAttribute('index'));
+                        }
+                    }
+                    var url = "/index.php?s=desktop/Promo_Certificate/Move";
+                    var data = {};
+                    data["usertoken"] = get_cache('usertoken');
+                    data["mark"] = mark;
+                    data["MKS"] = JSON.stringify(arr);
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                            for(var i = 0; i < r_index.length;i++){
+                                main.listR.push(main.listL[r_index[i]])
+                            }
+                        }
+                        
+                    })  
+                },
+                to_l(mark){
+                    var tr = this.$refs.reference_back.getElementsByClassName('tr_s'),arr = [],remain_index = [] ,listR_new = [];
+                    for(var i = 0; i<tr.length;i++){
+                        if(tr[i].getElementsByTagName('input')[0].checked){
+                            console.log(tr[i].getElementsByTagName('input')[0].getAttribute('sign'))
+                            arr.push(tr[i].getElementsByTagName('input')[0].getAttribute('sign'));
+                            
+                        }else if(!tr[i].getElementsByTagName('input')[0].checked){
+                            remain_index.push(tr[i].getElementsByTagName('input')[0].getAttribute('index'));
+                        }
+                    }
+                    var url = "/index.php?s=desktop/Promo_Certificate/Move";
+                    var data = {};
+                    data["usertoken"] = get_cache('usertoken');
+                    data["mark"] = mark;
+                    data["MKS"] = JSON.stringify(arr);
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                            for(var i = 0; i < remain_index.length; i++){
+                                listR_new.push(main.listR[remain_index[i]]);
+                            }
+                            main.listR = listR_new;
+                            setTimeout(function(){
+                                main.research()
+                            })
+                            
+                        }
+                    })
+                },
+                print(){
+                    var arr = [];
+                    for(var i = 0;i<this.listR.length;i++){
+                        arr.push({'mk':this.listR[i]["Mk"],'Code':this.listR[i]["Code"],'Sc':this.listR[i]["Sc"],'Name':this.listR[i]["Name"],'PromoDate':this.listR[i]["PromoDate"],'Grade':this.listR[i]["Grade"]})
+                    }
+                    var url = '/index.php?s=desktop/Promo_Certificate/button5_Click';
+                    var data = {};
+                    data["usertoken"] = get_cache('usertoken');
+                    data["MKS"] = JSON.stringify(arr);
+                    ajax(url,data,function (ret) {
+
+                    })
+
+                    console.log(arr);
+                },
+                research(){
+                    var url = "/index.php?s=desktop/Promo_Certificate/button3_Click";
+                    var data = {};
+                    data["usertoken"] = get_cache('usertoken');
+                    data["SC/Card"] = this.sc;
+                    data["Grade"] = this.grade.sel;
+                    data["From"] = $('#s_s').val();
+                    data["To"] = $('#s_e').val();
+                    data["checkBox1"] = this.check_one?1:0;
+                    ajax1(url,data,function (ret) {
+                        if(ret.stat){
+                            main.listL = ret.data;
+                        }
+                        
+                    }) 
+                }
+            }
+        })
+
+        main.init()
+    </script>
+</body>
+
+</html>
