@@ -85,7 +85,8 @@
                     <div>
                         
                         <span>SaleType:</span>
-                        <select v-model="SaleType" name="" style="width:55%;border-color: rgb(221,221,221);height: 30px;" class="radius" id="">
+                        <input style="width:55%;" v-show="SaleType_iss" disabled v-model="SaleType" type="text" class="input-text radius" placeholder="">
+                        <select v-model="SaleType" v-show="!SaleType_iss" name="" style="width:55%;border-color: rgb(221,221,221);height: 30px;" class="radius" id="">
                             <option :value="item.TypeName" v-for="item in saletype_list" :key="item.id">{{item.TypeName+'（'+item.TypeName_E+'）'}}</option>
                         </select>
                         <span @click="SaleType_select($event)" class="btn btn-default radius">T</span>
@@ -94,7 +95,8 @@
                 <div class="f-l text-r pt-10" style="width:18%;">
                     <div class="mb-5">
                         <span>PromoType:</span>
-                        <select v-model="PromoType" name="" style="width:55%;border-color: rgb(221,221,221);height: 30px;" class="radius" id="">
+                        <input style="width:55%;" v-show="PromoType_iss" disabled v-model="PromoType" type="text" class="input-text radius" placeholder="">
+                        <select v-model="PromoType" v-show="!PromoType_iss" name="" style="width:55%;border-color: rgb(221,221,221);height: 30px;" class="radius" id="">
                             <option :value="item.PromoName" v-for="item in promotype_list" :key="item.id">{{item.PromoName}}</option>
                         </select>
                         <!-- <input style="width:55%;" type="text" class="input-text radius" placeholder=""> -->
@@ -112,10 +114,9 @@
                         <span>  Memo:</span>
                         <input v-model="Memo" style="width:61%;" type="text" class="input-text radius" placeholder="">
                     </div>
-                    <div class="text-c">
-                        
-                        <!-- <span>Search:</span>
-                        <input style="width:35%;" type="text" class="input-text radius" placeholder=""> -->
+                    <div class="text-l">
+                        <span>GID:</span>
+                        <input v-model="gid" disabled style="width:45%;" type="text" class="input-text radius" placeholder="">
                         <span @click="submit($event)" class="btn btn-default radius">Submit</span>
                     </div>
                 </div>
@@ -455,94 +456,8 @@
         </div>
     </div>
     <script>
-        var del_manage = new Vue({
-            el:'#delete_manage',
-            data:{
-                index: '',
-                tr_index:-1,
-                search_sc:'',
-                del_list:[],
-                s_or_sa:0
-            },
-            methods:{
-                search(){
-                    this.s_or_sa = 1;
-                    var url = '/index.php?s=desktop/Promo_Collect/del_search';
-                    var user_token = get_cache('usertoken');
-                    var data = {};
-                    data["usertoken"] = user_token;
-                    data["GroupID"] = this.search_sc;
-                    data["From"] = $('#del_start').val();
-                    data["To"] = $('#del_end').val();
-                    ajax(url,data,function (ret) {
-                        if(ret.stat){
-                            del_manage.del_list = ret.data;
-                        }else{
-                            showErr(ret.errmsg,ret.errmsg_en)
-                        }
-                    })
-                },
-                searchall(){
-                    this.s_or_sa = 2;
-                    query.r_list = [];
-                    var url = '/index.php?s=desktop/Promo_Collect/del_search_all';
-                    var user_token = get_cache('usertoken');
-                    var data = {};
-                    data["usertoken"] = user_token;
-                    data["GroupID"] = this.search_sc;
-                    data["From"] = $('#del_start').val();
-                    data["To"] = $('#del_end').val();
-                    ajax(url,data,function (ret) {
-                        if(ret.stat){
-                            del_manage.del_list = ret.data;
-                        }else{
-                            showErr(ret.errmsg,ret.errmsg_en)
-                        }
-                    })
-                },
-                isall(){
-                    if(this.s_or_sa == 1){
-                        this.search()
-                    }else if(this.s_or_sa == 2){
-                        this.searchall()
-                    }
-                },
-                tr_click(index){
-                    this.tr_index = index;
-                },
-                del_deep(gid){
-                    var url = '/index.php?s=desktop/Promo_Collect/del_perpetual';
-                    var user_token = get_cache('usertoken');
-                    var data = {};
-                    data["usertoken"] = user_token;
-                    data["GroupID"] = gid;
-                    ajax(url,data,function (ret) {
-                        if(ret.stat){
-                            showErr(ret.data);
-                            setTimeout(function(){
-                                del_manage.isall()
-                            },1000)
-                        }else{
-                            showErr(ret.errmsg,ret.errmsg_en)
-                        }
-                    })
-                },
-                del_back(gid){
-                    var url = '/index.php?s=desktop/Promo_Collect/repal_del';
-                    var user_token = get_cache('usertoken');
-                    var data = {};
-                    data["usertoken"] = user_token;
-                    data["GroupID"] = gid;
-                    ajax(url,data,function (ret) {
-                        if(ret.stat){
-                            showErr(ret.data);
-                        }else{
-                            showErr(ret.errmsg,ret.errmsg_en)
-                        }
-                    })
-                }
-            }
-        })
+        var tamia = 'tamia';
+        
 
         var pro_main = new Vue({
             el:'#pro_main',
@@ -556,7 +471,9 @@
                 PromoType:'',
                 GroupID:'',
                 Memo:'',    
-
+                gid:'',
+                SaleType_iss : false,
+                PromoType_iss : false
             },
             computed: {
                 get_id : function(){
@@ -587,6 +504,20 @@
                     this.get_product_list()
                     this.get_prom_type()
                     this.get_sale_type()
+
+                    var para1 = queryString('promotype'),
+                        para2 = queryString('saletype'),
+                        para3 = queryString('gid'); 
+                        if(para2 != ''){
+                            this.SaleType_iss = true;
+                        }
+                        if(para1 != ''){
+                            this.PromoType_iss = true;
+                        }
+                    console.log(para1,para2,para3);
+                    this.SaleType = para2;
+                    this.PromoType = para1;
+                    this.gid = para3;
                     // open_html('PromoCollectPrint','#promocollect','promocollect',function () {
 
                     // },1000,600)
@@ -611,15 +542,19 @@
 
                 },
                 promotype_select(){
-                    console.log(46566);
-                    open_html('PromoType','#PromoType','PromoType',function () {
+                    if(!PromoType_iss){
+                        open_html('PromoType','#PromoType','PromoType',function () {
 
-                    },800,570)
+                        },800,570)
+                    }
+                    
                 },
                 SaleType_select(){
-                    open_html('SaleType','#SaleType','SaleType',function () {
+                    if(!this.SaleType_iss){
+                        open_html('SaleType','#SaleType','SaleType',function () {
 
-                    },800,570)
+                        },800,570)
+                    }
                 },
                 add_td_bg(){        //单击
                     
@@ -1090,10 +1025,98 @@
         })
 
         query.init()
+
+        var del_manage = new Vue({
+            el:'#delete_manage',
+            data:{
+                index: '',
+                tr_index:-1,
+                search_sc:'',
+                del_list:[],
+                s_or_sa:0
+            },
+            methods:{
+                search(){
+                    this.s_or_sa = 1;
+                    var url = '/index.php?s=desktop/Promo_Collect/del_search';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GroupID"] = this.search_sc;
+                    data["From"] = $('#del_start').val();
+                    data["To"] = $('#del_end').val();
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            del_manage.del_list = ret.data;
+                        }else{
+                            showErr(ret.errmsg,ret.errmsg_en)
+                        }
+                    })
+                },
+                searchall(){
+                    this.s_or_sa = 2;
+                    query.r_list = [];
+                    var url = '/index.php?s=desktop/Promo_Collect/del_search_all';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GroupID"] = this.search_sc;
+                    data["From"] = $('#del_start').val();
+                    data["To"] = $('#del_end').val();
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            del_manage.del_list = ret.data;
+                        }else{
+                            showErr(ret.errmsg,ret.errmsg_en)
+                        }
+                    })
+                },
+                isall(){
+                    if(this.s_or_sa == 1){
+                        this.search()
+                    }else if(this.s_or_sa == 2){
+                        this.searchall()
+                    }
+                },
+                tr_click(index){
+                    this.tr_index = index;
+                },
+                del_deep(gid){
+                    var url = '/index.php?s=desktop/Promo_Collect/del_perpetual';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GroupID"] = gid;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                            setTimeout(function(){
+                                del_manage.isall()
+                            },1000)
+                        }else{
+                            showErr(ret.errmsg,ret.errmsg_en)
+                        }
+                    })
+                },
+                del_back(gid){
+                    var url = '/index.php?s=desktop/Promo_Collect/repal_del';
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GroupID"] = gid;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                        }else{
+                            showErr(ret.errmsg,ret.errmsg_en)
+                        }
+                    })
+                }
+            }
+        })
     </script>
 
     <script>
-    
         var promo_collect = new Vue({
             el:'#promocollect',
             data:{

@@ -15,6 +15,7 @@
     <script src="../script/vue.min.js"></script>
     <script src="../script/jquery-2.1.1.min.js"></script>
     <script src="../script/H-ui.min.js"></script>
+    <script src="../script/H-ui.admin.js"></script>
     <script src="../script/common.js"></script>
     <script src="../script/kedi.js"></script>
     <script src="../script/loading.js"></script>
@@ -28,11 +29,18 @@
         .tr_gray{background-color: lightgray;}
 
         table tr td{white-space:nowrap; text-overflow:ellipsis; -o-text-overflow:ellipsis; overflow:hidden;}
+        .table th, .table td{word-break: keep-all;}
+        #s_bar::-webkit-scrollbar {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
     <div id="main" class="cl" v-cloak>
+        <div class="top-nav pd-10">
+            <input @click="mark_back($event)" class="btn btn-primary size-M radius" type="button" value="撤销">
+        </div>
         <div class="f-l" style="width:50%;">
             <div class="bk-gray mt-10 ml-10 mr-10 pd-10 radius">
                 <div class="cl mb-5 ">
@@ -125,10 +133,84 @@
                 </table>
             </div>
             <div class="text-c pd-10">
-                <span @click="print($event)" class="btn btn-default radius">打印</span>
+                <!-- SALE_REPORT -->
+                <span @click="print($event)" class="btn btn-default radius">打印Print</span>
+                <span @click="openFrame($event)" class="btn btn-default radius">发产品CollectProduct</span>
             </div>
         </div>
         
+    </div>
+
+
+    <div id="back_con" style="display: none;">
+        <div class="pd-10 cl">
+            <div class="f-l mb-5">
+                <span>  GroupID:</span>
+                <input v-model="gid" style="max-width:155px;" type="text" class="input-text radius" placeholder=""> 
+                <span @click="search($event)" class="btn btn-default radius">搜索</span>
+            </div>
+            <div class="f-r">
+                <span @click="chexiao($event)" class="btn btn-default radius">撤销</span>
+
+            </div>
+        </div>
+        <div class="pd-10 cl">
+            <div class="f-l pd-5" style="width:50%;box-sizing:border-box;overflow-x: scroll;">
+                <fieldset id="" class="radius">
+                    <legend style="width: auto;margin-bottom: 0px;line-height: 16px; border-bottom: none;font-size: 14px;">会员</legend>
+                    <div class=""  style="height:300px;overflow-y: scroll;">
+                        
+                        <div id="s_bar" style="width:100%;">
+                            <table class="table table-border table-bg">
+                                <thead>
+                                    <tr>
+                                        <th>Mk</th><th>Code</th><th>Sc</th><th>Name</th><th>PromoDate</th><th>Grade</th><th>Status</th><th>Oper</th><th>GroupID</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(item,index) in l_list">
+                                        <td>{{item.Mk}}</td>
+                                        <td>{{item.Code}}</td>
+                                        <td>{{item.Sc}}</td>
+                                        <td>{{item.Name}}</td>
+                                        <td>{{item.PromoDate.substring(0,10)}}</td>
+                                        <td style="width:75px;">{{item.Grade}}</td>
+                                        <td style="width:70px;">{{item.Status}}</td>
+                                        <td>{{item.Oper}}</td>
+                                        <td>{{item.GroupID}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="f-l pd-5" style="width:50%;box-sizing:border-box;overflow-x: scroll;">
+                <fieldset id="" class="radius">
+                    <legend style="width: auto;margin-bottom: 0px;line-height: 16px; border-bottom: none;font-size: 14px;">产品</legend>
+                    <div class="" style="height:300px;overflow-y: scroll;">
+                        
+                        <div class="">
+                            <table class="table table-border table-bg">
+                                <thead>
+                                    <tr>
+                                        <th>ProductNo</th><th>Name</th><th>Amount</th><th>Memo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(item,index) in r_list">
+                                    <td>{{item.ProductNo}}</td>
+                                    <td>{{item.Name}}</td>
+                                    <td>{{item.Amount}}</td>
+                                    <td>{{item.Memo}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
     </div>
     <script>
         var main = new Vue({
@@ -154,10 +236,21 @@
                 check_two:false,
                 listL:[],
                 listR:[],
+                isopenFrame : false,
+                frame_para : {
+                    promo : '',
+                    saletype:'',
+                    gid:''
+                }
             },
             methods:{
                 init(){
-                    console.log(this.grade.default)
+                    
+                },
+                mark_back(){
+                    open_html('CancelPromoGrade','#back_con','back_con',function () {
+
+                    },800,570)
                 },
                 search(){
                     var url = "/index.php?s=desktop/Promo_Certificate/button3_Click";
@@ -225,19 +318,24 @@
                     data["usertoken"] = get_cache('usertoken');
                     data["mark"] = mark;
                     data["MKS"] = JSON.stringify(arr);
-                    ajax(url,data,function (ret) {
-                        if(ret.stat){
-                            showErr(ret.data);
-                            for(var i = 0; i < remain_index.length; i++){
-                                listR_new.push(main.listR[remain_index[i]]);
+                    if(arr.length > 0){
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                showErr(ret.data);
+                                for(var i = 0; i < remain_index.length; i++){
+                                    listR_new.push(main.listR[remain_index[i]]);
+                                }
+                                main.listR = listR_new;
+                                setTimeout(function(){
+                                    main.research()
+                                })
+                                
                             }
-                            main.listR = listR_new;
-                            setTimeout(function(){
-                                main.research()
-                            })
-                            
-                        }
-                    })
+                        })
+                    }else{
+                        showErr('没有数据');
+                    }
+                    
                 },
                 print(){
                     var arr = [];
@@ -248,11 +346,27 @@
                     var data = {};
                     data["usertoken"] = get_cache('usertoken');
                     data["MKS"] = JSON.stringify(arr);
-                    ajax(url,data,function (ret) {
-
-                    })
-
-                    console.log(arr);
+                    if(arr.length > 0){
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                main.isopenFrame = true;
+                                main.frame_para.promotype = ret.data[0].Grade;
+                                main.frame_para.saletype = ret.data[0].SaleType;
+                                main.frame_para.gid = ret.data[0].GID;
+                            }
+                        })
+                    }else {
+                        showErr('没有可打印的数据！！')
+                    }
+                    
+                },
+                openFrame(){
+                    if(this.isopenFrame){
+                        creatIframe(`./temp/promotion_product.html?promotype=${this.frame_para.promotype}&saletype=${this.frame_para.saletype}&gid=${this.frame_para.gid}`,'促销产品')
+                    }else{
+                        showErr('请先打印...')
+                    }
+                    
                 },
                 research(){
                     var url = "/index.php?s=desktop/Promo_Certificate/button3_Click";
@@ -274,6 +388,42 @@
         })
 
         main.init()
+
+        var back = new Vue({
+            el:'#back_con',
+            data:{
+                gid:'',
+                l_list:[],
+                r_list:[]
+            },
+            methods:{
+                search(){
+                    var url = "/index.php?s=desktop/Promo_Certificate/Search";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GID"] = this.gid;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            back.l_list = ret.data.left;
+                            back.r_list = ret.data.right;
+                        }
+                    })
+                },
+                chexiao(){
+                    var url = "/index.php?s=desktop/Promo_Certificate/Delete";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["GID"] = this.gid;
+                    ajax(url,data,function (ret) {
+                        if(ret.stat){
+                            showErr(ret.data);
+                        }
+                    })
+                }
+            }
+        })
     </script>
 </body>
 

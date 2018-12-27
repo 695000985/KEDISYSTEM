@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>科迪会员录入系统</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/iconfont.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+    <script src="../script/jquery.pagination.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        select{vertical-align: bottom;height: 29px;}
+        .tr_gray{background-color: lightgray;}
+    </style>
+</head>
+
+<body>
+    <div id="main">
+        <div class="bk-gray ml-10 mr-10 mt-10 pd-10 radius">
+            <div class="">
+                <div class="mb-5">
+                    <span>当月注册级别:</span>
+                    <select v-model="cm.m" style="width:10%;height: 30px;" class="radius" name="" id="">
+                        <option :value="index" v-for="(item,index) in cm.cm_list" :key="item.id">{{item.val}}</option>
+
+                    </select>
+                    <span @click="cm_query($event)" class="btn btn-primary radius">查询</span>
+                    <span class="ml-10">往月注册级别:</span>
+                    <select v-model="lm.m" style="width:10%;height: 30px;" class="radius" name="" id="">
+                        <option :value="index" v-for="(item,index) in lm.lm_list" :key="item.id">{{item.val}}</option>
+
+                    </select>
+                    <span @click="lm_query($event)" class="btn btn-primary radius">查询</span>
+                    <span @click="car_query($event)" class="btn btn-primary radius">发车查询</span>
+                    <span @click="output($event)" class="btn btn-default radius">导出到Excel</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bk-gray pd-10 ml-10 mt-10 mr-10" style="height: 500px;overflow-y: scroll;">
+            <table class="table table-border table-bg">
+                <thead>
+                    <tr>
+                        <th>卡号</th><th>姓名</th><th>级别</th><th>真正级别</th><th>电话</th><th>专卖店</th><th>日期</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr @click="tr_click(index,$event)" :class="trindex == index?'tr_gray':''" v-for="(item,index) in list">
+                        <td>{{item["卡号"]}}</td>
+                        <td>{{item["姓名"]}}</td>
+                        <td>{{item["级别"]}}</td>
+                        <td>{{item["真正级别"]}}</td>
+                        <td>{{item["mobile"]}}</td>
+                        <td>{{item["专卖店"]}}</td>
+                        <td>{{item["日期"]}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+
+        var main = new Vue({
+            el:'#main',
+            data:{
+                trindex: -1,
+                cm:{
+                    m:0,
+                    cm_list:[{'val':'0星'},{'val':'1星'},{'val':'2星'},{'val':'3星'},{'val':'4星'},{'val':'5星'},{'val':'6星'},{'val':'7星'},{'val':'8星'},{'val':'一星经理'},{'val':'二星经理'},{'val':'三星经理'}]
+                },
+                lm:{
+                    m:0,
+                    lm_list:[{'val':'0星'},{'val':'1星'},{'val':'2星'},{'val':'3星'},{'val':'4星'},{'val':'5星'},{'val':'6星'},{'val':'7星'},{'val':'8星'},{'val':'一星经理'},{'val':'二星经理'},{'val':'三星经理'},{'val':'一星董事'},{'val':'二星董事'},{'val':'三星董事'},{'val':'四星董事'},{'val':'五星董事'}]
+                },
+                list:[]
+                
+            },
+            methods:{
+                cm_query(){
+                    var url = "/index.php?s=desktop/Promotion/GetCurrentRegGrade";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["comboBox1"] = this.cm.m;
+                    ajax(url,data,function(ret){
+                        if(ret.stat){
+                            main.list = ret.data;
+                        }
+                    })
+                },
+                lm_query(){
+                    var url = "/index.php?s=desktop/Promotion/GetCurrentRegGrade";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["comboBox1"] = this.lm.m;
+                    ajax(url,data,function(ret){
+                        if(ret.stat){
+                            main.list = ret.data;
+                        }
+                    })
+
+                },
+                car_query(){
+
+                },
+                tr_click(index){
+                    this.trindex = index;
+                },
+                output(){
+
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
