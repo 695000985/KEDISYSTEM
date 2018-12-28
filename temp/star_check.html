@@ -58,7 +58,7 @@
             <table v-show="table_show[0]" class="table table-border table-bg">
                 <thead>
                     <tr>
-                        <th>卡号</th><th>姓名</th><th>级别</th><th>真正级别</th><th>电话</th><th>专卖店</th><th>日期</th>
+                        <th v-for="item in table_header[0]" :key="item.id">{{item}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -77,7 +77,7 @@
             <table v-show="table_show[1]" class="table table-border table-bg">
                 <thead>
                     <tr>
-                        <th>卡号</th><th>姓名</th><th>荣衔</th><th>电话</th><th>专卖店</th><th>日期</th>
+                        <th v-for="item in table_header[1]" :key="item.id">{{item}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,7 +95,7 @@
             <table v-show="table_show[2]" class="table table-border table-bg">
                 <thead>
                     <tr>
-                        <th>卡号</th><th>姓名</th><th>级别</th><th>SC</th><th>历史发车年份</th><th>发车级别</th><th>Phone</th>
+                        <th v-for="item in table_header[2]" :key="item.id">{{item}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -129,7 +129,12 @@
                 },
                 list:[],
                 
-                table_show:[1,0,0]
+                table_show:[1,0,0],
+                table_header:[
+                    ['卡号','姓名','级别','真正级别','电话','专卖店','日期'],
+                    ['卡号','姓名','荣衔','电话','专卖店','日期'],
+                    ['卡号','姓名','级别','SC','历史发车年份','发车级别','Phone']
+                ]
             },
             methods:{
                 cm_query(){
@@ -194,7 +199,7 @@
                             sheetData:[],
                             sheetName:'',
                         //	sheetFilter:['two','one'],
-                            sheetHeader:['NO','CODE'],
+                            sheetHeader:[],
                         },
                     ];
                     for(var i = 0;i<this.table_show.length;i++){
@@ -202,27 +207,54 @@
                             index = i;
                         }
                     }
-                    // console.log(this.table_show,index)
+                    console.log(this.table_show,index ,this.table_header[index])
+                    option.datas[0].sheetHeader = this.table_header[index];
                     if(this.list.length){
                         var c_data = this.list;
-                        c_data.forEach(function(item,index) {
-                            option.datas[0].sheetData.push({
-                                a:item.App,
-                                b:item.Bonus,
-                                c:item.DATE,
-                                k:item.DEBT,
-                                d:item.D_Sign,
-                                e:item.MF,
-                                f:item.NO,
-                                g:item.SC,
-                                h:item["Sub Amount"],
-                                i:item["Total Amount"],
-                                j:item["Total PV"],
+                        console.log(this.list)
+                        if(index == 0){
+                            option.datas[0].sheetName = '当月查询';
+                            c_data.forEach(function(item,index) {
+                                option.datas[0].sheetData.push({
+                                    a:item["卡号"],
+                                    b:item["姓名"],
+                                    c:item["级别"],
+                                    k:item["真正级别"],
+                                    d:item["mobile"],
+                                    e:item["专卖店"],
+                                    f:item["日期"]
+                                })
+                            });
+                        }else if(index == 1){
+                            option.datas[0].sheetName = '往月查询';
+                            c_data.forEach(function(item,index) {
+                                option.datas[0].sheetData.push({
+                                    a:item["卡号"],
+                                    b:item["姓名"],
+                                    c:item["荣衔"],
+                                    k:item["phone"],
+                                    d:item["专卖店"],
+                                    e:item["日期"]
 
-                            })
-                        });
+                                })
+                            });
+                        }else if(index == 2){
+                            option.datas[0].sheetName = '发车查询';
+                            c_data.forEach(function(item,index) {
+                                option.datas[0].sheetData.push({
+                                    a:item["卡号"],
+                                    b:item["姓名"],
+                                    c:item["级别"],
+                                    k:item["SC"],
+                                    d:item["历史发车年份"],
+                                    e:item["发车级别"],
+                                    f:item["phone"]
+                                })
+                            });
+                        }
+                        
                         var toExcel=new ExportJsonExcel(option);
-                        // toExcel.saveExcel();
+                        toExcel.saveExcel();
                     }else{
                         showErr('没有可导出数据!')
                     }
