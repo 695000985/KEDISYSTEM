@@ -21,6 +21,7 @@
     <script src="../DatePicker/WdatePicker.js"></script>
     <script src="../script/layer.js"></script>
     <script src="../script/jquery.pagination.js"></script>
+    <script src="../script/jsonExportExcel.js"></script>
     <style>
         [v-cloak] {
             display: none;
@@ -54,14 +55,14 @@
         </div>
 
         <div class="bk-gray pd-10 ml-10 mt-10 mr-10" style="height: 500px;overflow-y: scroll;">
-            <table class="table table-border table-bg">
+            <table v-show="table_show[0]" class="table table-border table-bg">
                 <thead>
                     <tr>
                         <th>卡号</th><th>姓名</th><th>级别</th><th>真正级别</th><th>电话</th><th>专卖店</th><th>日期</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr @click="tr_click(index,$event)" :class="trindex == index?'tr_gray':''" v-for="(item,index) in list">
+                    <tr v-show="list.length" @click="tr_click(index,$event)" :class="trindex == index?'tr_gray':''" v-for="(item,index) in list">
                         <td>{{item["卡号"]}}</td>
                         <td>{{item["姓名"]}}</td>
                         <td>{{item["级别"]}}</td>
@@ -70,6 +71,44 @@
                         <td>{{item["专卖店"]}}</td>
                         <td>{{item["日期"]}}</td>
                     </tr>
+                    <tr class="text-c" style="font-weight: bold;" v-show="!list.length"><td colspan="7">暂无数据</td></tr>
+                </tbody>
+            </table>
+            <table v-show="table_show[1]" class="table table-border table-bg">
+                <thead>
+                    <tr>
+                        <th>卡号</th><th>姓名</th><th>荣衔</th><th>电话</th><th>专卖店</th><th>日期</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-show="list.length" @click="tr_click(index,$event)" :class="trindex == index?'tr_gray':''" v-for="(item,index) in list">
+                        <td>{{item["卡号"]}}</td>
+                        <td>{{item["姓名"]}}</td>
+                        <td>{{item["荣衔"]}}</td>
+                        <td>{{item["mobile"]}}</td>
+                        <td>{{item["专卖店"]}}</td>
+                        <td>{{item["日期"]}}</td>
+                    </tr>
+                    <tr class="text-c" style="font-weight: bold;" v-show="!list.length"><td colspan="7">暂无数据</td></tr>
+                </tbody>
+            </table>
+            <table v-show="table_show[2]" class="table table-border table-bg">
+                <thead>
+                    <tr>
+                        <th>卡号</th><th>姓名</th><th>级别</th><th>SC</th><th>历史发车年份</th><th>发车级别</th><th>Phone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-show="list.length" @click="tr_click(index,$event)" :class="trindex == index?'tr_gray':''" v-for="(item,index) in list">
+                        <td>{{item["卡号"]}}</td>
+                        <td>{{item["姓名"]}}</td>
+                        <td>{{item["级别"]}}</td>
+                        <td>{{item["SC"]}}</td>
+                        <td>{{item["历史发车年份"]}}</td>
+                        <td>{{item["发车级别"]}}</td>
+                        <td>{{item["phone"]}}</td>
+                    </tr>
+                    <tr class="text-c" style="font-weight: bold;" v-show="!list.length"><td colspan="7">暂无数据</td></tr>
                 </tbody>
             </table>
         </div>
@@ -88,8 +127,9 @@
                     m:0,
                     lm_list:[{'val':'0星'},{'val':'1星'},{'val':'2星'},{'val':'3星'},{'val':'4星'},{'val':'5星'},{'val':'6星'},{'val':'7星'},{'val':'8星'},{'val':'一星经理'},{'val':'二星经理'},{'val':'三星经理'},{'val':'一星董事'},{'val':'二星董事'},{'val':'三星董事'},{'val':'四星董事'},{'val':'五星董事'}]
                 },
-                list:[]
+                list:[],
                 
+                table_show:[1,0,0]
             },
             methods:{
                 cm_query(){
@@ -100,31 +140,92 @@
                     data["comboBox1"] = this.cm.m;
                     ajax(url,data,function(ret){
                         if(ret.stat){
+                            main.table_show = main.table_show.map(function(item){return 0;})
+                            main.table_show[0] = 1;
                             main.list = ret.data;
+                        }else{
+                            main.list = [];
                         }
                     })
                 },
                 lm_query(){
-                    var url = "/index.php?s=desktop/Promotion/GetCurrentRegGrade";
+                    var url = "/index.php?s=desktop/Promotion/GetOldRegGrade";
                     var user_token = get_cache('usertoken');
                     var data = {};
                     data["usertoken"] = user_token;
-                    data["comboBox1"] = this.lm.m;
+                    data["comboBox2"] = this.lm.m;
                     ajax(url,data,function(ret){
                         if(ret.stat){
+                            main.table_show = main.table_show.map(function(item){return 0;})
+                            main.table_show[1] = 1;
                             main.list = ret.data;
+                        }else{
+                            main.list = [];
+                            showErr(ret.errmsg,ret.errmsg_en)
                         }
                     })
 
                 },
                 car_query(){
+                    var url = "/index.php?s=desktop/Promotion/CarAwardGrade";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["comboBox2"] = this.lm.m;
+                    ajax(url,data,function(ret){
+                        if(ret.stat){
+                            main.table_show = main.table_show.map(function(item){return 0;})
+                            main.table_show[2] = 1;
+                            main.list = ret.data;
+                        }else{
+                            main.list = [];
+                        }
+                    })
 
                 },
                 tr_click(index){
                     this.trindex = index;
                 },
                 output(){
+                    var option={} ,index;
+                    option.fileName = '星级查询'
+                    option.datas=[
+                        {
+                            sheetData:[],
+                            sheetName:'',
+                        //	sheetFilter:['two','one'],
+                            sheetHeader:['NO','CODE'],
+                        },
+                    ];
+                    for(var i = 0;i<this.table_show.length;i++){
+                        if(this.table_show[i]){
+                            index = i;
+                        }
+                    }
+                    // console.log(this.table_show,index)
+                    if(this.list.length){
+                        var c_data = this.list;
+                        c_data.forEach(function(item,index) {
+                            option.datas[0].sheetData.push({
+                                a:item.App,
+                                b:item.Bonus,
+                                c:item.DATE,
+                                k:item.DEBT,
+                                d:item.D_Sign,
+                                e:item.MF,
+                                f:item.NO,
+                                g:item.SC,
+                                h:item["Sub Amount"],
+                                i:item["Total Amount"],
+                                j:item["Total PV"],
 
+                            })
+                        });
+                        var toExcel=new ExportJsonExcel(option);
+                        // toExcel.saveExcel();
+                    }else{
+                        showErr('没有可导出数据!')
+                    }
                 }
             }
         })
