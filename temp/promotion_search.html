@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>科迪会员录入系统</title>
+    <link rel="icon" href="../images/kd.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/H-ui.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/iconfont.css">
+    <link rel="stylesheet" href="../css/kd.css">
+    <link rel="stylesheet" href="../css/layer.css">
+    <script src="../script/vue.min.js"></script>
+    <script src="../script/jquery-2.1.1.min.js"></script>
+    <script src="../script/H-ui.min.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/kedi.js"></script>
+    <script src="../script/loading.js"></script>
+    <script src="../DatePicker/WdatePicker.js"></script>
+    <script src="../script/layer.js"></script>
+    <script src="../script/jquery.pagination.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        .progress-bar{width:100%;background-color:#efefef}
+
+		.pb_span{width:;}
+        .pb_span_width{width: 10%;}
+		.pb_span2{background-color: #d9534f;}
+		.pb_span.act{width: 10%;animation: pbspan 1.5s ease 1;}
+		@keyframes pbspan{
+			0%{
+				width:0%
+			}
+			100%{
+				width:10%;
+			}
+		}
+        .tr_gray{background-color: lightgray;}
+    </style>
+</head>
+
+<body>
+    <div id="main" class="pd-10" v-cloak>
+        <div class="top-nav">
+            <input class="btn btn-primary size-M radius" type="button" value="促销查询">
+        </div>
+        <div class="f-l" style="width:45%;">
+            <div class="bk-gray mt-10 ml-10 mr-10 pd-10 radius">
+                <div class="cl">
+                    <div class="f-l text-r pt-10" style="width:25%;">
+                        <div class="mb-5">
+                            <span>RegDate:</span>
+                            <input style="width:55%;height: 30px;box-sizing:border-box;border-color: rgb(221,221,221);" id="s_s"  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from">
+                        </div>
+                        <div class="mb-5">
+                            <input type="checkbox" name="" id="is_check_reg"> <span>  Selct:</span>
+                            <input style="width:55%;height: 30px;box-sizing:border-box;border-color: rgb(221,221,221);" id="s_e"  onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate radius date_from">
+                        </div>
+                    </div>
+    
+                    <div class="f-l text-r pt-10" style="width:25%;">
+                        <div class="mb-5">
+                            <span>   级别:</span>
+                            <select v-model="l.m" style="width:65%;height: 30px;box-sizing:border-box;border-color: rgb(221,221,221);" name="" id="">
+                                <option :value="item['级别']" v-for="item in l.list" :key="item.id">{{item["级别"]}}</option>
+
+                            </select>
+                        </div>
+                        <div>
+                            <span>真正级别:</span>
+                            <select v-model="real_l.m" class="radius" style="width:65%;height: 30px;" name="" id="">
+                                <option :value="item['真正级别']" v-for="item in real_l.list" :key="item.id">{{item["真正级别"]}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="f-l text-r ml-10 pt-10" style="">
+                        <div class="mb-5" style="">
+                            从
+                            <input v-model="from.one" style="width:100px;" type="text" class="input-text radius" placeholder=""> 
+                            到
+                            <input v-model="to.one" style="width:100px;" type="text" class="input-text radius" placeholder=""> 
+                        </div>
+                        <div class="mb-5" style="">
+                            从
+                            <input v-model="from.two" style="width:100px;" type="text" class="input-text radius" placeholder=""> 
+                            到
+                            <input v-model="to.two" style="width:100px;" type="text" class="input-text radius" placeholder=""> 
+                        </div>
+                    </div>
+                    <div class="f-r pt-10 text-r">
+                        <input @click="add($event)" class="btn size-M btn-secondary radius mb-5" type="button" value="添加"><br/>
+                        <input @click="search( $event)" class="btn size-M btn-secondary radius" type="button" value="搜索">
+                    </div>
+                </div>
+                <div class="cl">
+                    <div class="f-l text-r pt-10" style="width:25%;">
+                        <div class="mb-5">
+                            <span>会员信息:</span>
+                            <select v-model="member_info.m" style="width:58%;height: 30px;box-sizing:border-box;border-color: rgb(221,221,221);" name="" id="">
+                                <option value="" v-for="item in member_info.list" :key="item.id"></option>
+                            </select>
+                
+                        </div>
+                        <div class="mb-5">
+                            <span>  内容:</span>
+                            <input v-model="content" style="width:58%;" type="text" class="input-text radius" placeholder=""> 
+                        </div>
+                    </div>
+                    <div class="f-l text-r pt-10" style="width:55%;">
+                        <div class="mb-5">
+                            <span>数值:</span>
+                            <select v-model="numerical_val.m" name="" id="" style="width:75%;height: 30px;box-sizing:border-box;border-color: rgb(221,221,221);">
+                                <option :value="item['级别']" v-for="item in numerical_val.list" :key="item.id">{{item["级别"]}}</option>
+                            </select>
+                        </div>
+                        <div class="mb-5" style="">
+                            从<span>>=</span>
+                            <input v-model="from.three" style="width:150px;" type="text" class="input-text radius" placeholder=""> 
+                            到<span><=</span>
+                            <input v-model="to.three" style="width:150px;" type="text" class="input-text radius" placeholder=""> 
+                        </div>
+                    </div>
+                    <div class="f-r text-r">
+                        <input @click="shancu($event)" class="btn size-M btn-secondary radius mb-5" type="button" value="删除"><br/>
+                        <input @click="clear($event)" class="btn size-M btn-secondary radius" type="button" value="清除">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="f-l" style="width:50%;">
+            <div class="bk-gray mt-10 ml-10 mr-10 pd-10 radius" style="height:163px;overflow-y:scroll;background-color: #efefef;">
+                <p :class="p_index == index?'tr_gray':''" @click="p_click(index, $event)" v-for="(item,index) in r_con" style="margin-bottom: 2px;">{{item}}</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var main = new Vue({
+            el:'#main',
+            data:{
+                progress:{
+                    'one':true,
+                },
+                is_check_reg : false,
+                l:{
+                    m:'',
+                    list:[]
+                },
+                real_l:{
+                    m:'',
+                    list:[]
+                },
+                member_info:{
+                    m:'',
+                    list:[]
+                },
+                numerical_val:{
+                    m:'',
+                    list:[]
+                },
+                from:{
+                    one:'',
+                    two:'',
+                    three:''
+                },
+                to:{
+                    one:'',
+                    two:'',
+                    three:''
+                },
+                content:'',
+                r_con:[],
+                p_index:-1,
+
+            },
+            methods:{
+                init(){
+                    $('.Wdate').val(get_local_time())
+                    // this.get_list('1')
+                    // this.get_list('2')
+                    // this.get_list('3')
+                },
+                add(){
+                    // console.log($('#is_check_reg').prop('checked'))
+                    if($('#is_check_reg').prop('checked')){
+                        this.r_con.push('RegDate between \''+ $('#s_s').val() + '\' and \''+ $('#s_e').val() +'\'');
+                    }
+                    if(this.from.one!=''){
+                        this.r_con.push(this.l.m+'>=' + this.from.one);
+                    }
+                    if(this.to.one!=''){
+                        this.r_con.push(this.l.m+'<=' + this.to.one);
+                    }
+                    if(this.from.two!=''){
+                        this.r_con.push(this.l.m+'>=' + this.from.two);
+                    }
+                    if(this.to.two!=''){
+                        this.r_con.push(this.l.m+'<=' + this.to.two);
+                    }
+                    if(this.from.three!=''){
+                        this.r_con.push(this.l.m+'>=' + this.from.three);
+                    }
+                    if(this.to.three!=''){
+                        this.r_con.push(this.l.m+'<=' + this.to.three);
+                    }
+
+                },
+                search(){
+
+                },
+                shancu(){
+                    if(this.p_index >= 0){
+                        this.r_con.splice(this.p_index,1)
+                    }
+                },
+                clear(){
+                    this.r_con = [];
+                },
+
+                get_list(para){
+                    var url = "/index.php?s=desktop/Promotion/get_selects";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    data["mark"] = para;
+                    ajax(url,data,function (ret) {
+                        if(para == 1 && ret.stat){
+                            main.l.list = ret.data;main.l.m = ret.data[0]["级别"];
+                        }else if(para == 2 && ret.stat){
+                            main.real_l.list = ret.data;main.real_l.m = ret.data[0]['真正级别'];
+                        }else if(para == 3 && ret.stat){
+                            main.numerical_val.list = ret.data;main.numerical_val.m = ret.data[0]['级别'];
+                        }
+                    })
+                },
+                p_click(index){
+                    this.p_index = index;
+                    console.log(index)
+                }
+            }
+        })
+
+        main.init()
+    </script>
+</body>
+
+</html>
