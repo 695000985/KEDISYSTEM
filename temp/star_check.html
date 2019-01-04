@@ -50,6 +50,7 @@
                     <span @click="lm_query($event)" class="btn btn-primary radius">查询</span>
                     <span @click="car_query($event)" class="btn btn-primary radius">发车查询</span>
                     <span @click="output($event)" class="btn btn-default radius">导出到Excel</span>
+                    <span @click="data_upload($event)" class="btn btn-default radius">数据上传</span>
                 </div>
             </div>
         </div>
@@ -131,10 +132,11 @@
                 
                 table_show:[1,0,0],
                 table_header:[
-                    ['卡号','姓名','级别','真正级别','电话','专卖店','日期'],
-                    ['卡号','姓名','荣衔','电话','专卖店','日期'],
-                    ['卡号','姓名','级别','SC','历史发车年份','发车级别','Phone']
-                ]
+                    ['卡号','姓名','级别','真正级别','电话','专卖店','日期','签名'],
+                    ['卡号','姓名','荣衔','电话','专卖店','日期','签名'],
+                    ['卡号','姓名','级别','SC','历史发车年份','发车级别','Phone','签名']
+                ],
+                type_index:0
             },
             methods:{
                 cm_query(){
@@ -205,6 +207,7 @@
                     for(var i = 0;i<this.table_show.length;i++){
                         if(this.table_show[i]){
                             index = i;
+                            main.type_index = i;
                         }
                     }
                     console.log(this.table_show,index ,this.table_header[index])
@@ -258,6 +261,35 @@
                     }else{
                         showErr('没有可导出数据!')
                     }
+                },
+                data_upload(){
+
+                    var url = "/index.php?s=desktop/Promo_Certificate/UploadPromo";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    // data["cell"] = this.lm.m;
+                    
+                    if(this.type_index == 0 && this.list.length){
+                        console.log(this.list)
+                        var cell  = [];
+                        for(var i = 0 ;i < this.list.length; i++){
+                            cell.push({'卡号':this.list[i]["卡号"],'专卖店':this.list[i]["专卖店"],'姓名':this.list[i]["姓名"],'级别':this.list[i]["级别"],'日期':this.list[i]["日期"].substring(0,10)})
+                        }
+
+                        data["cell"] = JSON.stringify(cell);
+                        ajax(url,data,function(ret){
+                            if(ret.stat){
+                                showErr(ret.data);
+                            }else{
+                                showErr(ret.errmsg);
+                            }
+                        })
+                    }else{
+                        showErr('没有可上传的数据');
+                    }
+                    
+
                 }
             }
         })
