@@ -105,7 +105,7 @@ nw.App.manifest.version = 'test';
                         <td style="width: 170px;">{{s.Oper}}</td>
                         <td style="width: 170px;">{{s.Dept}}</td> -->
                         <td style="width: 170px;">{{s.PV}}</td>
-                        <td style="width: 170px;">{{s.LastEditDate}}</td>
+                        <td style="width: 170px;">{{s.LastEditTime.substring(0,19)}}</td>
                         <td>
                             <a title="修改" class="btn btn-primary size-S radius" href="javascript:;" @click="open_oper_edit(s)" style="text-decoration: none;">
                                 {{obj_txt.edit}}

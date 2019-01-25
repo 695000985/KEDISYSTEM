@@ -703,8 +703,8 @@
                     data["typeid"] = this.modify.modify_type_default;
                     data["memo"] = $("#new_memo").val();
                     data["id"] = this.detail.id;
-                    data["amount"] = $('#new_total').val();
-                    // console.log(this.detail);
+                    data["amount"] = this.detail.total_money;
+                    console.log(this.detail);
                     ajax(url,data,function (ret) {
                         if(ret.stat){
                             showErr_bs(ret.data);

@@ -542,11 +542,11 @@
 
                 },
                 promotype_select(){
-                    if(!PromoType_iss){
+                    // if(!PromoType_iss){
                         open_html('PromoType','#PromoType','PromoType',function () {
 
                         },800,570)
-                    }
+                    // }
                     
                 },
                 SaleType_select(){
@@ -734,6 +734,8 @@
                             if(ret.stat){
                                 showErr(ret.data);
                                 promotype.search_all();
+                            }else{
+                                showErr(ret.errmsg,ret.errmsg_en)
                             }
                         })
                     }else{
@@ -751,6 +753,8 @@
                             if(ret.stat){
                                 showErr(ret.data);
                                 promotype.search_all();
+                            }else{
+                                showErr(ret.errmsg,ret.errmsg_en)
                             }
                         })
                     }else{
@@ -771,6 +775,8 @@
                         if(ret.stat){
                             showErr(ret.data);
                             promotype.search_all();
+                        }{
+                            showErr(ret.errmsg,ret.errmsg_en)
                         }
                     })
                 },
@@ -789,6 +795,8 @@
                         if(ret.stat){
                             showErr(ret.data);
                             promotype.search_all();
+                        }else{
+                            showErr(ret.errmsg,ret.errmsg_en)
                         }
                     })
                 }

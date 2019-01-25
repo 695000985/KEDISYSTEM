@@ -175,8 +175,13 @@
 				},
 				methods:{
 					query_out(){
-						console.log($("#out_query_start").val(),$("#out_query_end").val(),this.out_stock_no);
-						query_out_list($("#out_query_start").val(),$("#out_query_end").val(),this.out_stock_no);
+						// console.log($("#out_query_start").val(),$("#out_query_end").val(),this.out_stock_no);
+						if(this.out_stock_no == ''){
+							showErr('请选择仓库')
+						}else{
+							query_out_list($("#out_query_start").val(),$("#out_query_end").val(),this.out_stock_no);
+						}
+						
 					},
 					open_stockout_manage(){
 						open_html("stockout_manage",'#main','main',function(){
