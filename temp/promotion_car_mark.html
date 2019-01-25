@@ -36,7 +36,7 @@
                 <div class="pt-10">
                     <div class="mb-5">
                         <span>Member:</span>
-                        <input style="width:10%;" v-model="search_no" type="text" class="input-text radius" placeholder="">
+                        <input style="width:10%;" v-model="search_no" type="text" class="car-inpput input-text radius" placeholder="">
                         <span @click="search($event)" class="btn btn-primary radius">搜索</span>
                         <span class="btn btn-default radius">打印</span>
                     </div>
@@ -138,11 +138,21 @@
                     var data = {};
                     data["usertoken"] = user_token;
                     data["CustomerNO"] = this.search_no;
-                    ajax(url,data,function (ret) {
-                        if(ret.stat){
-                            main.search_list = ret.data;
-                        }
-                    })
+                    if(data["CustomerNO"] == ''){
+                        $('.car-inpput').focus();
+                        $('.car-inpput').css('border-color','#5a98de');
+                        showErr('请输入会员编号');
+                    }else{
+                        $('.car-inpput').css('border-color','auto');
+                        ajax(url,data,function (ret) {
+                            if(ret.stat){
+                                main.search_list = ret.data;
+                            }else{
+                                showErr(ret.errmsg,ret.errmsg_en)
+                            }
+                        })
+                    }
+                    
                 },
                 mark(){
                     var url = "/index.php?s=desktop/Promo_Certificate/button2_Click";

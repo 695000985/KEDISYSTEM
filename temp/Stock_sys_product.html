@@ -499,10 +499,10 @@ var pagecounts,page=1,pagesize=30,pagestat=0,obj; // 分页相关的参数
                 //保存
                 editsave : function(){
                     var data = this.data;
-                    if(!data.TypeName){
-                        alert('TypeName can not be empty!!');
-                        return;
-                    }
+                    // if(!data.TypeName){
+                    //     alert('TypeName can not be empty!!');
+                    //     return;
+                    // }
                     data.usertoken = user_token;
                     var url = '';
                     if(this.is_add){
