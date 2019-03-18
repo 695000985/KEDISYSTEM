@@ -27,6 +27,8 @@
         .tr_bg{
             background: #eee;
         }
+        .Wdate{width: 100px;}
+        .table th,.table td{word-break: normal;}
         select.is_check{background: rgba(140,140,140,0.35);}
     </style>
 </head>
@@ -46,7 +48,7 @@
             </div>
             <div>
                 <p>仓库InStock</p>
-               <select name="" id="in_stock" v-model="stock_no"  style="width: 140px;">
+               <select name="" id="in_stock" v-model="stock_no"  style="width: 100px;">
                    <option :value="item.StockShow" v-for="(item, index) in stock_manage">{{item.StockShow}}</option>
                </select>
             </div>
@@ -64,7 +66,8 @@
                     <option v-for="item in connect_list">{{item.FromPlace}}</option>
                 </select>
             </div>
-            
+        </div>
+        <div class="search_txt">    
             <input type="button" id="" name="" value="查询入库单In" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
                 @click="query_in()">
             <!--<input type="button" id="" name="" value="SearchProduct" class="btn btn-success btn-radius btn-serach" style="height: 30px; margin-right: 15px;"
@@ -81,7 +84,7 @@
                                 <th style="width: 60px;">国家</th>
                                 <th style="width: 80px;">来源地</th>
                                 <th style="width: 60px;">类型</th>
-                                <th style="width: 80px;">报溢所属</th>
+                                <th style="width: 90px;">报溢所属</th>
                                 <th style="width: 120px;">入库日期</th>
                                 <th style="width: 100px;">入库员</th>
                                 <th>备注MeMo</th>

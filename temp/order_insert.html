@@ -38,13 +38,13 @@
 
 <body>
     <div class="order_input_con">
-        <header class="navbar-wrapper">
+        <!-- <header class="navbar-wrapper">
             <div class="navbar navbar-black">
                 <div class="cl" style="width: 1100px">
 
                 </div>
             </div>
-        </header>
+        </header> -->
         <div class="kd_content">
             <div class="left" >
                 <div class="order_left_info " id="top_left">
@@ -146,6 +146,7 @@
                                     <th class="TotalBV">{{obj_txt.TotalBV}}</th>
                                     <th class="TotalPV">{{obj_txt.TotalPV}}</th>
                                     <th class="TotalNaira">{{obj_txt.TotalNaira}}</th>
+                                    <th class="RealDate">Buydate</th>
                                     <th class="ReporterName">{{obj_txt.ReporterName}}</th>
                                 </tr>
                             </thead>
@@ -157,6 +158,7 @@
                                     <td>{{x.Total_BV}}</td>
                                     <td>{{x.Total_PV}}</td>
                                     <td>{{x.Total_naira}}</td>
+                                    <td>{{x.realdate.substring(0,10)}}</td>
                                     <td>
                                         {{x.oper_name}}
                                     </td>
@@ -171,15 +173,15 @@
                         <input type="button" :value="obj_txt.BtnDelete" class="btn btn-danger BtnDelete" onclick="del_sale()">
                         <div class="Report_BV">
                            {{obj_txt.ReportBV}}
-                            <input type="number" class="total_bv" value="0" disabled>
+                            <input type="number" style="width: 60px;" class="total_bv" value="0" disabled>
                         </div>
                         <div class="Report_PV">
                            {{obj_txt.ReportPV}}
-                            <input type="number" class="total_pv" value="0" disabled>
+                            <input type="number" style="width: 60px;" class="total_pv" value="0" disabled>
                         </div>
                         <div class="Report_Naira">
                             {{obj_txt.Report_Naira}}
-                            <input type="number" class="total_naira" value="0" disabled>
+                            <input type="number" style="width: 100px;" class="total_naira" value="0" disabled>
                         </div>
                     </div>
                     <div class="bottom">
@@ -274,41 +276,59 @@
         }
 
         function btn_query() { //查询产品
-            if (!!!$('.product_no').val()) {
-                showErr(config_txt.product_no.zn_network_err,config_txt.product_no.en_network_err0)
-                return
-            }
-            var arr = [];
+            // if (!!!$('.product_no').val()) {
+            //     showErr(config_txt.product_no.zn_network_err,config_txt.product_no.en_network_err0)
+            //     return
+            // }
+            if($('.product_no').val() == ''){
+                var x = [];
+                $('#p_list tr td:nth-child(7)').each(function () {
+                    if (!!$(this).html()) {
+                        // alert($(this).html())
+                        // alert($(this).parent().find('td:nth-child(2)').html())
+                        var a = {};
+                        a['ProductNO'] = $(this).parent().find('td:nth-child(2)').html();
+                        a['Amount'] = $(this).html();
+                        x.push(a)
+                    }
+                })
+                order_entry_list(JSON.stringify(x))
+            }else{
+                var arr = [];
 
-            for (n in productdata) {
-                arr.push(productdata[n].ProductNO)
-            }
-            if (arr.includes($('.product_no').val().toUpperCase())) {
-                var obj = {};
-                obj['ProductNO'] = $('.product_no').val();
-
-                var del_index = $.inArray($('.product_no').val().toUpperCase(), arr);
-                var temp_o = productdata[del_index];
-                productdata.splice(del_index, 1)
-                chcha()
-                function chcha() {
-                    // query_product(obj)
+                for (n in productdata) {
+                    arr.push(productdata[n].ProductNO)
                 }
-                productdata.unshift(temp_o);
-                // if (query_stat == 1) {
-                    product_list.index_active = 0;
-                    // $('.product_no').css('display', 'none')
-                    // $('.product_no').val('')
-                    // $('.set_num').css('display', 'inline-block').focus();
-                    $('.product_no').attr('type', 'number')
-                    $('.product_no').val('');
-                    $('.product_no').focus();
-                    $('#p_list tbody tr:first td:last').html('');  
-                    // $('.set_num').css('display', 'inline-block').focus();
-                // }
-            } else {
-                showErr(config_txt.not_product_no.zn,config_txt.not_product_no.en)
+                if (arr.includes($('.product_no').val().toUpperCase())) {
+                    var obj = {};
+                    obj['ProductNO'] = $('.product_no').val();
+
+                    var del_index = $.inArray($('.product_no').val().toUpperCase(), arr);
+                    var temp_o = productdata[del_index];
+                    productdata.splice(del_index, 1)
+                    chcha()
+                    function chcha() {
+                        // query_product(obj)
+                    }
+                    productdata.unshift(temp_o);
+                    // if (query_stat == 1) {
+                        product_list.index_active = 0;
+                        // $('.product_no').css('display', 'none')
+                        // $('.product_no').val('')
+                        // $('.set_num').css('display', 'inline-block').focus();
+                        $('.product_no').attr('type', 'number')
+                        $('.product_no').val('');
+                        $('.product_no').focus();
+                        $('#p_list tbody tr:first td:last').html('');  
+                        // $('.set_num').css('display', 'inline-block').focus();
+                    // }
+                } else {
+                    // showErr(config_txt.not_product_no.zn,config_txt.not_product_no.en)
+                   
+                }
             }
+
+            
         }
 
         function set_num() { //设置产品数量
@@ -550,9 +570,9 @@
                 <td>${$('#sale_list tr.tr_active td:nth-child(3)').html()}</td>
             </tr>
         </table> 
-        你确定删除已上报单
+        DO YOU WANT TO DELETE IT?
         `
-            firm('删除报单', txt, function () {
+            firm('Delete order', txt, function () {
                 ajax(url, data, function (e) {
                     if (e.stat == 1) {
                         query_order_report($('.Wdate').val())
@@ -566,10 +586,15 @@
         }
 
         function _clear() { //清空输入条件
+            // query_product()
             $('.order_left_info input[type="text"]').val('');
             for (x in productdata) {
                 product_list.listdata[x].Qty = ''
             }
+            $('#p_list tr td:nth-child(7)').each(function () {
+                $(this).html('')
+            })
+            product_list.index_active = -1;
             $('.order_left_info input[type="number"]').val('');
             total.total_data.total_price = 0;
             total.total_data.total_bv = 0;
@@ -616,9 +641,9 @@
                 <td>${$('.select_shop_no').val()}</td>
             </tr>
         </table> 
-        你确定已上报单信息正确
+        &nbsp;&nbsp;Confirm the Order Info Correct?
         `
-            firm('报单汇总', txt, function () {
+            firm('Report summary', txt, function () {
                 layer.closeAll('page');
                 creat_report_no()
             })

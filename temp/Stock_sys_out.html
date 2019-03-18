@@ -29,6 +29,7 @@
         }
         .marginbtm_15{margin-bottom: 15px;}
 		.m-style{width: auto;}
+		.sto-man-tab .table th,.table td{word-break: normal;}
 		
     </style>
 </head>
@@ -186,7 +187,7 @@
 					open_stockout_manage(){
 						open_html("stockout_manage",'#main','main',function(){
 							Refresh()
-						},1100)
+						},800,500)
 					},
 					get_groupId(group_id,index){
 						console.log(group_id.GroupID);
@@ -291,16 +292,16 @@
     
 </body>
 
-<div id="main" v-cloak class="market_shop" style="display:none;">
-	<div class="cl">
-		<div class="f-r pd-10">
+<div id="main" v-cloak class="market_shop" style="display:none;margin-top: 5px;margin-bottom: 0;">
+	<div class="cl pr-20">
+		<div class="f-r pd-5">
 			<span class=" size-L">GID</span>
 			<input type="text" v-model="top.gid" style="width: 185px;" disabled class="input-text radius" placeholder="">
 			<span class="size-L">SC/Region</span>
 			<input type="text" v-model="top.sc" style="width: 70px;" disabled class="input-text radius" placeholder="">
 		</div>
 	</div>
-	<div class="search_txt" style="display:-webkit-box;">
+	<div class="search_txt" style="display:-webkit-box;-webkit-box-pack:center;margin-bottom: 5px;">
 		<div>
 			<p>RetailKEDICard</p>
 			<input type="text" id="search_CName" class="radius" :placeholder="obj_txt.CName">
@@ -313,7 +314,8 @@
 
 		<input type="button" id="" name="" value="SearchSC" class="btn btn-success btn-radius btn-serach radius" style="height: 30px; margin-right: 10px;"
 			@click="search_btn()">
-		
+	</div>
+	<div class="search_txt" style="display:-webkit-box;-webkit-box-pack:center;margin-bottom: 5px;">
 		<div>
 			<p>Region:</p>
 			<input v-model="main_stock_out_num" class="radius" type="text" id="search_EName" placeholder="" style="width:150px;">
@@ -352,46 +354,46 @@
 	</div>
 	
 	<div>
-		<div class="left pd-5" style="min-height: 500px; width: 45%;box-sizing: border-box;">			
-			<fieldset id="" style="width: 95%;" class="radius">
-				<legend style="width: auto;border-bottom: none;margin-bottom: 5px;">Condition</legend>
-				<div class="marginbtm_15">
+		<div class="left pl-5 pr-5" style="min-height: 500px; width: 45%;box-sizing: border-box;">			
+			<fieldset id="" style="width: 95%;padding-bottom: 5px;" class="radius">
+				<legend style="width: auto;border-bottom: none;margin-bottom: 0px;">Condition</legend>
+				<div class="mb-5">
 					<div class="left" style="margin-right: 5px;">
-						<select name="" v-model="stock_sel" id="" style="width: 140px;" class=" radius">
+						<select name="" v-model="stock_sel" id="" style="width: 80px;" class=" radius">
 							<option :value="item.result" v-for="(item , index) in region_list">{{item.result}}</option>
 						</select>
 					</div>
-					<div class="left">
+					<div class="mb-5 left">
 						<span>From</span>
 						<input id="sa_start" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_from radius">
 					</div>
-					<div class="left">
+					<div class="mb-5 left" style="padding-left: 100px;">
 						<span>To</span>
 						<input id="sa_end" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="Wdate date_to radius">
 					</div>
 					<div class="clear"></div>
 				</div>
 				
-				<div class="marginbtm_15">
+				<div class="mb-5">
 					<span style="display: inline-block;width: 90px;text-align: right;">SC/Distributor</span>
-					<input type="text" id="" v-model="SC_Distributor" placeholder="" class=" radius">
+					<input type="text" id="" v-model="SC_Distributor" placeholder="" class=" radius" style="width: 100px;">
 				</div>
-				<div class="marginbtm_15">
+				<div class="mb-5">
 					<span style="display: inline-block;width: 90px;text-align: right;">汇总编号No:</span>
-					<input type="text" id="" class="radius" v-model="left_Distributor" placeholder="">
+					<input type="text" id="" class="radius" v-model="left_Distributor" placeholder="" style="width: 100px;">
 					<input type="button" id="" @click="searchall()" name="" value="SearchAll" class="btn btn-success btn-radius btn-serach radius" style="height: 30px; margin-right: 15px;"
 				@click="">
 				</div>
-				<div class="marginbtm_15">
+				<div class="">
 					<span style="display: inline-block;width: 90px;text-align: right;">Category:</span>
-					<select name="" v-model="i_o_type_list_def" id="" style="width: 140px;" class=" radius">
+					<select name="" v-model="i_o_type_list_def" id="" style="width: 109px;" class=" radius">
 						<option :value="item.TypeName_E" v-for="(item , index) in i_o_type_list">{{item.TypeName_E}}</option>
 					</select>
 					<input type="button" @click="SearchScStockOut()" id="" name="" value="Search" class="btn btn-success btn-radius btn-serach radius" style="height: 30px; margin-right: 15px;"
 				@click="">
 				</div>
 			</fieldset>	
-			<div style="overflow-x:scroll;overflow-y:scroll;height:250px;">
+			<div class="sto-man-tab" style="overflow-x:scroll;overflow-y:scroll;height:250px;">
 				<table class="table table-border table-bordered table-bg" style="width: 125%; margin: 10px auto;background-color: rgba(200,200,200,.15);">
 					<thead>
 						<tr>
@@ -430,7 +432,7 @@
 		</div>
 		<!-- 订单详细列表  -->
 		<div class="left" style="margin-left: 1%; width: 54%;">
-			<div style="overflow-x:scroll;overflow-y:scroll;height:450px;" class="pd-5">
+			<div style="overflow-x:scroll;overflow-y:scroll;height:250px;" class="pd-5">
 				<table class="table table-border table-bordered table-bg" style="width: 95%; background-color: rgba(200,200,200,0); margin: 0 auto; margin-bottom: 10px;">
 					<thead>
 						<tr>
@@ -463,8 +465,11 @@
 					</tbody>
 				</table>
 			</div>
-			<div class="text-r pd-10">
+			<div class="text-r pt-5 pr-10">
 				出库日期StockOutDate:<input style="width:90px;height:29px;" id="stock_out_date" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" class="radius Wdate date_from">
+				
+			</div>
+			<div class="text-r mt-5 pr-10">
 				<span @click="btn5($event)" class="btn btn-default radius" :class="r_btm_btn.one.enable?'btn-secondary':''">{{r_btm_btn.one.text}}</span>
 				<span @click="btn6($event)" class="btn btn-default radius" :class="r_btm_btn.two.enable?'btn-secondary':''">{{r_btm_btn.two.text}}</span>
 			</div>

@@ -200,7 +200,7 @@ function firm(title, txt, fun) { // 确认框
         type: 1,
         title: title,
         content: txt, //这里content是一个普通的String
-        btn: ['确定', '取消'],
+        btn: ['OK', 'CANCEL'],
         area: ['300px', '200px'],
         yes: function(index, layero) {
             fun()

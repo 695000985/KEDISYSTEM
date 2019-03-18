@@ -42,11 +42,11 @@
                         <option value="KN">KN</option>
                         <option value="KG">KG</option>
                     </select>
-                    <input type="text" class="member-code" name="index_1">
+                    <input type="text" class="member-code req" name="index_1" req="0">
                 </div>
                 <div>
                     <span id="MemberName">{{obj_txt.MemberName}}</span>
-                    <input type="text" class="member-name" name="index_5">
+                    <input type="text" class="member-name req" name="index_5" req="1">
                 </div>
             </div>
             <div class="list_information">
@@ -56,7 +56,7 @@
                         <option value="KN">KN</option>
                         <option value="KG">KG</option>
                     </select>
-                    <input type="text" class="sponsor-code" name="index_2">
+                    <input type="text" class="sponsor-code req" name="index_2" req="2">
                 </div>
                 <div>
                     <span id="SponsorName">{{obj_txt.SponsorName}}</span>
@@ -71,7 +71,7 @@
                         <option value="KN">KN</option>
                         <option value="KG">KG</option>
                     </select>
-                    <input type="text" class="plancement-code" name="index_3">
+                    <input type="text" class="plancement-code req" name="index_3" req="3">
 
                 </div>
                 <div>
@@ -82,7 +82,7 @@
             <div class="list_information">
                 <div class="skin-minimal">
                     <span id="ShopNo">{{obj_txt.ShopNo}}</span>
-                    <input type="text"  id="" class="shop-code" name="index_4">
+                    <input type="text"  id="" class="shop-code req" name="index_4" req="4">
 
                 </div>
                 <div>
@@ -109,7 +109,7 @@
             <div class="list_information">
                 <div>
                     <span id="Handset">{{obj_txt.Handset}}</span>
-                    <input type="text" style="width: 140px" class="mobile" name="index_6">
+                    <input type="text" style="width: 140px" class="mobile req" name="index_6" req="5">
                 </div>
                 <div style="width: 190px;">
                     <span id="Gender">{{obj_txt.Gender}}</span>
@@ -294,20 +294,68 @@
         data['Address'] = $('.address').val(); //
         data['sex'] = getRadioButtonCheckedValue('radio'); //
         data['State'] = $('.state').val(); //
-        $('input[type="button"]').attr('disabled', true);
-        ajax(url, data, function (ret) {
-            $('input[type="button"]').attr('disabled', false);
-            if (ret.stat == 1) {
-                success(config_txt.success_text.zn_entry, config_txt.success_text.en_entry)
-                search_member_all()
-                $('#sale_list').css('display', 'block');
-                $("input[type='text']").val('')
-            } else {
-                showErr(ret.errmsg, ret.errmsg_en, ret.errcode)
+        // $('input[type="button"]').attr('disabled', true);
+        // console.log('tamiaaaaaa')
+        
+        // is_req()
+        var req_bool ,req_error = -1;
+        is_req()
+        function is_req(){
+            
+            $('.req').each(function(){
+                // console.log($(this).attr('req'))
+                // console.log($(this).val())
+                if(!$(this).val()){
+                    req_error = $(this).attr('req')
+                    req_bool = false;
+                    return false;
+                }else{
+                    req_bool = true;
+                }
+            })
+            
+        }
+        function show_err(num){
+            var num = Number(num)
+            switch (num)
+            {
+                case 0:
+                return "Member account is required!";
+                case 1:
+                return "Member name is required!";
+                case 2:
+                return "Referrer account is required!";
+                case 3:
+                return "Placement person is required!";
+                case 4:
+                return "The store number is required!";
+                case 5:
+                return "Phone number is required!";
             }
-        })
+        }
+        if(req_bool){
+            ajax(url, data, function (ret) {
+                $('input[type="button"]').attr('disabled', false);
+                if (ret.stat == 1) {
+                    success(config_txt.success_text.zn_entry, config_txt.success_text.en_entry)
+                    search_member_all()
+                    $('#sale_list').css('display', 'block');
+                    $("input[type='text']").val('')
+                } else {
+                    showErr(ret.errmsg,ret.errmsg_en)
+                }
+            })
+        }else{
+            showErr(show_err(req_error))
+        }
+        // console.log(req_bool,req_error)      
     }
-
+    $('body').on('keyup',function(e){
+        if(e.keyCode === 13){
+            member_add()
+        }
+        
+    })
 
     function getRadioButtonCheckedValue(tagNameAttr) {
         var radio_tag = document.getElementsByName(tagNameAttr);
@@ -354,6 +402,7 @@
         methods: {
             lang_toggle() {
                 this.obj_txt = splicing_obj(this.lang_txt)
+                console.log(this.obj_txt)
             }
         }
     })

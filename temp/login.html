@@ -178,7 +178,7 @@
                 </div>
                 <div class="row cl">
                     <div class="formControls col-xs-8 col-xs-offset-3" style="display: flex;align-items: center;justify-content: space-between;">
-                        <input name="" type="button" class="btn btn-success radius size-L" value="&nbsp;登&nbsp;&nbsp;&nbsp;&nbsp;录&nbsp;" onclick="login(this)">
+                        <input name="" type="button" class="login-btn btn btn-success radius size-L" value="&nbsp;登&nbsp;&nbsp;&nbsp;&nbsp;录&nbsp;" onclick="login(this)">
 
                         <div class="btn-group" style="" id="lang_group">
                             <span class="btn  radius" v-for="(l, index) in langs" @click="toggle(index)" :class="{ 'btn-primary' :index == lang_toggle }">{{l}}</span>
@@ -237,7 +237,14 @@
             }
 
         })
-
+        
+        
+        document.onkeydown = function (event) {
+            var e = event || window.event;
+            if (e && e.keyCode == 13) {
+                $(".login-btn").click(); 
+            }
+        }; 
         function login(a) {
             $(a).css('filter', 'grayscale(100%)')
             $('input[type="button"]').attr('disabled', true)

@@ -41,6 +41,7 @@
             font-size: 14px !important;
             border-bottom: 1px solid #000 !important;
         }
+        
     </style>
 </head>
 
@@ -173,27 +174,27 @@
 </body>
 <div class="cash_data" id="cash_data" style="display: none">
     <div class="cash_top">
-        <p>
+        <div class="ml-5">
             <span>{{obj_txt.Ca_groupid}}</span>
-            <input type="text" disabled class="cash_gid" :value="cash_groupid" style="width: 140px;">
-        </p>
-        <p>
+            <input type="text" disabled class="cash_gid" :value="cash_groupid" style="width: 90px;">
+        </div>
+        <div>
             <span>{{obj_txt.Ca_date}}</span>
             <input type="text" disabled class="cash_time" :value='cash_time'>
-        </p>
-        <p>
+        </div>
+        <div>
             <span>{{obj_txt.Ca_shopCode}}</span>
-            <input type="text" disabled class="cash_sc" :value='cash_sc'>
-        </p>
-        <p>
+            <input type="text" disabled class="cash_sc" :value='cash_sc'  style="width:71px;">
+        </div>
+        <div>
             <span>{{obj_txt.Ca_total}}</span>
-            <input type="text" disabled class="cash_total" v-model='cash_total'>
-        </p>
+            <input type="text" disabled class="cash_total" v-model='cash_total'  style="width:60px;">
+        </div>
     </div>
     <div class="cash_top">
         <p>
             <span>{{obj_txt.Ca_amount}}</span>
-            <input type="text" style="width:200px;" class="amount">
+            <input type="text" style="width:150px;" class="amount">
         </p>
         <button class="btn btn-success" onclick="cash_data_add()">{{obj_txt.Ca_btn_add}}</button>
         <button class="btn btn-danger" v-on:click='del_data(cashid)'>{{obj_txt.Ca_btn_delete}}</button>
@@ -408,46 +409,46 @@
     </div>
 </div>
 
-<div id="tellardata" class="tellar_data" style="display: none" v-cloak>
+<div id="tellardata" class="pl-5 pr-5 tellar_data" style="display: none" v-cloak>
     <div class="tell_top">
-        <P>
+        <div>
             <span>{{obj_txt.Te_groupid}}</span>
             <input type="text" disabled :value='groupid'>
-        </P>
-        <P>
+        </div>
+        <div>
             <span>{{obj_txt.Te_balance}}</span>
             <input type="text" class="balance" disabled :value="banlance">
-        </P>
-        <P>
+        </div>
+        <div>
             <span>{{obj_txt.Te_shopcode}}</span>
-            <input type="text" disabled :value="sc">
-        </P>
-        <P>
+            <input type="text" disabled :value="sc" style="width: 80px;">
+        </div>
+        <div>
             <span>{{obj_txt.Te_regionMoney}}</span>
             <input type="text" class="tellar_RegionMoney" disabled :value="RegionMoney">
-        </P>
+        </div>
     </div>
     <div class="tell_top">
-        <P>
+        <div>
             <span>{{obj_txt.Te_date}}</span>
             <input type="text" disabled :value="date">
-        </P>
-        <P>
+        </div>
+        <div>
             <span>{{obj_txt.Te_teller}}</span>
             <input type="text" disabled :value='teller'>
-        </P>
-        <P>
+        </div>
+        <div>
             <span>{{obj_txt.Te_Region}}</span>
             <input type="text" disabled :value="region">
-        </P>
-        <P>
+        </div>
+        <div>
             <span>{{obj_txt.Te_amount}}</span>
             <input type="text" class="tellar_amount">
-        </P>
+        </div>
         <button class="btn btn-success" v-on:click="add_tellar()">{{obj_txt.Te_btn_add}}</button>
     </div>
     <div class="tell_top">
-        <p>
+        <div>
             <span>{{obj_txt.Te_year}}</span>
             <select name="" id="" v-model="year">
                 <option value="2014">2014</option>
@@ -460,8 +461,8 @@
                 <option value="2021">2021</option>
                 <option value="2022">2022</option>
             </select>
-        </p>
-        <p>
+        </div>
+        <div>
             <span>{{obj_txt.Te_month}}</span>
             <select name="" class="month" id="" v-model="month">
                 <option value="1">JAN</option>
@@ -477,21 +478,21 @@
                 <option value="11">NOV</option>
                 <option value="12">DEC</option>
             </select>
-        </p>
-        <p>
+        </div>
+        <div>
             <span>{{obj_txt.Te_RegPsw}}</span>
             <input type="text" disabled>
-        </p>
+        </div>
     </div>
     <div class="tell_top">
 
-        <p>
+        <div>
             <span>{{obj_txt.ConfirmPsw}}</span>
             <input type="text">
-        </p>
-        <p>
+        </div>
+        <div>
             <span>未注册，Unregister</span>
-        </p>
+        </div>
         <button class="btn btn-danger" v-on:click='del_tellar()'>{{obj_txt.Te_btn_delete}}</button>
     </div>
     <div class="list_data" style="background: #ccc; height: 300px; overflow-x: auto;">
@@ -978,7 +979,9 @@
     })
 
     function opne_cash_data() {
-        open_html('cashData', '#cash_data', 'cash_data')
+        open_html('cashData', '#cash_data', 'cash_data', function(){
+
+        },650,420)
     }
     var v_cash = new Vue({
         el: "#cash_data",
@@ -1118,7 +1121,7 @@
     function open_tellar() {
         open_html('TellarData', '#tellardata', 'v_tellar', function() {
             //Refresh()
-        });
+        },800,500);
 
 
         get_tellar();
