@@ -41,7 +41,12 @@
             font-size: 14px !important;
             border-bottom: 1px solid #000 !important;
         }
-        
+        #canvas_con .table td{padding: 0 3px!important;}
+        .printForm .print_row select {
+            height: 30px!important;font-size: 12px!important;
+        }
+        .printForm .print_row select option{height: 30px;line-height: 30px;}
+        .print_row p{margin-bottom: 0px;}
     </style>
 </head>
 
@@ -175,7 +180,7 @@
 <div class="cash_data" id="cash_data" style="display: none">
     <div class="cash_top">
         <div class="ml-5">
-            <span>{{obj_txt.Ca_groupid}}</span>
+            <span style="display: inline-block;width: 40px;text-align: right;">{{obj_txt.Ca_groupid}}</span>
             <input type="text" disabled class="cash_gid" :value="cash_groupid" style="width: 90px;">
         </div>
         <div>
@@ -191,9 +196,9 @@
             <input type="text" disabled class="cash_total" v-model='cash_total'  style="width:60px;">
         </div>
     </div>
-    <div class="cash_top">
+    <div class="cash_top" style="padding-left: 0;">
         <p>
-            <span>{{obj_txt.Ca_amount}}</span>
+            <span style="display: inline-block;width: 53px;text-align: right;">{{obj_txt.Ca_amount}}</span>
             <input type="text" style="width:150px;" class="amount">
         </p>
         <button class="btn btn-success" onclick="cash_data_add()">{{obj_txt.Ca_btn_add}}</button>
@@ -568,18 +573,20 @@
                 <input type="text" readonly :value="people ">
             </P>
         </div>
-        <div class="print_row">
-            <select name="" id="sture_name" v-model="store_name">
-                <option value="专卖店销售汇总表">专卖店销售汇总表</option>
-                <option value="DAILY REPORT">DAILY REPORT</option>
-                <option value="MONTHLY REPORT">MONTHLY REPORT</option>
-                <option value="REGIONAL OFFICE REPORT">REGIONAL OFFICE REPORT</option>
-            </select>
+        <div class="print_row" style="height: 50px;">
+            <div style="">
+                <select style="box-sizing: border-box;" name="" id="sture_name" v-model="store_name">
+                    <option value="专卖店销售汇总表">专卖店销售汇总表</option>
+                    <option value="DAILY REPORT">DAILY REPORT</option>
+                    <option value="MONTHLY REPORT">MONTHLY REPORT</option>
+                    <option value="REGIONAL OFFICE REPORT">REGIONAL OFFICE REPORT</option>
+                </select>
+            </div>
         </div>
         <div class="print_row">
             <P>
                 <span>{{obj_txt.Pr_date}}</span>
-                <input class="Wdate" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" :value='local_time'>
+                <input style="height: auto;" class="Wdate" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" :value='local_time'>
             </P>
             <P>
                 <span>{{obj_txt.Pr_region}}</span>

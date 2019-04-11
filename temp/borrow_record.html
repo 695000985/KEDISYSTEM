@@ -485,7 +485,9 @@
                     borrow_ret:{
                         id :''
                     }
-                }
+                },
+
+                modify_n_v:''
             },
             methods : {
                 init : function(){
@@ -684,7 +686,7 @@
                     // this.showdetail(item);
                     this.detail = item;
                     this.modify.modify_type_default = this.detail.type_id;
-                    
+                    this.modify_n_v = this.detail.total_money;
                     $("#momo_win").modal();
                 },
                 confirm_modify: function(){
@@ -703,8 +705,8 @@
                     data["typeid"] = this.modify.modify_type_default;
                     data["memo"] = $("#new_memo").val();
                     data["id"] = this.detail.id;
-                    data["amount"] = this.detail.total_money;
-                    console.log(this.detail);
+                    data["amount"] = this.modify_n_v;
+                    console.log(data["amount"]);
                     ajax(url,data,function (ret) {
                         if(ret.stat){
                             showErr_bs(ret.data);
@@ -745,6 +747,8 @@
                 thousand_ex_:function( precision, separator) {
                     var parts;
                     var num = $("#new_total").val();
+                    this.modify_n_v = num;
+                    console.log(num);
                     if (!isNaN(parseFloat(num)) && isFinite(num)) {
                         num = Number(num);
                         num = (typeof precision !== 'undefined' ? num.toFixed(precision) : num).toString();

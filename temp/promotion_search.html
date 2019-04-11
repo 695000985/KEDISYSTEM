@@ -66,7 +66,7 @@
 <body>
     <div id="main" class="pd-10" v-cloak>
         <div class="top-nav">
-            <input class="btn btn-primary size-M radius" type="button" value="促销查询">
+            <input @click="set_res($event)" class="btn btn-primary size-M radius" type="button" value="设置结果">
         </div>
         <div class="f-l" style="width:45%;">
             <div class="bk-gray mt-10 ml-10 mr-10 pd-10 radius">
@@ -202,33 +202,44 @@
                         // this.get_list('2')
                         // this.get_list('3')
                 },
+                set_res(){
+
+                    console.log('tamia')
+                },
                 add() {
                     // console.log($('#is_check_reg').prop('checked'))
                     if ($('#is_check_reg').prop('checked')) {
                         this.r_con.push('RegDate between \'' + $('#s_s').val() + '\' and \'' + $('#s_e').val() + '\'');
                     }
-                    if (this.from.one != '') {
+                    if (this.from.one != '' && this.l.m != '') {
                         this.r_con.push(this.l.m + '>=' + this.from.one);
                     }
-                    if (this.to.one != '') {
+                    if (this.to.one != '' && this.l.m != '') {
                         this.r_con.push(this.l.m + '<=' + this.to.one);
                     }
-                    if (this.from.two != '') {
+                    if (this.from.two != '' && this.l.m != '') {
                         this.r_con.push(this.l.m + '>=' + this.from.two);
                     }
-                    if (this.to.two != '') {
+                    if (this.to.two != '' && this.l.m != '') {
                         this.r_con.push(this.l.m + '<=' + this.to.two);
                     }
-                    if (this.from.three != '') {
+                    if (this.from.three != '' && this.l.m != '') {
                         this.r_con.push(this.l.m + '>=' + this.from.three);
                     }
-                    if (this.to.three != '') {
+                    if (this.to.three != '' && this.l.m != '') {
                         this.r_con.push(this.l.m + '<=' + this.to.three);
                     }
 
                 },
                 search() {
+                    var url = "/index.php?s=desktop/Promotion/PromoSearch";
+                    var user_token = get_cache('usertoken');
+                    var data = {};
+                    data["usertoken"] = user_token;
+                    // data["comboBox1_Grade"] = ;
+                    ajax(url,data,function () {
 
+                    })
                 },
                 shancu() {
                     if (this.p_index >= 0) {
@@ -264,6 +275,7 @@
                 }
             }
         })
+
         main.init()
     </script>
 </body>

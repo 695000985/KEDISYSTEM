@@ -146,6 +146,7 @@
                                     <th class="TotalBV">{{obj_txt.TotalBV}}</th>
                                     <th class="TotalPV">{{obj_txt.TotalPV}}</th>
                                     <th class="TotalNaira">{{obj_txt.TotalNaira}}</th>
+                                    <th>GroupID</th>
                                     <th class="RealDate">Buydate</th>
                                     <th class="ReporterName">{{obj_txt.ReporterName}}</th>
                                 </tr>
@@ -158,6 +159,7 @@
                                     <td>{{x.Total_BV}}</td>
                                     <td>{{x.Total_PV}}</td>
                                     <td>{{x.Total_naira}}</td>
+                                    <td>{{x.groupid}}</td>
                                     <td>{{x.realdate.substring(0,10)}}</td>
                                     <td>
                                         {{x.oper_name}}
@@ -292,7 +294,11 @@
                         x.push(a)
                     }
                 })
-                order_entry_list(JSON.stringify(x))
+                if(x.length){
+                    total.commit()
+                }
+                // console.log(JSON.stringify(x))
+                // order_entry_list()
             }else{
                 var arr = [];
 
@@ -643,7 +649,7 @@
         </table> 
         &nbsp;&nbsp;Confirm the Order Info Correct?
         `
-            firm('Report summary', txt, function () {
+            firm('Order Repor', txt, function () {
                 layer.closeAll('page');
                 creat_report_no()
             })

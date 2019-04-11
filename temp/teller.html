@@ -50,7 +50,7 @@
         }
 
         .mid-con{height: 150px;position: relative;}
-        .mid-con .mid-word{position: absolute;top: 50%;left: 50%;transform: translate(-50%,-50%);}
+        .mid-con .mid-word{position: absolute;width: 16px;top: 50%;left: 50%;transform: translate(-50%,-50%);}
 
         table tr td{
             white-space: nowrap;
@@ -374,7 +374,7 @@
             
 
             <div class="middle_btn left" style="width: 3%;padding-top: 7%;margin-right: 1%;">
-                <div class="mid-con" style="margin-top: 20px;font-size: 18px;border: 1px solid #cccccc;padding: 20px 15px;">
+                <div class="mid-con" style="height: 225px;margin-top: 20px;font-size: 18px;border: 1px solid #cccccc;padding: 20px 15px;">
                     <!-- <button class="btn" style="width: 20px;height: 100px;word-wrap: break-word;">关联</button> -->
                     <div class="mid-word" @click="guanlian($event)">{{lang_txt.associate.toUpperCase()}}</div>
                 </div>
