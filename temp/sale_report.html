@@ -199,7 +199,7 @@
     <div class="cash_top" style="padding-left: 0;">
         <p>
             <span style="display: inline-block;width: 53px;text-align: right;">{{obj_txt.Ca_amount}}</span>
-            <input type="text" style="width:150px;" class="amount">
+            <input type="text" style="width:150px;" id="k-amount" class="amount">
         </p>
         <button class="btn btn-success" onclick="cash_data_add()">{{obj_txt.Ca_btn_add}}</button>
         <button class="btn btn-danger" v-on:click='del_data(cashid)'>{{obj_txt.Ca_btn_delete}}</button>
@@ -220,7 +220,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for='(x,$index) in cash_data.list' v-if='cash_data' v-bind:class="{active_index:$index == active_index}" @click="sel_active($index,x.CashID)">
+                <tr v-for='(x,$index) in cash_data.list' v-if='cash_data' v-bind:class="{active_index:$index == active_index}" @click="sel_active($index,x.GroupID,x.CashID,x.Amount,x.Oper)">
                     <td>{{x.GroupID}}</td>
                     <td>{{x.CashID}}</td>
                     <td>{{x.ShopNo}}</td>
@@ -993,6 +993,9 @@
     var v_cash = new Vue({
         el: "#cash_data",
         data: {
+            del_gid:'',
+            del_amount:'',
+            del_oper:'',
             cash_data: {},
             cash_groupid: groupid,
             cash_time: realdate,
@@ -1008,9 +1011,12 @@
             this.lang_toggle()
         },
         methods: {
-            sel_active(index, cashid) {
+            sel_active(index,groupid, cashid,amount,oper) {
                 this.active_index = index;
-                this.cashid = cashid
+                this.del_gid = groupid;
+                this.cashid = cashid;
+                this.del_amount = amount;
+                this.del_oper = oper;
             },
             del_data(cid) {
                 if (cid) {
@@ -1049,7 +1055,11 @@
             }
         })
     }
-
+    $('#k-amount').keyup(function(event){
+        if(event.keyCode ==13){
+            cash_data_add()
+        }
+    });
     function cash_data_add() {
         var url = '/index.php?s=desktop/Front_Desk_Cash/Add_Cash';
         var data = {};
@@ -1070,11 +1080,42 @@
     }
 
     function cash_data_del(cid) {
+        console.log(v_cash['$root'].del_gid)
         var url = '/index.php?s=desktop/Front_Desk_Cash/Delete_Cash';
         var data = {};
         data['usertoken'] = get_cache('usertoken');
         data['CashID'] = cid;
-        var txt = `<div>${config_txt.del_cash.en}</div>`
+        // var txt = "<table class='table-border'>"+
+        //             '<tr style="font-weight: bold;">'+
+        //                 '<td class="TotalNaira">GroupId</td><td>CashId</td><td class="TotalBV">Amount</td>'+
+        //                 '<td>Oper</td>'+
+        //             '</tr><tr>'+
+        //                 '<td class="TotalPV">'+ v_cash['$root'].del_gid+ '</td>'+
+        //                 '<td>'+v_cash['$root'].cashid+'</td>'+
+        //                 '<td class="ShopCode">'+v_cash['$root'].del_amount + '</td>'+
+        //                 '<td>' + v_cash['$root'].del_oper + '</td>'+
+        //             "</tr></table>"+ 
+        //         "&nbsp;&nbsp;<div>${config_txt.del_cash.en}</div>";
+        let txt =
+                `<div style="padding:2%;">
+                <table class="table-border">
+                    <tr style="font-weight: bold;">
+                        <td class="TotalNaira">GroupId</td>
+                        <td>CashId</td>
+                        <td class="TotalBV">Amount</td>
+                        <td>Oper</td>
+                    </tr>
+                    <tr>
+                        <td class="TotalPV">${v_cash['$root'].del_gid}</td>
+                        <td>${v_cash['$root'].cashid}</td>
+                        <td class="ShopCode">${v_cash['$root'].del_amount}</td>
+                        <td>${v_cash['$root'].del_oper}</td>
+                    </tr>
+                </table> 
+                <div style="font-size: 14px;margin-top:30px;text-align:center;">${config_txt.del_cash.en}?</div></div>
+                `;
+
+        // var txt = `<div>${config_txt.del_cash.en}</div>`
         firm('确认删除', txt, function() {
             layer.close(layer.index);
             ajax1(url, data, function(e) {

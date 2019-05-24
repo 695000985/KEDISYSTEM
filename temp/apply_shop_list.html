@@ -25,6 +25,8 @@
         [v-cloak] {
             display: none;
         }
+        .search_txt{justify-content: space-between;}
+        .search_txt div p{min-width: 64px;text-align: right;}
     </style>
 </head>
 
@@ -39,6 +41,10 @@
             <div>
                 <p>{{obj_txt.apply_person}}</p>
                 <input type="text" class="approve_name" :placeholder="obj_txt.apply_person">
+            </div>
+            <div>
+                <p>shop-No</p>
+                <input type="number" class="shopno" placeholder="shop number">
             </div>
             <div>
                 <p>{{obj_txt.apply_status}}</p>
@@ -435,6 +441,7 @@
             var data = {};
             data['usertoken'] = user_token;
             data['order'] = "applay_date desc";
+            data['Shopno'] = $(".shopno").val();
             data['Oper'] = $(".oper_name").val();
             data['apply_person'] = $(".approve_name").val();
             data['apply_status'] = $('.apply_status').val();

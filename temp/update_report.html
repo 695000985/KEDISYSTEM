@@ -544,8 +544,10 @@
                         <th>{{obj_txt.Dis_date}}</th>
                         <th>{{obj_txt.TellerID}}</th>
                         <th>{{obj_txt.Dis_groupID}}</th>
-                        <th>{{obj_txt.Purpose}}</th>
-                        <th>{{obj_txt.Expected}}</th>
+                        <!-- <th>{{obj_txt.Purpose}}</th> -->
+                        <th>用途</th>
+                        <!-- <th>{{obj_txt.Expected}}</th> -->
+                        <th>所预期</th>
                         <th>{{obj_txt.systemTellerId}}</th>
                         <th>{{obj_txt.Dis_region}}</th>
                         <th>{{obj_txt.Dis_oper}}</th>
@@ -566,6 +568,7 @@
                         <td>{{t.Bank}}</td>
                         <td>{{t.Date}}</td>
                         <td>{{t.TellerID}}</td>
+                        <td>{{t.GroupID}}</td>
                         <td>{{t['用途']}}</td>
                         <td>{{t['所预期']}}</td>
                         <td>{{t.systemTellerId}}</td>
@@ -577,7 +580,7 @@
                         <td>{{t.FreezeMark}}</td>
                         <td>{{t.FreezeSelect}}</td>
                         <td>{{t.LastEditDate}}</td>
-                        <td>{{t.ROW_NUMBER}}</td>
+                        <!-- <td>{{t.ROW_NUMBER}}</td> -->
                     </tr>
                     <tr v-else>
                         <td colspan="18">没有数据</td>
@@ -673,7 +676,7 @@
             </p>
             <button class="btn btn-danger" v-on:click='del_tellar()'>{{obj_txt.Te_btn_delete}}</button>
         </div>
-        <div class="list_data" style="background: #ccc; height: 300px; overflow-x: auto;">
+        <div class="list_data" style="background: #ccc; height: 300px; overflow-x: scroll;max-width:800px;">
             <table class="table table-border table-bordered table-bg " style="background: #fff;">
                 <thead>
                     <tr>
@@ -801,15 +804,16 @@
                     }
                 },
                 open_tellardata(){
-                    if(!!this.GroupID){
-                        open_tellar();
-                        v_tellar.groupid=update_report_main.GroupID;
-                        v_tellar.date=update_report_main.info_bot_left.Date;
-                        v_tellar.sc=update_report_main.info_bot_left.shop_no;
-                        v_tellar.region=update_report_main.info_bot_left.Region;
-                    }else{
-                        showErr('请选中一条数据')
-                    }
+                    open_tellar();
+                    // if(!!this.GroupID){
+                    //     open_tellar();
+                    //     v_tellar.groupid=update_report_main.GroupID;
+                    //     v_tellar.date=update_report_main.info_bot_left.Date;
+                    //     v_tellar.sc=update_report_main.info_bot_left.shop_no;
+                    //     v_tellar.region=update_report_main.info_bot_left.Region;
+                    // }else{
+                    //     showErr('请选中一条数据')
+                    // }
                 },
                 open_dis(){
                     if(!!this.GroupID){
@@ -1212,7 +1216,7 @@
     function open_tellar() {
         open_html('TellarData', '#tellardata', 'v_tellar', function() {
             //Refresh()
-        });
+        },800);
         setTimeout(function(){
             get_tellar();
         },100)

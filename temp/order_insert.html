@@ -93,9 +93,9 @@
                                 <td width='30'></td>
                                 <td>{{x.ProductNO}}</td>
                                 <td>{{x.CName}}</td>
-                                <td>{{x.MemberPrice}}</td>
-                                <td>{{x.BV}}</td>
-                                <td>{{x.PV}}</td>
+                                <td>{{x.MemberPrice>0?parseInt(x.MemberPrice):''}}</td>
+                                <td>{{x.BV>0?parseInt(x.BV*10)/10:''}}</td>
+                                <td>{{x.PV>0?parseInt(x.PV*10)/10:''}}</td>
                                 <td ref="reference_qty">{{x.Qty==0?'':x.Qty}}</td>
                             </tr>
                         </tbody>
@@ -348,11 +348,14 @@
             $('#p_list tbody tr:first td:last').html(c);  
             // Vue.set(product_list.listdata[0], 'Qty', 5000)
             total_price = total_price + $('.product_no').val() * product_list.listdata[0].MemberPrice;
+            // total_price = $('.product_no').val() * product_list.listdata[0].MemberPrice;
             if(product_list.listdata[0].BV != undefined){
                 total_bv = total_bv + $('.product_no').val() * product_list.listdata[0].BV;
+                // total_bv = $('.product_no').val() * product_list.listdata[0].BV;
             }
             if(product_list.listdata[0].PV != undefined){
                 total_pv = total_pv + $('.product_no').val() * product_list.listdata[0].PV;
+                // total_pv = $('.product_no').val() * product_list.listdata[0].PV;
             }
             // console.log(product_list.listdata[0].BV,product_list.listdata[0].PV)
             total.total_data.total_price = total_price;
@@ -605,6 +608,9 @@
             total.total_data.total_price = 0;
             total.total_data.total_bv = 0;
             total.total_data.total_pv = 0;
+            total_price = 0;
+            total_bv = 0;
+            total_pv = 0;
         }
 
         function testing_export_data() {
